@@ -1,0 +1,189 @@
+# Locale sets language and country.
+d-i debian-installer/locale string en_US
+
+# Keyboard selection.
+# Disable automatic (interactive) keymap detection.
+d-i console-setup/ask_detect boolean false
+d-i console-setup/modelcode string SKIP
+d-i console-setup/layoutcode string us
+
+### Network configuration
+# netcfg will choose an interface that has link if possible. This makes it
+# skip displaying a list if there is more than one interface.
+d-i netcfg/choose_interface select auto
+
+# If you have a slow dhcp server and the installer times out waiting for
+# it, this might be useful.
+d-i netcfg/dhcp_timeout string 60
+
+# Any hostname and domain names assigned from dhcp take precedence over
+# values set here. However, setting the values still prevents the questions
+# from being shown, even if values come from dhcp.
+d-i netcfg/get_hostname string netsus
+d-i netcfg/get_domain string local
+
+# Disable that annoying WEP key dialog.
+d-i netcfg/wireless_wep string
+
+### Mirror settings
+# If you select ftp, the mirror/country string does not need to be set.
+#d-i mirror/protocol string ftp
+d-i mirror/country string manual
+d-i mirror/http/hostname string archive.ubuntu.com
+d-i mirror/http/directory string /ubuntu
+d-i mirror/http/proxy string
+
+# Suite to install.
+d-i mirror/suite string &releasename;
+# Suite to use for loading installer components (optional).
+d-i mirror/udeb/suite string &releasename;
+# Components to use for loading installer components (optional).
+d-i mirror/udeb/components multiselect main, restricted
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean true
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string US/Central
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean true
+
+### Partitioning
+# Alternatively, you can specify a disk to partition. The device name must
+# be given in traditional non-devfs format.
+# Note: A disk must be specified, unless the system has only one disk.
+# For example, to use the first SCSI/SATA hard disk:
+d-i partman-auto/disk string /dev/sda
+# In addition, you'll need to specify the method to use.
+# The presently available methods are: "regular", "lvm" and "crypto"
+d-i partman-auto/method string lvm
+
+# If one of the disks that are going to be automatically partitioned
+# contains an old LVM configuration, the user will normally receive a
+# warning. This can be preseeded away...
+d-i partman-lvm/device_remove_lvm boolean true
+# The same applies to pre-existing software RAID array:
+d-i partman-md/device_remove_md boolean true
+# And the same goes for the confirmation to write the lvm partitions.
+d-i partman-lvm/confirm boolean true
+
+# For LVM partitioning, you can select how much of the volume group to use
+# for logical volumes.
+d-i partman-auto-lvm/guided_size string max
+
+# You can choose one of the three predefined partitioning recipes:
+# - atomic: all files in one partition
+# - home:   separate /home partition
+# - multi:  separate /home, /usr, /var, and /tmp partitions
+d-i partman-auto/choose_recipe select atomic
+
+# If you just want to change the default filesystem from ext3 to something
+# else, you can do that without providing a full recipe.
+d-i partman/default_filesystem string ext4
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+# Write the changes to disks and configure LVM?
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-auto-lvm/guided_size string max
+
+### Base system installation
+# The kernel image (meta) package to be installed; "none" can be used if no
+# kernel is to be installed.
+d-i base-installer/kernel/image string linux-server
+
+### Account setup
+# Skip creation of a root account (normal user account will be able to
+# use sudo). The default is false; preseed this to true if you want to set
+# a root password.
+d-i passwd/root-login boolean false
+
+# To create a normal user account.
+d-i passwd/user-fullname string NetSUS
+d-i passwd/username string shelluser
+# Normal user's password, either in clear text
+d-i passwd/user-password password shelluser
+d-i passwd/user-password-again password shelluser
+
+# Set to true if you want to encrypt the first user's home directory.
+d-i user-setup/encrypt-home boolean false
+
+# By default the installer requires that repositories be authenticated
+# using a known gpg key. This setting can be used to disable that
+# authentication. Warning: Insecure, not recommended.
+d-i debian-installer/allow_unauthenticated string true
+
+### Package selection
+#tasksel tasksel/first multiselect lamp-server
+
+# Individual additional packages to install
+d-i pkgsel/include string php5 samba avahi-daemon nfs-kernel-server tftpd-hpa openbsd-inetd dialog netatalk curl ssl-cert mkpasswd
+# Whether to upgrade packages after debootstrap.
+# Allowed values: none, safe-upgrade, full-upgrade
+d-i pkgsel/upgrade select safe-upgrade
+
+# Language pack selection
+d-i pkgsel/language-packs multiselect en
+
+# Policy for applying updates. May be "none" (no automatic updates),
+# "unattended-upgrades" (install security updates automatically), or
+# "landscape" (manage system with Landscape).
+d-i pkgsel/update-policy select unattended-upgrades
+
+# Some versions of the installer can report back on what software you have
+# installed, and what software you use. The default is not to report back,
+# but sending reports helps the project determine what software is most
+# popular and include it on CDs.
+popularity-contest popularity-contest/participate boolean false
+
+# By default, the system's locate database will be updated after the
+# installer has finished installing most packages. This may take a while, so
+# if you don't want it, you can set this to "false" to turn it off.
+d-i pkgsel/updatedb boolean false
+
+
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian boolean true
+
+# This one makes grub-installer install to the MBR if it also finds some other
+# OS, which is less safe as it might not be able to boot that other OS.
+d-i grub-installer/with_other_os boolean true
+
+# Avoid that last message about the install being complete.
+d-i finish-install/reboot_in_progress note
+
+
+# This will power off the machine instead of just halting it.
+d-i debian-installer/exit/poweroff boolean true
+
+# Monitor autodetection is recommended.
+xserver-xorg xserver-xorg/autodetect_monitor boolean true
+# Uncomment if you have an LCD display.
+#xserver-xorg xserver-xorg/config/monitor/lcd boolean true
+# X has three configuration paths for the monitor. Here's how to preseed
+# the "medium" path, which is always available. The "simple" path may not
+# be available, and the "advanced" path asks too many questions.
+xserver-xorg xserver-xorg/config/monitor/selection-method \
+       select medium
+xserver-xorg xserver-xorg/config/monitor/mode-list \
+       select 1024x768 @ 60 Hz
+
+#### Advanced options
+### Running custom commands during the installation
+
+# This command is run just before the install finishes, but when there is
+# still a usable /target directory. You can chroot to /target and use it
+# directly, or use the apt-install and in-target commands to easily install
+# packages and run commands in the target system.
+d-i preseed/late_command string wget http://<server_name>/NetSUS.tar.gz -O /target/NetSUS.tar.gz && chroot /target chmod +r NetSUS.tar.gz && chroot /target tar xvfo /NetSUS.tar.gz --strip-components=2 --overwrite && chroot /target chmod +x /etc/init.d/applianceFirstRun && chroot /target update-rc.d applianceFirstRun defaults && chroot /target chmod +x /var/appliance/dialog.sh && chroot /target chmod +x /etc/rc.local && chroot /target rm /etc/udev/rules.d/70-* && chroot /target rm /etc/resolv.conf

@@ -1,0 +1,48 @@
+1027c1027
+< 
+---
+> #if 0
+1052c1052
+< 
+---
+> #endif
+1296c1296,1297
+< 		to.sin_port = remote_port;
+---
+>                 to.sin_port = packet->client_port; 
+> 		/* to.sin_port = remote_port; */ 
+1453,1454c1454,1455
+< 			to.sin_port = remote_port; /* for testing. */
+< 
+---
+>                 to.sin_port = packet->client_port; 
+>                 /* to.sin_port = remote_port; */
+1463c1464,1465
+< 		to.sin_port = remote_port;
+---
+>                 to.sin_port = packet->client_port; 
+>                 /* to.sin_port = remote_port; */
+3117,3118c3119,3121
+< 			to.sin_port = remote_port; /* For debugging. */
+< 
+---
+>                
+>                 /* to.sin_port = packet->client_port; Cant set this here */
+>                 to.sin_port = remote_port; 
+3150,3151c3153,3154
+< 		to.sin_port = remote_port;
+< 
+---
+>                 /* to.sin_port = packet->client_port; Cant set this here */ 
+>                 to.sin_port = remote_port;
+3170,3171c3173,3174
+< 		to.sin_port = remote_port;
+< 
+---
+>                 /* to.sin_port = packet->client_port; Cant set the here */ 
+>                 to.sin_port = remote_port; 
+3175c3178,3179
+< 		to.sin_port = remote_port;
+---
+>                 /* to.sin_port = packet->client_port; Cant set this here */
+>                 to.sin_port = remote_port; 

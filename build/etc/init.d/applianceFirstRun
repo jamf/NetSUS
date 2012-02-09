@@ -1,0 +1,136 @@
+#!/bin/sh -e
+#upstart-job
+
+case "$1" in
+    start)
+        echo -n "Starting applianceFirstRun...\n"
+	if [ -f /var/db/.applianceSetupDone ]; then
+		echo "Appliance First Run already completed."
+	else
+
+		#Creates the accounts to be used for the different services
+		useradd -d /dev/null -s /dev/null smbuser
+		echo smbuser:smbuser | chpasswd
+		#Needs normal user creation for AFP mount to work proper
+		mkdir /home/afpuser
+		useradd afpuser -d /home/afpuser
+		echo afpuser:afpuser | chpasswd
+		chown afpuser:afpuser /home/afpuser/
+
+		#Set perms on SUS sync
+		chmod +x /var/appliance/sus_sync.py
+
+		#Point Apache to SUS
+		sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default
+
+		#Remove default it works page
+		rm /var/www/index.html		
+
+		#Prevent writes to the webadmin's helper script
+		chmod -wr /var/www/webadmin/scripts/adminHelper.sh
+		chown root:root /var/www/webadmin/scripts/adminHelper.sh
+		chmod u+r /var/www/webadmin/scripts/adminHelper.sh
+		
+		#Allow the webadmin from Apache to invoke the helper script
+		echo "www-data ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" > /etc/sudoers.d/webadmin
+		chmod 0440 /etc/sudoers.d/webadmin
+		
+		#Disables IPv6
+		echo "#disable ipv6" >> /etc/sysctl.conf
+		echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
+		echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+		echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+
+
+		#Change SMB settings to allow for a symlink in an app or pkg
+		sed '/global/ a\
+unix extensions = no' /etc/samba/smb.conf > /tmp/smb.conf
+		mv /tmp/smb.conf /etc/samba/smb.conf
+		
+		#Create the SMB share for NetBoot
+		echo "Creating the SMB share for NetBoot..."
+		(echo smbuser; echo smbuser) | smbpasswd -s -a smbuser
+		echo "[NetBoot]" >> /etc/samba/smb.conf
+		echo "comment = NetBoot" >> /etc/samba/smb.conf
+		echo "path = /srv/NetBoot/NetBootSP0" >> /etc/samba/smb.conf
+		echo "browseable = no" >> /etc/samba/smb.conf
+		echo "guest ok = no" >> /etc/samba/smb.conf
+		echo "read only = yes" >> /etc/samba/smb.conf
+		echo "create mask = 0755" >> /etc/samba/smb.conf
+		echo "write list = smbuser" >> /etc/samba/smb.conf
+		echo "valid users = smbuser" >> /etc/samba/smb.conf
+		chown smbuser /srv/NetBoot/NetBootSP0/
+
+		
+		#Make the afpuser the owner of the NetBootClients share
+		chown afpuser /srv/NetBootClients/
+
+		# Enable apache on SSL
+		a2enmod ssl
+		a2ensite default-ssl
+		/etc/init.d/apache2 restart
+
+		#Create the .applianceSetupDone file in /var/db so this doesn't run again
+		if [ -d /var/db ]; then
+			touch /var/db/.applianceSetupDone
+		else
+			mkdir /var/db
+			touch /var/db/.applianceSetupDone
+		fi
+	fi
+ ;;
+    stop)
+        echo -n "Stopping applianceFirstRun "
+        ## Stop daemon with killproc(8) and if this fails
+        ## killproc sets the return value according to LSB.
+
+        #killproc -TERM $BAR_BIN
+
+        # Remember status and be verbose
+        #rc_status -v
+        ;;
+    restart)
+        ## Stop the service and regardless of whether it was
+        ## running or not, start it again.
+        #$0 stop
+        #$0 start
+
+        # Remember status and be quiet
+        #rc_status
+        ;;
+    reload)
+        # If it supports signaling:
+        echo -n "Reload service bar "
+        #killproc -HUP $BAR_BIN
+        #touch /var/run/BAR.pid
+        #rc_status -v
+
+        ## Otherwise if it does not support reload:
+        #rc_failed 3
+        #rc_status -v
+        ;;
+    status)
+        echo -n "Checking for service bar "
+        ## Check status with checkproc(8), if process is running
+        ## checkproc will return with exit status 0.
+
+        # Return value is slightly different for the status command:
+        # 0 - service up and running
+        # 1 - service dead, but /var/run/  pid  file exists
+        # 2 - service dead, but /var/lock/ lock file exists
+        # 3 - service not running (unused)
+        # 4 - service status unknown :-(
+        # 5--199 reserved (5--99 LSB, 100--149 distro, 150--199 appl.)
+
+        # NOTE: checkproc returns LSB compliant status values.
+        #checkproc $BAR_BIN
+        # NOTE: rc_status knows that we called this init script with
+        # "status" option and adapts its messages accordingly.
+        #rc_status -v
+        ;;
+    *)
+        ## If no parameters are given, print which are avaiable.
+        echo "Usage: $0 {start|stop|status|restart|reload}"
+        exit 1
+        ;;
+esac

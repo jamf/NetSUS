@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# Copyright (C) 2012, JAMF Software, LLC
+# All rights reserved.
+# 
+# SUPPORT FOR THIS PROGRAM
+# 
+# This program is distributed "as is" by JAMF Software, LLC.  For more information or support for the appliance, please utilize the following resources:
+# 
+# 	https://jamfnation.jamfsoftware.com/
+# 
+# Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+# 
+# * Neither the name of the JAMF Software, LLC nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+ip=`ifconfig | grep eth0 -A 1 | grep 'inet addr' | awk '{print $2}' | sed 's/addr://g'`
+netmask=`ifconfig | grep eth0 -A 1 | grep 'inet addr' | awk '{print $4}' | sed 's/Mask://g'`
+ipsub=`echo $ip | awk '{split($0,array,".")} END {print array[1], array[2], array[3]}' | sed 's/ /./g'`
+ipdec=`awk -v dec=$ip 'BEGIN{n=split(dec,d,".");for(i=1;i<=n;i++) printf ":%02X",d[i];print ""}'`
+
+curafp=`cat /etc/dhcpd.conf | grep "01:01:02:08:04:01:00:02:0E:80" | sed 's/option vendor-encapsulated-options 01:01:02:08:04:01:00:02:0E:80:.*:61:66:70:75:73:65:72:3A://g' | awk -F40 '{print $1}' | tr -d ' ' | sed 's/\(.*\)./\1/'`
+afppw=`cat /etc/dhcpd.conf | grep "01:01:02:08:04:01:00:02:0E:80" | sed 's/option vendor-encapsulated-options 01:01:02:08:04:01:00:02:0E:80:.*:61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A://g' | sed 's/://g' | awk -F40 '{print $1}' | tr -d ' ' | wc -c`
+afppwlen=`expr $afppw "/" 2`
+
+iphex=`echo $ip | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
+num=`echo $iphex | sed 's/://g' | wc -c`
+num=`expr $num "/" 2`
+num=`expr $num "+" 23`
+num=`expr $num "+" $afppwlen`
+lengthhex=`awk -v dec=$num 'BEGIN{n=split(dec,d,".");for(i=1;i<=n;i++) printf ":%02X",d[i];print ""}'`
+
+sed -i "s/01:01:02:08:04:01:00:02:0E:80:.*/01:01:02:08:04:01:00:02:0E:80$lengthhex:61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:$curafp:40:$iphex:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
+
+sed -i "s/7, 12) = 08:04:01:00:02:0E:03:04.*)/7, 12) = 08:04:01:00:02:0E:03:04$ipdec)/g" /etc/dhcpd.conf
+sed -i "s/7, 12) = 03:04.*:08:04:01:00:02:0E)/7, 12) = 03:04$ipdec:08:04:01:00:02:0E)/g" /etc/dhcpd.conf
+sed -i "s/next-server.*;/next-server $ip;/g" /etc/dhcpd.conf
+sed -i "s/nfs:.*:\/srv\/NetBoot\/NetBootSP0:/nfs:$ip:\/srv\/NetBoot\/NetBootSP0:/g" /etc/dhcpd.conf
+
+
+
+killall dhcpd
+/usr/local/sbin/dhcpd

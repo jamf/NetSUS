@@ -1,0 +1,45 @@
+# Appletalk configuration
+# Change this to increase the maximum number of clients that can connect:
+AFPD_MAX_CLIENTS=50
+
+# Change this to set the machine's atalk name and zone, the latter containing
+# the '@' sign as first character -- compare with nbp_name(3) if in doubt
+#
+# NOTE: If Netatalk should register AppleTalk services in the standard zone
+#       then you need not to specify a zone name here.
+#
+#       If your zone has spaces in it, you're better off specifying
+#       it in afpd.conf if you realize that your distribution doesn't
+#       handle spaces correctly in the startup script. Remember to use
+#       quotes here if the zone name contains spaces.
+#
+#ATALK_ZONE="@some zone"
+ATALK_NAME=`/bin/hostname --short`
+
+# specify the Mac and unix charsets to be used
+ATALK_MAC_CHARSET='MAC_ROMAN'
+ATALK_UNIX_CHARSET='LOCALE'
+
+# specify this if you don't want dhx and dhx2
+# available options: uams_guest.so, uams_clrtxt.so, 
+#                    uams_dhx.so, uams_dhx2.so, 
+# 		     uams_randnum.so
+#AFPD_UAMLIST="-U uams_dhx2.so,uams_clrtxt.so"
+
+# Change this to set the id of the guest user
+AFPD_GUEST=nobody
+
+# Set which daemons to run (papd is dependent upon atalkd):
+ATALKD_RUN=no
+PAPD_RUN=no
+CNID_METAD_RUN=yes
+AFPD_RUN=yes
+TIMELORD_RUN=no
+A2BOOT_RUN=yes
+
+# Control whether the daemons are started in the background
+ATALK_BGROUND=no
+
+# export the charsets, read form ENV by apps
+export ATALK_MAC_CHARSET
+export ATALK_UNIX_CHARSET
