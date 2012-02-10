@@ -168,7 +168,7 @@ function getSyncStatus()
 function formatPackage($package)
 {
 	$package = preg_replace("/\s\s+/", " ", $package);
-	$package = preg_replace("/\[([^\s]+)\s([^\]]+)\]/", "[$1$2]", $package);
+	$package = preg_replace("/'\s*,\s*'/", "','", $package);
 	$parts = explode(" ", $package);
 	$len = count($parts);
 	$id = $parts[0];
