@@ -39,7 +39,7 @@ function getSystemTimeZoneMenu()
 	echo "<select id=\"timezone\" name=\"timezone\">\n";
     $timezone_identifiers = DateTimeZone::listIdentifiers();
     foreach($timezone_identifiers as $value){
-        if (preg_match('/^(America|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
+        if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
         {
             $ex=explode("/",$value);//obtain continent,city    
             if ($continent!=$ex[0]){
