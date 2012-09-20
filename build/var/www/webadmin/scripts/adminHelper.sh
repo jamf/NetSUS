@@ -280,7 +280,7 @@ cp "/srv/SUS/html/content/catalogs/index_$2.sucatalog" "/srv/SUS/html/index.suca
 addsch)
 crontab -l > /tmp/mycron
 sed -i '/sus_sync.py/d' /tmp/mycron
-echo "00 $2 * * * /var/appliance/sus_sync.py" >> /tmp/mycron
+echo "00 $2 * * * /var/appliance/sus_sync.py > /dev/null" >> /tmp/mycron
 crontab /tmp/mycron
 rm /tmp/mycron
 ;;
