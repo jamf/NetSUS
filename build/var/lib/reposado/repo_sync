@@ -43,6 +43,7 @@ import calendar
 import os
 import optparse
 import plistlib
+import shutil
 import subprocess
 #import sys
 import time
@@ -102,7 +103,12 @@ def parseSUdist(filename):
     su_name = ""
     title = ""
 
-    dom = minidom.parse(filename)
+    try:
+        dom = minidom.parse(filename)
+    except ExpatError:
+        reposadocommon.print_stderr(
+            'Invalid XML in %s', filename)
+        return None
 
     choice_elements = dom.getElementsByTagName("choice")
     if choice_elements:
@@ -214,7 +220,9 @@ def curl(url, destinationpath, onlyifnewer=False, etag=None, resume=False):
         print >> fileobj, 'fail'           # throw error if download fails
         print >> fileobj, 'dump-header -'  # dump headers to stdout
         print >> fileobj, 'speed-time = 30' # give up if too slow d/l
-        #print >> fileobj, 'output = "%s"' % tempdownloadpath # does not work on windows
+        # next line does not work on windows
+        #print >> fileobj, 'output = "%s"' % tempdownloadpath 
+        
         print >> fileobj, 'ciphers = HIGH,!ADH' # use only >=128 bit SSL
         print >> fileobj, 'url = "%s"' % url
         
@@ -248,7 +256,7 @@ def curl(url, destinationpath, onlyifnewer=False, etag=None, resume=False):
             '-q',                    # don't read .curlrc file
             '--config',              # use config file
             curldirectivepath,
-            '-o', tempdownloadpath]  # because output in config file doesn't work on windows
+            '-o', tempdownloadpath]
 
     proc = subprocess.Popen(cmd, shell=False, bufsize=1,
                             stdin=subprocess.PIPE,
@@ -501,7 +509,18 @@ def getPreferredLocalization(list_of_localizations):
     elif 'en' in list_of_localizations:
         return 'en'
     return None
-    
+
+
+def cleanUpTmpDir():
+    """Cleans up our temporary directory."""
+    global TMPDIR
+    if TMPDIR:
+        try:
+            shutil.rmtree(TMPDIR)
+        except (OSError, IOError):
+            pass
+        TMPDIR = None
+
 
 TMPDIR = None
 def sync(fast_scan=False, download_packages=True):
@@ -509,7 +528,9 @@ def sync(fast_scan=False, download_packages=True):
     Returns a dictionary of products.'''
     global TMPDIR
     TMPDIR = tempfile.mkdtemp()
-    
+    if reposadocommon.LOGFILE:
+        print 'Output logged to %s' % reposadocommon.LOGFILE
+    reposadocommon.print_stdout('repo_sync run started')
     catalog_urls = reposadocommon.pref('AppleCatalogURLs')
     products = reposadocommon.getProductInfo()
     
@@ -523,8 +544,13 @@ def sync(fast_scan=False, download_packages=True):
             reposadocommon.getLocalPathNameFromURL(catalog_url) + '.apple'
         if os.path.exists(localcatalogpath):
             archiveCatalog(localcatalogpath)
-        localcatalogpath = replicateURLtoFilesystem(catalog_url, 
-            appendToFilename='.apple')
+        try:
+            localcatalogpath = replicateURLtoFilesystem(catalog_url, 
+                appendToFilename='.apple')
+        except ReplicationError, err:
+            reposadocommon.print_stderr(
+                'Could not replicate %s: %s', catalog_url, err)
+            continue
         try:
             catalog = plistlib.readPlist(localcatalogpath)
         except (OSError, IOError, ExpatError), err:
@@ -551,25 +577,37 @@ def sync(fast_scan=False, download_packages=True):
                             unused_path = replicateURLtoFilesystem(
                                 product['ServerMetadataURL'], 
                                 copy_only_if_missing=fast_scan)
-                        except ReplicationError:
+                        except ReplicationError, err:
+                            reposadocommon.print_stderr(
+                                'Could not replicate %s: %s',
+                                product['ServerMetadataURL'], err)
                             continue
                     
                     if download_packages:
-                        try:
-                            for package in product.get('Packages', []):
-                                # TO-DO: Check 'Size' attribute and make sure
-                                # we have enough space on the target
-                                # filesystem before attempting to download
-                                if 'URL' in package:
+                        for package in product.get('Packages', []):
+                            # TO-DO: Check 'Size' attribute and make sure
+                            # we have enough space on the target
+                            # filesystem before attempting to download
+                            if 'URL' in package:
+                                try:
                                     unused_path = replicateURLtoFilesystem(
                                         package['URL'], 
                                         copy_only_if_missing=fast_scan)
-                                if 'MetadataURL' in package:
+                                except ReplicationError, err:
+                                    reposadocommon.print_stderr(
+                                        'Could not replicate %s: %s',
+                                        package['URL'], err)
+                                    continue
+                            if 'MetadataURL' in package:
+                                try:
                                     unused_path = replicateURLtoFilesystem(
                                         package['MetadataURL'], 
                                         copy_only_if_missing=fast_scan)
-                        except ReplicationError:
-                            continue
+                                except ReplicationError, err:
+                                    reposadocommon.print_stderr(
+                                        'Could not replicate %s: %s',
+                                        package['MetadataURL'], err)
+                                    continue
                             
                     # calculate total size
                     size = 0
@@ -591,14 +629,18 @@ def sync(fast_scan=False, download_packages=True):
                                     copy_only_if_missing=fast_scan)
                             if dist_lang == preferred_lang:
                                 preferred_dist = dist_path
-                    except ReplicationError:
+                    except ReplicationError, err:
+                        reposadocommon.print_stderr(
+                            'Could not replicate %s: %s', dist_url, err)
                         continue
                     
                     if preferred_dist:
                         dist = parseSUdist(preferred_dist)
+                        if not dist:
+                            continue
                         products[product_key]['title'] = dist['title']
                         products[product_key]['version'] = dist['version']
-                        products[product_key]['size'] = size
+                        products[product_key]['size'] = str(size)
                         products[product_key]['description'] = \
                             dist['description']
                         products[product_key]['PostDate'] = \
@@ -612,10 +654,24 @@ def sync(fast_scan=False, download_packages=True):
                     
                     # record original catalogs in case the product is
                     # deprecated in the future
-                    if not 'OriginalAppleCatalogs' in products[product_key]:
+                    #if not 'OriginalAppleCatalogs' in products[product_key]:
+                    #    products[product_key]['OriginalAppleCatalogs'] = \
+                    #        products[product_key]['AppleCatalogs']
+                    
+                    # If AppleCatalogs list is non-empty, record to 
+                    # OriginalAppleCatalogs in case the product is deprecated
+                    # in the future
+                    #
+                    # (This is a change from the original implementation to
+                    # account for products being mistakenly released for the
+                    # wrong sucatalogs and later corrected. The assumption now 
+                    # is that a change in available catalogs means Apple is 
+                    # fixing a mistake; disappearing from all catalogs means
+                    # an item is deprecated.)
+                    if products[product_key]['AppleCatalogs']:
                         products[product_key]['OriginalAppleCatalogs'] = \
                             products[product_key]['AppleCatalogs']
-        
+                            
         # record products we've successfully downloaded
         reposadocommon.writeDownloadStatus(replicated_products)
         # write our ETags to disk for future use
@@ -626,9 +682,9 @@ def sync(fast_scan=False, download_packages=True):
         reposadocommon.writeLocalCatalogs(localcatalogpath)
         
     # clean up tmpdir
-    # TO-DO: write the cleanup function
-    # cleanup(TMPDIR)
-
+    cleanUpTmpDir()
+    reposadocommon.print_stdout('repo_sync run ended')
+    
 
 def main():
     '''Main command processing'''
@@ -636,6 +692,8 @@ def main():
     p.set_usage('''Usage: %prog [options]''')
     p.add_option('--recheck', action='store_true',
                  help="""Recheck already downloaded packages for changes.""")
+    p.add_option('--log', dest='logfile', metavar='LOGFILE',
+                 help="""Log all output to LOGFILE. No output to STDOUT.""")
     options, unused_arguments = p.parse_args()
     if reposadocommon.validPreferences():
         if not os.path.exists(reposadocommon.pref('CurlPath')):
@@ -646,6 +704,11 @@ def main():
             download_packages = False
         else:
             download_packages = True
+        if options.logfile:
+            reposadocommon.LOGFILE = options.logfile
+        elif reposadocommon.pref('RepoSyncLogFile'):
+            reposadocommon.LOGFILE = reposadocommon.pref('RepoSyncLogFile')
+            
         sync(fast_scan=(not options.recheck), 
              download_packages=download_packages)
 
