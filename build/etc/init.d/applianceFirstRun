@@ -28,6 +28,22 @@ case "$1" in
 
 		#Point Apache to SUS
 		sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default
+		sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default
+		cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
+    <IfModule mod_rewrite.c>
+        RewriteEngine On
+        RewriteCond %{HTTP_USER_AGENT} Darwin/9
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
+        RewriteCond %{HTTP_USER_AGENT} Darwin/10
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
+        RewriteCond %{HTTP_USER_AGENT} Darwin/11
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
+        RewriteCond %{HTTP_USER_AGENT} Darwin/12
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+    </IfModule>
+
+</VirtualHost>
+ZHEREDOC
 
 		#Remove default it works page
 		rm /var/www/index.html		
@@ -73,6 +89,7 @@ unix extensions = no' /etc/samba/smb.conf > /tmp/smb.conf
 
 		# Enable apache on SSL
 		a2enmod ssl
+		a2enmod rewrite
 		a2ensite default-ssl
 		/etc/init.d/apache2 restart
 

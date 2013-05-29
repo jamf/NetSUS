@@ -81,6 +81,7 @@ def sync_sus():
     os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/others/index-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-lion-snowleopard-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard-snowleopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard-snowleopard.merged-1.sucatalog")
+    os.system("cp /srv/SUS/html/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
 def enable_all_sus():
@@ -91,6 +92,7 @@ def enable_all_sus():
     os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/others/index-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-lion-snowleopard-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard-snowleopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard-snowleopard.merged-1.sucatalog")
+    os.system("cp /srv/SUS/html/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
 try:
