@@ -1,0 +1,251 @@
+<?php
+
+include "inc/config.php";
+include "inc/auth.php";
+include "inc/functions.php";
+
+$title = "NetBoot Server";
+
+include "inc/header.php";
+
+$currentIP = trim(getCurrentIP());
+
+$netbootimgdir = "/srv/NetBoot/NetBootSP0/";
+
+
+if (isset($_POST['NetBootImage']))
+{
+	$wasrunning = getNetBootStatus();
+	$nbi = $_POST['NetBootImage'];
+	if ($nbi != "")
+	{
+		$nbconf = file_get_contents("/var/appliance/conf/dhcpd.conf");
+		$nbsubnets = "";
+		foreach($conf->getSubnets() as $key => $value)
+		{
+			$nbsubnets .= "subnet ".$value['subnet']." netmask ".$value['netmask']." {\n\tallow unknown-clients;\n}\n\n";
+		}
+		$nbconf = str_replace("##SUBNETS##", $nbsubnets, $nbconf);
+		suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
+		if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
+		{
+			echo "<div class=\"errorMessage\">ERROR: Unable to update dhcpd.conf</div>";
+			 
+		}
+		suExec("disablenetboot");
+		suExec("installdhcpdconf");
+		
+		if ($wasrunning || isset($_POST['enablenetboot']))
+		{
+			suExec("setnbimages ".$nbi);
+		}
+		$conf->setSetting("netbootimage", $nbi);
+	}
+}
+
+if (isset($_POST['disablenetboot']))
+{
+	suExec("disablenetboot");
+}
+
+if (isset($_POST['addsubnet']) && isset($_POST['subnet']) && isset($_POST['netmask'])
+&& $_POST['subnet'] != "" && $_POST['netmask'] != "")
+{
+	$conf->addSubnet($_POST['subnet'], $_POST['netmask']);
+	// 	echo "<script type=\"text/javascript\">\nchangeServiceType('NetBoot');\n</script>\n";
+	$nbconf = file_get_contents("/var/appliance/conf/dhcpd.conf");
+	$nbsubnets = "";
+	foreach($conf->getSubnets() as $key => $value)
+	{
+		$nbsubnets .= "subnet ".$value['subnet']." netmask ".$value['netmask']." {\n\tallow unknown-clients;\n}\n\n";
+	}
+	$nbconf = str_replace("##SUBNETS##", $nbsubnets, $nbconf);
+	suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
+	if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
+	{
+		echo "<div class=\"errorMessage\">ERROR: Unable to update dhcpd.conf</div>";
+	}
+	$wasrunning = getNetBootStatus();
+	if ($wasrunning)
+	{
+		suExec("disablenetboot");
+	}
+	suExec("installdhcpdconf");
+	if ($wasrunning)
+	{
+		suExec("setnbimages ".$conf->getSetting("netbootimage"));
+	}
+}
+
+if (isset($_GET['deleteSubnet']) && isset($_GET['deleteNetmask'])
+&& $_GET['deleteSubnet'] != "" && $_GET['deleteNetmask'] != "")
+{
+	$conf->deleteSubnet($_GET['deleteSubnet'], $_GET['deleteNetmask']);
+	$nbconf = file_get_contents("/var/appliance/conf/dhcpd.conf");
+	$nbsubnets = "";
+	foreach($conf->getSubnets() as $key => $value)
+	{
+		$nbsubnets .= "subnet ".$value['subnet']." netmask ".$value['netmask']." {\n\tallow unknown-clients;\n}\n\n";
+	}
+	$nbconf = str_replace("##SUBNETS##", $nbsubnets, $nbconf);
+	suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
+	if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
+	{
+		echo "<div class=\"errorMessage\">ERROR: Unable to update dhcpd.conf</div>";
+	}
+	$wasrunning = getNetBootStatus();
+	if ($wasrunning)
+	{
+		suExec("disablenetboot");
+	}
+	suExec("installdhcpdconf");
+	if ($wasrunning)
+	{
+		suExec("setnbimages ".$conf->getSetting("netbootimage"));
+	}
+}
+
+// ####################################################################
+// End of GET/POST parsing
+// ####################################################################
+?>
+
+<script>
+function validateSubnet()
+{
+	if (document.getElementById("subnet").value != "" && document.getElementById("netmask").value != "")
+		document.getElementById("addsubnet").disabled = false;
+	else
+		document.getElementById("addsubnet").disabled = true;
+}
+</script>
+
+<style>         
+  <!--       
+	@media (max-width: 600px) {
+
+		tr:first-child { display: none; }
+	
+	  td:nth-of-type(1):before { content: "Subnet";}
+   
+	  td:nth-of-type(2):before { content: "Netmask";}
+   
+	}
+ -->	
+</style> 
+
+<h2>NetBoot Server</h2>
+
+<div id="form-wrapper">
+
+	<form action="netBoot.php" method="post" name="NetBoot" id="NetBoot">
+
+		<div id="form-inside">
+			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
+			<span class="label">New NetBoot Image</span>
+			<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
+			<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton"
+								value="Upload NetBoot Image" onClick="javascript: return goTo(true, '<?php echo "smb://".$currentIP."/NetBoot"?>');"/>
+			<br>
+
+			<span class="label">NetBoot Image</span>
+			<span class="description">NetBoot image that computers boot to</span>
+			<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('admin.php?service=NetBoot', 'NetBootImage='+this.value);">
+				<?php
+				$nbidircontents = scandir($netbootimgdir);
+				$curimg = $conf->getSetting("netbootimage");
+				$i = 0;
+				foreach($nbidircontents as $item)
+				{
+					if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
+					{
+					?>
+				<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
+					<?php
+					}
+					$i++;
+				}
+				
+				if ($i == 0)
+				{
+					echo "<option value=\"\">---</option>\n";
+				}
+
+				?>
+			</select>
+			<br>
+
+			<div class="labelDescriptionWrapper">
+				<span class="label">Subnets</span>
+				<span class="description">Subnets on which to listen for the NetBoot image. One of the subnets must include the IP address of the NetBoot server</span>
+			</div>
+
+
+			<span class="label">Subnet</span>
+			<input type="text" name="subnet" id="subnet" value="" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+			<br>
+
+			<span class="label">Netmask</span>
+			<input type="text" name="netmask" id="netmask" value="" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+			<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
+			<br>
+			<table class="branchesTable">
+				<? 	
+				$branchstr = trim(suExec("getBranchlist"));
+				$branches = explode(" ",$branchstr);
+				?>
+				<tr>
+					<th>Subnet</th>
+					<th>Netmask</th>
+					<th></th>
+				</tr>
+				<?php foreach($conf->getSubnets() as $key => $value) { ?>
+				<tr class="<?=($key % 2 == 0 ? "object0" : "object1")?>">
+					<td><?php echo $value['subnet']?></td>
+					<td><?php echo $value['netmask']?></td>
+					<td><a href="netBoot.php?service=NetBoot&deleteSubnet=<?php echo urlencode($value['subnet'])?>&deleteNetmask=<?php echo urlencode($value['netmask'])?>">Delete</a>
+				</tr>
+				<? } ?>
+			</table>
+
+			<span>NetBoot Status: </span>
+			<?php
+			if (getNetBootStatus())
+			{
+				echo "<img style=\"margin-right:10px;\" src=\"images/active.gif\" alt=\"NetBoot Active\"/>";
+			}
+			else
+			{
+				echo "<img style=\"margin-right:10px;\" src=\"images/inactive.gif\" alt=\"NetBoot Inactive\"/>";
+			}
+			?>
+
+			<?php
+			if (getNetBootStatus())
+			{
+				?>
+				<input type="submit" class="insideActionButton" value="Disable NetBoot" name="disablenetboot" />
+			<?php
+			}
+			else
+			{
+				?>
+				<input type="submit" class="insideActionButton" value="Enable NetBoot" name="enablenetboot" onClick="javascript:return toggle_creating('enabling')" />
+				<?php
+			}
+			?>
+		</div> <!-- end #form-inside -->
+
+	</form> <!-- end form NetBoot -->
+	<?php 
+	}
+	else { ?>
+	<tr><td><h3>Managed by the JSS</h3></td></tr>
+	<?php }?>
+
+</div><!--  end #form-wrapper -->
+
+<?php include "inc/footer.php"; ?>
+
+
+
