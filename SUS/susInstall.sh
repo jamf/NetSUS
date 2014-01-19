@@ -76,7 +76,11 @@ cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
         RewriteCond %{HTTP_USER_AGENT} Darwin/12
         RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
         RewriteCond %{HTTP_USER_AGENT} Darwin/13
+<<<<<<< HEAD
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+=======
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+>>>>>>> bc64c690fb95c4bc6676b51651c16ae047eebd7c
     </IfModule>
 
 </VirtualHost>
