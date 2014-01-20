@@ -1,4 +1,4 @@
-<?
+<?php
 //Read in whether or not the user is an admin - this is populated at the index.php page using the allowedAdminUsers variable
 if (isset($_SESSION['isAdmin'])) {
 	$isAdmin = $_SESSION['isAdmin'];

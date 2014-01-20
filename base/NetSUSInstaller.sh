@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script controls the flow of the Linux JSS installation
+# This script controls the flow of the Linux NetSUS installation
 
 ######### Requirements Checking - Root #########
 
@@ -31,11 +31,11 @@ logEvent "Starting the NetSUS Installation"
 logEvent "Checking installation requirements..."
 
 failedAnyChecks=0
-# Check for Ubuntu
-bash testUbuntuRequirements.sh
-if [[ $? -ne 0 ]]; then
-	failedAnyChecks=1
-fi
+# Check for Valid OS
+. testOSRequirements.sh
+
+logEvent $detectedOS
+
 
 # Check for a 64-bit OS
 bash test64bitRequirements.sh 
@@ -107,22 +107,32 @@ The following will be installed
 
 #Initial Cleanup tasks
 
+# Set SELinux policy
+if sestatus | grep -q enforcing ; then
+logEvent "Setting SELINUX mode to permissive"
+sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
+echo 0 > /selinux/enforce
+echo
+fi
+
+
+
 # Install Web Interface
-bash webadminInstall.run 
+bash webadminInstall.run -- $detectedOS
 if [[ $? -ne 0 ]]; then
 	umask $OLD_UMASK
 	exit 1
 fi
 
 # Install NetBoot
-bash netbootInstall.run 
+bash netbootInstall.run -- $detectedOS
 if [[ $? -ne 0 ]]; then
 	umask $OLD_UMASK
 	exit 1
 fi
 
 # Install SUS
-bash susInstall.run 
+bash susInstall.run -- $detectedOS
 if [[ $? -ne 0 ]]; then
 	umask $OLD_UMASK
 	exit 1
@@ -130,6 +140,7 @@ fi
 
 #Post Cleanup Tasks
 #Disables IPv6
+
 echo "#disable ipv6" >> /etc/sysctl.conf
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
@@ -154,9 +165,10 @@ else
     logEvent "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
 fi
 
-
+# Need to check service names for RedHat
 case $standalone in
 [yY])
+if [[ $detectedOS == 'Ubuntu' ]]; then
 	echo "Restarting Services..."
 	/etc/init.d/networking restart > /dev/null 2>&1
 	/etc/init.d/apache2 restart > /dev/null 2>&1
@@ -166,15 +178,38 @@ case $standalone in
 	/etc/init.d/openbsd-inetd restart > /dev/null 2>&1
 
 	logEvent "If you are installing NetSUS for the first time, please follow the documentation for setup instructions."
+fi
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    /etc/init.d/httpd restart
+    /etc/init.d/smb restart
+    /etc/init.d/xinetd restart
+    /etc/init.d/netatalk restart
+fi
+
 	;;
 [nN])
+if [[ $detectedOS == 'Ubuntu' ]]; then
 	chmod +x /etc/init.d/applianceFirstRun
+    #Need to update for RedHat
 	update-rc.d applianceFirstRun defaults
 	cp -R ./etc/* /etc/
 	rm /etc/udev/rules.d/70-*
 	rm /etc/resolv.conf
 	echo "Shutting Down....."
 	shutdown -P now
+fi
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    rm -rf /etc/ssh/ssh_host_*
+    rm -rf /etc/udev/rules.d/70-*
+    grep -v 'HWADDR=' /etc/sysconfig/network-scripts/ifcfg-eth0 > /etc/sysconfig/network-scripts/ifcfg-eth0.tmp
+    mv -f /etc/sysconfig/network-scripts/ifcfg-eth0.tmp /etc/sysconfig/network-scripts/ifcfg-eth0
+    find /var/log -type f -delete
+    rm -f install.log*
+    history -w
+    history -c
+    echo "Shutting Down....."
+    poweroff
+fi
 	;;
 esac
 

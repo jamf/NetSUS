@@ -34,7 +34,7 @@ include "inc/header.php";
 	<p class="bold">ISC's DHCP</p>
 	<p><a href="http://www.isc.org/software/dhcp/" target="_blank">http://www.isc.org/software/dhcp/</a></p>
 	<br/>
-
+	<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Ubuntu') !== FALSE) { ?>
 	<p class="bold">Ubuntu</p>
 	<p><a href="http://www.ubuntu.com/" target="_blank">http://www.ubuntu.com/</a></p>
 	<br>
@@ -52,6 +52,41 @@ include "inc/header.php";
 			<li>curl</li>
 		</ul>
 	<br/>
+	<?php } ?>	
+	<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'CentOS') !== FALSE) { ?>
+	<p class="bold">CentOS</p>
+	<p><a href="http://www.centos.org" target="_blank">http://www.centos.org/</a></p>
+	<br>
+
+	<p>The following installations, including any dependencies:</p>
+		<ul>
+			<li>php</li>
+			<li>php-xml</li>
+			<li>mod_ssl</li>
+			<li>dialog</li>
+			<li>netatalk</li>
+			<li>samba</li>
+			<li>tftp-server</li>
+		</ul>
+	<br/>
+	<?php } ?>	
+	<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Red Hat') !== FALSE) { ?>
+	<p class="bold">RedHat</p>
+	<p><a href="https://www.redhat.com" target="_blank">https://www.redhat.com/</a></p>
+	<br>
+
+	<p>The following installations, including any dependencies:</p>
+		<ul>
+			<li>php</li>
+			<li>php-xml</li>
+			<li>mod_ssl</li>
+			<li>dialog</li>
+			<li>netatalk</li>
+			<li>samba</li>
+			<li>tftp-server</li>
+		</ul>
+	<br/>
+	<?php } ?>		
 </div>
 
 

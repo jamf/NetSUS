@@ -2,28 +2,106 @@
 
 NAMESERVERLIST=""
 
+if [ -f "/usr/bin/lsb_release" ]; then
+
+ubuntuVersion=`lsb_release -s -d`
+
+case $ubuntuVersion in
+	*Ubuntu\ 12.04*)
+	detectedOS="Ubuntu"
+;;
+	*Ubuntu\ 10.04*)
+	detectedOS="Ubuntu"
+;;
+esac
+
+elif [ -f "/etc/system-release" ]; then
+
+case "$(readlink /etc/system-release)" in
+"centos-release")
+    detectedOS="CentOS"    
+    ;;
+"redhat-release")
+    detectedOS="RedHat"
+    ;;
+esac
+
+else
+	echo "Error detecting OS"
+fi
+
+
 case $1 in
 
-getnettype) if [ -n "$(grep -i static /etc/network/interfaces)" ]; then echo "static"; else echo "dhcp"; fi;;
+getnettype) 
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	if [ -n "$(grep -i static /etc/network/interfaces)" ]; then echo "static"; else echo "dhcp"; fi
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if [ -n "$(grep -i BOOTPROTO=none /etc/sysconfig/network-scripts/ifcfg-eth0)" ]; then echo "static"; else echo "dhcp"; fi
+
+fi
+;;
 getip) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 2 | cut -d ' ' -f 1`;;
 getnetmask) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`;;
 getgateway) echo `ip route | grep -i default | cut -d ' ' -f 3`;;
-setip) echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
-echo "auto lo" >> /etc/network/interfaces
-echo "iface lo inet loopback" >> /etc/network/interfaces
-echo "auto eth0" >> /etc/network/interfaces
-echo "iface eth0 inet static" >> /etc/network/interfaces
-echo "address $2" >> /etc/network/interfaces
-echo "netmask $3" >> /etc/network/interfaces
-echo "gateway $4" >> /etc/network/interfaces
-/etc/init.d/networking restart
+setip) 
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
+	echo "auto lo" >> /etc/network/interfaces
+	echo "iface lo inet loopback" >> /etc/network/interfaces
+	echo "auto eth0" >> /etc/network/interfaces
+	echo "iface eth0 inet static" >> /etc/network/interfaces
+	echo "address $2" >> /etc/network/interfaces
+	echo "netmask $3" >> /etc/network/interfaces
+	echo "gateway $4" >> /etc/network/interfaces
+	/etc/init.d/networking restart
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
+	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "DEVICE=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "TYPE=Ethernet" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "$UUID" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "NM_CONTROLLED=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "BOOTPROTO=none" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "IPADDR=$2" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "NETMASK=$3" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "GATEWAY=$4" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "DEFROUTE=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "IPV4_FAILURE_FATAL=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "IPV6INIT=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "NAME=\"System eth0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	service network restart
+fi
 ;;
-setdhcp) echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
-echo "auto lo" >> /etc/network/interfaces
-echo "iface lo inet loopback" >> /etc/network/interfaces
-echo "auto eth0" >> /etc/network/interfaces
-echo "iface eth0 inet dhcp" >> /etc/network/interfaces
-/etc/init.d/networking restart
+setdhcp) 
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
+	echo "auto lo" >> /etc/network/interfaces
+	echo "iface lo inet loopback" >> /etc/network/interfaces
+	echo "auto eth0" >> /etc/network/interfaces
+	echo "iface eth0 inet dhcp" >> /etc/network/interfaces
+	/etc/init.d/networking restart
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
+	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "DEVICE=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "TYPE=Ethernet" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "$UUID" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "NM_CONTROLLED=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "BOOTPROTO=dhcp" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "DEFROUTE=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "PEERDNS=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "PEERROUTES=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "IPV4_FAILURE_FATAL=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "IPV6INIT=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	echo "NAME=\"System eth0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	service network restart
+fi
 ;;
 getdns)
 	for line in $(cat /etc/resolv.conf | grep nameserver | cut -d ' ' -f 2);
@@ -46,13 +124,21 @@ getlocaltime) echo $(/bin/date);;
 
 #Get the time server that is set
 gettimeserver)
+if [ "$detectedOS" = 'Ubuntu' ]; then
 	if [ -f /etc/cron.daily/ntpdate ]; then
 		echo $(cat /etc/cron.daily/ntpdate | awk '{print $2}')
 	fi
-	;;
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if [ -f /etc/ntp/step-tickers ]; then
+		echo $(cat /etc/ntp/step-tickers | grep -m 1 -v '#')
+	fi
+fi	
+;;
 
 #Set the time server
 settimeserver)
+if [ "$detectedOS" = 'Ubuntu' ]; then
 	if [ -f /etc/cron.daily/ntpdate ]; then
 		currentTimeServer=`cat /etc/cron.daily/ntpdate | awk '{print $2}'`
 	fi
@@ -60,19 +146,53 @@ settimeserver)
 		echo "server $2" > /etc/cron.daily/ntpdate
 		/usr/sbin/ntpdate $2
 	fi
-	;;
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if [ -f /etc/ntp/step-tickers ]; then
+		currentTimeServer=`cat /etc/ntp/step-tickers | grep -m 1 -v '#'`
+	fi
+	if [ "$currentTimeServer" != $2 ]; then
+		echo "$2" > /etc/ntp/step-tickers
+		/usr/sbin/ntpdate $2
+	fi
+fi
+;;
 
 # *** Timezone retrieval done through PHP
 # Set time zone
-settz) echo `echo $2 > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata`;;
+settz) 
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	echo `echo $2 > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata`
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	echo ZONE=\"$2\" > /etc/sysconfig/clock && ln -sf /usr/share/zoneinfo/$2 /etc/localtime
+fi
+;;
 sethostname) 
+if [ "$detectedOS" = 'Ubuntu' ]; then
 	oldname=`hostname`
 	sed -i "s/$oldname/$2/g" /etc/hosts
-	/bin/hostname $2 && echo $2 > /etc/hostname && service avahi-daemon restart;;
+	/bin/hostname $2 && echo $2 > /etc/hostname && service avahi-daemon restart
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	oldname=`hostname`
+	sed -i "s/$oldname/$2/g" /etc/sysconfig/network
+	/bin/hostname $2 && service avahi-daemon restart
+fi	
+;;
+	
+
 # Admin services commands
-restartsmb) /etc/init.d/smbd restart;;
+restartsmb)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	/etc/init.d/smbd restart
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	service smb restart
+fi
+;;
 restartafp)
-/etc/init.d/netatalk restart
+service netatalk restart
 rm -rf /srv/NetBootClients/*
 ;;
 getnbimages)
@@ -94,12 +214,28 @@ fi
 
 #Needs updating if we do multiple NetBoot images
 setnbimages)
-#AFP
-ufw allow 548/tcp
-#DHCP
-ufw allow 67/udp
-#TFTP
-ufw allow 69/udp
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	#AFP
+	ufw allow 548/tcp
+	#DHCP
+	ufw allow 67/udp
+	#TFTP
+	ufw allow 69/udp
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
+		iptables -I INPUT -p tcp --dport 548 -j ACCEPT
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
+		iptables -I INPUT -p udp --dport 67 -j ACCEPT
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
+		iptables -I INPUT -p udp --dport 69 -j ACCEPT
+	fi
+    service iptables save
+fi
+
+
 for files in /srv/NetBoot/NetBootSP0/$2/*
 do
 dmgfile=`echo $files | grep dmg`
@@ -110,18 +246,37 @@ fi
 done
 sed -i "s/\/NetBoot\/NetBootSP0\/.*\";/\/NetBoot\/NetBootSP0\/$2\/$finaldmg\";/g" /etc/dhcpd.conf
 sed -i "s/filename \".*\";/filename \"$2\/i386\/booter\";/g" /etc/dhcpd.conf
-cp /var/appliance/configurefornetboot /etc/network/if-up.d/
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	cp /var/appliance/configurefornetboot /etc/network/if-up.d/
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	cp /var/appliance/configurefornetboot /sbin/ifup-local
+fi
 /var/appliance/configurefornetboot
 ;;
 
 disablenetboot)
-#AFP
-ufw deny 548/tcp
-#DHCP
-ufw deny 67/udp
-#TFTP
-ufw deny 69/udp
-rm /etc/network/if-up.d/configurefornetboot
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	#AFP
+	ufw deny 548/tcp
+	#DHCP
+	ufw deny 67/udp
+	#TFTP
+	ufw deny 69/udp
+	rm /etc/network/if-up.d/configurefornetboot
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
+		iptables -I INPUT -p tcp --dport 548 -j DENY
+	fi
+	if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
+		iptables -I INPUT -p udp --dport 67 -j DENY
+	fi
+	if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
+		iptables -I INPUT -p udp --dport 69 -j DENY
+	fi
+    service iptables save
+fi
 killall dhcpd
 ;;
 
@@ -138,7 +293,12 @@ fi
 
 touchconf)
 touch "$2"
-chown www-data "$2"
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	chown www-data "$2"
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chown apache "$2"
+fi
 chmod u+w "$2"
 ;;
 
@@ -180,7 +340,7 @@ usermod -l $2 $3
 ;;
 
 changeshellpass)
-usermod -p `mkpasswd $3` $2
+echo $2:$3 | chpasswd
 ;;
 
 installdhcpdconf)
@@ -226,7 +386,12 @@ sed -i "/LocalCatalogURLBase/ a\
     <string>$2<\/string>" /var/lib/reposado/preferences.plist
 ;;
 diskusage)
-echo `df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n"`
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	echo `df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n"`
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	echo `df -H / | awk '{print $3}' | sed 's/Used//g' | tr -d "\n"`
+fi 
 ;;
 netbootusage)
 echo `du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}'`
@@ -317,10 +482,19 @@ inventory=`/usr/local/sbin/jamfds inventory`
 echo $inventory
 ;;
 enableAvahi)
-apt-get -qq -y install avahi-daemon
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	apt-get -qq -y install avahi-daemon
+fi
 ;;
 enableSSH)
-apt-get -qq -y install openssh-server
-ufw allow 22/tcp
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	apt-get -qq -y install openssh-server
+	ufw allow 22/tcp
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	yum -y install openssh-server
+	iptables -I INPUT -p tcp --dport 22 -j ACCEPT
+    service iptables save
+fi
 ;;
 esac

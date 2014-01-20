@@ -1,19 +1,31 @@
 #!/bin/bash
 # This script controls the flow of the SUS installation
 pathToScript=$0
-pathToPackage=$1
-targetLocation=$2
-targetVolume=$3
+detectedOS=$1
 
 # Logger
 source logger.sh
 
 logEvent "Starting NetBoot Installation"
+if [[ $detectedOS == 'Ubuntu' ]]; then
+    apt-get -qq -y install samba >> $logFile
+    apt-get -qq -y install tftpd-hpa >> $logFile
+    apt-get -qq -y install openbsd-inetd >> $logFile
+    apt-get -qq -y install netatalk >> $logFile
+fi
 
-apt-get -qq -y install samba >> $logFile
-apt-get -qq -y install tftpd-hpa >> $logFile
-apt-get -qq -y install openbsd-inetd >> $logFile
-apt-get -qq -y install netatalk >> $logFile
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    rpm -i -v "http://dl.fedoraproject.org/pub/epel/6/x86_64/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile
+    yum install samba -y -q >> $logFile
+    yum install tftp-server -y -q >> $logFile
+    chkconfig netatalk on
+    chkconfig smb on
+    chkconfig tftp on
+    service smb start
+    service xinetd start
+    service netatalk start
+    sed -i 's/\/var\/lib\/tftpboot/\/srv\/NetBoot\/NetBootSP0/' /etc/xinetd.d/tftp
+fi
 
 if [ ! -d "/var/db/" ]; then
     mkdir /var/db/
@@ -37,15 +49,27 @@ cp -R ./usr/* /usr/
 cp -R ./var/* /var/
 
 #Create Apache Share for NetBoot
-sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
-
-
+if [[ $detectedOS == 'Ubuntu' ]]; then
+    sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
+fi
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    echo '
+    Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
+    echo '
+    <Directory "/srv/NetBoot">
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+    </Directory>' >> /etc/httpd/conf/httpd.conf
+fi
 #Creates the accounts to be used for the different services
 if [ "$(getent passwd smbuser)" ]; then
     echo "smbuser already exists"
 else
 useradd -d /dev/null -s /dev/null smbuser >> $logFile
 echo smbuser:smbuser1 | chpasswd
+(echo smbuser1; echo smbuser1) | smbpasswd -s -a smbuser
 fi
 
 #Needs normal user creation for AFP mount to work proper
@@ -64,22 +88,26 @@ fi
 sed -i "s/map to guest = bad user/map to guest = never/g" /etc/samba/smb.conf
 
 #Change SMB settings to allow for a symlink in an app or pkg
-sed '/global/ a\
-unix extensions = no' /etc/samba/smb.conf > /tmp/smb.conf
-mv /tmp/smb.conf /etc/samba/smb.conf
+if ! grep -q 'unix extensions' /etc/samba/smb.conf ; then
+sed -i '/\[global\]/ a\
+unix extensions = no' /etc/samba/smb.conf
+fi
 
 #Create the SMB share for NetBoot
-echo "Creating the SMB share for NetBoot..."
-(echo smbuser; echo smbuser) | smbpasswd -s -a smbuser
-echo "[NetBoot]" >> /etc/samba/smb.conf
-echo "comment = NetBoot" >> /etc/samba/smb.conf
-echo "path = /srv/NetBoot/NetBootSP0" >> /etc/samba/smb.conf
-echo "browseable = no" >> /etc/samba/smb.conf
-echo "guest ok = no" >> /etc/samba/smb.conf
-echo "read only = yes" >> /etc/samba/smb.conf
-echo "create mask = 0755" >> /etc/samba/smb.conf
-echo "write list = smbuser" >> /etc/samba/smb.conf
-echo "valid users = smbuser" >> /etc/samba/smb.conf
+if ! grep -q '\[NetBoot\]' /etc/samba/smb.conf ; then
+printf '
+
+\t[NetBoot]
+\tcomment = NetBoot
+\tpath = /srv/NetBoot/NetBootSP0
+\tbrowseable = no
+\tguest ok = no
+\tread only = yes
+\tcreate mask = 0755
+\twrite list = smbuser
+\tvalid users = smbuser' >> /etc/samba/smb.conf
+fi
+
 chown smbuser /srv/NetBoot/NetBootSP0/
 
 #Make the afpuser the owner of the NetBootClients share
@@ -87,6 +115,6 @@ chown afpuser /srv/NetBootClients/ >> $logFile
 
 logEvent "OK"
 
-logEvent "Finished deploying the appliance web application"
+logEvent "Finished deploying NetBoot"
 
 exit 0

@@ -117,7 +117,7 @@ function validateField(fieldid, buttonid)
 			<br>
 			<span class="label">Branches</span>
 			<table class="tablesorter">
-				<? 	
+				<?php	
 				$branchstr = trim(suExec("getBranchlist"));
 				$branches = explode(" ",$branchstr);
 				?>
@@ -127,15 +127,15 @@ function validateField(fieldid, buttonid)
 					<th class="header">URL</th>
 					<th class="header"></th>
 				</tr>
-				<? foreach ($branches as $key => $value) { 
+				<?php foreach ($branches as $key => $value) { 
 				if ($value != "") {?>
-				<tr class="<?=($key % 2 == 0 ? "object0" : "object1")?>">
-					<td><?if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
-					<td><a href="managebranch.php?branch=<?=$value?>" title="Manage branch: <?=$value?>"><?=$value?></a></td>
-					<td nowrap><?=$conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
-					<td><a href="SUS.php?service=SUS&deletebranch=<?=$value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
+				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
+					<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
+					<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
+					<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
+					<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
 				</tr>
-				<?} } ?>
+				<?php } } ?>
 			</table>
 			<span class="label">New Branch</span>
 			<input type="text" name="branchname" id="branchname" value="" 

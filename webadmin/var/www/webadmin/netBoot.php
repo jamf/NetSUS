@@ -190,7 +190,7 @@ function validateSubnet()
 			<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
 			<br>
 			<table class="branchesTable">
-				<? 	
+				<?php 	
 				$branchstr = trim(suExec("getBranchlist"));
 				$branches = explode(" ",$branchstr);
 				?>
@@ -200,12 +200,12 @@ function validateSubnet()
 					<th></th>
 				</tr>
 				<?php foreach($conf->getSubnets() as $key => $value) { ?>
-				<tr class="<?=($key % 2 == 0 ? "object0" : "object1")?>">
+				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
 					<td><?php echo $value['subnet']?></td>
 					<td><?php echo $value['netmask']?></td>
 					<td><a href="netBoot.php?service=NetBoot&deleteSubnet=<?php echo urlencode($value['subnet'])?>&deleteNetmask=<?php echo urlencode($value['netmask'])?>">Delete</a>
 				</tr>
-				<? } ?>
+				<?php } ?>
 			</table>
 
 			<span>NetBoot Status: </span>
