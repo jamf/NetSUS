@@ -16,10 +16,28 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username=$_POST['username'];
 	$password=hash("sha256",$_POST['password']);
 
+	$_SESSION['username'] = $username;
+
 	if (($username != "") && ($password != "")) {
 		if ($username == $admin_username && $password == $admin_password) {
 			$isAuth=TRUE;
 		}
+
+		// LDAP login		
+                $authorizedUsers = getLDAPAdmins();
+
+                $ldapconn = ldap_connect($conf->getSetting("ldapserver")) or die("Could not connect to LDAP server.");
+
+                ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);  //Set the LDAP Protocol used by your AD service
+                ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);         //This was necessary for my AD to do anything
+
+                if ($ldapconn) {
+                        if (isset($authorizedUsers[$username])) {
+                                if (ldap_bind($ldapconn, $authorizedUsers[$username], $_POST['password']))
+                                        $isAuth=TRUE;
+                        }
+                }
+                ldap_close($ldapconn);
 	}
 }
 
