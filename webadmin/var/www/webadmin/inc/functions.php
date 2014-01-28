@@ -143,6 +143,62 @@ function setWebAdminUser($username, $password)
 // 	// TODO
 // }
 
+// ldap administrators lookup (contributor: Tyler Winfield)
+function getLDAPAdmins()
+{
+        global $conf;
+        $results = array();
+
+        $conn = ldap_connect($conf->getSetting("ldapserver"));
+        if ($conn) {
+                ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);  //Set the LDAP Protocol used by your AD service
+                ldap_set_option($conn, LDAP_OPT_REFERRALS, 0);         //This was necessary for my AD to do anything
+
+                if (ldap_bind($conn, $conf->getSetting("ldapusername"), base64_decode($conf->getSetting("ldappassword")))) {
+                        $adminlist = array();
+                        foreach ($conf->getAdmins() as $key => $value)
+                                $results = array_merge($results, getLDAPAdmin($conn, $value['cn']));
+                        ldap_unbind($conn);
+                }
+                ldap_close($conn);
+        }
+        return $results;
+}
+
+// recursive ldap lookup (contributor: Tyler Winfield)
+function getLDAPAdmin($conn, $cn) {
+        global $conf;
+        $domain = "DC=".implode(",DC=", explode(".", $conf->getSetting("ldapdomain")));
+
+        // CHECK FOR BASE CASE: User account
+        $user_search = ldap_search($conn, $domain, "(&(objectcategory=user)(|(samaccountname=".$cn.")(userprincipalname=".$cn.")))", array("dn", "cn", "samaccountname", "userprincipalname"));
+        $user_records = ldap_get_entries($conn, $user_search);
+        if ($user_records['count'] > 0) {
+                $user_account = $user_records[0];
+                if ($user_account['samaccountname']['count'] > 0)
+                        return array($user_account['samaccountname'][0] => $user_account['dn']);
+                if ($user_accoutn['userprincipalname']['count'] > 0)
+                        return array($user_account['userprincipalname'][0] => $user_account['dn']);
+        }
+
+        $userlist = array();
+        // RECURSIVE CASE: Group account
+        $group_search = ldap_search($conn, $domain, "(&(objectcategory=group)(|(samaccountname=".$cn.")(userprincipalname=".$cn.")))", array("dn", "cn", "samaccountname", "userprincipalname"));
+        $group_records = ldap_get_entries($conn, $group_search);
+        if ($group_records['count'] > 0) {
+                $group_account = $group_records[0];
+                $members_search = ldap_search($conn, $domain, "(&(memberOf=".$group_account['dn']."))", array("dn", "cn", "samaccountname", "userprincipalname"));
+                $members_records = ldap_get_entries($conn, $members_search);
+                for ($i = 0; $i < $members_records['count']; $i++) {
+                        if (isset($members_records[$i]['samaccountname'][0]))
+                                $userlist = array_merge($userlist, getLDAPAdmin($conn, $members_records[$i]['samaccountname'][0]));
+                        else if (isset($members_records[$i]['userprincipalname'][0]))
+                                $userlist = array_merge($userlist, getLDAPAdmin($conn, $members_records[$i]['userprincipalname'][0]));
+                }
+        }
+        return $userlist;
+}
+
 function getNetBootStatus()
 {
 	if (trim(suExec("getnetbootstatus")) == "true")
