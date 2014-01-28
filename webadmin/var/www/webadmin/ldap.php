@@ -104,10 +104,6 @@ function validateLDAPAdmin()
                         <input type="submit" name="addadmin" id="addadmin" class="insideActionButton" value="Add" disabled="disabled" />
                         <br>
                         <table class="branchesTable">
-                                <?
-//                                $branchstr = trim(suExec("getBranchlist"));
-                                $branches = explode(" ",$branchstr);
-                                ?>
                                 <tr>
                                         <th>Administrator</th>
                                         <th></th>
