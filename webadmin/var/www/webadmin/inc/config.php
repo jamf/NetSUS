@@ -21,6 +21,7 @@ class WebadminConfig
 	private $topElement;
 	private $settings;
 	private $subnets;
+	private $admins;
 	private $autosyncbranches;
 	private $defaultpasses;
 	private $files;
@@ -29,6 +30,7 @@ class WebadminConfig
 	{
 		$this->settings = array();
 		$this->subnets = array();
+		$this->admins = array();
 		$this->autosyncbranches = array();
 		$this->defaultpasses = array();
 		if(!file_exists(CONF_FILE_PATH) || ($this->xmlDoc = DOMDocument::load(CONF_FILE_PATH)) == FALSE)
@@ -102,7 +104,7 @@ class WebadminConfig
 	{
 		foreach($this->topElement->childNodes as $curNode)
 		{
-			if ($curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files")
+			if ($curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files" || $curNode->nodeName == "ldapadmins")
 			{
 				continue;
 			}
@@ -114,6 +116,7 @@ class WebadminConfig
 		}
 
 		$this->loadSubnets();
+		$this->loadAdmins();
 	}
 
 	public function saveSettings()
@@ -156,6 +159,21 @@ class WebadminConfig
 			$newNetmask->nodeValue = trim($value['netmask']);
 			$newSubnetNode->appendChild($newNetmask);
 		}
+		
+                // Create the ldapadmins node
+                $ldapadmins = $this->createElement("ldapadmins");
+                $this->topElement->appendChild($ldapadmins);
+
+                // Loop through the LDAP admins
+                foreach($this->admins as $key => $value)
+                {
+                        $newAdminNode = $this->createElement("ldapadmin");
+                        $ldapadmins->appendChild($newAdminNode);
+                        $newAdmin = $this->createElement("cn");
+                        $newAdmin->nodeValue = trim($value['cn']);
+                        $newAdminNode->appendChild($newAdmin);
+                }
+
 		
 		// Create the autosyncbranches node
 		$autosyncbranches = $this->createElement("autosyncbranches");
@@ -242,6 +260,54 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
+
+        public function loadAdmins()
+        {
+                $adminnodes = $this->xmlDoc->getElementsByTagName("ldapadmin");
+                $numadmins = $adminnodes->length;
+                for ($admini = 0; $admini < $numadmins; $admini++)
+                {
+                        $node = $adminnodes->item($admini)->childNodes;
+                        if ($node->length != 1)
+                                continue;
+                        if ($node->item(0)->nodeName == "cn")
+                                $cn = $node->item(0)->nodeValue;
+                        else
+                                continue;
+
+                        $this->admins["$cn"] = array("cn" => $cn);
+                }
+        }
+
+        public function getAdmins()
+        {
+                return $this->admins;
+        }
+
+        public function addAdmin($cn)
+        {
+                if (isset($this->admins["$cn"]))
+                {
+                        return false; // False means duplicate
+                }
+                else
+                {
+                        $this->admins["$cn"] = array("cn" => $cn);
+                        $this->saveSettings();
+                        return true; // True means added
+                }
+        }
+
+        public function deleteAdmin($cn)
+        {
+                reset($this->admins);
+                if (array_key_exists("$cn", $this->admins))
+                {
+                        unset($this->admins["$cn"]);
+                        $this->saveSettings();
+                }
+        }
+
 	
 	public function loadAutosyncBranches()
 	{
