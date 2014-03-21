@@ -10,12 +10,10 @@ ubuntuVersion=`lsb_release -s -d`
 
 case $ubuntuVersion in
 *Ubuntu\ 12.04*)
-detectedOS="Ubuntu"
-export $detectedOS
+export detectedOS="Ubuntu"
 ;;
 *Ubuntu\ 10.04*)
-detectedOS="Ubuntu"
-export $detectedOS
+export detectedOS="Ubuntu"
 ;;
 "*")
 logEvent "Error: Did not detect a valid Ubuntu OS install."
@@ -28,18 +26,14 @@ elif [ -f "/etc/system-release" ]; then
 
 case "$(readlink /etc/system-release)" in
 "centos-release")
-    detectedOS="CentOS"
-    export $detectedOS
-    
+    export detectedOS="CentOS"
     ;;
 "redhat-release")
     if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
         logevent "This system is not registered to Red Hat Subscription Management."
         failedAnyChecks=1
     fi
-    detectedOS="RedHat"
-    export $detectedOS
-    
+    export detectedOS="RedHat"
     ;;
 "*")
     logEvent "Error: Did not detect a valid RedHat/Cent OS install."
