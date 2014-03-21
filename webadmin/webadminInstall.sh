@@ -125,7 +125,8 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    sed -i 's/#DocumentRoot.*/DocumentRoot "\/var\/www\/webadmin"/' /etc/httpd/conf.d/ssl.conf
+    mv /var/www/index.php /var/www/html/
+    mv /var/www/webadmin /var/www/html/
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
