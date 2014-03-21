@@ -64,6 +64,12 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
 sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default
+
+# Remove any entries from old installations
+sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default
+sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default
+
+
 cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
     <IfModule mod_rewrite.c>
         RewriteEngine On
@@ -81,9 +87,16 @@ cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
 
 </VirtualHost>
 ZHEREDOC
+
+# Remove empty <IfModule mod_rewrite.c> sections
+sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/apache2/sites-enabled/000-default
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+# Remove any entries from old installations
+sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/httpd/conf/httpd.conf
+sed -i '/sucatalog/d' /etc/httpd/conf/httpd.conf
+
 echo '
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -98,6 +111,9 @@ RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snow
 RewriteCond %{HTTP_USER_AGENT} Darwin/13
 RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 </IfModule>' >> /etc/httpd/conf/httpd.conf
+
+# Remove empty <IfModule mod_rewrite.c> sections
+sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
 fi
 
 

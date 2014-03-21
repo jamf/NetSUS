@@ -50,9 +50,15 @@ cp -R ./var/* /var/
 
 #Create Apache Share for NetBoot
 if [[ $detectedOS == 'Ubuntu' ]]; then
+    # Remove any entries from old installations
+    sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default
+    
     sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    # Remove any entries from old installations
+    sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/httpd/conf/httpd.conf
+    
     echo '
     Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
     echo '
