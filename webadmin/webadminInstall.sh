@@ -125,8 +125,8 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    mv /var/www/index.php /var/www/html/
-    mv /var/www/webadmin /var/www/html/
+    mv -f /var/www/index.php /var/www/html/
+    mv -f /var/www/webadmin /var/www/html/
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
