@@ -68,15 +68,15 @@ cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
     <IfModule mod_rewrite.c>
         RewriteEngine On
         RewriteCond %{HTTP_USER_AGENT} Darwin/9
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard.merged-1.sucatalog
         RewriteCond %{HTTP_USER_AGENT} Darwin/10
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard-snowleopard.merged-1.sucatalog
         RewriteCond %{HTTP_USER_AGENT} Darwin/11
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-lion-snowleopard-leopard.merged-1.sucatalog
         RewriteCond %{HTTP_USER_AGENT} Darwin/12
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
         RewriteCond %{HTTP_USER_AGENT} Darwin/13
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
     </IfModule>
 
 </VirtualHost>
@@ -88,15 +88,15 @@ echo '
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteCond %{HTTP_USER_AGENT} Darwin/9
-RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
+RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard.merged-1.sucatalog
 RewriteCond %{HTTP_USER_AGENT} Darwin/10
-RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
+RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard-snowleopard.merged-1.sucatalog
 RewriteCond %{HTTP_USER_AGENT} Darwin/11
-RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
+RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-lion-snowleopard-leopard.merged-1.sucatalog
 RewriteCond %{HTTP_USER_AGENT} Darwin/12
-RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 RewriteCond %{HTTP_USER_AGENT} Darwin/13
-RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 </IfModule>' >> /etc/httpd/conf/httpd.conf
 fi
 
