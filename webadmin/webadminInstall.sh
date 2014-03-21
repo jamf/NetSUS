@@ -126,6 +126,9 @@ fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
     mv -f /var/www/index.php /var/www/html/
+    if [ -d '/var/www/html/webadmin' ]; then
+		rm -rf '/var/www/html/webadmin'
+    fi
     mv -f /var/www/webadmin /var/www/html/
 fi
 
