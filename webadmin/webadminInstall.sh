@@ -125,6 +125,7 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
+    sed -i 's/#\?DocumentRoot.*/DocumentRoot "\/var\/www\/html"/' /etc/httpd/conf.d/ssl.conf
     mv -f /var/www/index.php /var/www/html/
     if [ -d '/var/www/html/webadmin' ]; then
 		rm -rf '/var/www/html/webadmin'
