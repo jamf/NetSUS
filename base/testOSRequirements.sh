@@ -2,6 +2,7 @@
 
 source logger.sh
 
+unset detectedOS
 logEventNoNewLine "Checking for a supported OS..."
 
 if [ -f "/usr/bin/lsb_release" ]; then
@@ -9,28 +10,24 @@ if [ -f "/usr/bin/lsb_release" ]; then
 ubuntuVersion=`lsb_release -s -d`
 
 case $ubuntuVersion in
-*Ubuntu\ 12.04*)
+*"Ubuntu 12.04"*)
 detectedOS="Ubuntu"
-export $detectedOS
+export detectedOS
 ;;
-*Ubuntu\ 10.04*)
+*"Ubuntu 10.04"*)
 detectedOS="Ubuntu"
-export $detectedOS
-;;
-"*")
-logEvent "Error: Did not detect a valid Ubuntu OS install."
-failedAnyChecks=1
+export detectedOS
 ;;
 esac
 
+fi
 
-elif [ -f "/etc/system-release" ]; then
+if [ -f "/etc/system-release" ] &&  [ -z "${detectedOS}" ]; then
 
 case "$(readlink /etc/system-release)" in
 "centos-release")
     detectedOS="CentOS"
-    export $detectedOS
-    
+    export detectedOS
     ;;
 "redhat-release")
     if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
@@ -38,16 +35,13 @@ case "$(readlink /etc/system-release)" in
         failedAnyChecks=1
     fi
     detectedOS="RedHat"
-    export $detectedOS
-    
-    ;;
-"*")
-    logEvent "Error: Did not detect a valid RedHat/Cent OS install."
-    failedAnyChecks=1
+    export detectedOS
     ;;
 esac
 
-else
-logEvent "Error: Did not detect a valid OS."
-failedAnyChecks=1
+fi
+
+if [ "${detectedOS}" != 'Ubuntu' ] && [ "${detectedOS}" != 'RedHat' ] && [ "${detectedOS}" != 'CentOS' ]; then
+	logEvent "Error: Did not detect a valid Ubuntu/RedHat/Cent OS install."
+	failedAnyChecks=1
 fi

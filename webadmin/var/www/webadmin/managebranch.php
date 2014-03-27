@@ -86,7 +86,8 @@ foreach ($packages as $key => $value)
 	
 	$formattedpackages[$packagearr[0]] = $packagearr[1]."%".$packagearr[2]."%".$packagearr[3]."%".$checked;
 }
-natcasesort($formattedpackages);
+uksort($formattedpackages);
+$formattedpackages = array_reverse($formattedpackages, TRUE);
 
 /*
  * Done with package list retrieval
