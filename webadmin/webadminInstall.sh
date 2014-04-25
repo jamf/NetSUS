@@ -111,7 +111,7 @@ fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
     echo "www-data ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers
-    chmod 0440 /etc/sudoers.d/webadmin
+    chmod 0440 /etc/sudoers
 fi
 
 
