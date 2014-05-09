@@ -259,7 +259,7 @@ else
 
     LABEL="$3"
     SCRIPT="$4"
-    test x$SCRIPT = x || shift 1
+    test "x$SCRIPT" = "x" || shift 1
     shift 3
     SCRIPTARGS="$*"
 fi
