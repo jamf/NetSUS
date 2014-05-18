@@ -394,7 +394,7 @@ case $1 in
 		du -h /srv/SUS | tail -1 | awk '{print $1}'
 		;;
 	lastsussync)
-		echo `ls -al /srv/SUS/html/content/catalogs/ | grep index.sucatalog | head -1 | awk '{print $6" "$7}'`
+		echo `ls -al /srv/SUS/html/content/catalogs/index.sucatalog | awk '/index.sucatalog/ { print $6" "$7 }'`
 		;;
 	afpconns)
 		echo `netstat | grep afpovertcp | wc | awk '{print $1}'`
