@@ -15,12 +15,15 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+    yum install avahi -y -q >> $logFile
     rpm -i -v "http://dl.fedoraproject.org/pub/epel/6/x86_64/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile
     yum install samba -y -q >> $logFile
     yum install tftp-server -y -q >> $logFile
     chkconfig netatalk on
     chkconfig smb on
     chkconfig tftp on
+    service messagebus start
+    service avahi-daemon start
     service smb start
     service xinetd start
     service netatalk start
