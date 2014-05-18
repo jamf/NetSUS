@@ -394,11 +394,7 @@ case $1 in
 		du -h /srv/SUS | tail -1 | awk '{print $1}'
 		;;
 	lastsussync)
-		if [ -f 'ls -al /srv/SUS/html/content/catalogs/index.sucatalog' ]; then
-			echo `ls -al /srv/SUS/html/content/catalogs/index.sucatalog | awk '/index.sucatalog/ { print $6" "$7 }'`
-		else
-			echo 'Never'
-		fi
+		echo `ls -al /srv/SUS/html/content/catalogs/index.sucatalog | awk '/index.sucatalog/ { print $6" "$7 }'`
 		;;
 	afpconns)
 		echo `netstat | grep afpovertcp | wc | awk '{print $1}'`
