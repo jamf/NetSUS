@@ -33,7 +33,7 @@ class WebadminConfig
 		$this->defaultpasses = array();
 		if(!file_exists(CONF_FILE_PATH) || ($this->xmlDoc = DOMDocument::load(CONF_FILE_PATH)) == FALSE)
 		{
-			shell_exec("sudo /bin/sh scripts/adminHelper.sh touchconf \"".CONF_FILE_PATH."\"");
+			shell_exec("sudo /bin/bash scripts/adminHelper.sh touchconf \"".CONF_FILE_PATH."\"");
 			// Creating a new settings doc
 			$this->xmlDoc = new DOMDocument("1.0", "utf-8");
 			$this->topElement = $this->xmlDoc->createElement(TOP_ELEMENT_NAME);
