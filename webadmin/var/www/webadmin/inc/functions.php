@@ -58,7 +58,7 @@ function getSystemTimeZoneMenu()
 
 function suExec($cmd)
 {
-	return shell_exec("sudo /bin/sh scripts/adminHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	return shell_exec("sudo /bin/bash scripts/adminHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
 function getLocalTime()
