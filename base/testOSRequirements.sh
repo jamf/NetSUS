@@ -10,14 +10,18 @@ if [ -f "/usr/bin/lsb_release" ]; then
 ubuntuVersion=`lsb_release -s -d`
 
 case $ubuntuVersion in
-*"Ubuntu 12.04"*)
-detectedOS="Ubuntu"
-export detectedOS
-;;
-*"Ubuntu 10.04"*)
-detectedOS="Ubuntu"
-export detectedOS
-;;
+	*"Ubuntu 14.04"*)
+		detectedOS="Ubuntu"
+		export detectedOS
+		;;
+	*"Ubuntu 12.04"*)
+		detectedOS="Ubuntu"
+		export detectedOS
+		;;
+	*"Ubuntu 10.04"*)
+		detectedOS="Ubuntu"
+		export detectedOS
+		;;
 esac
 
 fi

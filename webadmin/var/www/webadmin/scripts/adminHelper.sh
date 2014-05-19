@@ -7,6 +7,9 @@ if [ -f "/usr/bin/lsb_release" ]; then
 	ubuntuVersion=`lsb_release -s -d`
 
 	case $ubuntuVersion in
+		*"Ubuntu 14.04"*)
+			detectedOS="Ubuntu"
+			;;
 		*"Ubuntu 12.04"*)
 			detectedOS="Ubuntu"
 			;;

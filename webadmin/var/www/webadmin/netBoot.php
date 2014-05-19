@@ -13,6 +13,10 @@ $currentIP = trim(getCurrentIP());
 $netbootimgdir = "/srv/NetBoot/NetBootSP0/";
 
 
+if (isset($_POST['enablenetboot']))
+{
+	suExec("setnbimages ".$nbi);
+}
 if (isset($_POST['disablenetboot']))
 {
 	suExec("disablenetboot");

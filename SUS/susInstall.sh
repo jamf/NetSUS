@@ -56,21 +56,27 @@ fi
 #Point Apache to SUS
 #TODO - This will not take into account if the installer is run again
 
+if [[ $detectedOS == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" != '14.04' ]]; then
+	defaultUbuntuApacheConf='/etc/apache2/sites-enabled/000-default'
+elif [[ $detectedOS == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" == '14.04' ]]; then
+	defaultUbuntuApacheConf='/etc/apache2/sites-enabled/000-default.conf'
+	sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
-    sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default
+    sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" "${defaultUbuntuApacheConf}"
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     sed -i 's/\/var\/www\/html/\/srv\/SUS\/html/' /etc/httpd/conf/httpd.conf
 fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
-sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default
+sed -i "s|</VirtualHost>||" "${defaultUbuntuApacheConf}"
 
 # Remove any entries from old installations
-sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default
-sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default
+sed -i '/{HTTP_USER_AGENT} Darwin/d' "${defaultUbuntuApacheConf}"
+sed -i '/sucatalog/d' "${defaultUbuntuApacheConf}"
 
 
-cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
+cat >> "${defaultUbuntuApacheConf}" <<ZHEREDOC
     <IfModule mod_rewrite.c>
         RewriteEngine On
         RewriteCond %{HTTP_USER_AGENT} Darwin/9
@@ -89,7 +95,7 @@ cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
 ZHEREDOC
 
 # Remove empty <IfModule mod_rewrite.c> sections
-sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/apache2/sites-enabled/000-default
+sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' "${defaultUbuntuApacheConf}"
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
