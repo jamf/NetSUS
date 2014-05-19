@@ -9,11 +9,14 @@ source logger.sh
 
 logEvent "Starting Web Application Installation"
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
-    if [ $(lsb_release -rs) == '12.04' ]; then
-        apt-get -qq -y install whois >> $logFile
-    else
-        apt-get -qq -y install mkpasswd >> $logFile
-    fi
+	case "$(lsb_release -rs)" in
+		14.04|12.04)
+			apt-get -qq -y install whois >> $logFile
+			;;
+		10.04)
+			apt-get -qq -y install mkpasswd >> $logFile
+			;;
+	esac
 fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
@@ -69,9 +72,6 @@ if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
     service iptables save
 fi
 
-
-
-
 cp -R ./etc/* /etc/ >> $logFile
 cp -R ./var/* /var/ >> $logFile
 
@@ -120,17 +120,27 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
     a2ensite default-ssl >> $logFile
 fi
 
-if [[ "$detectedOS" == 'Ubuntu' ]]; then
+if [[ "$detectedOS" == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" != '14.04' ]]; then
     sed -i 's#<VirtualHost _default_:443>#<VirtualHost _default_:443>\n\t<Directory /var/www/webadmin/>\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' /etc/apache2/sites-enabled/default-ssl
 fi
 
-if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    sed -i 's/#\?DocumentRoot.*/DocumentRoot "\/var\/www\/html"/' /etc/httpd/conf.d/ssl.conf
-    mv -f /var/www/index.php /var/www/html/
-    if [ -d '/var/www/html/webadmin' ]; then
+if [[ "$detectedOS" == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" == '14.04' ]]; then
+    sed -i 's#<VirtualHost _default_:443>#<VirtualHost _default_:443>\n\t\t<Directory /var/www/html/webadmin/>\n\t\t\tOptions None\n\t\t\tAllowOverride None\n\t\t</Directory>#' /etc/apache2/sites-enabled/default-ssl.conf
+	rm -f /var/www/html/index.html
+	mv -f /var/www/index.php /var/www/html/
+	if [ -d '/var/www/html/webadmin' ]; then
 		rm -rf '/var/www/html/webadmin'
-    fi
-    mv -f /var/www/webadmin /var/www/html/
+	fi
+	mv -f /var/www/webadmin /var/www/html/
+fi
+
+if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
+	sed -i 's/#\?DocumentRoot.*/DocumentRoot "\/var\/www\/html"/' /etc/httpd/conf.d/ssl.conf
+	mv -f /var/www/index.php /var/www/html/
+	if [ -d '/var/www/html/webadmin' ]; then
+		rm -rf '/var/www/html/webadmin'
+	fi
+	mv -f /var/www/webadmin /var/www/html/
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then

@@ -52,11 +52,17 @@ cp -R ./usr/* /usr/
 cp -R ./var/* /var/
 
 #Create Apache Share for NetBoot
-if [[ $detectedOS == 'Ubuntu' ]]; then
+if [[ $detectedOS == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" != '14.04' ]]; then
     # Remove any entries from old installations
     sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default
     
     sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
+fi
+if [[ $detectedOS == 'Ubuntu' ]] && [[ "$(lsb_release -rs)" == '14.04' ]]; then
+    # Remove any entries from old installations
+    sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
+    
+    sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     # Remove any entries from old installations
