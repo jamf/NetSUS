@@ -13,36 +13,6 @@ $currentIP = trim(getCurrentIP());
 $netbootimgdir = "/srv/NetBoot/NetBootSP0/";
 
 
-if (isset($_POST['NetBootImage']))
-{
-	$wasrunning = getNetBootStatus();
-	$nbi = $_POST['NetBootImage'];
-	if ($nbi != "")
-	{
-		$nbconf = file_get_contents("/var/appliance/conf/dhcpd.conf");
-		$nbsubnets = "";
-		foreach($conf->getSubnets() as $key => $value)
-		{
-			$nbsubnets .= "subnet ".$value['subnet']." netmask ".$value['netmask']." {\n\tallow unknown-clients;\n}\n\n";
-		}
-		$nbconf = str_replace("##SUBNETS##", $nbsubnets, $nbconf);
-		suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
-		if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
-		{
-			echo "<div class=\"errorMessage\">ERROR: Unable to update dhcpd.conf</div>";
-			 
-		}
-		suExec("disablenetboot");
-		suExec("installdhcpdconf");
-		
-		if ($wasrunning || isset($_POST['enablenetboot']))
-		{
-			suExec("setnbimages ".$nbi);
-		}
-		$conf->setSetting("netbootimage", $nbi);
-	}
-}
-
 if (isset($_POST['disablenetboot']))
 {
 	suExec("disablenetboot");
@@ -150,7 +120,7 @@ function validateSubnet()
 
 			<span class="label">NetBoot Image</span>
 			<span class="description">NetBoot image that computers boot to</span>
-			<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('admin.php?service=NetBoot', 'NetBootImage='+this.value);">
+			<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
 				<?php
 				$nbidircontents = scandir($netbootimgdir);
 				$curimg = $conf->getSetting("netbootimage");

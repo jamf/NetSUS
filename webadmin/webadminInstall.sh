@@ -111,6 +111,7 @@ fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
     echo "www-data ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers
+    chmod 0440 /etc/sudoers
 fi
 
 
@@ -125,7 +126,12 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    sed -i 's/#DocumentRoot.*/DocumentRoot "\/var\/www\/webadmin"/' /etc/httpd/conf.d/ssl.conf
+    sed -i 's/#\?DocumentRoot.*/DocumentRoot "\/var\/www\/html"/' /etc/httpd/conf.d/ssl.conf
+    mv -f /var/www/index.php /var/www/html/
+    if [ -d '/var/www/html/webadmin' ]; then
+		rm -rf '/var/www/html/webadmin'
+    fi
+    mv -f /var/www/webadmin /var/www/html/
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
