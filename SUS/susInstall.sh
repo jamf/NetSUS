@@ -57,39 +57,77 @@ fi
 #TODO - This will not take into account if the installer is run again
 
 if [[ $detectedOS == 'Ubuntu' ]]; then
-    sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default
+	if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
+    	sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default
+    fi
+	if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
+    	sed -i "s/DocumentRoot.*/DocumentRoot \/srv\/SUS\/html\//g" /etc/apache2/sites-enabled/000-default.conf
+    	sed -i '/[[:space:]]*<Directory \/srv\/SUS\//,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
+    	sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+    fi
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     sed -i 's/\/var\/www\/html/\/srv\/SUS\/html/' /etc/httpd/conf/httpd.conf
 fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
-sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default
+if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
+	sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default
 
-# Remove any entries from old installations
-sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default
-sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default
+	# Remove any entries from old installations
+	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default
+	sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default
 
 
-cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
-    <IfModule mod_rewrite.c>
-        RewriteEngine On
-        RewriteCond %{HTTP_USER_AGENT} Darwin/9
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard.merged-1.sucatalog
-        RewriteCond %{HTTP_USER_AGENT} Darwin/10
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard-snowleopard.merged-1.sucatalog
-        RewriteCond %{HTTP_USER_AGENT} Darwin/11
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-lion-snowleopard-leopard.merged-1.sucatalog
-        RewriteCond %{HTTP_USER_AGENT} Darwin/12
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
-        RewriteCond %{HTTP_USER_AGENT} Darwin/13
-        RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
-    </IfModule>
+	cat >>/etc/apache2/sites-enabled/000-default <<ZHEREDOC
+    	<IfModule mod_rewrite.c>
+        	RewriteEngine On
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/9
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/10
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard-snowleopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/11
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-lion-snowleopard-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/12
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/13
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+    	</IfModule>
 
 </VirtualHost>
 ZHEREDOC
 
-# Remove empty <IfModule mod_rewrite.c> sections
-sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/apache2/sites-enabled/000-default
+	# Remove empty <IfModule mod_rewrite.c> sections
+	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/apache2/sites-enabled/000-default
+fi
+if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
+	sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default.conf
+
+	# Remove any entries from old installations
+	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default.conf
+	sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default.conf
+
+
+	cat >>/etc/apache2/sites-enabled/000-default.conf <<ZHEREDOC
+    	<IfModule mod_rewrite.c>
+        	RewriteEngine On
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/9
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/10
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-leopard-snowleopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/11
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-lion-snowleopard-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/12
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+        	RewriteCond %{HTTP_USER_AGENT} Darwin/13
+        	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+    	</IfModule>
+
+</VirtualHost>
+ZHEREDOC
+
+	# Remove empty <IfModule mod_rewrite.c> sections
+	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/apache2/sites-enabled/000-default.conf
+fi
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then

@@ -7,6 +7,9 @@ if [ -f "/usr/bin/lsb_release" ]; then
 ubuntuVersion=`lsb_release -s -d`
 
 case $ubuntuVersion in
+	*Ubuntu\ 14.04*)
+	detectedOS="Ubuntu"
+;;
 	*Ubuntu\ 12.04*)
 	detectedOS="Ubuntu"
 ;;
@@ -430,8 +433,8 @@ numofbranches)
 echo `/var/lib/reposado/repoutil --branches | wc | awk '{print $1}'`
 ;;
 rootBranch)
-catalogArray=(/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog)
-for i in "${catalogArray[@]}"; do
+catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
+for i in ${catalogArray}; do
 catalogName="$(basename "${i}" "_${2}.sucatalog")"
 cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
 done
