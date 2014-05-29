@@ -9,7 +9,7 @@ source logger.sh
 
 logEvent "Starting Web Application Installation"
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
-    if [ $(lsb_release -rs) == '12.04' ]; then
+    if [ $(lsb_release -rs) == '12.04' ] || [ $(lsb_release -rs) == '14.04' ]; then
         apt-get -qq -y install whois >> $logFile
     else
         apt-get -qq -y install mkpasswd >> $logFile
@@ -95,6 +95,9 @@ fi
 if [ -f "/var/www/index.html" ]; then
 	rm /var/www/index.html
 fi 
+if [ -f "/var/www/html/index.html" ]; then
+	rm /var/www/html/index.html
+fi 
 
 #Prevent writes to the webadmin's helper script
 
@@ -121,7 +124,16 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
-    sed -i 's#<VirtualHost _default_:443>#<VirtualHost _default_:443>\n\t<Directory /var/www/webadmin/>\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' /etc/apache2/sites-enabled/default-ssl
+	if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
+    	sed -i 's#<VirtualHost _default_:443>#<VirtualHost _default_:443>\n\t<Directory /var/www/webadmin/>\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' /etc/apache2/sites-enabled/default-ssl
+	fi
+	if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
+    	mv -f /var/www/index.php /var/www/html/
+    	if [ -d '/var/www/html/webadmin' ]; then
+			rm -rf '/var/www/html/webadmin'
+    	fi
+    	mv -f /var/www/webadmin /var/www/html/
+	fi
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
