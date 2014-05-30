@@ -2,30 +2,35 @@
 
 NAMESERVERLIST=""
 
+unset detectedOS
 if [ -f "/usr/bin/lsb_release" ]; then
 	ubuntuVersion=`lsb_release -s -d`
 
 	case $ubuntuVersion in
-		*Ubuntu\ 14.04*)
+		*"Ubuntu 14.04"*)
 			detectedOS="Ubuntu"
 			;;
-		*Ubuntu\ 12.04*)
+		*"Ubuntu 12.04"*)
 			detectedOS="Ubuntu"
 			;;
-		*Ubuntu\ 10.04*)
+		*"Ubuntu 10.04"*)
 			detectedOS="Ubuntu"
 			;;
 	esac
-elif [ -f "/etc/system-release" ]; then
+fi
+
+if [ -f "/etc/system-release" ] &&  [ -z "${detectedOS}" ]; then
 	case "$(readlink /etc/system-release)" in
 		"centos-release")
-			detectedOS="CentOS"	
+			detectedOS="CentOS"
 			;;
 		"redhat-release")
 			detectedOS="RedHat"
 			;;
 	esac
-else
+fi
+
+if [ "${detectedOS}" != 'Ubuntu' ] && [ "${detectedOS}" != 'RedHat' ] && [ "${detectedOS}" != 'CentOS' ]; then
 	echo "Error detecting OS"
 fi
 
