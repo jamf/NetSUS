@@ -108,12 +108,12 @@ chmod u+rx /var/www/webadmin/scripts/adminHelper.sh >> $logFile
 #Allow the webadmin from webadmin to invoke the helper script
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
     sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
-    echo "apache ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" > /etc/sudoers.d/webadmin
+    echo "apache ALL=(ALL) NOPASSWD: /bin/bash scripts/adminHelper.sh *" > /etc/sudoers.d/webadmin
     chmod 0440 /etc/sudoers.d/webadmin
 fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
-    echo "www-data ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers
+    echo "www-data ALL=(ALL) NOPASSWD: /bin/bash scripts/adminHelper.sh *" >> /etc/sudoers
     chmod 0440 /etc/sudoers
 fi
 
