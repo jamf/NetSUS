@@ -19,6 +19,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	rpm -i -v "http://dl.fedoraproject.org/pub/epel/6/x86_64/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile
 	yum install samba -y -q >> $logFile
 	yum install tftp-server -y -q >> $logFile
+	yum install vim-common -y -q >> $logFile
 	chkconfig netatalk on
 	chkconfig smb on
 	chkconfig tftp on
