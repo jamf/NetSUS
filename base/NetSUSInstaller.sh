@@ -14,12 +14,12 @@ umask 022
 
 # Create NetSUS directory (needed immediately for logging)
 if [ ! -d "/var/appliance/" ]; then
-mkdir /var/appliance/
+	mkdir /var/appliance/
 fi
 
 # Create NetSUS directory (needed immediately for logging)
 if [ ! -d "/var/appliance/logs/" ]; then
-mkdir /var/appliance/logs/
+	mkdir /var/appliance/logs/
 fi
 
 # Logger
@@ -59,18 +59,18 @@ logEvent "Passed all requirements checking!"
 
 ######### Verification #########
 # Prompt user for type of installation
-	echo "
+echo "
 Is this a standalone installation?
 Answer yes unless you are creating an image of the appliance to deploy in multiple locations
 "
 
-	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
-	
-	while [[ $REPLY != [yYnN] ]]; do
-		read -n1 -p "Standalone?  (y/n): "
-		echo ""
-	done
-    standalone=$REPLY
+read -t 1 -n 100000 devnull # This clears any accidental input from stdin
+
+while [[ $REPLY != [yYnN] ]]; do
+	read -n1 -p "Standalone?  (y/n): "
+	echo ""
+done
+standalone=$REPLY
 
 if [ -d "/var/appliance/" ]; then
 	upgrade=true
@@ -80,26 +80,26 @@ fi
 
 
 # Prompt user for permission to continue with the installation
-	echo "
+echo "
 The following will be installed
 * Appliance Web Interface
 * NetBoot Server
 * Software Updates Server
 "
 	
-	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
-	REPLY=""
-	while [[ $REPLY != [yYnN] ]]; do
-		read -n1 -p "Proceed?  (y/n): "
-		echo ""
-	done
-	if [[ $REPLY = [nN] ]]; then
-		logEvent "Aborting..."
-		umask $OLD_UMASK
-		exit 0
-	else
-		logEvent "Installing..."
-	fi
+read -t 1 -n 100000 devnull # This clears any accidental input from stdin
+REPLY=""
+while [[ $REPLY != [yYnN] ]]; do
+	read -n1 -p "Proceed?  (y/n): "
+	echo ""
+done
+if [[ $REPLY = [nN] ]]; then
+	logEvent "Aborting..."
+	umask $OLD_UMASK
+	exit 0
+else
+	logEvent "Installing..."
+fi
 
 
 
@@ -109,10 +109,10 @@ The following will be installed
 
 # Set SELinux policy
 if sestatus | grep -q enforcing ; then
-logEvent "Setting SELINUX mode to permissive"
-sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
-echo 0 > /selinux/enforce
-echo
+	logEvent "Setting SELINUX mode to permissive"
+	sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
+	echo 0 > /selinux/enforce
+	echo
 fi
 
 
@@ -162,55 +162,54 @@ fi
 if [ $upgrade = true ]; then
 	logEvent "If you are upgrading NetSUS, you can simply start using it."
 else
-    logEvent "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
+	logEvent "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
 fi
 
 # Need to check service names for RedHat
 case $standalone in
-[yY])
-if [[ $detectedOS == 'Ubuntu' ]]; then
-	echo "Restarting Services..."
-	/etc/init.d/networking restart > /dev/null 2>&1
-	/etc/init.d/apache2 restart > /dev/null 2>&1
-	/etc/init.d/netatalk restart > /dev/null 2>&1
-	/etc/init.d/smbd restart > /dev/null 2>&1
-	/etc/init.d/tftpd-hpa restart > /dev/null 2>&1
-	/etc/init.d/openbsd-inetd restart > /dev/null 2>&1
+	[yY])
+		if [[ $detectedOS == 'Ubuntu' ]]; then
+			echo "Restarting Services..."
+			/etc/init.d/networking restart > /dev/null 2>&1
+			/etc/init.d/apache2 restart > /dev/null 2>&1
+			/etc/init.d/netatalk restart > /dev/null 2>&1
+			/etc/init.d/smbd restart > /dev/null 2>&1
+			/etc/init.d/tftpd-hpa restart > /dev/null 2>&1
+			/etc/init.d/openbsd-inetd restart > /dev/null 2>&1
 
-	logEvent "If you are installing NetSUS for the first time, please follow the documentation for setup instructions."
-fi
-if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    /etc/init.d/httpd restart
-    /etc/init.d/smb restart
-    /etc/init.d/xinetd restart
-    /etc/init.d/netatalk restart
-fi
-
-	;;
-[nN])
-if [[ $detectedOS == 'Ubuntu' ]]; then
-	chmod +x /etc/init.d/applianceFirstRun
-    #Need to update for RedHat
-	update-rc.d applianceFirstRun defaults
-	cp -R ./etc/* /etc/
-	rm /etc/udev/rules.d/70-*
-	rm /etc/resolv.conf
-	echo "Shutting Down....."
-	shutdown -P now
-fi
-if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    rm -rf /etc/ssh/ssh_host_*
-    rm -rf /etc/udev/rules.d/70-*
-    grep -v 'HWADDR=' /etc/sysconfig/network-scripts/ifcfg-eth0 > /etc/sysconfig/network-scripts/ifcfg-eth0.tmp
-    mv -f /etc/sysconfig/network-scripts/ifcfg-eth0.tmp /etc/sysconfig/network-scripts/ifcfg-eth0
-    find /var/log -type f -delete
-    rm -f install.log*
-    history -w
-    history -c
-    echo "Shutting Down....."
-    poweroff
-fi
-	;;
+			logEvent "If you are installing NetSUS for the first time, please follow the documentation for setup instructions."
+		fi
+		if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+			/etc/init.d/httpd restart
+			/etc/init.d/smb restart
+			/etc/init.d/xinetd restart
+			/etc/init.d/netatalk restart
+		fi
+		;;
+	[nN])
+		if [[ $detectedOS == 'Ubuntu' ]]; then
+			chmod +x /etc/init.d/applianceFirstRun
+			#Need to update for RedHat
+			update-rc.d applianceFirstRun defaults
+			cp -R ./etc/* /etc/
+			rm /etc/udev/rules.d/70-*
+			rm /etc/resolv.conf
+			echo "Shutting Down....."
+			shutdown -P now
+		fi
+		if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+			rm -rf /etc/ssh/ssh_host_*
+			rm -rf /etc/udev/rules.d/70-*
+			grep -v 'HWADDR=' /etc/sysconfig/network-scripts/ifcfg-eth0 > /etc/sysconfig/network-scripts/ifcfg-eth0.tmp
+			mv -f /etc/sysconfig/network-scripts/ifcfg-eth0.tmp /etc/sysconfig/network-scripts/ifcfg-eth0
+			find /var/log -type f -delete
+			rm -f install.log*
+			history -w
+			history -c
+			echo "Shutting Down....."
+			poweroff
+		fi
+		;;
 esac
 
 umask $OLD_UMASK

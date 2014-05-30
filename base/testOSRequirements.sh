@@ -6,43 +6,39 @@ unset detectedOS
 logEventNoNewLine "Checking for a supported OS..."
 
 if [ -f "/usr/bin/lsb_release" ]; then
+	ubuntuVersion=`lsb_release -s -d`
 
-ubuntuVersion=`lsb_release -s -d`
-
-case $ubuntuVersion in
-*"Ubuntu 14.04"*)
-detectedOS="Ubuntu"
-export detectedOS
-;;
-*"Ubuntu 12.04"*)
-detectedOS="Ubuntu"
-export detectedOS
-;;
-*"Ubuntu 10.04"*)
-detectedOS="Ubuntu"
-export detectedOS
-;;
-esac
-
+	case $ubuntuVersion in
+		*"Ubuntu 14.04"*)
+			detectedOS="Ubuntu"
+			export detectedOS
+			;;
+		*"Ubuntu 12.04"*)
+			detectedOS="Ubuntu"
+			export detectedOS
+			;;
+		*"Ubuntu 10.04"*)
+			detectedOS="Ubuntu"
+			export detectedOS
+			;;
+	esac
 fi
 
 if [ -f "/etc/system-release" ] &&  [ -z "${detectedOS}" ]; then
-
-case "$(readlink /etc/system-release)" in
-"centos-release")
-    detectedOS="CentOS"
-    export detectedOS
-    ;;
-"redhat-release")
-    if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
-        logevent "This system is not registered to Red Hat Subscription Management."
-        failedAnyChecks=1
-    fi
-    detectedOS="RedHat"
-    export detectedOS
-    ;;
-esac
-
+	case "$(readlink /etc/system-release)" in
+		"centos-release")
+			detectedOS="CentOS"
+			export detectedOS
+			;;
+		"redhat-release")
+			if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
+				logevent "This system is not registered to Red Hat Subscription Management."
+				failedAnyChecks=1
+			fi
+			detectedOS="RedHat"
+			export detectedOS
+			;;
+	esac
 fi
 
 if [ "${detectedOS}" != 'Ubuntu' ] && [ "${detectedOS}" != 'RedHat' ] && [ "${detectedOS}" != 'CentOS' ]; then
