@@ -314,6 +314,7 @@ case $1 in
 #Needs updating if we change image id or host more than one Netboot Image
 	resetafppw)
 		echo afpuser:$2 | chpasswd
+		wasRunning="$(${0} getnetbootstatus)"
 
 		ip=`ifconfig | grep eth0 -A 1 | grep 'inet addr' | awk '{print $2}' | sed 's/addr://g'`
 		afppw=`echo $2 | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
@@ -334,8 +335,12 @@ case $1 in
 			sed -i "s/01:01:02:08:04:$imageid:80:.*/01:01:02:08:04:$imageid:80$lengthhex:$newafp:40:$iphex:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
 		fi
 		sed -i "s/01:01:02:08:04:$imageid:80:.*/01:01:02:08:04:$imageid:80$lengthhex:$newafp:40:$iphex:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
-		killall dhcpd > /dev/null 2>&1
-		/usr/local/sbin/dhcpd > /dev/null 2>&1
+		if [ "${wasRunning}" == 'true' ]; then
+			killall dhcpd > /dev/null 2>&1
+			/usr/local/sbin/dhcpd > /dev/null 2>&1
+		else
+			killall dhcpd > /dev/null 2>&1
+		fi
 		;;
 	changeshelluser)
 		usermod -l $2 $3
