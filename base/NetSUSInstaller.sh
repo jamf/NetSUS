@@ -12,14 +12,16 @@ fi
 OLD_UMASK=`umask`
 umask 022
 
-# Create NetSUS directory (needed immediately for logging)
-if [ ! -d "/var/appliance/" ]; then
-mkdir /var/appliance/
+# Check for an existing installation
+if [ -d "/var/appliance" ]; then
+	upgrade=true
+else
+	upgrade=false
 fi
 
 # Create NetSUS directory (needed immediately for logging)
-if [ ! -d "/var/appliance/logs/" ]; then
-mkdir /var/appliance/logs/
+if [ ! -d "/var/appliance/logs" ]; then
+	mkdir -p /var/appliance/logs
 fi
 
 # Logger
@@ -71,12 +73,6 @@ Answer yes unless you are creating an image of the appliance to deploy in multip
 		echo ""
 	done
     standalone=$REPLY
-
-if [ -d "/var/appliance/" ]; then
-	upgrade=true
-else
-	upgrade=false
-fi
 
 
 # Prompt user for permission to continue with the installation
@@ -141,10 +137,10 @@ fi
 #Post Cleanup Tasks
 #Disables IPv6
 
-echo "#disable ipv6" >> /etc/sysctl.conf
-echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
-echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
+echo "# Disable IPv6
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 
 logEvent ""
@@ -180,10 +176,10 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 	logEvent "If you are installing NetSUS for the first time, please follow the documentation for setup instructions."
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    /etc/init.d/httpd restart
-    /etc/init.d/smb restart
-    /etc/init.d/xinetd restart
-    /etc/init.d/netatalk restart
+    service httpd restart
+    service smb restart
+    service xinetd restart
+    service netatalk restart
 fi
 
 	;;
@@ -195,23 +191,21 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 	cp -R ./etc/* /etc/
 	rm /etc/udev/rules.d/70-*
 	rm /etc/resolv.conf
-	echo "Shutting Down....."
-	shutdown -P now
+	echo "NetSUS installation complete."
+	echo "Type: \"shutdown -P now\" to Shut Down."
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     rm -rf /etc/ssh/ssh_host_*
     rm -rf /etc/udev/rules.d/70-*
-    grep -v 'HWADDR=' /etc/sysconfig/network-scripts/ifcfg-eth0 > /etc/sysconfig/network-scripts/ifcfg-eth0.tmp
-    mv -f /etc/sysconfig/network-scripts/ifcfg-eth0.tmp /etc/sysconfig/network-scripts/ifcfg-eth0
+    sed -i '/HWADDR=/d' /etc/sysconfig/network-scripts/ifcfg-eth0
     find /var/log -type f -delete
     rm -f install.log*
-    history -w
-    history -c
-    echo "Shutting Down....."
-    poweroff
+	echo "NetSUS installation complete."
+	echo "Type: \"poweroff\" to Shut Down."
 fi
 	;;
 esac
 
+rm -f "$0"
 umask $OLD_UMASK
 exit 0

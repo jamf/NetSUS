@@ -34,10 +34,16 @@ case "$(readlink /etc/system-release)" in
     export detectedOS
     ;;
 "redhat-release")
-    if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
-        logevent "This system is not registered to Red Hat Subscription Management."
-        failedAnyChecks=1
-    fi
+	if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
+		dependencies=( php php-xml mod_ssl ntpdate dialog avahi netatalk samba tftp-server vim-common )
+		for dependency in "${dependencies[@]}" ; do
+			if ! rpm -qa "$dependency" | grep -q "$dependency" ; then
+				logevent "This system is not registered to Red Hat Subscription Management."
+				failedAnyChecks=1
+				break
+			fi
+		done
+	fi
     detectedOS="RedHat"
     export detectedOS
     ;;
