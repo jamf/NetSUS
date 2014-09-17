@@ -122,11 +122,11 @@ include "inc/header.php";
 			}
 			?>
 
-			<li id="WebAdmin" <?php echo $webadminActive ?>>
+			<li id="WebAdmin" <?php if (isset($webadminActive)) { echo $webadminActive; } ?>>
 				<a href="javascript:changeTab('WebAdmin')">Web Application</a>
 			</li>
 
-			<li id="Shell" <?php echo $shellActive ?>>
+			<li id="Shell" <?php if (isset($shellActive)) { echo $shellActive; } ?>>
 				<a href="javascript:changeTab('Shell')">Shell</a>
 			</li>
 
@@ -136,7 +136,7 @@ include "inc/header.php";
 
 			<form method="POST" name="WebAdmin" id="WebAdmin" >
 
-				<div id="WebAdmin_Pane" class="pane" <?php echo $hideWebAdmin; ?>>
+				<div id="WebAdmin_Pane" class="pane" <?php if (isset($hideWebAdmin)) { echo $hideWebAdmin; } ?>>
 
 					<input type="hidden" name="userAction" value="WebAdmin">
  
@@ -168,7 +168,7 @@ include "inc/header.php";
 
 			<form method="POST" name="ShellForm" id="ShellForm">
 
-				<div id="Shell_Pane" class="pane" <?php echo $hideShell; ?>>
+				<div id="Shell_Pane" class="pane" <?php if (isset($hideShell)) { echo $hideShell; } ?>>
 
 					<input type="hidden" name="userAction" value="Shell">
 

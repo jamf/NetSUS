@@ -31,7 +31,9 @@ class WebadminConfig
 		$this->subnets = array();
 		$this->autosyncbranches = array();
 		$this->defaultpasses = array();
-		if(!file_exists(CONF_FILE_PATH) || ($this->xmlDoc = DOMDocument::load(CONF_FILE_PATH)) == FALSE)
+		$dom = new DOMDocument;
+		$dom->load(CONF_FILE_PATH);
+		if(!file_exists(CONF_FILE_PATH) || ($this->xmlDoc = $dom) == FALSE)
 		{
 			shell_exec("sudo /bin/sh scripts/adminHelper.sh touchconf \"".CONF_FILE_PATH."\"");
 			// Creating a new settings doc

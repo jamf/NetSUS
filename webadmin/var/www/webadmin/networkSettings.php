@@ -11,7 +11,7 @@ include "inc/header.php";
 //Save the new network settings if the "SaveNetwork" button was clicked
 if (isset($_POST['SaveNetwork']))
 {
-	if (isset($_POST['hostname']))
+	if (isset($_POST['hostname']) && isValidHostname($_POST['hostname']))
 	{
 		setHostName($_POST['hostname']);
 	}
@@ -25,9 +25,20 @@ if (isset($_POST['SaveNetwork']))
 		}
 		else // static
 		{
-			//address netmask gateway
-			suExec("setip ".$_POST['ip']." ".$_POST['netmask']." ".$_POST['gateway']);
-			suExec("setdns ".$_POST['dns1']." ".$_POST['dns2']);
+			if (isValidIPAddress($_POST['ip']) && !isLoopbackAddress($_POST['ip'])
+			 && getNetAddress($_POST['ip'], $_POST['netmask']) != $_POST['ip']
+			 && getBcastAddress($_POST['ip'], $_POST['netmask']) != $_POST['ip']
+			 && isValidNetmask($_POST['netmask']) && isValidIPAddress($_POST['gateway'])
+			 && !isLoopbackAddress($_POST['gateway'])
+			 && getNetAddress($_POST['gateway'], $_POST['netmask']) != $_POST['gateway']
+			 && getBcastAddress($_POST['gateway'], $_POST['netmask']) != $_POST['gateway']
+			 && $_POST['gateway'] != $_POST['ip'] && isValidIPAddress($_POST['dns1'])
+			 && (isValidIPAddress($_POST['dns2']) || $_POST['dns2'] == ""))
+			{
+				//address netmask gateway
+				suExec("setip ".$_POST['ip']." ".$_POST['netmask']." ".$_POST['gateway']);
+				suExec("setdns ".$_POST['dns1']." ".$_POST['dns2']);
+			}
 		}
 		echo "<div class=\"successMessage\">Configuration saved.</div>";
 	}
@@ -35,10 +46,16 @@ if (isset($_POST['SaveNetwork']))
 
 if (isset($_POST['SSH']))
 {
-
-	suExec("enableSSH");
-	echo "<div class=\"successMessage\">SSH Enabled.</div>";
-
+	if (getSSHstatus())
+	{
+		suExec("disableSSH");
+		echo "<div class=\"successMessage\">SSH Disabled.</div>";
+	}
+	else
+	{
+		suExec("enableSSH");
+		echo "<div class=\"successMessage\">SSH Enabled.</div>";
+	}
 }
 
 $type = getNetType();
@@ -47,7 +64,14 @@ $dns = getCurrentNameServers();
 ?>
 
 <script>
-window.onload=disableStaticOptions("<?php echo $type ?>");
+window.onload = function()
+{
+	document.getElementById('ip').disabled = document.getElementById('dhcp').checked;
+	document.getElementById('netmask').disabled = document.getElementById('dhcp').checked;
+	document.getElementById('gateway').disabled = document.getElementById('dhcp').checked;
+	document.getElementById('dns1').disabled = document.getElementById('dhcp').checked;
+	document.getElementById('dns2').disabled = document.getElementById('dhcp').checked;
+}
 </script>
 
 <h2>Network</h2>
@@ -87,17 +111,17 @@ window.onload=disableStaticOptions("<?php echo $type ?>");
 			<br>
 
 			<span class="label">DNS Server 1</span>
-			<input type="text" name="dns1" id="dns1" value="<?php echo $dns[0]; ?>" />
+			<input type="text" name="dns1" id="dns1" value="<?php if (isset($dns[0])) { echo $dns[0]; } ?>" />
 			<br>
 
 			<span class="label">DNS Server 2</span>
-			<input type="text" name="dns2" id="dns2" value="<?php echo $dns[1]; ?>" />
+			<input type="text" name="dns2" id="dns2" value="<?php if (isset($dns[1])) { echo $dns[1]; } ?>" />
 			<br>
 			
 			<input type="submit" class="insideActionButton" value="Save" name="SaveNetwork"/>
 			<br>
 			<br>
-			<input type="submit" class="insideActionButton" value="Enable SSH" name="SSH"/>
+			<input type="submit" class="insideActionButton" value="<?php if (getSSHstatus()) { echo "Disable"; } else { echo "Enable"; } ?> SSH" name="SSH"/>
 
 		</div> <!-- end #form-inside -->
 

@@ -178,7 +178,7 @@ function validateField(fieldid, buttonid)
 			</select>
 			<br>
 			<div class="labelDescriptionWrapper">
-				<span style="font-weight:bold;">Last Sync: </span><span><?php echo suExec("lastsussync")?></span>
+				<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
 			</div>
 
 		</div> <!-- end #form-inside -->

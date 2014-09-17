@@ -45,9 +45,10 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 
 fi
 ;;
-getip) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 2 | cut -d ' ' -f 1`;;
+getip) echo `ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`;;
+#getnetmask) echo `ipcalc -m $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }') | cut -d = -f 2`;;
 getnetmask) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`;;
-getgateway) echo `ip route | grep -i default | cut -d ' ' -f 3`;;
+getgateway) echo `ip route show to 0.0.0.0/0 | awk '/default / { print gensub("/.*","","g",$3) }'`;;
 setip) 
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
@@ -188,7 +189,7 @@ fi
 # Admin services commands
 restartsmb)
 if [ "$detectedOS" = 'Ubuntu' ]; then
-	/etc/init.d/smbd restart
+	service smbd restart
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	service smb restart
@@ -199,86 +200,98 @@ service netatalk restart
 rm -rf /srv/NetBootClients/*
 ;;
 getnbimages)
-for file in /srv/NetBoot/NetBootSP0/*
-do
-   if [ -d $file ]; then
-      nbis=$nbis" "`echo $file | sed s/"\/srv\/NetBoot\/NetBootSP0\/"//g`
-   
-   fi
-done
-if [ "$nbis" != "" ]; then
-        for image in $nbis; do  
-                echo "<option value=\"$image\">"$image"</option>"
-        done
+IFS=$'\n'
+nbis=`ls /srv/NetBoot/NetBootSP0 2>/dev/null`
+unset IFS
+if [ ${#nbis[@]} -gt 0 ]; then
+	i=0
+	for item in ${nbis[@]}; do
+		if [ ! -d "/srv/NetBoot/NetBootSP0/${item}" ]
+		then
+			unset nbis[i]
+		fi
+		let i++
+	done
+fi
+if [ ${#nbis[@]} -gt 0 ]; then
+	for image in ${nbis[@]}; do
+		echo '<option value="'${image}'">'${image}'</option>'
+	done
 else
-	echo "<option value="">"Nothing to Enable"</option>"
+	echo '<option value="">Nothing to Enable</option>'
 fi
 ;;
 
 #Needs updating if we do multiple NetBoot images
 setnbimages)
+dmgfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.dmg 2>/dev/null`
+if [ -n "${dmgfile}" ]; then
+	finaldmg=`echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
+else
+	exit 1
+fi
+plistfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.plist 2>/dev/null`
+if [ -n "${plistfile}" ]; then
+	finalplist=`echo ${plistfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
+fi
+if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')" &>/dev/null; then
+	if [ $(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['IsInstall']") = "True" ]; then
+		isinstall=8
+	else
+		isinstall=0
+	fi
+	kind=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Kind']"`
+	index=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Index']"`
+	indexhex=`printf "%x" ${index} | tr "[:lower:]" "[:upper:]"`
+	while [ ${#indexhex} -lt 4 ]; do
+		indexhex=0${indexhex}
+	done
+	imageid="${isinstall}${kind}:00:$(echo ${indexhex} | cut -c 1,2):$(echo ${indexhex} | cut -c 3,4)"
+	name=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Name']"`
+	listlenhex=`printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]"`
+	while [ ${#listlenhex} -lt 2 ]; do
+		listlenhex=0${listlenhex}
+	done
+	namelenhex=`printf "%x" ${#name} | tr "[:lower:]" "[:upper:]"`
+	while [ ${#namelenhex} -lt 2 ]; do
+		namelenhex=0${namelenhex}
+	done
+	namehex=`echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g'`
+else
+	imageid="01:00:02:0E"
+	listlenhex="11"
+	namelenhex="0C"
+	namehex="46:61:75:78:20:4E:65:74:42:6F:6F:74"
+fi
+curimageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+sed -i "s/${curimageid}/${imageid}/g" /etc/dhcpd.conf
+sed -i "s/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:.*/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:${listlenhex}:${imageid}:${namelenhex}:${namehex};/" /etc/dhcpd.conf
+sed -i "s:/NetBoot/NetBootSP0/.*\";:/NetBoot/NetBootSP0/${2}/${finaldmg}\";:g" /etc/dhcpd.conf
+sed -i "s:filename \".*\";:filename \"${2}/i386/booter\";:g" /etc/dhcpd.conf
 if [ "$detectedOS" = 'Ubuntu' ]; then
-	#AFP
-	ufw allow 548/tcp
-	#DHCP
-	ufw allow 67/udp
-	#TFTP
-	ufw allow 69/udp
+	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
+	rm -f /etc/init/tftpd-hpa.override
+	service tftpd-hpa start
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -I INPUT -p tcp --dport 548 -j ACCEPT
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
-		iptables -I INPUT -p udp --dport 67 -j ACCEPT
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
-		iptables -I INPUT -p udp --dport 69 -j ACCEPT
-	fi
-    service iptables save
-fi
-
-
-for files in /srv/NetBoot/NetBootSP0/$2/*
-do
-dmgfile=`echo $files | grep dmg`
-if [ "$dmgfile" != "" ]
-then
-finaldmg=`echo $dmgfile | sed "s/\/srv\/NetBoot\/NetBootSP0\/$2\///g"`
-fi
-done
-sed -i "s/\/NetBoot\/NetBootSP0\/.*\";/\/NetBoot\/NetBootSP0\/$2\/$finaldmg\";/g" /etc/dhcpd.conf
-sed -i "s/filename \".*\";/filename \"$2\/i386\/booter\";/g" /etc/dhcpd.conf
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	cp /var/appliance/configurefornetboot /etc/network/if-up.d/
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	cp /var/appliance/configurefornetboot /sbin/ifup-local
+	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
+	chkconfig tftp on
+	service xinetd restart
 fi
 /var/appliance/configurefornetboot
 ;;
 
 disablenetboot)
+service netatalk stop
 if [ "$detectedOS" = 'Ubuntu' ]; then
-	#AFP
-	ufw deny 548/tcp
-	#DHCP
-	ufw deny 67/udp
-	#TFTP
-	ufw deny 69/udp
-	rm /etc/network/if-up.d/configurefornetboot
+	service tftpd-hpa stop
+	echo manual > /etc/init/tftpd-hpa.override
+	rm -f /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -I INPUT -p tcp --dport 548 -j DENY
-	fi
-	if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
-		iptables -I INPUT -p udp --dport 67 -j DENY
-	fi
-	if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
-		iptables -I INPUT -p udp --dport 69 -j DENY
-	fi
-    service iptables save
+	chkconfig tftp off
+	service xinetd restart
+	rm -f /sbin/ifup-local
 fi
 killall dhcpd
 ;;
@@ -311,29 +324,31 @@ echo smbuser:$2 | chpasswd
 ;;
 
 
-#Needs updating if we change image id or host more than one Netboot Image
+#Needs updating if we host more than one Netboot Image
 resetafppw)
 echo afpuser:$2 | chpasswd
 
-ip=`ifconfig | grep eth0 -A 1 | grep 'inet addr' | awk '{print $2}' | sed 's/addr://g'`
-afppw=`echo $2 | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
-afppwlen=`echo $afppw | sed 's/://g' | tr -d ' ' | wc -c`
-afppwlen=`expr $afppwlen "/" 2`
+ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
+afppw=`echo ${2} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
+afppwlen=`echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c`
+afppwlen=`expr ${afppwlen} / 2`
 
-iphex=`echo $ip | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
-num=`echo $iphex | sed 's/://g' | wc -c`
-num=`expr $num "/" 2`
-num=`expr $num "+" 23`
-num=`expr $num "+" $afppwlen`
-lengthhex=`awk -v dec=$num 'BEGIN{n=split(dec,d,".");for(i=1;i<=n;i++) printf ":%02X",d[i];print ""}'`
-imageid=`cat /var/appliance/conf/dhcpd.conf | grep "option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04" | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+iphex=`echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
+num=`echo ${iphex} | sed 's/://g' | wc -c`
+num=`expr ${num} / 2`
+num=`expr ${num} + 23`
+num=`expr ${num} + ${afppwlen}`
+lengthhex=`awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }'`
 
-newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:$afppw
+newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:${afppw}
 
+imageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+
+sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
 if [ -f "/etc/dhcpd.conf" ]; then
-sed -i "s/01:01:02:08:04:$imageid:80:.*/01:01:02:08:04:$imageid:80$lengthhex:$newafp:40:$iphex:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
+	imageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
 fi
-sed -i "s/01:01:02:08:04:$imageid:80:.*/01:01:02:08:04:$imageid:80$lengthhex:$newafp:40:$iphex:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
 killall dhcpd > /dev/null 2>&1
 /usr/local/sbin/dhcpd > /dev/null 2>&1
 ;;
@@ -490,15 +505,55 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	apt-get -qq -y install avahi-daemon
 fi
 ;;
+getSSHstatus)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	if service ssh status 2>/dev/null | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if service sshd status 2>/dev/null | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+fi
+;;
 enableSSH)
 if [ "$detectedOS" = 'Ubuntu' ]; then
-	apt-get -qq -y install openssh-server
+	if ! dpkg --list | grep -q 'openssh-server'; then
+		apt-get -qq -y install openssh-server
+	fi
+	if [ -e /etc/init/ssh.override ];then
+		rm -f /etc/init/ssh.override
+	fi
+	service ssh start
 	ufw allow 22/tcp
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	yum -y install openssh-server
-	iptables -I INPUT -p tcp --dport 22 -j ACCEPT
-    service iptables save
+	if ! rpm -qa "openssh-server" | grep -q "openssh-server" ; then
+		yum -y install openssh-server
+	fi
+	chkconfig sshd on
+	service sshd start
 fi
+;;
+disableSSH)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	echo manual > /etc/init/ssh.override
+	service ssh stop
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig sshd off
+	service sshd stop
+fi
+;;
+restart)
+reboot
+;;
+shutdown)
+poweroff
 ;;
 esac

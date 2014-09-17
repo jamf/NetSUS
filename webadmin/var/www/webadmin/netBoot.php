@@ -9,6 +9,8 @@ $title = "NetBoot Server";
 include "inc/header.php";
 
 $currentIP = trim(getCurrentIP());
+$currentNetmask = trim(getCurrentNetmask());
+$currentSubnet = trim(getNetAddress($currentIP, $currentNetmask));
 
 $netbootimgdir = "/srv/NetBoot/NetBootSP0/";
 
@@ -48,9 +50,9 @@ if (isset($_POST['disablenetboot']))
 }
 
 if (isset($_POST['addsubnet']) && isset($_POST['subnet']) && isset($_POST['netmask'])
-&& $_POST['subnet'] != "" && $_POST['netmask'] != "")
+&& isValidIPAddress($_POST['subnet']) && isValidNetmask($_POST['netmask']) && !isLoopbackAddress($_POST['subnet']))
 {
-	$conf->addSubnet($_POST['subnet'], $_POST['netmask']);
+	$conf->addSubnet(getNetAddress($_POST['subnet'], $_POST['netmask']), $_POST['netmask']);
 	// 	echo "<script type=\"text/javascript\">\nchangeServiceType('NetBoot');\n</script>\n";
 	$nbconf = file_get_contents("/var/appliance/conf/dhcpd.conf");
 	$nbsubnets = "";
@@ -117,6 +119,7 @@ function validateSubnet()
 	else
 		document.getElementById("addsubnet").disabled = true;
 }
+window.onload = validateSubnet;
 </script>
 
 <style>         
@@ -181,11 +184,11 @@ function validateSubnet()
 
 
 			<span class="label">Subnet</span>
-			<input type="text" name="subnet" id="subnet" value="" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+			<input type="text" name="subnet" id="subnet" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentSubnet; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
 			<br>
 
 			<span class="label">Netmask</span>
-			<input type="text" name="netmask" id="netmask" value="" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+			<input type="text" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
 			<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
 			<br>
 			<table class="branchesTable">
