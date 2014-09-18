@@ -259,7 +259,7 @@ else
 
     LABEL="$3"
     SCRIPT="$4"
-    test x$SCRIPT = x || shift 1
+    test "x$SCRIPT" = "x" || shift 1
     shift 3
     SCRIPTARGS="$*"
 fi
@@ -357,7 +357,8 @@ else
 	OLD_PATH=$PATH
 	PATH=${GUESS_MD5_PATH:-"$OLD_PATH:/bin:/usr/bin:/sbin:/usr/local/ssl/bin:/usr/local/bin:/opt/openssl/bin"}
 	MD5_ARG=""
-	MD5_PATH=`exec <&- 2>&-; which md5sum || type md5sum`
+	#MD5_PATH=`exec <&- 2>&-; which md5sum || type md5sum`
+	MD5_PATH=`exec <&- 2>&-; which md5 || type md5`
 	test -x $MD5_PATH || MD5_PATH=`exec <&- 2>&-; which md5 || type md5`
 	test -x $MD5_PATH || MD5_PATH=`exec <&- 2>&-; which digest || type digest`
 	PATH=$OLD_PATH

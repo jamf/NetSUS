@@ -63,15 +63,18 @@ include "inc/header.php";
 			<li>php</li>
 			<li>php-xml</li>
 			<li>mod_ssl</li>
+			<li>ntpdate</li>
 			<li>dialog</li>
+			<li>avahi</li>
 			<li>netatalk</li>
 			<li>samba</li>
 			<li>tftp-server</li>
+			<li>vim-common</li>
 		</ul>
 	<br/>
 	<?php } ?>	
 	<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Red Hat') !== FALSE) { ?>
-	<p class="bold">RedHat</p>
+	<p class="bold">Red Hat</p>
 	<p><a href="https://www.redhat.com" target="_blank">https://www.redhat.com/</a></p>
 	<br>
 
@@ -80,10 +83,13 @@ include "inc/header.php";
 			<li>php</li>
 			<li>php-xml</li>
 			<li>mod_ssl</li>
+			<li>ntpdate</li>
 			<li>dialog</li>
+			<li>avahi</li>
 			<li>netatalk</li>
 			<li>samba</li>
 			<li>tftp-server</li>
+			<li>vim-common</li>
 		</ul>
 	<br/>
 	<?php } ?>		
