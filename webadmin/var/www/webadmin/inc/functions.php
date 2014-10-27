@@ -41,9 +41,12 @@ function getSystemTimeZoneMenu()
     foreach($timezone_identifiers as $value){
         if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
         {
+			if (!isset($continent)) {
+				$continent = '';
+			}
             $ex=explode("/",$value);//obtain continent,city    
             if ($continent!=$ex[0]){
-                if ($continent!="") $return .= '</optgroup>'."\n";
+                if ($continent!="") $return = '</optgroup>'."\n";
                 echo '<optgroup label="'.$ex[0].'">'."\n";
             }
     
@@ -78,7 +81,11 @@ function setTimeServer($ts)
 
 function getCurrentTimeZone()
 {
-	return trim(shell_exec("cat /etc/timezone"));
+	if (strpos($_SERVER['SERVER_SOFTWARE'], 'Ubuntu') !== FALSE) {
+		return trim(shell_exec("cat /etc/timezone"));
+	} else {
+		return trim(shell_exec("cat /etc/sysconfig/clock | awk -F '\"' '{print $2}'"));
+	}
 }
 
 function setTimeZone($tz)
@@ -213,6 +220,55 @@ function formatPackage($package)
 function checkIn()
 {
 	return suExecFromAPIBackground("checkin");
+}
+
+function isValidIPAddress($string)
+{
+	return filter_var($string, FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
+}
+
+function isValidNetmask($string)
+{
+	if ($string =='')
+	{
+		return false;
+	}
+	else
+	{
+		return in_array(ip2long($string), array(0xffffffff, 0xfffffffe, 0xfffffffc, 0xfffffff8, 0xfffffff0, 0xffffffe0, 0xffffffc0, 0xffffff80, 0xffffff00, 0xfffffe00, 0xfffffc00, 0xfffff800, 0xfffff000, 0xffffe000, 0xffffc000, 0xffff8000, 0xffff0000, 0xfffe0000, 0xfffc0000, 0xfff80000, 0xfff00000, 0xffe00000, 0xffc00000, 0xff800000, 0xff000000, 0xfe000000, 0xfc000000, 0xf8000000, 0xf0000000, 0xe0000000, 0xc0000000, 0x80000000, 0x00000000));
+	}
+}
+
+function getNetAddress($ip, $mask)
+{
+	return long2ip(ip2long($ip) & ip2long($mask));
+}
+
+function getBcastAddress($ip, $mask)
+{
+	return long2ip(ip2long($ip) & ip2long($mask) | ~ip2long($mask));
+}
+
+function isLoopbackAddress($ip)
+{
+	return (ip2long($ip) >= 0x7f000000 && ip2long($ip) <= 0x7fffffff);
+}
+
+function isValidHostname($string)
+{
+	return preg_match('/^(?=.{1,255}$)[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|-){0,61}[0-9A-Za-z])?)*\.?$/', $string);
+}
+
+function getSSHstatus()
+{
+	if (trim(suExec("getSSHstatus")) == "true")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ?>

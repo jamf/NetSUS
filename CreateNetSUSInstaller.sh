@@ -12,7 +12,7 @@ echo ""
 timeEcho "Building NetSUSDP Installer..."
 
 # Clean-up old files
-rm netsusinstaller.run 2>&1 > /dev/null
+rm -f NetSUSInstaller.run 2>&1 > /dev/null
 rm -Rf temp 2>&1 > /dev/null
 
 mkdir temp
@@ -24,6 +24,8 @@ cp -R includes/* temp/base/
 cp -R includes/* temp/NetBoot/
 cp -R includes/* temp/SUS/
 cp -R includes/* temp/webadmin/
+if [ -x /usr/bin/xattr ]; then find temp -exec xattr -c {} \; ;fi # Remove OS X extended attributes
+find temp -name .DS_Store -delete # Clean out .DS_Store files
 find temp -name .svn | xargs rm -Rf # Clean out SVN garbage
 
 

@@ -14,34 +14,28 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    yum install mod_ssl -y -q >> $logFile
-    yum install php -y -q >> $logFile
-    yum install php-xml -y -q >> $logFile
+	if ! rpm -qa "mod_ssl" | grep -q "mod_ssl" ; then
+		yum install mod_ssl -y -q >> $logFile
+	fi
+	if ! rpm -qa "php" | grep -q "php" ; then
+		yum install php -y -q >> $logFile
+	fi
+	if ! rpm -qa "php-xml" | grep -q "php-xml" ; then
+		yum install php-xml -y -q >> $logFile
+	fi
 fi
 
 
-if [ ! -d "/var/lib/reposado/" ]; then
-    mkdir /var/lib/reposado/
+if [ ! -d "/var/lib/reposado" ]; then
+    mkdir /var/lib/reposado
 fi
 
-if [ ! -d "/srv/SUS/" ]; then
-    mkdir /srv/SUS/
+if [ ! -d "/srv/SUS/metadata" ]; then
+	mkdir -p /srv/SUS/metadata
 fi
 
-if [ ! -d "/srv/SUS/html/" ]; then
-    mkdir /srv/SUS/html/
-fi
-
-if [ ! -d "/srv/SUS/metadata/" ]; then
-    mkdir /srv/SUS/metadata/
-fi
-
-if [ ! -d "/srv/SUS/html/content/" ]; then
-    mkdir /srv/SUS/html/content/
-fi
-
-if [ ! -d "/srv/SUS/html/content/catalogs/" ]; then
-    mkdir /srv/SUS/html/content/catalogs/
+if [ ! -d "/srv/SUS/html/content/catalogs" ]; then
+	mkdir -p /srv/SUS/html/content/catalogs
 fi
 
 cp -R ./var/* /var/
@@ -67,7 +61,43 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
     fi
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    sed -i 's/\/var\/www\/html/\/srv\/SUS\/html/' /etc/httpd/conf/httpd.conf
+	# Remove any entries from old installations
+	sed -i 's:/srv/SUS/html:/var/www/html:' /etc/httpd/conf/httpd.conf
+	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/httpd/conf/httpd.conf
+	sed -i '/sucatalog/d' /etc/httpd/conf/httpd.conf
+	cat > /etc/httpd/conf.d/sus.conf <<ZHEREDOC
+<VirtualHost _default_:80>
+
+DocumentRoot "/srv/SUS/html"
+
+<Directory "/srv/SUS/html">
+    Options FollowSymLinks
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{HTTP_USER_AGENT} Darwin/9
+    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
+    RewriteCond %{HTTP_USER_AGENT} Darwin/10
+    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
+    RewriteCond %{HTTP_USER_AGENT} Darwin/11
+    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
+    RewriteCond %{HTTP_USER_AGENT} Darwin/12
+    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+    RewriteCond %{HTTP_USER_AGENT} Darwin/13
+    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+	RewriteCond %{HTTP_USER_AGENT} Darwin/14
+	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+</IfModule>
+
+</VirtualHost>
+ZHEREDOC
+
+	# Remove empty <IfModule mod_rewrite.c> sections
+	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
 fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
 if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
@@ -159,6 +189,7 @@ RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.10-10.9-mountainlio
 # Remove empty <IfModule mod_rewrite.c> sections
 sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
 fi
+
 
 
 logEvent "OK"

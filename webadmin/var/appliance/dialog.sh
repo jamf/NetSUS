@@ -1,13 +1,25 @@
 #!/bin/sh 
 
+detectedOS=`lsb_release -s -d 2>/dev/null | sed -e 's/"//g'`
+if [ -z "$detectedOS" ]
+then
+	detectedOS=`cat /etc/system-release`
+fi
+
+ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
+if [ -z "$ip" ]
+then
+	ip="0.0.0.0"
+fi
+
 message="\n
 '''''''\n
 ^-0-0-^\n
 +----oOO--------------------------------------+\n
 | Welcome to the NetSUS Appliance.\n
-| OS: Ubuntu\n
+| OS: $detectedOS\n
 | To Login to the NetSUS Appliance:\n
-| https://`ifconfig | grep "Ethernet" -A 1 | grep "inet addr" | awk '{ print $2 }' | sed s/addr://g`/webadmin\n 
+| https://$ip/webadmin\n 
 | Username: webadmin\n
 | Password: webadmin\n
 +-----------oOO-------------------------------+\n

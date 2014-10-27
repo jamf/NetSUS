@@ -16,36 +16,65 @@ fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	cp ./var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm /var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm
-    rpm -i -v "/var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile
-    yum install samba -y -q >> $logFile
-    yum install tftp-server -y -q >> $logFile
+	if ! rpm -qa "netatalk" | grep -q "netatalk" ; then
+		rpm -i -v "/var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile
+	fi
+	if ! rpm -qa "avahi" | grep -q "avahi" ; then
+		yum install avahi -y -q >> $logFile
+	fi
+	if ! rpm -qa "samba" | grep -q "samba" ; then
+		yum install samba -y -q >> $logFile
+	fi
+	if ! rpm -qa "tftp-server" | grep -q "tftp-server" ; then
+		yum install tftp-server -y -q >> $logFile
+	fi
+	if ! rpm -qa "vim-common" | grep -q "vim-common" ; then
+		yum install vim-common -y -q >> $logFile
+	fi
     chkconfig netatalk on
     chkconfig smb on
     chkconfig tftp on
     service smb start
     service xinetd start
+    service messagebus start
+    service avahi-daemon start
     service netatalk start
-    sed -i 's/\/var\/lib\/tftpboot/\/srv\/NetBoot\/NetBootSP0/' /etc/xinetd.d/tftp
+	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/xinetd.d/tftp
 fi
 
-if [ ! -d "/var/db/" ]; then
-    mkdir /var/db/
-fi
-
-if [ ! -d "/srv/NetBoot/" ]; then
-    mkdir /srv/NetBoot/
+if [ ! -d "/var/db" ]; then
+    mkdir /var/db
 fi
 
 if [ ! -d "/srv/NetBoot/NetBootSP0" ]; then
-    mkdir /srv/NetBoot/NetBootSP0/
+    mkdir -p /srv/NetBoot/NetBootSP0
 fi
 
-if [ ! -d "/srv/NetBootClients/" ]; then
-    mkdir /srv/NetBootClients/
+if [ ! -d "/srv/NetBootClients" ]; then
+    mkdir /srv/NetBootClients
 fi
 
-killall dhcpd >> $logFile 2>&1 
-cp -R ./etc/* /etc/
+killall dhcpd >> $logFile 2>&1
+if [[ $detectedOS == 'Ubuntu' ]]; then
+	cp -R ./etc/* /etc/
+fi
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+	# Configure netatalk
+	if ! grep -q '\- \-setuplog "default log_info /var/log/afpd.log"' /etc/netatalk/afpd.conf; then
+		echo '- -setuplog "default log_info /var/log/afpd.log"' >> /etc/netatalk/afpd.conf
+	fi
+    # Remove any entries from old installations
+	sed -i '/"NetBoot"/d' /etc/netatalk/AppleVolumes.default
+	echo '/srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv cnidscheme:dbd ea:sys preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' >> /etc/netatalk/AppleVolumes.default
+	sed -i 's/#AFPD_MAX_CLIENTS=.*/AFPD_MAX_CLIENTS=200/' /etc/netatalk/netatalk.conf
+	sed -i 's:#ATALK_NAME=.*:ATALK_NAME=`/bin/hostname --short`:' /etc/netatalk/netatalk.conf
+	sed -i 's/#AFPD_GUEST=.*/AFPD_GUEST=nobody/' /etc/netatalk/netatalk.conf
+	sed -i 's/#ATALKD_RUN=.*/ATALKD_RUN=no/' /etc/netatalk/netatalk.conf
+	sed -i 's/#PAPD_RUN=.*/PAPD_RUN=no/' /etc/netatalk/netatalk.conf
+	sed -i 's/#TIMELORD_RUN=.*/TIMELORD_RUN=no/' /etc/netatalk/netatalk.conf
+	sed -i 's/#A2BOOT_RUN=.*/A2BOOT_RUN=yes/' /etc/netatalk/netatalk.conf
+	sed -i 's/#ATALK_BGROUND=.*/ATALK_BGROUND=no/' /etc/netatalk/netatalk.conf
+fi
 cp -R ./usr/* /usr/
 cp -R ./var/* /var/
 
@@ -66,36 +95,40 @@ fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     # Remove any entries from old installations
     sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/httpd/conf/httpd.conf
-    
-    echo '
-    Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    echo '
-    <Directory "/srv/NetBoot">
+    # Create httpd include for NetBoot
+echo 'Alias /NetBoot/ "/srv/NetBoot/"
+
+<Directory "/srv/NetBoot">
     Options Indexes FollowSymLinks MultiViews
     AllowOverride None
     Order allow,deny
     Allow from all
-    </Directory>' >> /etc/httpd/conf/httpd.conf
+</Directory>
+
+<LocationMatch "/NetBoot/">
+    Options -Indexes
+    ErrorDocument 403 /error/noindex.html
+</LocationMatch>' > /etc/httpd/conf.d/netboot.conf
 fi
 #Creates the accounts to be used for the different services
 if [ "$(getent passwd smbuser)" ]; then
     echo "smbuser already exists"
 else
-useradd -d /dev/null -s /dev/null smbuser >> $logFile
-echo smbuser:smbuser1 | chpasswd
-(echo smbuser1; echo smbuser1) | smbpasswd -s -a smbuser
+	useradd -c 'NetBoot Admin' -d /dev/null -g users -s /sbin/nologin smbuser >> $logFile
+	echo smbuser:smbuser1 | chpasswd
+	(echo smbuser1; echo smbuser1) | smbpasswd -s -a smbuser
 fi
 
 #Needs normal user creation for AFP mount to work proper
-if [ ! -d "/home/afpuser/" ]; then
-    mkdir /home/afpuser
-fi
 if [ "$(getent passwd afpuser)" ]; then
     echo "afpuser already exists"
 else
-    useradd afpuser -d /home/afpuser >> $logFile
-    echo afpuser:afpuser1 | chpasswd
-    chown afpuser:afpuser /home/afpuser/ >> $logFile
+	useradd -c 'NetBoot User' -d /home/afpuser -g users -m -s /bin/sh afpuser >> $logFile
+	echo afpuser:afpuser1 | chpasswd
+fi
+if [ ! -d "/home/afpuser" ]; then
+    mkdir /home/afpuser
+    chown afpuser:users /home/afpuser >> $logFile
 fi
 
 #Change SMB setting for guest access
@@ -103,15 +136,16 @@ sed -i "s/map to guest = bad user/map to guest = never/g" /etc/samba/smb.conf
 
 #Change SMB settings to allow for a symlink in an app or pkg
 if ! grep -q 'unix extensions' /etc/samba/smb.conf ; then
-sed -i '/\[global\]/ a\
-unix extensions = no' /etc/samba/smb.conf
+	sed -i '/\[global\]/ a\\tunix extensions = no' /etc/samba/smb.conf
 fi
+#Change SMB setting to eliminate CUPS errors
+sed -i 's:;\tprintcap name = lpstat:\tprintcap name = /dev/null:' /etc/samba/smb.conf
+sed -i 's/;\tprinting = cups/\tprinting = bsd/' /etc/samba/smb.conf
 
 #Create the SMB share for NetBoot
 if ! grep -q '\[NetBoot\]' /etc/samba/smb.conf ; then
-printf '
-
-\t[NetBoot]
+	mkdir -p /etc/samba/conf.d
+	printf '\t[NetBoot]
 \tcomment = NetBoot
 \tpath = /srv/NetBoot/NetBootSP0
 \tbrowseable = no
@@ -119,13 +153,21 @@ printf '
 \tread only = yes
 \tcreate mask = 0755
 \twrite list = smbuser
-\tvalid users = smbuser' >> /etc/samba/smb.conf
+\tvalid users = smbuser
+' > /etc/samba/conf.d/netboot.conf
+fi
+if ! grep -q 'NetBoot' /etc/samba/smb.conf ; then
+printf '
+
+# NetBoot Share
+\tinclude = /etc/samba/conf.d/netboot.conf
+' >> /etc/samba/smb.conf
 fi
 
-chown smbuser /srv/NetBoot/NetBootSP0/
+chown smbuser /srv/NetBoot/NetBootSP0 >> $logFile
 
 #Make the afpuser the owner of the NetBootClients share
-chown afpuser /srv/NetBootClients/ >> $logFile
+chown afpuser /srv/NetBootClients >> $logFile
 
 logEvent "OK"
 
