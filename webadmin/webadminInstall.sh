@@ -126,9 +126,11 @@ fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
 	if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
+		sed -i 's/SSLProtocol all -SSLv2/SSLProtocol all -SSLv2 -SSLv3/' /etc/apache2/mods-enabled/ssl.conf
     	sed -i 's#<VirtualHost _default_:443>#<VirtualHost _default_:443>\n\t<Directory /var/www/webadmin/>\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' /etc/apache2/sites-enabled/default-ssl
 	fi
 	if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
+		sed -i 's/SSLProtocol all/SSLProtocol all -SSLv3/' /etc/apache2/mods-enabled/ssl.conf
     	mv -f /var/www/index.php /var/www/html/
     	if [ -d '/var/www/html/webadmin' ]; then
 			rm -rf '/var/www/html/webadmin'
@@ -139,6 +141,7 @@ fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
     sed -i 's/#\?DocumentRoot.*/DocumentRoot "\/var\/www\/html"/' /etc/httpd/conf.d/ssl.conf
+    sed -i 's/SSLProtocol all -SSLv2/SSLProtocol all -SSLv2 -SSLv3/' /etc/httpd/conf.d/ssl.conf
     mv -f /var/www/index.php /var/www/html/
     if [ -d '/var/www/html/webadmin' ]; then
 		rm -rf '/var/www/html/webadmin'
