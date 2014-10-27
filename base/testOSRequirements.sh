@@ -34,8 +34,8 @@ case "$(readlink /etc/system-release)" in
     export detectedOS
     ;;
 "redhat-release")
-    if subscription-manager list | grep Status | grep -q 'Not Subscribed' ; then
-        logevent "This system is not registered to Red Hat Subscription Management."
+	if yum repolist | grep repolist | grep -q ': 0'; then 
+        logevent "This system is does not have any available repositories."
         failedAnyChecks=1
     fi
     detectedOS="RedHat"
