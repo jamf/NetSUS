@@ -224,6 +224,25 @@ fi
 
 #Needs updating if we do multiple NetBoot images
 setnbimages)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	#AFP
+	ufw allow 548/tcp
+	#DHCP
+	ufw allow 67/udp
+	#TFTP
+	ufw allow 69/udp
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
+		iptables -I INPUT -p tcp --dport 548 -j ACCEPT
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
+		iptables -I INPUT -p udp --dport 67 -j ACCEPT
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
+		iptables -I INPUT -p udp --dport 69 -j ACCEPT
+	fi
+    service iptables save
 dmgfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.dmg 2>/dev/null`
 if [ -n "${dmgfile}" ]; then
 	finaldmg=`echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
@@ -284,11 +303,29 @@ fi
 disablenetboot)
 service netatalk stop
 if [ "$detectedOS" = 'Ubuntu' ]; then
+	#AFP
+	ufw deny 548/tcp
+	#DHCP
+	ufw deny 67/udp
+	#TFTP
+	ufw deny 69/udp
+	rm /etc/network/if-up.d/configurefornetboot
 	service tftpd-hpa stop
 	echo manual > /etc/init/tftpd-hpa.override
 	rm -f /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
+		iptables -I INPUT -p tcp --dport 548 -j DENY
+	fi
+	if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
+		iptables -I INPUT -p udp --dport 67 -j DENY
+	fi
+	if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
+		iptables -I INPUT -p udp --dport 69 -j DENY
+	fi
+    service iptables save
+
 	chkconfig tftp off
 	service xinetd restart
 	rm -f /sbin/ifup-local
