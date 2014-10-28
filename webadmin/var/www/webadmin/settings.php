@@ -40,6 +40,13 @@ include "inc/header.php";
 				</a>
 			</li>
 
+                        <li class="settings-item">
+                                <a href="ldap.php">
+                                        <img src="images/settings/ldap.png" alt="LDAP Configuration">
+                                        <span>LDAP</span>
+                                </a>
+                        </li>
+
 		</ul>
 
 	</li>
