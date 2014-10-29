@@ -15,6 +15,12 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
+	if ! rpm -qa "*db47*" | grep -q "db47" ; then
+		yum install compat-db47 -y -q >> $logFile
+	fi
+	if ! rpm -qa "perl" | grep -q "perl" ; then
+		yum install perl -y -q >> $logFile
+	fi
 	cp ./var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm /var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm
 	if ! rpm -qa "netatalk" | grep -q "netatalk" ; then
 		rpm -i -v "/var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm" >> $logFile

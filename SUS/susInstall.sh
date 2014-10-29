@@ -14,12 +14,6 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 fi
 
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-	if ! rpm -qa "*db47*" | grep -q "db47" ; then
-		yum install compat-db47 -y -q >> $logFile
-	fi
-	if ! rpm -qa "perl" | grep -q "perl" ; then
-		yum install perl -y -q >> $logFile
-	fi
 	if ! rpm -qa "mod_ssl" | grep -q "mod_ssl" ; then
 		yum install mod_ssl -y -q >> $logFile
 	fi
