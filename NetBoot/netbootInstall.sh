@@ -31,6 +31,9 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	if ! rpm -qa "samba" | grep -q "samba" ; then
 		yum install samba -y -q >> $logFile
 	fi
+	if ! rpm -qa "samba-client" | grep -q "samba-client" ; then
+		yum install samba-client -y -q >> $logFile
+	fi
 	if ! rpm -qa "tftp-server" | grep -q "tftp-server" ; then
 		yum install tftp-server -y -q >> $logFile
 	fi
