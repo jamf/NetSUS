@@ -243,6 +243,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 		iptables -I INPUT -p udp --dport 69 -j ACCEPT
 	fi
     service iptables save
+fi
 dmgfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.dmg 2>/dev/null`
 if [ -n "${dmgfile}" ]; then
 	finaldmg=`echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
