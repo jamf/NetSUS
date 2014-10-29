@@ -188,7 +188,7 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    /etc/init.d/httpd restart >> $logFile
+    service httpd restart >> $logFile
 fi
 logEvent "OK"
 
