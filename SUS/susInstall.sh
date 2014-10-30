@@ -65,39 +65,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	sed -i 's:/srv/SUS/html:/var/www/html:' /etc/httpd/conf/httpd.conf
 	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/httpd/conf/httpd.conf
 	sed -i '/sucatalog/d' /etc/httpd/conf/httpd.conf
-	cat > /etc/httpd/conf.d/sus.conf <<ZHEREDOC
-<VirtualHost _default_:80>
-
-DocumentRoot "/srv/SUS/html"
-
-<Directory "/srv/SUS/html">
-    Options FollowSymLinks
-    AllowOverride None
-    Order allow,deny
-    Allow from all
-</Directory>
-
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteCond %{HTTP_USER_AGENT} Darwin/9
-    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
-    RewriteCond %{HTTP_USER_AGENT} Darwin/10
-    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
-    RewriteCond %{HTTP_USER_AGENT} Darwin/11
-    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
-    RewriteCond %{HTTP_USER_AGENT} Darwin/12
-    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
-    RewriteCond %{HTTP_USER_AGENT} Darwin/13
-    RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
-	RewriteCond %{HTTP_USER_AGENT} Darwin/14
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
-</IfModule>
-
-</VirtualHost>
-ZHEREDOC
-
-	# Remove empty <IfModule mod_rewrite.c> sections
-	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
+	sed -i 's/\/var\/www\/html/\/srv\/SUS\/html/' /etc/httpd/conf/httpd.conf	
 fi
 if [[ $detectedOS == 'Ubuntu' ]]; then
 if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
