@@ -62,21 +62,32 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
-    #HTTP(S)
-    if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:https' ; then
-        iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --add-port=443/tcp
+		firewall-cmd --zone=public --add-port=443/tcp --permanent
+		firewall-cmd --zone=public --add-port=80/tcp
+		firewall-cmd --zone=public --add-port=80/tcp --permanent
+		firewall-cmd --zone=public --add-port=139/tcp
+		firewall-cmd --zone=public --add-port=139/tcp --permanent
+		firewall-cmd --zone=public --add-port=445/tcp
+		firewall-cmd --zone=public --add-port=445/tcp --permanent
+	else
+    	#HTTP(S)
+    	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:https' ; then
+        	iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+    	fi
+    	if ! iptables -L | grep ACCEPT | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
+        	iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+    	fi
+    	#SMB
+    	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:netbios-ssn' ; then
+        	iptables -I INPUT -p tcp --dport 139 -j ACCEPT
+    	fi
+    	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:microsoft-ds' ; then
+        	iptables -I INPUT -p tcp --dport 445 -j ACCEPT
+    	fi
+    	service iptables save
     fi
-    if ! iptables -L | grep ACCEPT | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
-        iptables -I INPUT -p tcp --dport 80 -j ACCEPT
-    fi
-    #SMB
-    if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:netbios-ssn' ; then
-        iptables -I INPUT -p tcp --dport 139 -j ACCEPT
-    fi
-    if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:microsoft-ds' ; then
-        iptables -I INPUT -p tcp --dport 445 -j ACCEPT
-    fi
-    service iptables save
 fi
 
 

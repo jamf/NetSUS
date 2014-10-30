@@ -233,16 +233,25 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	ufw allow 69/udp
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -I INPUT -p tcp --dport 548 -j ACCEPT
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
-		iptables -I INPUT -p udp --dport 67 -j ACCEPT
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
-		iptables -I INPUT -p udp --dport 69 -j ACCEPT
-	fi
-    service iptables save
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --add-port=548/tcp
+		firewall-cmd --zone=public --add-port=548/tcp --permanent
+		firewall-cmd --zone=public --add-port=67/tcp
+		firewall-cmd --zone=public --add-port=67/tcp --permanent
+		firewall-cmd --zone=public --add-port=69/tcp
+		firewall-cmd --zone=public --add-port=69/tcp --permanent
+	else
+		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
+			iptables -I INPUT -p tcp --dport 548 -j ACCEPT
+		fi
+		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
+			iptables -I INPUT -p udp --dport 67 -j ACCEPT
+		fi
+		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
+			iptables -I INPUT -p udp --dport 69 -j ACCEPT
+		fi
+    	service iptables save
+    fi
 fi
 dmgfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.dmg 2>/dev/null`
 if [ -n "${dmgfile}" ]; then
@@ -316,17 +325,25 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	rm -f /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -I INPUT -p tcp --dport 548 -j DENY
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --remove-port=548/tcp
+		firewall-cmd --zone=public --remove-port=548/tcp --permanent
+		firewall-cmd --zone=public --remove-port=67/tcp
+		firewall-cmd --zone=public --remove-port=67/tcp --permanent
+		firewall-cmd --zone=public --remove-port=69/tcp
+		firewall-cmd --zone=public --remove-port=69/tcp --permanent
+	else
+		if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
+			iptables -I INPUT -p tcp --dport 548 -j DENY
+		fi
+		if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
+			iptables -I INPUT -p udp --dport 67 -j DENY
+		fi
+		if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
+			iptables -I INPUT -p udp --dport 69 -j DENY
+		fi
+    	service iptables save
 	fi
-	if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
-		iptables -I INPUT -p udp --dport 67 -j DENY
-	fi
-	if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
-		iptables -I INPUT -p udp --dport 69 -j DENY
-	fi
-    service iptables save
-
 	chkconfig tftp off
 	service xinetd restart
 	rm -f /sbin/ifup-local
