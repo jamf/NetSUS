@@ -46,9 +46,13 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 fi
 ;;
 getip) echo `ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`;;
-#Not a good option on Ubuntu
-#getnetmask) echo `ipcalc -m $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }') | cut -d = -f 2`;;
-getnetmask) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`;;
+getnetmask) 
+if [ -f "/usr/bin/ipcalc" ]; then
+	echo `ipcalc -m $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }') | cut -d = -f 2`
+else
+	echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`
+fi
+;;
 getgateway) echo `ip route show to 0.0.0.0/0 | awk '/default / { print gensub("/.*","","g",$3) }'`;;
 setip) 
 if [ "$detectedOS" = 'Ubuntu' ]; then

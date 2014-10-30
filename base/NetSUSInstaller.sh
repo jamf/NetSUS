@@ -105,10 +105,13 @@ The following will be installed
 
 # Set SELinux policy
 if sestatus | grep -q enforcing ; then
-logEvent "Setting SELINUX mode to permissive"
-sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
-echo 0 > /selinux/enforce
-echo
+	logEvent "Setting SELINUX mode to permissive"
+	echo "A restart of the system will be required before using the NetSUS"
+	sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
+fi
+if [ -f "/selinux/enforce" ]; then
+	echo 0 > /selinux/enforce
+	echo
 fi
 
 
