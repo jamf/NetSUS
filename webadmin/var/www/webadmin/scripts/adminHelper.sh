@@ -46,6 +46,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 fi
 ;;
 getip) echo `ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`;;
+#Not a good option on Ubuntu
 #getnetmask) echo `ipcalc -m $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }') | cut -d = -f 2`;;
 getnetmask) echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`;;
 getgateway) echo `ip route show to 0.0.0.0/0 | awk '/default / { print gensub("/.*","","g",$3) }'`;;
@@ -482,10 +483,10 @@ lastsussync)
 echo `ls -al /srv/SUS/html/content/catalogs/ | grep index.sucatalog | head -1 | awk '{print $6" "$7}'`
 ;;
 afpconns)
-echo `netstat | grep afpovertcp | wc | awk '{print $1}'`
+echo `ss | grep afpovertcp | wc | awk '{print $1}'`
 ;;
 smbconns)
-echo `netstat | grep microsoft-ds | wc | awk '{print $1}'`
+echo `ss | grep microsoft-ds | wc | awk '{print $1}'`
 ;;
 getsyncstatus)
 SERVICE='repo_sync'
