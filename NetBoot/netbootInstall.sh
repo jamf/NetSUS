@@ -105,17 +105,26 @@ fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	# Remove any entries from old installations
     sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/httpd/conf/httpd.conf
-    
-    echo '
-    Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    echo '
-    <Directory "/srv/NetBoot">
-    Options Indexes FollowSymLinks MultiViews
-    AllowOverride None
-    Order allow,deny
-    Allow from all
-    Require all granted
-    </Directory>' >> /etc/httpd/conf/httpd.conf
+    if httpd -v | grep version | grep '2.2'; then 
+    	echo '
+    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
+    	echo '
+    	<Directory "/srv/NetBoot">
+    	Options Indexes FollowSymLinks MultiViews
+    	AllowOverride None
+    	Order allow,deny
+    	Allow from all
+    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    else
+    	echo '
+    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
+    	echo '
+    	<Directory "/srv/NetBoot">
+    	Options Indexes FollowSymLinks MultiViews
+    	AllowOverride None
+    	Require all granted
+    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    fi
 fi
 #Creates the accounts to be used for the different services
 if [ "$(getent passwd smbuser)" ]; then
