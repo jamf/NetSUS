@@ -241,10 +241,10 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	if [ -f "/usr/bin/firewall-cmd" ]; then
 		firewall-cmd --zone=public --add-port=548/tcp
 		firewall-cmd --zone=public --add-port=548/tcp --permanent
-		firewall-cmd --zone=public --add-port=67/tcp
-		firewall-cmd --zone=public --add-port=67/tcp --permanent
-		firewall-cmd --zone=public --add-port=69/tcp
-		firewall-cmd --zone=public --add-port=69/tcp --permanent
+		firewall-cmd --zone=public --add-port=67/udp
+		firewall-cmd --zone=public --add-port=67/udp --permanent
+		firewall-cmd --zone=public --add-port=69/udp
+		firewall-cmd --zone=public --add-port=69/udp --permanent
 	else
 		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
 			iptables -I INPUT -p tcp --dport 548 -j ACCEPT
@@ -333,10 +333,10 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	if [ -f "/usr/bin/firewall-cmd" ]; then
 		firewall-cmd --zone=public --remove-port=548/tcp
 		firewall-cmd --zone=public --remove-port=548/tcp --permanent
-		firewall-cmd --zone=public --remove-port=67/tcp
-		firewall-cmd --zone=public --remove-port=67/tcp --permanent
-		firewall-cmd --zone=public --remove-port=69/tcp
-		firewall-cmd --zone=public --remove-port=69/tcp --permanent
+		firewall-cmd --zone=public --remove-port=67/udp
+		firewall-cmd --zone=public --remove-port=67/udp --permanent
+		firewall-cmd --zone=public --remove-port=69/udp
+		firewall-cmd --zone=public --remove-port=69/udp --permanent
 	else
 		if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
 			iptables -I INPUT -p tcp --dport 548 -j DENY

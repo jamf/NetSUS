@@ -49,6 +49,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     service avahi-daemon start
     service netatalk start
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/xinetd.d/tftp
+	sed -i "s:disable\t\t\t= yes:disable\t\t\t= no:" /etc/xinetd.d/tftp
 fi
 
 if [ ! -d "/var/db" ]; then
