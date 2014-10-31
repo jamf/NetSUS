@@ -114,6 +114,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     AllowOverride None
     Order allow,deny
     Allow from all
+    Require all granted
     </Directory>' >> /etc/httpd/conf/httpd.conf
 fi
 #Creates the accounts to be used for the different services
