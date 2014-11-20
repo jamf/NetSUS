@@ -21,6 +21,7 @@ class WebadminConfig
 	private $topElement;
 	private $settings;
 	private $subnets;
+	private $admins;
 	private $autosyncbranches;
 	private $defaultpasses;
 	private $files;
@@ -29,6 +30,7 @@ class WebadminConfig
 	{
 		$this->settings = array();
 		$this->subnets = array();
+		$this->admins = array();
 		$this->autosyncbranches = array();
 		$this->defaultpasses = array();
 		$dom = new DOMDocument;
@@ -104,7 +106,7 @@ class WebadminConfig
 	{
 		foreach($this->topElement->childNodes as $curNode)
 		{
-			if ($curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files")
+			if ($curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files" || $curNode->nodeName == "ldapadmins")
 			{
 				continue;
 			}
@@ -116,6 +118,7 @@ class WebadminConfig
 		}
 
 		$this->loadSubnets();
+		$this->loadAdmins();
 	}
 
 	public function saveSettings()
@@ -158,11 +161,25 @@ class WebadminConfig
 			$newNetmask->nodeValue = trim($value['netmask']);
 			$newSubnetNode->appendChild($newNetmask);
 		}
-		
+
+		// Create the ldapadmins node
+		$ldapadmins = $this->createElement("ldapadmins");
+		$this->topElement->appendChild($ldapadmins);
+
+		// Loop through the LDAP admins
+		foreach($this->admins as $key => $value)
+		{
+			$newAdminNode = $this->createElement("ldapadmin");
+			$ldapadmins->appendChild($newAdminNode);
+			$newAdmin = $this->createElement("cn");
+			$newAdmin->nodeValue = trim($value['cn']);
+			$newAdminNode->appendChild($newAdmin);
+		}
+
 		// Create the autosyncbranches node
 		$autosyncbranches = $this->createElement("autosyncbranches");
 		$this->topElement->appendChild($autosyncbranches);
-		
+
 		// Loop through the autosync branches
 		foreach($this->autosyncbranches as $key => $value)
 		{
@@ -170,11 +187,11 @@ class WebadminConfig
 			$newBranchNode->nodeValue = $key;
 			$autosyncbranches->appendChild($newBranchNode);
 		}
-		
+
 		// Create the defaultpasses node
 		$defaultpasses = $this->createElement("defaultpasses");
 		$this->topElement->appendChild($defaultpasses);
-		
+
 		// Lopo through the default pass list
 		foreach($this->defaultpasses as $key => $value)
 		{
@@ -189,8 +206,8 @@ class WebadminConfig
 			echo("Could not save settings");
 		}
 	}
-	
-	
+
+
 	public function loadSubnets()
 	{
 		$subnetnodes = $this->xmlDoc->getElementsByTagName("netbootsubnet");
@@ -244,7 +261,54 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
+	public function loadAdmins()
+	{
+		$adminnodes = $this->xmlDoc->getElementsByTagName("ldapadmin");
+		$numadmins = $adminnodes->length;
+		for ($admini = 0; $admini < $numadmins; $admini++)
+		{
+			$node = $adminnodes->item($admini)->childNodes;
+			if ($node->length != 1)
+				continue;
+			if ($node->item(0)->nodeName == "cn")
+				$cn = $node->item(0)->nodeValue;
+			else
+				continue;
+
+			$this->admins["$cn"] = array("cn" => $cn);
+		}
+	}
+
+	public function getAdmins()
+	{
+		return $this->admins;
+	}
+
+	public function addAdmin($cn)
+	{
+		if (isset($this->admins["$cn"]))
+		{
+			return false; // False means duplicate
+		}
+		else
+		{
+			$this->admins["$cn"] = array("cn" => $cn);
+			$this->saveSettings();
+			return true; // True means added
+		}
+	}
+
+	public function deleteAdmin($cn)
+	{
+		reset($this->admins);
+		if (array_key_exists("$cn", $this->admins))
+		{
+			unset($this->admins["$cn"]);
+			$this->saveSettings();
+		}
+	}
+
 	public function loadAutosyncBranches()
 	{
 		$branchnodes = $this->xmlDoc->getElementsByTagName("branch");
@@ -284,7 +348,7 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
 
 	public function containsAutosyncBranch($branch)
 
@@ -293,7 +357,7 @@ class WebadminConfig
 		return array_key_exists($branch, $this->autosyncbranches);
 	}
 
-	
+
 	public function loadDefaultPasses()
 	{
 		$defaultpassnodes = $this->xmlDoc->getElementsByTagName("defaultpass");
@@ -312,7 +376,7 @@ class WebadminConfig
 			}
 		}
 	}
-	
+
 	public function createDefaultPasses()
 	{
 		$this->defaultpasses["webaccount"] = "webaccount";
@@ -356,7 +420,7 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
 	public function printDebug()
 	{
 		echo "Settings: ";

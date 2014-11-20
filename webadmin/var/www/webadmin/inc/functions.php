@@ -26,7 +26,7 @@ function getSystemTimeZones($path="/usr/share/zoneinfo/right")
 	        	$tzlist[$i++] = $file;
 	        }
 	    }
-	    
+
 	    closedir($handle);
 	}
 	sort($tzlist);
@@ -44,12 +44,12 @@ function getSystemTimeZoneMenu()
 			if (!isset($continent)) {
 				$continent = '';
 			}
-            $ex=explode("/",$value);//obtain continent,city    
+            $ex=explode("/",$value);//obtain continent,city
             if ($continent!=$ex[0]){
                 if ($continent!="") $return = '</optgroup>'."\n";
                 echo '<optgroup label="'.$ex[0].'">'."\n";
             }
-    
+
             $city=$ex[1];
             $continent=$ex[0];
             echo '<option value="'.$value.'"'.($value==$currentTZ?" selected=\"selected\"":"").'>'.$city.(isset($ex[2])?"/".$ex[2]:"").'</option>'."\n";
@@ -147,6 +147,62 @@ function setWebAdminUser($username, $password)
 // {
 // 	// TODO
 // }
+
+function getDN($ldapconn, $samaccountname, $basedn)
+{
+    $attributes = array("dn");
+    $result = ldap_search($ldapconn, $basedn, "(|(samaccountname=".$samaccountname.")(userprincipalname=".$samaccountname."))", $attributes);
+    if ($result === FALSE)
+        return '';
+    $entries = ldap_get_entries($ldapconn, $result);
+    if ($entries['count'] > 0)
+        return $entries[0]['dn'];
+    else
+        return '';
+};
+
+function getCN($dn)
+{
+    preg_match('/[^,]*/', $dn, $matchs, PREG_OFFSET_CAPTURE, 3);
+    return $matchs[0][0];
+};
+
+function checkLDAPGroup($ldapconn, $userdn, $groupdn)
+{
+    $attributes = array("members");
+    $result = ldap_read($ldapconn, $userdn, "(memberof=".$groupdn.")", $attributes);
+    if ($result === FALSE)
+        return FALSE;
+    $entries = ldap_get_entries($ldapconn, $result);
+    return ($entries['count'] > 0);
+};
+
+function checkLDAPGroupEx($ldapconn, $userdn, $groupdn)
+{
+    $attributes = array("memberOf");
+    $result = ldap_read($ldapconn, $userdn, "(objectclass=*)", $attributes);
+    if ($result === FALSE)
+        return FALSE;
+    $entries = ldap_get_entries($ldapconn, $result);
+    if ($entries['count'] <= 0)
+        return FALSE;
+    if (empty($entries[0]['memberof']))
+    {
+        return FALSE;
+    }
+    else
+    {
+        for ($i = 0; $i < $entries[0]['memberof']['count']; $i++)
+        {
+            if ($entries[0]['memberof'][$i] == $groupdn)
+                return TRUE;
+            elseif (checkLDAPGroupEx($ldapconn, $entries[0]['memberof'][$i], $groupdn))
+                return TRUE;
+        }
+    }
+    return FALSE;
+};
+
 
 function getNetBootStatus()
 {
