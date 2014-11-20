@@ -18,6 +18,7 @@ fi
 
 if [[ "$detectedOS" == 'Ubuntu' ]]; then
     apt-get -qq -y install php5 >> $logFile
+    apt-get -qq -y install php5-ldap >> $logFile
     apt-get -qq -y install dialog >> $logFile
     apt-get -qq -y install python-m2crypto >> $logFile
     apt-get -qq -y install python-pycurl >> $logFile
@@ -35,6 +36,9 @@ if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
 	fi
 	if ! rpm -qa "php-xml" | grep -q "php-xml" ; then
 		yum install php-xml -y -q >> $logFile
+	fi
+	if ! rpm -qa "php-ldap" | grep -q "php-ldap" ; then
+		yum install php-ldap -y -q >> $logFile
 	fi
 	if ! rpm -qa "ntpdate" | grep -q "ntpdate" ; then
 		yum install ntpdate -y -q >> $logFile
