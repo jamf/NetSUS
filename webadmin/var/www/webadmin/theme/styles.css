@@ -1010,7 +1010,7 @@ Tabs for forms
     border: red 5px solid;
 }
 #form-inside{
-    padding: 20px 0 20px 20px;
+    padding: 20px;
 }
 #form-inside.side-navigation{
     padding: 1px 0;
@@ -1063,6 +1063,12 @@ Tabs for forms
     border-top: #CCCCCC 1.5px solid;
     width: 100%;
     height: 50px;
+}
+#form-wrapper .separator {
+    border: 0px solid #CCCCCC;
+    color: #CCCCCC;
+    background-color: #CCCCCC;
+    height: 1px;
 }
 #form-wrapper .label {
     font-size: 12px;
