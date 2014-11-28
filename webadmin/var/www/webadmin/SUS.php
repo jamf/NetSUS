@@ -81,24 +81,24 @@ function validateField(fieldid, buttonid)
 }
 </script>
 
-<style>
-  <!--
+<style>         
+  <!--       
 	@media (max-width: 600px) {
 
 		tr:first-child { display: none; }
-
+	
 	  td:nth-of-type(1):before { content: "Root";}
-
+   
 	  td:nth-of-type(2):before { content: "Name";}
 
 	  td:nth-of-type(3):before { content: "URL";}
-
+   
 	}
  -->
  .tablesorter {
  	margin-bottom: 5px;
  }
-</style>
+</style> 
 
 <h2>Software Update Server</h2>
 
@@ -111,13 +111,13 @@ function validateField(fieldid, buttonid)
 			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 			<span class="label">Base URL</span>
 			<span class="description">Base URL for the software update server (e.g. "https://sus.mycompany.corp")</span>
-			<input type="text" name="baseurl" id="baseurl"
+			<input type="text" name="baseurl" id="baseurl" 
 							value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
 			<input type="submit" name="setbaseurl" id="setbaseurl" class="insideActionButton" value="Change URL" disabled="disabled" />
 			<br>
 			<span class="label">Branches</span>
 			<table class="tablesorter">
-				<?php
+				<?php	
 				$branchstr = trim(suExec("getBranchlist"));
 				$branches = explode(" ",$branchstr);
 				?>
@@ -127,7 +127,7 @@ function validateField(fieldid, buttonid)
 					<th class="header">URL</th>
 					<th class="header"></th>
 				</tr>
-				<?php foreach ($branches as $key => $value) {
+				<?php foreach ($branches as $key => $value) { 
 				if ($value != "") {?>
 				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
 					<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
@@ -138,10 +138,10 @@ function validateField(fieldid, buttonid)
 				<?php } } ?>
 			</table>
 			<span class="label">New Branch</span>
-			<input type="text" name="branchname" id="branchname" value=""
-				onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+			<input type="text" name="branchname" id="branchname" value="" 
+				onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/> 
 			<input type="submit" name="addbranch" id="addbranch" class="insideActionButton" value="Add" disabled="disabled"/>
-			<?php
+			<?php 
 			}
 			else { ?>
 				<h3>Managed by the JSS</h3>
@@ -149,7 +149,7 @@ function validateField(fieldid, buttonid)
 				</table>
 				<br>
 			<div class="checkboxWrapper">
-				<span class="label"><input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
+				<span class="label"><input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs" 
 								<?php if ($conf->getSetting("mirrorpkgs") == "true")
 				        {
 									echo "checked=\"checked\"";
@@ -180,12 +180,6 @@ function validateField(fieldid, buttonid)
 			<div class="labelDescriptionWrapper">
 				<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
 			</div>
-			<br>
-			<hr class="separator"/>
-			<br>
-			<span class="label">Deprecated Updates</span>
-			<span class="description">Removes all deprecated updates that are no longer included in any branches</span>
-			<input type="button" value="Purge Deprecated" class="insideActionButton" onClick="javascript: return goTo(true, 'susCtl.php?purge=true');"/>
 
 		</div> <!-- end #form-inside -->
 
@@ -198,3 +192,4 @@ function validateField(fieldid, buttonid)
 
 
 
+					
