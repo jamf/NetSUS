@@ -454,6 +454,9 @@ echo $abranch
 reposync)
 /var/appliance/sus_sync.py > /dev/null 2>&1 &
 ;;
+repopurge)
+/var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
+;;
 removefrombranch)
 rbranch=`/var/lib/reposado/repoutil --remove-product=$2 $3`
 echo $rbranch
