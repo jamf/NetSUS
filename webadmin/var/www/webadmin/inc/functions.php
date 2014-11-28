@@ -131,6 +131,8 @@ function getNetType()
 function getCurrentWebUser()
 {
 	global $admin_username;
+	if (isset($_SESSION['username']))
+		return $_SESSION['username'];
 	return $admin_username;
 }
 

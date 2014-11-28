@@ -16,6 +16,8 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username=$_POST['username'];
 	$password=hash("sha256",$_POST['password']);
 
+	$_SESSION['username'] = $username;
+
 	if (($username != "") && ($password != "")) {
 		if ($username == $admin_username && $password == $admin_password) {
 			$isAuth=TRUE;
@@ -42,12 +44,12 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 				}
 				else
 				{
-					echo "LDAP: invalid credentials";
+					$ldaperror = "LDAP: invalid credentials";
 				}
 			}
 			else
 			{
-				echo "LDAP: uanble to connect";
+				$ldaperror = "LDAP: uanble to connect";
 			}
 	}
 }
