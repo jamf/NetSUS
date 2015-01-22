@@ -54,7 +54,7 @@ if ($conf->needsToChangeAnyPasses())
 					<br>
 					<br>
 					<br>
-					<span><?php print suExec("lastsussync")?></span>
+					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
 				</li>
 
 				<li>
@@ -70,14 +70,14 @@ if ($conf->needsToChangeAnyPasses())
 					<br>
 					<br>
 					<br>
-					<span><?php echo suExec(getsussize); ?></span>
+					<span><?php echo suExec("getsussize"); ?></span>
 				</li>
 
 				<li>
 					<span>Number of Branches:</span>
 					<br>
 					<br>
-					<span><?php echo suExec(numofbranches); ?></span>
+					<span><?php echo suExec("numofbranches"); ?></span>
 				</li>
 
 			</ul>
@@ -107,28 +107,28 @@ if ($conf->needsToChangeAnyPasses())
 					<span>Total NetBoot Image Size:</span>
 					<br>
 					<br>
-					<span><?php echo suExec(netbootusage); ?></span>
+					<span><?php echo suExec("netbootusage"); ?></span>
 				</li>
 
 				<li>
 					<span>Number of Active SMB Connections:</span>
 					<br>
 					<br>
-					<span><?php echo suExec(smbconns); ?></span>
+					<span><?php echo suExec("smbconns"); ?></span>
 				</li>
 
 				<li>
 					<span>Number of Active AFP Connections:</span>
 					<br>
 					<br>
-					<span><?php echo suExec(afpconns); ?></span>
+					<span><?php echo suExec("afpconns"); ?></span>
 				</li>
 
 				<li>
 					<span>Shadow File Usage:</span>
 					<br>
 					<br>
-					<span><?php echo suExec(shadowusage);?></span>
+					<span><?php echo suExec("shadowusage");?></span>
 				</li>
 
 			</ul>

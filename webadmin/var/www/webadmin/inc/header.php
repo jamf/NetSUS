@@ -66,6 +66,9 @@ $pageURI = $parts[count($parts) -1];
           <div id="user" class="hidemobile">
             <a href="#" id="user-link"><?php echo getCurrentWebUser(); ?> <img src="images/navigation/down-arrow.png" alt="Click" /></a>
               <div id="user-modal">
+                <a href="restart.php">Restart</a>
+                <a href="shutdown.php">Shut Down</a>
+                <hr />
                 <a href="logout.php">Log Out</a>
                 <hr />
                 <img class="handle" src="images/navigation/handle.png" alt="Handle" />
@@ -87,6 +90,9 @@ $pageURI = $parts[count($parts) -1];
     <div id="notifications-mobile" class="showmobile ">
         <a href="#" id="user-link-mobile"><?php echo getCurrentWebUser(); ?> <img src="images/navigation/down-arrow.png" alt="Click" /></a>
         <div id="user-modal-mobile">
+          <a href="restart.php">Restart</a>
+          <a href="shutdown.php">Shut Down</a>
+          <hr />
           <a href="logout.php">Log Out</a>
           <hr />
           <img class="handle" src="images/navigation/handle.png" alt="Handle" />

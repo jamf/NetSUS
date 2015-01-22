@@ -19,7 +19,7 @@
 # THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import xml.dom.minidom
-import os, sys
+import os, sys, glob
 
 if os.access("/var/run/lockfile.sus_sync.lock", os.F_OK):
     #if the lockfile is already there then check the PID number
@@ -78,11 +78,13 @@ def getText(nodelist):
 def sync_sus():
     print "Syncing SUS"
     os.system("/var/lib/reposado/repo_sync")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-lion-snowleopard-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard-snowleopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard-snowleopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
+
+    catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
+    for i in catalogArray:
+    	catalogname = str.replace(str(i), "_" + str(strRootBranch), "")
+    	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
+    	os.system("cp " + i + " /srv/SUS/html/" + catalogname)
+
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
 def enable_all_sus():
@@ -90,11 +92,12 @@ def enable_all_sus():
     for inst in instarr:
         print "Adding all updates to: " + inst
         os.system("/var/lib/reposado/repoutil --add-product all " + inst)
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-lion-snowleopard-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-leopard-snowleopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-leopard-snowleopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
-    os.system("cp /srv/SUS/html/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1_" + strRootBranch + ".sucatalog /srv/SUS/html/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog")
+    catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
+    for i in catalogArray:
+    	catalogname = str.replace(str(i), "_" + str(strRootBranch), "")
+    	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
+    	os.system("cp " + i + " /srv/SUS/html/" + catalogname)
+
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
 try:
