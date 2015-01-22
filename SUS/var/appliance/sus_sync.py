@@ -78,27 +78,49 @@ def getText(nodelist):
 def sync_sus():
     print "Syncing SUS"
     os.system("/var/lib/reposado/repo_sync")
-
-    catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
-    for i in catalogArray:
-    	catalogname = str.replace(str(i), "_" + str(strRootBranch), "")
-    	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
-    	os.system("cp " + i + " /srv/SUS/html/" + catalogname)
-
-    os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
+    sync_catalogs()
 
 def enable_all_sus():
     print "Enabling new updates"
     for inst in instarr:
         print "Adding all updates to: " + inst
         os.system("/var/lib/reposado/repoutil --add-product all " + inst)
-    catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
-    for i in catalogArray:
-    	catalogname = str.replace(str(i), "_" + str(strRootBranch), "")
-    	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
-    	os.system("cp " + i + " /srv/SUS/html/" + catalogname)
+    sync_catalogs()
 
-    os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
+def sync_catalogs():
+    print "Syncing catalogs"
+    # get all branches from reposado
+    aBranches = os.popen("/var/lib/reposado/repoutil --branches 2>/dev/null").readlines()
+    # static list of catalogs
+    aCatalogs = [
+        { 'agent':'Darwin/8',  'name': 'index', 'location': '' },
+        { 'agent':'Darwin/9',  'name': 'index-leopard.merged-1', 'location': 'others/' },
+        { 'agent':'Darwin/10', 'name': 'index-leopard-snowleopard.merged-1', 'location': 'others/' },
+        { 'agent':'Darwin/11', 'name': 'index-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
+        { 'agent':'Darwin/12', 'name': 'index-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
+        { 'agent':'Darwin/13', 'name': 'index-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
+        { 'agent':'Darwin/14', 'name': 'index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' }
+    ]
+    print "Updating URL rewrites for all branches, with root branch of " + strRootBranch + "."
+    sApacheIncludeFile='/var/appliance/conf/apache-sus-rewrites.conf'
+    fileSHAsumBefore=os.popen("shasum '" + sApacheIncludeFile + "' 2>/dev/null").readlines()
+    f = open(sApacheIncludeFile, 'w')
+    f.write('<IfModule mod_rewrite.c>' + '\r\n')
+    f.write('   RewriteEngine On' + '\r\n')
+    for CatalogKey in aCatalogs:
+        f.write('   RewriteCond %{HTTP_USER_AGENT} ' + CatalogKey['agent'] + '\r\n')
+        f.write('   RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + strRootBranch + '.sucatalog' + '\r\n')
+        for sBranchNL in aBranches:
+            sBranch = sBranchNL.strip()
+            f.write('   RewriteRule ^/index_' + sBranch + '\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + sBranch + '.sucatalog' + '\r\n')
+    f.write('</IfModule>' + '\r\n')
+    f.close()
+    fileSHAsumAfter=os.popen("shasum '" + sApacheIncludeFile + "' 2>/dev/null").readlines()
+    if fileSHAsumBefore != fileSHAsumAfter:
+        print "Restarting apache."
+        os.system("apachectl graceful")
+    else:
+        print "Not restarting apache, include file did not change."
 
 try:
     dom = xml.dom.minidom.parse('/var/appliance/conf/appliance.conf.xml')

@@ -502,18 +502,13 @@ echo "false"
 fi
 ;;
 getsussize)
-echo `du -h /srv/SUS/ | tail -1 | awk '{print $1}'`
+echo `du -sh /srv/SUS/ | awk '{print $1}'`
 ;;
 numofbranches)
 echo `/var/lib/reposado/repoutil --branches | wc | awk '{print $1}'`
 ;;
 rootBranch)
-catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
-for i in ${catalogArray}; do
-catalogName="$(basename "${i}" "_${2}.sucatalog")"
-cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
-done
-cp "/srv/SUS/html/content/catalogs/index_$2.sucatalog" "/srv/SUS/html/index.sucatalog"
+echo "The root branch is now being set by sus_sync."
 ;;
 addsch)
 crontab -l > /tmp/mycron
