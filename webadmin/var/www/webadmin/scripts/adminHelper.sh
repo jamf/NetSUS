@@ -426,26 +426,28 @@ mv /etc/dhcpd.conf /etc/dhcpd.conf.bak
 mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
 ;;
 getSUSlist)
-/var/lib/reposado/repoutil --products
-/var/lib/reposado/repoutil --updates
+/var/lib/reposado/repoutil --products 2>/dev/null
+/var/lib/reposado/repoutil --updates 2>/dev/null
 ;;
 getBranchlist)
-branches=`/var/lib/reposado/repoutil --branches`
+branches=`/var/lib/reposado/repoutil --branches 2>/dev/null`
 echo $branches
 ;;
 createBranch)
 cbranch=`/var/lib/reposado/repoutil --new-branch $2`
+/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
 echo $cbranch
 ;;
 deleteBranch)
 dbranch=`echo y | /var/lib/reposado/repoutil --delete-branch $2`
+/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
 echo $dbranch
 ;;
 listBranch)
-/var/lib/reposado/repoutil --list-branch $2
+/var/lib/reposado/repoutil --list-branch $2 2>/dev/null
 ;;
 prodinfo)
-/var/lib/reposado/repoutil --info $2
+/var/lib/reposado/repoutil --info $2  2>/dev/null
 ;;
 addtobranch)
 abranch=`/var/lib/reposado/repoutil --add=$2 $3`
@@ -508,7 +510,7 @@ numofbranches)
 echo `/var/lib/reposado/repoutil --branches | wc | awk '{print $1}'`
 ;;
 rootBranch)
-echo "The root branch is now being set by sus_sync."
+/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
 ;;
 addsch)
 crontab -l > /tmp/mycron
