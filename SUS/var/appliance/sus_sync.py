@@ -19,7 +19,7 @@
 # THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import xml.dom.minidom
-import os, sys, glob
+import os, sys
 
 if os.access("/var/run/lockfile.sus_sync.lock", os.F_OK):
     #if the lockfile is already there then check the PID number
@@ -112,6 +112,7 @@ def sync_catalogs():
         f.write('   RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + strRootBranch + '.sucatalog' + '\r\n')
         for sBranchNL in aBranches:
             sBranch = sBranchNL.strip()
+            f.write('   RewriteCond %{HTTP_USER_AGENT} ' + CatalogKey['agent'] + '\r\n')
             f.write('   RewriteRule ^/index_' + sBranch + '\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + sBranch + '.sucatalog' + '\r\n')
     f.write('</IfModule>' + '\r\n')
     f.close()
