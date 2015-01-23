@@ -172,6 +172,8 @@ def main(argv):
         print "Unable to update URL rewrites!"    
         os.unlink("/var/run/lockfile.sus_sync.lock")
         sys.exit(1603)
+    
+    os.unlink("/var/run/lockfile.sus_sync.lock")
 
 if __name__ == "__main__":
     #pass parameter list, first item is script name
