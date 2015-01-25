@@ -38,6 +38,7 @@ failedAnyChecks=0
 
 logEvent $detectedOS
 
+[[ $detectedOS == "Ubuntu" ]] && { bash testUbuntuBinRequirements.sh; }
 
 # Check for a 64-bit OS
 bash test64bitRequirements.sh 
