@@ -160,7 +160,6 @@ def main(argv):
         try:
             enable_all_sus()
             print "Finished enabling all updates for marked branches"
-            os.unlink("/var/run/lockfile.sus_sync.lock")
         except Exception:
             print "Unable to enable updates, what did you do!"    
             os.unlink("/var/run/lockfile.sus_sync.lock")

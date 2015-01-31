@@ -132,7 +132,7 @@ function validateField(fieldid, buttonid)
 				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
 					<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
 					<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
-					<td nowrap><?php echo $conf->getSetting("susbaseurl")."index_".$value.".sucatalog"?></a></td>
+					<td nowrap><?php echo $conf->getSetting("susbaseurl")."/index_".$value.".sucatalog"?></a></td>
 					<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
 				</tr>
 				<?php } } ?>
