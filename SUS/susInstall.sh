@@ -48,19 +48,19 @@ cat > /var/appliance/conf/apache-sus-rewrites.conf <<ZHEREDOC
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 	RewriteCond %{HTTP_USER_AGENT} Darwin/8
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/index.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/index.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/9
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-leopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/10
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-leopard-snowleopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/11
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-lion-snowleopard-leopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/12
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/13
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/14
-	RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/others/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
 </IfModule>
 ZHEREDOC
 chown www-data /var/appliance/conf/apache-sus-rewrites.conf

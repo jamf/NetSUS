@@ -83,11 +83,11 @@ def update_URL_rewrites():
     f.write('   RewriteEngine On' + '\r\n')
     for CatalogKey in aCatalogs:
         f.write('   RewriteCond %{HTTP_USER_AGENT} ' + CatalogKey['agent'] + '\r\n')
-        f.write('   RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + strRootBranch + '.sucatalog' + '\r\n')
+        f.write('   RewriteRule ^/index\.sucatalog$ /content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + strRootBranch + '.sucatalog' + ' [L] \r\n')
         for sBranchNL in aBranches:
             sBranch = sBranchNL.strip()
             f.write('   RewriteCond %{HTTP_USER_AGENT} ' + CatalogKey['agent'] + '\r\n')
-            f.write('   RewriteRule ^/index_' + sBranch + '\.sucatalog$ http://%{HTTP_HOST}/content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + sBranch + '.sucatalog' + '\r\n')
+            f.write('   RewriteRule ^/index_' + sBranch + '\.sucatalog$ /content/catalogs/' + CatalogKey['location'] + CatalogKey['name'] + '_' + sBranch + '.sucatalog' + ' [L] \r\n')
     f.write('</IfModule>' + '\r\n')
     f.close()
     fileSHAsumAfter=os.popen("shasum '" + sApacheIncludeFile + "' 2>/dev/null").readlines()
@@ -100,7 +100,7 @@ def update_URL_rewrites():
 def main(argv):
 
     try:
-        opts, args = getopt.getopt(argv, "r:h", ["rewrite", "help"])
+        opts, args = getopt.getopt(argv, "rh", ["rewrite", "help"])
     except getopt.GetoptError:
         #watch for undefined parameters
         print "option not recognised"
