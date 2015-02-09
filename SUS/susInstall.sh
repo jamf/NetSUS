@@ -94,7 +94,7 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
    		# Additional Ubuntu 14 configuration
     	if [[ "${apacheConfigFile}" == "/etc/apache2/sites-enabled/000-default.conf" ]]; then
 	    	sed -i '/[[:space:]]*<Directory \/srv\/SUS\//,/[[:space:]]*<\/Directory>/d' "${apacheConfigFile}"
-	    	sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" "${apacheConfigFile}"
+	    	sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions FollowSymLinks\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" "${apacheConfigFile}"
         fi
 		# add our own Include directive
 		sed -i "s|</VirtualHost>||" "${apacheConfigFile}"
