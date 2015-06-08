@@ -93,7 +93,7 @@ function validateLDAPAdmin()
                                         <th></th>
                                 </tr>
                                 <?php foreach($conf->getAdmins() as $key => $value) { ?>
-                                <tr class="<?=($key % 2 == 0 ? "object0" : "object1")?>">
+                                <tr class="<?php ($key % 2 == 0 ? "object0" : "object1"); ?>">
                                         <td><?php echo $value['cn']?></td>
                                         <td><a href="ldap.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
                                 </tr>
