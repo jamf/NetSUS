@@ -50,6 +50,7 @@ include "inc/header.php";
 			<li>dialog</li>
 			<li>netatalk</li>
 			<li>curl</li>
+			<li>slapd</li>
 		</ul>
 	<br/>
 	<?php } ?>	
@@ -70,6 +71,7 @@ include "inc/header.php";
 			<li>samba</li>
 			<li>tftp-server</li>
 			<li>vim-common</li>
+			<li>slapd</li>
 		</ul>
 	<br/>
 	<?php } ?>	
@@ -90,6 +92,7 @@ include "inc/header.php";
 			<li>samba</li>
 			<li>tftp-server</li>
 			<li>vim-common</li>
+			<li>slapd</li>
 		</ul>
 	<br/>
 	<?php } ?>		
@@ -100,7 +103,7 @@ include "inc/header.php";
 <br>
 <div class="about">
 		<p>
-		The NetBoot/SUS server is distributed "as is" by JAMF Software, LLC.  For support, please use the following resource:<br/><br/>
+		The NetBoot/SUS/LDAP Proxy server is distributed "as is" by JAMF Software, LLC.  For support, please use the following resource:<br/><br/>
 		<a href="https://jamfnation.jamfsoftware.com" target="_blank">https://jamfnation.jamfsoftware.com/</a><br/><br/>
 		</p>
 	<br/>

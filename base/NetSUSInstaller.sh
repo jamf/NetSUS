@@ -76,12 +76,24 @@ Answer yes unless you are creating an image of the appliance to deploy in multip
 
 
 # Prompt user for permission to continue with the installation
+if [[ $detectedOS == 'Ubuntu' ]]; then
+	echo "
+The following will be installed
+* Appliance Web Interface
+* NetBoot Server
+* Software Updates Server
+* LDAP Proxy Server
+"
+fi
+if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
 	echo "
 The following will be installed
 * Appliance Web Interface
 * NetBoot Server
 * Software Updates Server
 "
+fi
+
 	
 	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
 	REPLY=""
@@ -114,6 +126,9 @@ if [ -f "/selinux/enforce" ]; then
 	echo
 fi
 
+if [[ $detectedOS == 'Ubuntu' ]]; then
+	apt-get update
+fi
 
 
 # Install Web Interface
@@ -137,6 +152,15 @@ if [[ $? -ne 0 ]]; then
 	exit 1
 fi
 
+# Install LDAP Proxy
+if [[ $detectedOS == 'Ubuntu' ]]; then
+bash LDAPProxyInstall.run -- $detectedOS
+if [[ $? -ne 0 ]]; then
+	umask $OLD_UMASK
+	exit 1
+fi
+fi
+
 #Post Cleanup Tasks
 #Disables IPv6
 
@@ -147,7 +171,7 @@ net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
 
 
 logEvent ""
-logEvent "The NetSUS has been installed."
+logEvent "The NetSUSLP has been installed."
 if [ ! $upgrade = true ]; then
 	logEvent "Verify that port 443 and 80 are not blocked by a firewall."
 	logEvent ""
@@ -159,7 +183,7 @@ fi
 
 
 if [ $upgrade = true ]; then
-	logEvent "If you are upgrading NetSUS, you can simply start using it."
+	logEvent "If you are upgrading NetSUSLP, you can simply start using it."
 else
     logEvent "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
 fi
@@ -168,21 +192,31 @@ fi
 case $standalone in
 [yY])
 if [[ $detectedOS == 'Ubuntu' ]]; then
-	echo "Restarting Services..."
-	/etc/init.d/networking restart > /dev/null 2>&1
-	/etc/init.d/apache2 restart > /dev/null 2>&1
-	/etc/init.d/netatalk restart > /dev/null 2>&1
-	/etc/init.d/smbd restart > /dev/null 2>&1
-	/etc/init.d/tftpd-hpa restart > /dev/null 2>&1
-	/etc/init.d/openbsd-inetd restart > /dev/null 2>&1
+	echo "Updating Services..."
+	service apparmor restart
+	service slapd stop > /dev/null 2>&1
+	service networking restart > /dev/null 2>&1
+	service apache2 restart > /dev/null 2>&1
+	service netatalk stop > /dev/null 2>&1
+	service smbd stop > /dev/null 2>&1
+	service tftpd-hpa stop > /dev/null 2>&1
+	service openbsd-inetd stop > /dev/null 2>&1
+	echo manual > /etc/init/slapd.override
+	echo manual > /etc/init/netatalk.override
+	echo manual > /etc/init/smbd.override
+	echo manual > /etc/init/tftpd-hpa.override
+	echo manual > /etc/init/openbsd-inetd.override
 
-	logEvent "If you are installing NetSUS for the first time, please follow the documentation for setup instructions."
+	logEvent "If you are installing NetSUSLP for the first time, please follow the documentation for setup instructions."
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     service httpd restart
-    service smb restart
+    service smb stop
+    chkconfig tftp off
     service xinetd restart
-    service netatalk restart
+    service netatalk stop
+    chkconfig smb off
+    chkconfig netatalk off
 fi
 
 	;;
@@ -194,7 +228,7 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
 	cp -R ./etc/* /etc/
 	rm /etc/udev/rules.d/70-*
 	rm /etc/resolv.conf
-	echo "NetSUS installation complete."
+	echo "NetSUSLP installation complete."
 	echo "Type: \"shutdown -P now\" to Shut Down."
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
@@ -203,7 +237,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     sed -i '/HWADDR=/d' /etc/sysconfig/network-scripts/ifcfg-eth0
     find /var/log -type f -delete
     rm -f install.log*
-	echo "NetSUS installation complete."
+	echo "NetSUSLP installation complete."
 	echo "Type: \"poweroff\" to Shut Down."
 fi
 	;;

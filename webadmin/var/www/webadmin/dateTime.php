@@ -34,13 +34,13 @@ if (isset($_POST['SaveDateTime'])) {
 			<input type="hidden" name="userAction" value="DateTime">
 
 			<span class="label">Current Time</span>
-			<span class="description">Current time on the NetBoot/SUS server</span>
+			<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
 			<span><?php print getLocalTime();?></span>
 			<br>
 			<br>
 
 			<span class="label">Current Time Zone</span>
-			<span class="description">Current time zone on the NetBoot/SUS server</span>
+			<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
 			<span><?php echo getSystemTimeZoneMenu();?></span>
 			<br>
 

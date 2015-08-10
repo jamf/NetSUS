@@ -43,7 +43,7 @@ if ($isAuth) {
 
 <html>
 	<head> 
-	    <title>NetBoot/SUS Server Login</title>
+	    <title>NetBoot/SUS/LDAP Proxy Server Login</title>
 	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	    <meta http-equiv="expires" content="0">
 	    <meta http-equiv="pragma" content="no-cache"> 
