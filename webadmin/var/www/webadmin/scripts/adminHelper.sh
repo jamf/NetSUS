@@ -257,12 +257,15 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	else
 		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
 			iptables -I INPUT -p tcp --dport 548 -j ACCEPT
+			iptables -D INPUT -p tcp --dport 548 -j DROP
 		fi
 		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
 			iptables -I INPUT -p udp --dport 67 -j ACCEPT
+			iptables -D INPUT -p udp --dport 67 -j DROP
 		fi
 		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
 			iptables -I INPUT -p udp --dport 69 -j ACCEPT
+			iptables -D INPUT -p udp --dport 69 -j DROP
 		fi
     	service iptables save
     fi
@@ -338,18 +341,44 @@ disableproxy)
 service slapd stop
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	#LDAP
-	ufw deny 636/tcp
+	ufw deny 389/tcp
 	echo manual > /etc/init/slapd.override
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig slapd off
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --remove-port=389/tcp
+		firewall-cmd --zone=public --remove-port=389/tcp --permanent
+	else
+		if ! iptables -L | grep DROP | grep -q 'tcp dpt:ldaps' ; then
+			iptables -I INPUT -p tcp --dport 389 -j DROP
+			iptables -D INPUT -p tcp --dport 389 -j ACCEPT
+		fi
+    	service iptables save
+    fi
+	
 fi
 ;;
 
 enableproxy)
 service slapd start
-
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	#LDAP
 	rm -f /etc/init/slapd.override
-	ufw allow 636/tcp
+	ufw allow 389/tcp
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig slapd on
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --add-port=389/tcp
+		firewall-cmd --zone=public --add-port=389/tcp --permanent
+	else
+		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:ldaps' ; then
+			iptables -I INPUT -p tcp --dport 389 -j ACCEPT
+			iptables -D INPUT -p tcp --dport 389 -j DROP
+		fi
+    	service iptables save
+	fi
 fi
 ;;
 
@@ -382,14 +411,17 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 		firewall-cmd --zone=public --remove-port=69/udp
 		firewall-cmd --zone=public --remove-port=69/udp --permanent
 	else
-		if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
-			iptables -I INPUT -p tcp --dport 548 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'tcp dpt:afpovertcp' ; then
+			iptables -I INPUT -p tcp --dport 548 -j DROP
+			iptables -D INPUT -p tcp --dport 548 -j ACCEPT
 		fi
-		if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
-			iptables -I INPUT -p udp --dport 67 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'udp dpt:bootps' ; then
+			iptables -I INPUT -p udp --dport 67 -j DROP
+			iptables -D INPUT -p udp --dport 67 -j ACCEPT
 		fi
-		if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
-			iptables -I INPUT -p udp --dport 69 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'udp dpt:tftp' ; then
+			iptables -I INPUT -p udp --dport 69 -j DROP
+			iptables -D INPUT -p udp --dport 67 -j ACCEPT
 		fi
     	service iptables save
 	fi
@@ -481,8 +513,14 @@ echo $2:$3 | chpasswd
 ;;
 
 installslapdconf)
-mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
-mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
+fi
 ;;
 
 installdhcpdconf)
@@ -696,12 +734,30 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 fi
 ;;
 updateCert)
-cp /var/appliance/conf/appliance.certificate.pem /etc/ssl/certs/ssl-cert-snakeoil.pem
-cp /var/appliance/conf/appliance.private.key /etc/ssl/private/ssl-cert-snakeoil.key
-mkdir -p /etc/apache2/ssl.crt/	
-cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
-chown openldap /var/appliance/conf/appliance.private.key
-sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	cp /var/appliance/conf/appliance.certificate.pem /etc/ssl/certs/ssl-cert-snakeoil.pem
+	cp /var/appliance/conf/appliance.private.key /etc/ssl/private/ssl-cert-snakeoil.key
+	mkdir -p /etc/apache2/ssl.crt/	
+	cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
+	chown openldap /var/appliance/conf/appliance.private.key
+	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
+	cp /var/appliance/conf/appliance.private.key /etc/pki/tls/private/localhost.key	
+	cp /var/appliance/conf/appliance.chain.pem /etc/pki/tls/certs/server-chain.crt
+	chown ldap /var/appliance/conf/appliance.private.key
+	sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/g" /etc/httpd/conf.d/ssl.conf
+	rm -rf /etc/openldap/certs/
+	mkdir /etc/openldap/certs
+	modutil -create -dbdir /etc/openldap/certs -force
+	openssl pkcs12 -inkey /var/appliance/conf/appliance.private.key -in /var/appliance/conf/appliance.certificate.pem -export -out /tmp/openldap.p12 -nodes -name 'LDAP-Certificate' -password pass:
+	certutil -A -d /etc/openldap/certs -n "CA Chain" -t CT,, -a -i /var/appliance/conf/appliance.chain.pem
+	pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""
+	rm /tmp/openldap.p12
+	chown -R ldap:ldap /etc/openldap/certs/
+	service slapd restart
+fi
 ;;
 enableFirewall)
 if [ "$detectedOS" = 'Ubuntu' ]; then

@@ -68,6 +68,9 @@ $pageURI = $parts[count($parts) -1];
               <div id="user-modal">
                 <a href="restart.php">Restart</a>
                 <a href="shutdown.php">Shut Down</a>
+                
+                <hr />
+                <a href="disablegui.php">Disable GUI</a>
                 <hr />
                 <a href="logout.php">Log Out</a>
                 <hr />

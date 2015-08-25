@@ -26,7 +26,7 @@ cp -R includes/* temp/NetBoot/
 cp -R includes/* temp/SUS/
 cp -R includes/* temp/webadmin/
 cp -R includes/* temp/LDAPProxy/
-#if [ -x /usr/bin/xattr ]; then find temp -exec xattr -c {} \; ;fi # Remove OS X extended attributes
+if [ -x /usr/bin/xattr ]; then find temp -exec xattr -c {} \; ;fi # Remove OS X extended attributes
 find temp -name .DS_Store -delete # Clean out .DS_Store files
 find temp -name .svn | xargs rm -Rf # Clean out SVN garbage
 

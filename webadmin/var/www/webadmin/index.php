@@ -36,6 +36,28 @@ if ($isAuth) {
 	if (!($debug)) {
 		header('Location: '. $sURL);
 	}
+}
+elseif ($conf->getSetting("webadmingui") == "Disabled") {
+?>
+<!DOCTYPE html>
+
+<html>
+	<head> 
+	    <title>NetBoot/SUS/LDAP Proxy Server</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	    <meta http-equiv="expires" content="0">
+	    <meta http-equiv="pragma" content="no-cache"> 
+		<link rel="stylesheet" href="theme/reset.css" type="text/css">
+		<link rel="stylesheet" href="theme/styles.css" type="text/css">
+	</head> 
+
+	<body> 
+
+			<div class="errorMessage">WebAdmin GUI is disabled</div>
+
+	</body>
+</html>
+<?php
 } else {
 
 ?>

@@ -76,7 +76,6 @@ Answer yes unless you are creating an image of the appliance to deploy in multip
 
 
 # Prompt user for permission to continue with the installation
-if [[ $detectedOS == 'Ubuntu' ]]; then
 	echo "
 The following will be installed
 * Appliance Web Interface
@@ -84,15 +83,7 @@ The following will be installed
 * Software Updates Server
 * LDAP Proxy Server
 "
-fi
-if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-	echo "
-The following will be installed
-* Appliance Web Interface
-* NetBoot Server
-* Software Updates Server
-"
-fi
+
 
 	
 	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
@@ -153,12 +144,10 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Install LDAP Proxy
-if [[ $detectedOS == 'Ubuntu' ]]; then
 bash LDAPProxyInstall.run -- $detectedOS
 if [[ $? -ne 0 ]]; then
 	umask $OLD_UMASK
 	exit 1
-fi
 fi
 
 #Post Cleanup Tasks
@@ -217,6 +206,8 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     service netatalk stop
     chkconfig smb off
     chkconfig netatalk off
+    chkconfig slapd off
+    service slapd stop
 fi
 
 	;;
