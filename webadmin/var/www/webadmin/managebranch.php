@@ -106,6 +106,15 @@ foreach($formattedpackages as $key => $value)
 }
 ?>
 
+var pkgDeprecatedList = new Array();
+<?php
+foreach($formattedpackages as $key => $value)
+{
+	$parts = explode("%", $value);
+	echo "pkgDeprecatedList[\"$key\"] = ".(strpos($parts[1],'Deprecated') !== false ? "true" : "false").";\n";
+}
+?>
+
 function selectAllVisible()
 {
 	var boxes = document.branchPackages;
@@ -125,6 +134,19 @@ function clearAllVisible()
 	for (i = 0; i < boxes.length; i++)
 	{
 		if (boxes.elements[i].name != "rootbranch" && boxes.elements[i].name != "autosync")
+		{
+			boxes.elements[i].checked = false;
+			checkBox(boxes.elements[i].value, boxes.elements[i].checked);
+		}
+	}
+}
+
+function clearAllDeprecated()
+{
+	var boxes = document.branchPackages;
+	for (i = 0; i < boxes.length; i++)
+	{
+		if (boxes.elements[i].className == "deprecated")
 		{
 			boxes.elements[i].checked = false;
 			checkBox(boxes.elements[i].value, boxes.elements[i].checked);
@@ -158,12 +180,14 @@ function filterPackages()
 		{
 			var value = pkgList[key].replace("%", " ");
 			var checked = "";
+			var deprecated = "";
 			if (search == "" || pattern.test(value))
 			{
 				pieces = pkgList[key].split("%");
 				checked = (pkgCheckedList[key] ? "checked=\"checked\"" : "");
+				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
-				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
+				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
 				tableContents += "<td>"+pieces[0]+"</td>";
 				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
@@ -272,6 +296,7 @@ else if ($statusMessage != "")
 
 			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
 			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
+			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
 
 
 			<table id="packageTable" style="width:90%;">
@@ -280,6 +305,8 @@ else if ($statusMessage != "")
 
 			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
 			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
+			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
+
 			<br>
 			<br>
 
