@@ -61,6 +61,8 @@ cat > /var/appliance/conf/apache-sus-rewrites.conf <<ZHEREDOC
 	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
 	RewriteCond %{HTTP_USER_AGENT} Darwin/14
 	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
+	RewriteCond %{HTTP_USER_AGENT} Darwin/15
+	RewriteRule ^/index\.sucatalog$ /content/catalogs/others/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog [L]
 </IfModule>
 ZHEREDOC
 chown www-data /var/appliance/conf/apache-sus-rewrites.conf
