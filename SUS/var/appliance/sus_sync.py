@@ -74,7 +74,7 @@ def update_URL_rewrites():
         { 'agent':'Darwin/12', 'name': 'index-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
         { 'agent':'Darwin/13', 'name': 'index-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
         { 'agent':'Darwin/14', 'name': 'index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' },
-        { 'agent':'Darwin/14', 'name': 'index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' }
+        { 'agent':'Darwin/15', 'name': 'index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1', 'location': 'others/' }
     ]
     print "Updating URL rewrites for all branches, with root branch of " + strRootBranch + "."
     sApacheIncludeFile='/var/appliance/conf/apache-sus-rewrites.conf'
