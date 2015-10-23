@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="60;url=index.php">';
-	echo '<div class="noticeMessage">NOTICE: Restarting the NetBoot/SUS Server.</div>';
+	echo '<div class="noticeMessage">NOTICE: Restarting the NetBoot/SUS/LDAP Proxy Server.</div>';
 }
 
 ?>
@@ -24,7 +24,7 @@ if (isset($_POST['confirm']))
 
 		<div id="form-inside">
 
-			<span class="label">Are you sure you want to restart the NetBoot/SUS Server?</span>
+			<span class="label">Are you sure you want to restart the NetBoot/SUS/LDAP Proxy Server?</span>
 			<?php
 			$afpconns = trim(suExec("afpconns"));
 			$smbconns = trim(suExec("smbconns"));

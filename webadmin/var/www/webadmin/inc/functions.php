@@ -160,6 +160,18 @@ function getNetBootStatus()
 	}
 }
 
+function getLDAPProxyStatus()
+{
+	if (trim(suExec("getldapproxystatus")) == "true")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 function getSyncStatus()
 {
 	if (trim(suExec("getsyncstatus")) == "true")
@@ -262,6 +274,18 @@ function isValidHostname($string)
 function getSSHstatus()
 {
 	if (trim(suExec("getSSHstatus")) == "true")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function getFirewallstatus()
+{
+	if (trim(suExec("getFirewallstatus")) == "true")
 	{
 		return true;
 	}
