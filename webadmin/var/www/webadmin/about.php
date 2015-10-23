@@ -114,7 +114,7 @@ include "inc/header.php";
 <br>
 <div class="about">
 	<p>
-		Copyright (C) 2012, JAMF Software, LLC<br/>
+		Copyright (C) 2015, JAMF Software, LLC<br/>
 		All rights reserved.<br/><br/>
 
 		Redistribution and use in source and binary forms, with or without modification,

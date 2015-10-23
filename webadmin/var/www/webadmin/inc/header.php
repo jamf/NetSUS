@@ -60,6 +60,9 @@ $pageURI = $parts[count($parts) -1];
       </aside>
 
       <div id="navigation" class="">
+        <div style="float:left">
+        	<div style="float: left; font-size: 20px; margin-top: 40px; margin-left: 5px;">Version: 4.0.0</div>
+        </div>
         
         <div id="right-links" class="hidemobile">
 
