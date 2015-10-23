@@ -64,7 +64,7 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "address $2" >> /etc/network/interfaces
 	echo "netmask $3" >> /etc/network/interfaces
 	echo "gateway $4" >> /etc/network/interfaces
-	/etc/init.d/networking restart
+	service networking restart
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
@@ -92,7 +92,7 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "iface lo inet loopback" >> /etc/network/interfaces
 	echo "auto eth0" >> /etc/network/interfaces
 	echo "iface eth0 inet dhcp" >> /etc/network/interfaces
-	/etc/init.d/networking restart
+	service networking restart
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
@@ -200,6 +200,15 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	service smb restart
 fi
 ;;
+
+startsmb)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	service smbd start
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	service smb start
+fi
+;;
 restartafp)
 service netatalk restart
 rm -rf /srv/NetBootClients/*
@@ -248,12 +257,15 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	else
 		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
 			iptables -I INPUT -p tcp --dport 548 -j ACCEPT
+			iptables -D INPUT -p tcp --dport 548 -j DROP
 		fi
 		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
 			iptables -I INPUT -p udp --dport 67 -j ACCEPT
+			iptables -D INPUT -p udp --dport 67 -j DROP
 		fi
 		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
 			iptables -I INPUT -p udp --dport 69 -j ACCEPT
+			iptables -D INPUT -p udp --dport 69 -j DROP
 		fi
     	service iptables save
     fi
@@ -304,15 +316,70 @@ sed -i "s:/NetBoot/NetBootSP0/.*\";:/NetBoot/NetBootSP0/${2}/${finaldmg}\";:g" /
 sed -i "s:filename \".*\";:filename \"${2}/i386/booter\";:g" /etc/dhcpd.conf
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
-	rm -f /etc/init/tftpd-hpa.override
 	service tftpd-hpa start
+	service smbd start
+	service netatalk start
+	service openbsd-inetd start
+	rm -f /etc/init/netatalk.override
+	rm -f /etc/init/smbd.override
+	rm -f /etc/init/tftpd-hpa.override
+	rm -f /etc/init/openbsd-inetd.override
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
 	chkconfig tftp on
 	service xinetd restart
+	service netatalk start
+	service smb start
+    chkconfig smb on
+    chkconfig netatalk on
 fi
 /var/appliance/configurefornetboot
+;;
+
+disableproxy)
+service slapd stop
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	#LDAP
+	ufw deny 389/tcp
+	echo manual > /etc/init/slapd.override
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig slapd off
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --remove-port=389/tcp
+		firewall-cmd --zone=public --remove-port=389/tcp --permanent
+	else
+		if ! iptables -L | grep DROP | grep -q 'tcp dpt:ldaps' ; then
+			iptables -I INPUT -p tcp --dport 389 -j DROP
+			iptables -D INPUT -p tcp --dport 389 -j ACCEPT
+		fi
+    	service iptables save
+    fi
+	
+fi
+;;
+
+enableproxy)
+service slapd start
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	#LDAP
+	rm -f /etc/init/slapd.override
+	ufw allow 389/tcp
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig slapd on
+	if [ -f "/usr/bin/firewall-cmd" ]; then
+		firewall-cmd --zone=public --add-port=389/tcp
+		firewall-cmd --zone=public --add-port=389/tcp --permanent
+	else
+		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:ldaps' ; then
+			iptables -I INPUT -p tcp --dport 389 -j ACCEPT
+			iptables -D INPUT -p tcp --dport 389 -j DROP
+		fi
+    	service iptables save
+	fi
+fi
 ;;
 
 disablenetboot)
@@ -326,7 +393,13 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	ufw deny 69/udp
 	rm /etc/network/if-up.d/configurefornetboot
 	service tftpd-hpa stop
+	service smbd stop
+	service netatalk stop
+	service openbsd-inetd stop
+	echo manual > /etc/init/netatalk.override
+	echo manual > /etc/init/smbd.override
 	echo manual > /etc/init/tftpd-hpa.override
+	echo manual > /etc/init/openbsd-inetd.override
 	rm -f /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
@@ -338,19 +411,26 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 		firewall-cmd --zone=public --remove-port=69/udp
 		firewall-cmd --zone=public --remove-port=69/udp --permanent
 	else
-		if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
-			iptables -I INPUT -p tcp --dport 548 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'tcp dpt:afpovertcp' ; then
+			iptables -I INPUT -p tcp --dport 548 -j DROP
+			iptables -D INPUT -p tcp --dport 548 -j ACCEPT
 		fi
-		if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
-			iptables -I INPUT -p udp --dport 67 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'udp dpt:bootps' ; then
+			iptables -I INPUT -p udp --dport 67 -j DROP
+			iptables -D INPUT -p udp --dport 67 -j ACCEPT
 		fi
-		if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
-			iptables -I INPUT -p udp --dport 69 -j DENY
+		if ! iptables -L | grep DROP | grep -q 'udp dpt:tftp' ; then
+			iptables -I INPUT -p udp --dport 69 -j DROP
+			iptables -D INPUT -p udp --dport 67 -j ACCEPT
 		fi
     	service iptables save
 	fi
-	chkconfig tftp off
-	service xinetd restart
+	service smb stop
+    chkconfig tftp off
+    service xinetd restart
+    service netatalk stop
+    chkconfig smb off
+    chkconfig netatalk off
 	rm -f /sbin/ifup-local
 fi
 killall dhcpd
@@ -358,6 +438,17 @@ killall dhcpd
 
 getnetbootstatus)
 SERVICE='dhcpd'
+ 
+if ps ax | grep -v grep | grep $SERVICE > /dev/null
+then
+    echo "true"
+else
+    echo "false"
+fi
+;;
+
+getldapproxystatus)
+SERVICE='slapd'
  
 if ps ax | grep -v grep | grep $SERVICE > /dev/null
 then
@@ -421,10 +512,23 @@ changeshellpass)
 echo $2:$3 | chpasswd
 ;;
 
+installslapdconf)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
+fi
+;;
+
 installdhcpdconf)
 mv /etc/dhcpd.conf /etc/dhcpd.conf.bak
 mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
 ;;
+
+
 getSUSlist)
 /var/lib/reposado/repoutil --products
 /var/lib/reposado/repoutil --updates
@@ -562,6 +666,7 @@ echo $inventory
 ;;
 enableAvahi)
 if [ "$detectedOS" = 'Ubuntu' ]; then
+	apt-get update
 	apt-get -qq -y install avahi-daemon
 fi
 ;;
@@ -584,6 +689,7 @@ fi
 enableSSH)
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	if ! dpkg --list | grep -q 'openssh-server'; then
+		apt-get update
 		apt-get -qq -y install openssh-server
 	fi
 	if [ -e /etc/init/ssh.override ];then
@@ -608,6 +714,67 @@ fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	chkconfig sshd off
 	service sshd stop
+fi
+;;
+
+getFirewallstatus)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+        if ufw status | grep inactive ; then
+                echo "false"
+        else
+                echo "true"
+        fi
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	if service iptables status 2>/dev/null | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+fi
+;;
+updateCert)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	cp /var/appliance/conf/appliance.certificate.pem /etc/ssl/certs/ssl-cert-snakeoil.pem
+	cp /var/appliance/conf/appliance.private.key /etc/ssl/private/ssl-cert-snakeoil.key
+	mkdir -p /etc/apache2/ssl.crt/	
+	cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
+	chown openldap /var/appliance/conf/appliance.private.key
+	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
+	cp /var/appliance/conf/appliance.private.key /etc/pki/tls/private/localhost.key	
+	cp /var/appliance/conf/appliance.chain.pem /etc/pki/tls/certs/server-chain.crt
+	chown ldap /var/appliance/conf/appliance.private.key
+	sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/g" /etc/httpd/conf.d/ssl.conf
+	rm -rf /etc/openldap/certs/
+	mkdir /etc/openldap/certs
+	modutil -create -dbdir /etc/openldap/certs -force
+	openssl pkcs12 -inkey /var/appliance/conf/appliance.private.key -in /var/appliance/conf/appliance.certificate.pem -export -out /tmp/openldap.p12 -nodes -name 'LDAP-Certificate' -password pass:
+	certutil -A -d /etc/openldap/certs -n "CA Chain" -t CT,, -a -i /var/appliance/conf/appliance.chain.pem
+	pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""
+	rm /tmp/openldap.p12
+	chown -R ldap:ldap /etc/openldap/certs/
+	service slapd restart
+fi
+;;
+enableFirewall)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	ufw --force enable
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig iptables on
+	service iptables start
+fi
+;;
+disableFirewall)
+if [ "$detectedOS" = 'Ubuntu' ]; then
+	ufw disable
+fi
+if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+	chkconfig iptables off
+	service iptables stop
 fi
 ;;
 restart)

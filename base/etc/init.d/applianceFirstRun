@@ -11,7 +11,10 @@ case "$1" in
         # Enable apache on SSL
 		a2ensite default-ssl
 		/etc/init.d/apache2 restart
-
+		cp /etc/ssl/certs/ssl-cert-snakeoil.pem /var/appliance/conf/appliance.chain.pem
+		cp /etc/ssl/certs/ssl-cert-snakeoil.pem /var/appliance/conf/appliance.certificate.pem
+		cp /etc/ssl/private/ssl-cert-snakeoil.key /var/appliance/conf/appliance.private.key
+		chown openldap /var/appliance/conf/appliance.private.key
 		#Create the .applianceSetupDone file in /var/db so this doesn't run again
 		if [ -d /var/db ]; then
 			touch /var/db/.applianceSetupDone

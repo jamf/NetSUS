@@ -134,6 +134,27 @@ if ($conf->needsToChangeAnyPasses())
 			</ul>
 
 		</div>
+		</div>
+		
+		<div id="netboot-server">
+
+		<h3>LDAP Proxy Server</h3>
+
+		<div class="container">
+
+			<ul>
+
+				<li>
+					<span>LDAP Proxy Status:</span>
+					<br>
+					<br>
+					<br>
+					<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+				</li>
+
+			</ul>
+
+		</div>
 		
 	</div>
 

@@ -1,0 +1,56 @@
+# vim:syntax=apparmor
+# Last Modified: Fri Jan  4 15:18:13 2008
+# Author: Jamie Strandboge <jamie@ubuntu.com>
+
+#include <tunables/global>
+
+/usr/sbin/slapd {
+  #include <abstractions/base>
+  #include <abstractions/nameservice>
+
+  #include <abstractions/ssl_certs>
+  /etc/ssl/private/ r,
+  /etc/ssl/private/* r,
+  /var/appliance/conf/ r,
+  /var/appliance/conf/* r,
+
+  /etc/sasldb2 r,
+
+  capability dac_override,
+  capability net_bind_service,
+  capability setgid,
+  capability setuid,
+
+  /etc/gai.conf r,
+  /etc/hosts.allow r,
+  /etc/hosts.deny r,
+
+  # ldap files
+  /etc/ldap/** kr,
+  /etc/ldap/slapd.d/** rw,
+
+  # kerberos/gssapi
+  /dev/tty rw,
+  /etc/krb5.keytab kr,
+  /var/tmp/ rw,
+  /var/tmp/** rw,
+
+  # the databases and logs
+  /var/lib/ldap/ r,
+  /var/lib/ldap/** rwk,
+
+  # lock file
+  /var/lib/ldap/alock kw,
+
+  # pid files and sockets
+  /{,var/}run/slapd/* w,
+  /{,var/}run/nslcd/* w,
+
+  /usr/lib/ldap/ r,
+  /usr/lib/ldap/* mr,
+
+  /usr/sbin/slapd mr,
+
+  # Site-specific additions and overrides. See local/README for details.
+  #include <local/usr.sbin.slapd>
+}

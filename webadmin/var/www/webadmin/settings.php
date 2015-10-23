@@ -15,7 +15,7 @@ include "inc/header.php";
 
 	<li class="settings-row">
 
-		<h5 class="green">NetBoot/SUS Server</h5>
+		<h5 class="green">NetBoot/SUS/LDAP Proxy Server</h5>
 
 		<ul>
 
@@ -37,6 +37,13 @@ include "inc/header.php";
 				<a href="dateTime.php">
 					<img src="images/settings/computerCheckIn.png" alt="Date/Time Settings">
 					<span>Date/Time</span>
+				</a>
+			</li>
+			
+			<li class="settings-item">
+				<a href="certificates.php">
+					<img src="images/settings/PKI.png" alt="Certificates">
+					<span>Certificates</span>
 				</a>
 			</li>
 
