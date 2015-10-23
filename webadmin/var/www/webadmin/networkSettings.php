@@ -58,6 +58,20 @@ if (isset($_POST['SSH']))
 	}
 }
 
+if (isset($_POST['Firewall']))
+{
+	if (getFirewallstatus())
+	{
+		suExec("disableFirewall");
+		echo "<div class=\"successMessage\">Firewall Disabled.</div>";
+	}
+	else
+	{
+		suExec("enableFirewall");
+		echo "<div class=\"successMessage\">Firewall Enabled.</div>";
+	}
+}
+
 $type = getNetType();
 $dns = getCurrentNameServers();
 
@@ -122,6 +136,9 @@ window.onload = function()
 			<br>
 			<br>
 			<input type="submit" class="insideActionButton" value="<?php if (getSSHstatus()) { echo "Disable"; } else { echo "Enable"; } ?> SSH" name="SSH"/>
+			<br>
+			<br>
+			<input type="submit" class="insideActionButton" value="<?php if (getFirewallstatus()) { echo "Disable"; } else { echo "Enable"; } ?> Firewall" name="Firewall"/>
 
 		</div> <!-- end #form-inside -->
 
