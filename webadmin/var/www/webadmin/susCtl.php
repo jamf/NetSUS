@@ -8,6 +8,10 @@ if ($_GET['sync']) {
 	echo suExec("reposync");
 }
 
+if ($_GET['purge']) {
+	echo suExec("repopurge");
+}
+
 $sURL="SUS.php";
 header('Location: '. $sURL);
 
