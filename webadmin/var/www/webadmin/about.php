@@ -51,6 +51,7 @@ include "inc/header.php";
 			<li>netatalk</li>
 			<li>curl</li>
 			<li>slapd</li>
+			<li>gawk</li>
 		</ul>
 	<br/>
 	<?php } ?>	
