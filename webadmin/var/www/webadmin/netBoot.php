@@ -146,8 +146,7 @@ window.onload = validateSubnet;
 			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 			<span class="label">New NetBoot Image</span>
 			<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
-			<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton"
-								value="Upload NetBoot Image" onClick="javascript: return goTo(true, '<?php echo "smb://".$currentIP."/NetBoot"?>');"/>
+			<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
 			<br>
 
 			<span class="label">NetBoot Image</span>
@@ -192,10 +191,6 @@ window.onload = validateSubnet;
 			<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
 			<br>
 			<table class="branchesTable">
-				<?php 	
-				$branchstr = trim(suExec("getBranchlist"));
-				$branches = explode(" ",$branchstr);
-				?>
 				<tr>
 					<th>Subnet</th>
 					<th>Netmask</th>

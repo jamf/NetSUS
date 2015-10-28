@@ -21,6 +21,7 @@ class WebadminConfig
 	private $topElement;
 	private $settings;
 	private $subnets;
+	private $proxies;
 	private $autosyncbranches;
 	private $defaultpasses;
 	private $files;
@@ -29,6 +30,7 @@ class WebadminConfig
 	{
 		$this->settings = array();
 		$this->subnets = array();
+		$this->proxies = array();
 		$this->autosyncbranches = array();
 		$this->defaultpasses = array();
 		$dom = new DOMDocument;
@@ -104,7 +106,7 @@ class WebadminConfig
 	{
 		foreach($this->topElement->childNodes as $curNode)
 		{
-			if ($curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files")
+			if ($curNode->nodeName == "ldapproxies" || $curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files")
 			{
 				continue;
 			}
@@ -116,6 +118,8 @@ class WebadminConfig
 		}
 
 		$this->loadSubnets();
+		$this->loadProxies();
+		
 	}
 
 	public function saveSettings()
@@ -141,6 +145,27 @@ class WebadminConfig
 			}
 		}
 
+		// Create the ldapproxies node
+		$ldapproxies = $this->createElement("ldapproxies");
+		$this->topElement->appendChild($ldapproxies);
+
+
+		// Loop through the LDAP Proxies
+		foreach($this->proxies as $key => $value)
+		{
+			$newProxyNode = $this->createElement("ldapproxy");
+			$ldapproxies->appendChild($newProxyNode);
+			$newoutLDAP = $this->createElement("outLDAP");
+			$newoutLDAP->nodeValue = trim($value['outLDAP']);
+			$newProxyNode->appendChild($newoutLDAP);
+			$newinLDAP = $this->createElement("inLDAP");
+			$newinLDAP->nodeValue = trim($value['inLDAP']);
+			$newProxyNode->appendChild($newinLDAP);
+			$newinURL = $this->createElement("inURL");
+			$newinURL->nodeValue = trim($value['inURL']);
+			$newProxyNode->appendChild($newinURL);
+		}
+		
 		// Create the netbootsubnets node
 		$netbootsubnets = $this->createElement("netbootsubnets");
 		$this->topElement->appendChild($netbootsubnets);
@@ -215,10 +240,52 @@ class WebadminConfig
 			$this->subnets["$subnet $netmask"] = array("subnet" => $subnet, "netmask" => $netmask);
 		}
 	}
+	
+	public function loadProxies()
+	{
+		$proxynodes = $this->xmlDoc->getElementsByTagName("ldapproxy");
+		$numproxies = $proxynodes->length;
+		for ($proxyi = 0; $proxyi < $numproxies; $proxyi++)
+		{
+			$node = $proxynodes->item($proxyi)->childNodes;
+			if ($node->length != 3)
+				continue;
+			if ($node->item(0)->nodeName == "outLDAP")
+				$outLDAP = $node->item(0)->nodeValue;
+			else if ($node->item(1)->nodeName == "outLDAP")
+				$outLDAP = $node->item(1)->nodeValue;
+			else if ($node->item(2)->nodeName == "outLDAP")
+				$outLDAP = $node->item(2)->nodeValue;
+			else
+				continue;
+			if ($node->item(1)->nodeName == "inLDAP")
+				$inLDAP = $node->item(1)->nodeValue;
+			else if ($node->item(0)->nodeName == "inLDAP")
+				$inLDAP = $node->item(0)->nodeValue;
+			else if ($node->item(2)->nodeName == "inLDAP")
+				$inLDAP = $node->item(2)->nodeValue;
+			else
+				continue;
+			if ($node->item(1)->nodeName == "inURL")
+				$inURL = $node->item(1)->nodeValue;
+			else if ($node->item(0)->nodeName == "inURL")
+				$inURL = $node->item(0)->nodeValue;
+			else if ($node->item(2)->nodeName == "inURL")
+				$inURL = $node->item(2)->nodeValue;
+			else
+				continue;
+			$this->proxies["$outLDAP $inLDAP $inURL"] = array("outLDAP" => $outLDAP, "inLDAP" => $inLDAP, "inURL" => $inURL);
+		}
+	}
 
 	public function getSubnets()
 	{
 		return $this->subnets;
+	}
+	
+	public function getProxies()
+	{
+		return $this->proxies;
 	}
 
 	public function addSubnet($subnet, $netmask)
@@ -234,6 +301,20 @@ class WebadminConfig
 			return true; // True means added
 		}
 	}
+	
+	public function addProxy($outLDAP, $inLDAP, $inURL)
+	{
+		if (isset($this->proxies["$outLDAP $inLDAP $inURL"]))
+		{
+			return false; // False means duplicate
+		}
+		else
+		{
+			$this->proxies["$outLDAP $inLDAP $inURL"] = array("outLDAP" => $outLDAP, "inLDAP" => $inLDAP, "inURL" => $inURL);
+			$this->saveSettings();
+			return true; // True means added
+		}
+	}
 
 	public function deleteSubnet($subnet, $netmask)
 	{
@@ -241,6 +322,16 @@ class WebadminConfig
 		if (array_key_exists("$subnet $netmask", $this->subnets))
 		{
 			unset($this->subnets["$subnet $netmask"]);
+			$this->saveSettings();
+		}
+	}
+	
+	public function deleteProxy($outLDAP, $inLDAP, $inURL)
+	{
+		reset($this->proxies);
+		if (array_key_exists("$outLDAP $inLDAP $inURL", $this->proxies))
+		{
+			unset($this->proxies["$outLDAP $inLDAP $inURL"]);
 			$this->saveSettings();
 		}
 	}
@@ -363,6 +454,8 @@ class WebadminConfig
 		print_r($this->settings);
 		echo "Subnets: ";
 		print_r($this->subnets);
+		echo "Proxies: ";
+		print_r($this->proxies);
 		echo "AutosyncBranches: ";
 		print_r($this->autosyncbranches);
 		echo "Files: ";

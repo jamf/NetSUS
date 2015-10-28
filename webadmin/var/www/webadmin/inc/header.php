@@ -16,7 +16,7 @@ $pageURI = $parts[count($parts) -1];
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title><?php echo (isset($title) ? $title : "NetBoot/SUS Server") ?></title>
+<title><?php echo (isset($title) ? $title : "NetBoot/SUS/LDAP Proxy Server") ?></title>
 <link rel="stylesheet" href="theme/reset.css" type="text/css">
 <link rel="stylesheet" href="theme/styles.css" type="text/css">
 
@@ -43,7 +43,7 @@ $pageURI = $parts[count($parts) -1];
 
 <?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
 </head>
-<?php if (!isset($title)) { $title = "NetBoot/SUS Server Management"; } ?>
+<?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
 <body<?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?> id="dual-navigation-page">
 <!-- Begin creating tabbed navigation system here -->
 <div id="wrapper">
@@ -60,6 +60,9 @@ $pageURI = $parts[count($parts) -1];
       </aside>
 
       <div id="navigation" class="">
+        <div style="float:left">
+        	<div style="float: left; font-size: 20px; margin-top: 40px; margin-left: 5px;">Version: 4.0.0</div>
+        </div>
         
         <div id="right-links" class="hidemobile">
 
@@ -68,6 +71,9 @@ $pageURI = $parts[count($parts) -1];
               <div id="user-modal">
                 <a href="restart.php">Restart</a>
                 <a href="shutdown.php">Shut Down</a>
+                
+                <hr />
+                <a href="disablegui.php">Disable GUI</a>
                 <hr />
                 <a href="logout.php">Log Out</a>
                 <hr />

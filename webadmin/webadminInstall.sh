@@ -21,6 +21,8 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
     apt-get -qq -y install dialog >> $logFile
     apt-get -qq -y install python-m2crypto >> $logFile
     apt-get -qq -y install python-pycurl >> $logFile
+    apt-get -qq -y install gawk >> $logFile
+    
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then

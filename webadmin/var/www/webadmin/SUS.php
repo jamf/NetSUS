@@ -155,7 +155,7 @@ function validateField(fieldid, buttonid)
 									echo "checked=\"checked\"";
 								}?>
 								onChange="javascript:ajaxPost('ajax.php?service=SUS', 'mirrorpkgs=' + this.checked);"/>
-								Store software updates on the NetBoot/SUS server</span>
+								Store software updates on the NetBoot/SUS/LDAP Proxy server</span>
 				<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
 			</div>
 

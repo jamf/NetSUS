@@ -5,6 +5,8 @@
         <option value="SUS.php" <?php if ($pageURI == "SUS.php") { echo "selected"; } ?>>Software Update Server</option>
 
         <option value="netBoot.php" <?php if ($pageURI == "netBoot.php") { echo "selected"; } ?>>NetBoot Server</option>
+        
+        <option value="LDAPProxy.php" <?php if ($pageURI == "LDAPProxy.php") { echo "selected"; } ?>>LDAP Proxy</option>
 
         <option value="settings.php" <?php if ($pageURI == "settings.php") { echo "selected"; } ?>>Settings</option>
 
@@ -21,6 +23,8 @@
         <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php">Software Update Server</a></li>
 
         <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php">NetBoot Server</a></li>
+        
+        <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php">LDAP Proxy</a></li>
 
         <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php">Settings</a></li>
         
