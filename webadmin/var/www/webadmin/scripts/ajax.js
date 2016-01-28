@@ -22,3 +22,12 @@ function getPackageDetails(id)
 	var result = http.responseText;
 	return "<table style=\"width: 150px;\"><tr><td><font class=\"infoPanelFontLabel\">"+result+"</font></td></tr></table>";
 }
+
+function getPackageInfo(id)
+{
+	http = getHTTPObj();
+	http.open("GET", "ajax.php?getprodinfo=true&id="+id, false);
+	http.send();
+	return http.responseText;
+}
+
