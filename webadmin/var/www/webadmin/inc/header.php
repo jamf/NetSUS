@@ -17,10 +17,18 @@ $pageURI = $parts[count($parts) -1];
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title><?php echo (isset($title) ? $title : "NetBoot/SUS/LDAP Proxy Server") ?></title>
+
+<!-- Bootstrap CSS -->
+<link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
+
 <link rel="stylesheet" href="theme/reset.css" type="text/css">
 <link rel="stylesheet" href="theme/styles.css" type="text/css">
 
-<script type="text/javascript" src="scripts/jquery/jquery.js"></script>
+<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
+
+<!-- Bootstrap JavaScript -->
+<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
+
 <script type="text/javascript" src="scripts/scripts.js"></script>
 <!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
 <script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
@@ -30,98 +38,74 @@ $pageURI = $parts[count($parts) -1];
 <script type="text/javascript" src="scripts/ajax.js"></script>
 
 
-<!-- For non-Retina iPhone, iPod Touch, and Android 2.1+ devices: -->
-<link rel="apple-touch-icon-precomposed" href="images/touchicons/apple-touch-icon-precomposed.png">
-<!-- For first- and second-generation iPad: -->
-<link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/touchicons/apple-touch-icon-72x72-precomposed.png">
-<!-- For iPhone with high-resolution Retina display: -->
-<link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/touchicons/apple-touch-icon-114x114-precomposed.png">
-<!-- For third-generation iPad with high-resolution Retina display: -->
-<link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/touchicons/apple-touch-icon-144x144-precomposed.png">
-
-
-
 <?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
 </head>
 <?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
-<body<?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?> id="dual-navigation-page">
-<!-- Begin creating tabbed navigation system here -->
-<div id="wrapper">
-    <!-- open top -->
-    <header id="top" class="">
-      
-      <aside id="logo-dash" class="">
+<body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?> id="dual-navigation-page">
 
-				<a href="dashboard.php" title="Dashboard">
-					<img src="images/navigation/NSUS-logo.png" width="230px" height="65px" alt="NetBoot/SUS Server Dashboard" class="hidemobile">
-			        <img src="images/navigation/NSUS-logo-plain.png" alt="NetBoot/SUS Server Dashboard" class="showmobile"/>
-				</a>
-		        
-      </aside>
-
-      <div id="navigation" class="">
-        <div style="float:left">
-        	<div style="float: left; font-size: 20px; margin-top: 40px; margin-left: 5px;">Version: 4.0.0</div>
+<!-- Fixed Top Navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a id="version-number-text" class="navbar-brand text-muted">NetSUS 4.0.0</a>
         </div>
-        
-        <div id="right-links" class="hidemobile">
-
-          <div id="user" class="hidemobile">
-            <a href="#" id="user-link"><?php echo getCurrentWebUser(); ?> <img src="images/navigation/down-arrow.png" alt="Click" /></a>
-              <div id="user-modal">
-                <a href="restart.php">Restart</a>
-                <a href="shutdown.php">Shut Down</a>
-                
-                <hr />
-                <a href="disablegui.php">Disable GUI</a>
-                <hr />
-                <a href="logout.php">Log Out</a>
-                <hr />
-                <img class="handle" src="images/navigation/handle.png" alt="Handle" />
-              </div>        
-          </div>
-          <a href="settings.php" id="settings" class="" title="Settings"></a>
-
-        </div>
-
-      </div>
-      <!-- close navigation -->
-
-
-    </header>
-    <!-- close top -->
-
-
-    <!-- open notifications-mobile -->
-    <div id="notifications-mobile" class="showmobile ">
-        <a href="#" id="user-link-mobile"><?php echo getCurrentWebUser(); ?> <img src="images/navigation/down-arrow.png" alt="Click" /></a>
-        <div id="user-modal-mobile">
-          <a href="restart.php">Restart</a>
-          <a href="shutdown.php">Shut Down</a>
-          <hr />
-          <a href="logout.php">Log Out</a>
-          <hr />
-          <img class="handle" src="images/navigation/handle.png" alt="Handle" />
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?php echo getCurrentWebUser(); ?> <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="restart.php">Restart</a></li>
+                        <li><a href="shutdown.php">Shut Down</a></li>
+                        <li class="divider"></li>
+                        <li><a href="disablegui.php">Disable GUI</a></li>
+                        <li class="divider"></li>
+                        <li><a href="logout.php">Log Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="hidden-lg hidden-md hidden-sm navbar-inverse">
+                <ul class="nav navbar-nav navbar-inverse">
+                    <li class="<?php if ($pageURI == "dashboard.php") { echo "active"; } ?>"><a href="dashboard.php">Dashboard</a></li>
+                    <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php">Software Update Server</a></li>
+                    <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php">NetBoot Server</a></li>
+                    <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php">LDAP Proxy</a></li>
+                    <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php">Settings</a></li>
+                    <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php">About</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-    <!-- close notifications-mobile -->
+</nav>
 
+</div>
 
-
-    <div id="right-links-mobile" class="showmobile ">
-        <a href="settings.php" class="" id="settings-mobile"></a>
+<!-- Sidebar -->
+<div id="sidebar-wrapper" class="nav navbar-default">
+    <div id="logo-wrapper">
+        <a href="dashboard.php"><img src="images/navigation/NSUS-logo.png"></a>
     </div>
+    <div id="navbar">
+        <ul class="nav sidebar-nav">
+            <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php">Software Update Server</a></li>
+            <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php">NetBoot Server</a></li>
+            <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php">LDAP Proxy</a></li>
+            <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php">Settings</a></li>
+            <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php">About</a></li>
+        </ul>
+    </div>
+</div>
+<!-- /#sidebar-wrapper -->
+
+<!-- Page Content -->
+<div id="page-content-wrapper" class="container">
 
 
 
-    <!-- open content wrapper -->
-    <div id="content-wrapper">
-      
-      
-      <!-- open content container -->
-      <div id="content-container">
 
-        <?php include "inc/navigation.php"; ?>
 
-          <!-- open content-insdie -->
-          <div id="content-inside">
