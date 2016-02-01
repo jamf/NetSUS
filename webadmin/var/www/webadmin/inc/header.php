@@ -21,8 +21,8 @@ $pageURI = $parts[count($parts) -1];
 <!-- Bootstrap CSS -->
 <link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
 
-<link rel="stylesheet" href="theme/reset.css" type="text/css">
-<link rel="stylesheet" href="theme/styles.css" type="text/css">
+<!-- <link rel="stylesheet" href="theme/reset.css" type="text/css"> -->
+<link rel="stylesheet" href="theme/styles-fresh.css" type="text/css">
 
 <script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
 
@@ -103,7 +103,7 @@ $pageURI = $parts[count($parts) -1];
 <!-- /#sidebar-wrapper -->
 
 <!-- Page Content -->
-<div id="page-content-wrapper" class="container">
+<div id="page-content-wrapper">
 
 
 

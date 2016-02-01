@@ -9,6 +9,8 @@ ADDED STYLES 1/2016
     width: 0;
     height: 100%;
     margin-left: -220px;
+    margin-top: 0;
+    top: 0;
     overflow-y: auto;
     background-color: rgb(56, 63, 71);
     -webkit-transition: all 0.5s ease;
@@ -2566,9 +2568,7 @@ ul.sideNavigation li span.heading{
             height: 50px;
             margin-left: 25%;
         }
-        div#navigation {
-            background: #EFEFEF;
-        }
+
         div#navigation li:nth-child(2) {
             border: none;
             margin-left: -5px;
