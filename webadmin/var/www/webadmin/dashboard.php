@@ -15,8 +15,8 @@ include "inc/header.php";
 if ($conf->needsToChangeAnyPasses())
 {
 ?>
-<span class="noticeMessage">WARNING: Credentials have not been changed for the following accounts:<br>
-	<ul style="list-style-type: disc; padding-left:20px;">
+<div class="alert alert-warning alert-margin-top" role="alert"><strong>WARNING: </strong> Credentials have not been changed for the following accounts:<br>
+	<ul>
 		<?php
 		if ($conf->needsToChangePass("webaccount"))
 		{
@@ -36,56 +36,48 @@ if ($conf->needsToChangeAnyPasses())
 		}
 		?>
 	</ul>
-</span>
+</div>
 <?php
 }
 ?>
-<br>
-	<div id="software-update-server">
 
-		<h3>Software Update Server</h3>
+	<h3>Software Update Server</h3>
 
-		<div class="container">
+		<div class="alert alert-info">
+			<div class="row vertical-divider">
+				<div class="col-xs-3">
+					<strong>Last Sync:</strong>
+				</div>
+				<div class="col-xs-3">
+					<strong>Sync Status:</strong>
+				</div>
+				<div class="col-xs-3">
+					<strong>Disk Usage:</strong>
+				</div>
+				<div class="col-xs-3">
+					<strong>Number of Branches:</strong>
+				</div>
+			</div>
+			<br>
+			<div class="row vertical-divider">
 
-			<ul>
-
-				<li>
-					<span>Last Sync:</span>
-					<br>
-					<br>
-					<br>
+				<div class="col-xs-3 ">
 					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
-				</li>
-
-				<li>
-					<span>Sync Status:</span>
-					<br>
-					<br>
-					<br>
+				</div>
+				<div class="col-xs-3">
 					<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
-				</li>
-
-				<li>
-					<span>Disk Usage:</span>
-					<br>
-					<br>
-					<br>
+				</div>
+				<div class="col-xs-3">
 					<span><?php echo suExec("getsussize"); ?></span>
-				</li>
-
-				<li>
-					<span>Number of Branches:</span>
-					<br>
-					<br>
+				</div>
+				<div class="col-xs-3">
 					<span><?php echo suExec("numofbranches"); ?></span>
-				</li>
+				</div>
 
-			</ul>
+
+			</div>
 
 		</div>
-
-	</div>
-
 
 	<div id="netboot-server">
 

@@ -81,24 +81,7 @@ function validateField(fieldid, buttonid)
 }
 </script>
 
-<style>         
-  <!--       
-	@media (max-width: 600px) {
 
-		tr:first-child { display: none; }
-	
-	  td:nth-of-type(1):before { content: "Root";}
-   
-	  td:nth-of-type(2):before { content: "Name";}
-
-	  td:nth-of-type(3):before { content: "URL";}
-   
-	}
- -->
- .tablesorter {
- 	margin-bottom: 5px;
- }
-</style> 
 
 <h2>Software Update Server</h2>
 
@@ -106,38 +89,41 @@ function validateField(fieldid, buttonid)
 
 	<form action="SUS.php" method="post" name="SUS" id="SUS">
 
-		<div id="form-inside">
-
 			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
-			<span class="label">Base URL</span>
-			<span class="description">Base URL for the software update server (e.g. "https://sus.mycompany.corp")</span>
+			<span class="label label-default">Base URL</span>
+			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 			<input type="text" name="baseurl" id="baseurl" 
 							value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
 			<input type="submit" name="setbaseurl" id="setbaseurl" class="insideActionButton" value="Change URL" disabled="disabled" />
 			<br>
-			<span class="label">Branches</span>
-			<table class="tablesorter">
+			<br>
+			<span class="label label-default">Branches</span>
+			<table class="table table-responsive table-striped table-bordered table-condensed">
 				<?php	
 				$branchstr = trim(suExec("getBranchlist"));
 				$branches = explode(" ",$branchstr);
 				?>
+				<thead>
 				<tr>
-					<th class="header">Root</th>
-					<th class="header">Name</th>
-					<th class="header">URL</th>
-					<th class="header"></th>
+					<th>Root</th>
+					<th>Name</th>
+					<th>URL</th>
+					<th></th>
 				</tr>
+				</thead>
+				<tobdy>
 				<?php foreach ($branches as $key => $value) { 
 				if ($value != "") {?>
-				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
+				<tr>
 					<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
 					<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
 					<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
 					<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
 				</tr>
 				<?php } } ?>
+				</tobdy>
 			</table>
-			<span class="label">New Branch</span>
+			<span class="label label-default">New Branch</span>
 			<input type="text" name="branchname" id="branchname" value="" 
 				onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/> 
 			<input type="submit" name="addbranch" id="addbranch" class="insideActionButton" value="Add" disabled="disabled"/>
@@ -148,8 +134,9 @@ function validateField(fieldid, buttonid)
 			<?php }?>
 				</table>
 				<br>
+				<br>
 			<div class="checkboxWrapper">
-				<span class="label"><input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs" 
+				<span><input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
 								<?php if ($conf->getSetting("mirrorpkgs") == "true")
 				        {
 									echo "checked=\"checked\"";
@@ -158,13 +145,13 @@ function validateField(fieldid, buttonid)
 								Store software updates on the NetBoot/SUS/LDAP Proxy server</span>
 				<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
 			</div>
-
-			<span class="label">Manual Sync</span>
+			<br>
+			<span class="label label-default">Manual Sync</span>
 			<span class="description">Manual method for syncing the list of available updates with Apple's Software Update server</span>
 			<input type="button" value="Sync Manually" class="insideActionButton" onClick="javascript: return goTo(true, 'susCtl.php?sync=true');"/>
 			<br>
-
-			<span class="label">Daily Sync Time</span>
+			<br>
+			<span class="label label-default">Daily Sync Time</span>
 			<span class="description">Time at which to sync the list of available updates with Apple's Software Update server each day</span>
       <select id="syncsch" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
 				<option value="Off"<?php echo ($syncschedule == "Off" ? " selected=\"selected\"" : "")?>>None</option>
@@ -177,11 +164,11 @@ function validateField(fieldid, buttonid)
 				<option value="21"<?php echo ($syncschedule == "21" ? " selected=\"selected\"" : "")?>>9 p.m.</option>
 			</select>
 			<br>
+			<br>
 			<div class="labelDescriptionWrapper">
 				<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
 			</div>
 
-		</div> <!-- end #form-inside -->
 
 	</form> <!-- end form SUS -->
 
