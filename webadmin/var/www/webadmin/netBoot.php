@@ -122,80 +122,74 @@ function validateSubnet()
 window.onload = validateSubnet;
 </script>
 
-<style>         
-  <!--       
-	@media (max-width: 600px) {
-
-		tr:first-child { display: none; }
-	
-	  td:nth-of-type(1):before { content: "Subnet";}
-   
-	  td:nth-of-type(2):before { content: "Netmask";}
-   
-	}
- -->	
-</style> 
-
 <h2>NetBoot Server</h2>
 
 <div id="form-wrapper">
 
 	<form action="netBoot.php" method="post" name="NetBoot" id="NetBoot">
 
-		<div id="form-inside">
-			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
-			<span class="label">New NetBoot Image</span>
-			<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
-			<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
-			<br>
+		<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
+		<span class="label label-default">New NetBoot Image</span>
+		<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
+		<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
 
-			<span class="label">NetBoot Image</span>
-			<span class="description">NetBoot image that computers boot to</span>
-			<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
-				<?php
-				$nbidircontents = scandir($netbootimgdir);
-				$curimg = $conf->getSetting("netbootimage");
-				$i = 0;
-				foreach($nbidircontents as $item)
-				{
-					if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
-					{
-					?>
-				<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
-					<?php
-					}
-					$i++;
-				}
-				
-				if ($i == 0)
-				{
-					echo "<option value=\"\">---</option>\n";
-				}
+		<br>
+		<br>
 
+		<span class="label label-default">NetBoot Image</span>
+		<span class="description">NetBoot image that computers boot to</span>
+		<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
+			<?php
+			$nbidircontents = scandir($netbootimgdir);
+			$curimg = $conf->getSetting("netbootimage");
+			$i = 0;
+			foreach($nbidircontents as $item)
+			{
+				if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
+				{
 				?>
-			</select>
-			<br>
+			<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
+				<?php
+				}
+				$i++;
+			}
 
-			<div class="labelDescriptionWrapper">
-				<span class="label">Subnets</span>
-				<span class="description">Subnets on which to listen for the NetBoot image. One of the subnets must include the IP address of the NetBoot server</span>
-			</div>
+			if ($i == 0)
+			{
+				echo "<option value=\"\">---</option>\n";
+			}
 
+			?>
+		</select>
 
-			<span class="label">Subnet</span>
-			<input type="text" name="subnet" id="subnet" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentSubnet; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
-			<br>
+		<br>
+		<br>
 
-			<span class="label">Netmask</span>
-			<input type="text" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
-			<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
-			<br>
-			<table class="branchesTable">
+		<span class="label label-default">Subnets</span>
+		<span class="description">Subnets on which to listen for the NetBoot image. One of the subnets must include the IP address of the NetBoot server</span>
+
+		<span>Subnet</span>
+		<input type="text" name="subnet" id="subnet" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentSubnet; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+
+		<br>
+		<br>
+
+		<span class="label label-default">Netmask</span>
+		<input type="text" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+		<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
+
+		<br>
+		<br>
+
+		<table class="table-striped table-bordered table-condensed">
+			<thead>
 				<tr>
 					<th>Subnet</th>
 					<th>Netmask</th>
 					<th></th>
 				</tr>
+			</thead>
+			<tbody>
 				<?php foreach($conf->getSubnets() as $key => $value) { ?>
 				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
 					<td><?php echo $value['subnet']?></td>
@@ -203,35 +197,37 @@ window.onload = validateSubnet;
 					<td><a href="netBoot.php?service=NetBoot&deleteSubnet=<?php echo urlencode($value['subnet'])?>&deleteNetmask=<?php echo urlencode($value['netmask'])?>">Delete</a>
 				</tr>
 				<?php } ?>
-			</table>
+			</tbody>
+		</table>
 
-			<span>NetBoot Status: </span>
-			<?php
-			if (getNetBootStatus())
-			{
-				echo "<img style=\"margin-right:10px;\" src=\"images/active.gif\" alt=\"NetBoot Active\"/>";
-			}
-			else
-			{
-				echo "<img style=\"margin-right:10px;\" src=\"images/inactive.gif\" alt=\"NetBoot Inactive\"/>";
-			}
-			?>
+		<br>
 
-			<?php
-			if (getNetBootStatus())
-			{
-				?>
-				<input type="submit" class="insideActionButton" value="Disable NetBoot" name="disablenetboot" />
-			<?php
-			}
-			else
-			{
-				?>
-				<input type="submit" class="insideActionButton" value="Enable NetBoot" name="enablenetboot" onClick="javascript:return toggle_creating('enabling')" />
-				<?php
-			}
+		<span>NetBoot Status: </span>
+		<?php
+		if (getNetBootStatus())
+		{
+			echo "<img style=\"margin-right:10px;\" src=\"images/active.gif\" alt=\"NetBoot Active\"/>";
+		}
+		else
+		{
+			echo "<img style=\"margin-right:10px;\" src=\"images/inactive.gif\" alt=\"NetBoot Inactive\"/>";
+		}
+		?>
+
+		<?php
+		if (getNetBootStatus())
+		{
 			?>
-		</div> <!-- end #form-inside -->
+			<input type="submit" class="insideActionButton" value="Disable NetBoot" name="disablenetboot" />
+		<?php
+		}
+		else
+		{
+			?>
+			<input type="submit" class="insideActionButton" value="Enable NetBoot" name="enablenetboot" onClick="javascript:return toggle_creating('enabling')" />
+			<?php
+		}
+		?>
 
 	</form> <!-- end form NetBoot -->
 	<?php 

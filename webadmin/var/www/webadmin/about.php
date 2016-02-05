@@ -19,22 +19,21 @@ include "inc/header.php";
 	</style>
 
 	<h2>About</h2>
-	<br>
 
 	<h3>Open Source Acknowledgments</h3>
-	<br>
 	<div class="about">
+
 		<p class="bold">Reposado</p>
 		<p><a href="https://github.com/wdas/reposado/" target="_blank">https://github.com/wdas/reposado/</a></p>
-		<br/>
+
 
 		<p class="bold">ISC's DHCP</p>
 		<p><a href="http://www.isc.org/software/dhcp/" target="_blank">http://www.isc.org/software/dhcp/</a></p>
-		<br/>
+
 		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Ubuntu') !== FALSE) { ?>
 			<p class="bold">Ubuntu</p>
 			<p><a href="http://www.ubuntu.com/" target="_blank">http://www.ubuntu.com/</a></p>
-			<br>
+
 
 			<p>The following apt-get repository installations, including any dependencies:</p>
 			<ul>
@@ -50,12 +49,12 @@ include "inc/header.php";
 				<li>slapd</li>
 				<li>gawk</li>
 			</ul>
-			<br/>
+
 		<?php } ?>
 		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'CentOS') !== FALSE) { ?>
 			<p class="bold">CentOS</p>
 			<p><a href="http://www.centos.org" target="_blank">http://www.centos.org/</a></p>
-			<br>
+
 
 			<p>The following installations, including any dependencies:</p>
 			<ul>
@@ -71,12 +70,12 @@ include "inc/header.php";
 				<li>vim-common</li>
 				<li>slapd</li>
 			</ul>
-			<br/>
+
 		<?php } ?>
 		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Red Hat') !== FALSE) { ?>
 			<p class="bold">Red Hat</p>
 			<p><a href="https://www.redhat.com" target="_blank">https://www.redhat.com/</a></p>
-			<br>
+
 
 			<p>The following installations, including any dependencies:</p>
 			<ul>
@@ -92,24 +91,24 @@ include "inc/header.php";
 				<li>vim-common</li>
 				<li>slapd</li>
 			</ul>
-			<br/>
+
 		<?php } ?>
 	</div>
 
 
 	<h3 align="left">Support</h3>
-	<br>
+
 	<div class="about">
 		<p>
 			The NetBoot/SUS/LDAP Proxy server is distributed "as is" by JAMF Software, LLC.  For support, please use the following resource:<br/><br/>
 			<a href="https://jamfnation.jamfsoftware.com" target="_blank">https://jamfnation.jamfsoftware.com/</a><br/><br/>
 		</p>
-		<br/>
+
 	</div>
 
 
 	<h3 align="left">Additional License Information</h3>
-	<br>
+
 	<div class="about">
 		<p>
 			Copyright (C) 2015, JAMF Software, LLC<br/>

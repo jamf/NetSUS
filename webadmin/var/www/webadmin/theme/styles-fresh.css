@@ -1,28 +1,60 @@
 /*----------------------------------------------
 ADDED STYLES 1/2016
 ------------------------------------------------*/
+html {
+    overflow-x: hidden;
+}
+
+form > .container-fluid {
+    padding-left: 0;
+}
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.long-text-input {
+    width: 300px;
+}
+
+.btn-primary {
+    vertical-align: middle;
+    height: 27px;
+    background: #426daf;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    border-radius:6px;
+}
+
+.panel {
+    border: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.panel-heading .page-heading{
+    background-color: #EEE;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    font-size: 12px;
+    padding: 5px;
+}
+
+.panel-body {
+    background: #EEE;
+}
+.panel > .panel-heading {
+    background-image: none;
+    background-color: #f9f9f9;
+}
 .alert-margin-top {
     margin-top: 20px;
 }
 
 .alert-info {
+    padding: 10px;
     color:#444;
     background-color:#EEE;
     border-color:#DDD;
-}
-
-.row.vertical-divider {
-    overflow: hidden;
-}
-.row.vertical-divider > div[class^="col-"] {
-    text-align: center;
-    border-right: 1px solid #777;
-}
-.row.vertical-divider div[class^="col-"]:first-child {
-    border-left: none;
-}
-.row.vertical-divider div[class^="col-"]:last-child {
-    border-right: none;
 }
 
 #form-wrapper input.insideTableButton,
@@ -31,8 +63,8 @@ ADDED STYLES 1/2016
     -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
     -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
     box-shadow:inset 0px 1px 0px 0px #ffffff;
-    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
-    background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+    background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dadada), color-stop(1, #bababa) );
+    background:-moz-linear-gradient( center top, #dadada 5%, #bababa 100% );
     filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
     background-color:#ededed;
     -moz-border-radius:6px;
@@ -40,7 +72,7 @@ ADDED STYLES 1/2016
     border-radius:6px;
     border:1px solid #dcdcdc;
     display:inline-block;
-    color:#777777;
+    color:#555;
     font-family:arial;
     font-size:11px;
     font-weight:bold;
@@ -49,6 +81,7 @@ ADDED STYLES 1/2016
     text-shadow:1px 1px 0px #ffffff;
     margin-right: 20px;
     width: auto;
+    height: 20px;
 
 }
 
@@ -56,10 +89,20 @@ ADDED STYLES 1/2016
     width: 100%;
     height: 100%;
 }
-#form-wrapper .label {
+.label {
+    font-size: 14px;
     display: block;
-    width: 100px;
-    margin-bottom: 7px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    background: none;
+    text-align: left;
+    color: black;
+    background-color: #f6f6f6;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 6px;
+    -moz-border-radius:3px;
+    -webkit-border-radius:3px;
+    border-radius:3px;
 }
 
 #form-wrapper .description {
@@ -94,6 +137,7 @@ ADDED STYLES 1/2016
 }
 
 #page-content-wrapper {
+    position: absolute;
     padding: 20px;
     margin-top: 30px;
     width: 100%;
