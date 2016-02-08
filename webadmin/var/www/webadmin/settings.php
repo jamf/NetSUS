@@ -9,75 +9,69 @@ $title = "Settings";
 include "inc/header.php";
 
 ?>
+<h3>NetBoot/SUS/LDAP Proxy Server</h3>
 
+<div class="well">
+	<div class="row">
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="accounts.php">
+				<p><img src="images/settings/accounts.png" alt="SMB"></p>
+				<p>Accounts</p>
+			</a>
+		</div>
+		<!-- /Column -->
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="networkSettings.php">
+				<p><img src="images/settings/networkSegments.png" alt="Network Settings"></p>
+				<p>Network</p>
+			</a>
+		</div>
+		<!-- /Column -->
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="dateTime.php">
+				<p><img src="images/settings/computerCheckIn.png" alt="Date/Time Settings"></p>
+				<p>Date/Time</p>
+			</a>
+		</div>
+		<!-- /Column -->
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="certificates.php">
+				<p><img src="images/settings/PKI.png" alt="Certificates"></p>
+				<p>Certificates</p>
+			</a>
+		</div>
+		<!-- /Column -->
+	</div>
+	<!-- /Row -->
+</div>
 
-<ul id="settings-box">
+<h3>Shares</h3>
 
-	<li class="settings-row">
-
-		<h5 class="green">NetBoot/SUS/LDAP Proxy Server</h5>
-
-		<ul>
-
-			<li class="settings-item">
-				<a href="accounts.php">
-					<img src="images/settings/accounts.png" alt="SMB">
-					<span>Accounts</span>
-				</a>
-			</li>
-
-			<li class="settings-item">
-				<a href="networkSettings.php">
-					<img src="images/settings/networkSegments.png" alt="Network Settings">
-					<span>Network</span>
-				</a>
-			</li>
-
-			<li class="settings-item">
-				<a href="dateTime.php">
-					<img src="images/settings/computerCheckIn.png" alt="Date/Time Settings">
-					<span>Date/Time</span>
-				</a>
-			</li>
-			
-			<li class="settings-item">
-				<a href="certificates.php">
-					<img src="images/settings/PKI.png" alt="Certificates">
-					<span>Certificates</span>
-				</a>
-			</li>
-
-		</ul>
-
-	</li>
-
-	<li class="settings-row">
-
-		<h5 class="green">Shares</h5>
-
-		<ul>
-
-			<li class="settings-item">
-				<a href="AFP.php">
-					<img src="images/settings/categories.png" alt="AFP">
-					<span>AFP</span>
-				</a>
-			</li>
-
-			<li class="settings-item">
-				<a href="SMB.php">
-					<img src="images/settings/categories.png" alt="SMB">
-					<span>SMB</span>
-				</a>
-			</li>
-
-		</ul>
-
-	</li>
-
-
-</ul>
-
+<div class="well">
+	<div class="row">
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="AFP.php">
+				<p><img src="images/settings/categories.png" alt="AFP"></p>
+				<p>AFP</p>
+			</a>
+		</div>
+		<!-- /Column -->
+		<!-- Column -->
+		<div class="col-xs-3 col-sm-2 settings-item">
+			<a href="SMB.php">
+				<p><img src="images/settings/categories.png" alt="SMB"></p>
+				<p>SMB</p>
+			</a>
+		</div>
+		<!-- /Column -->
+	</div>
+	<!-- /Row -->
+</div>
 
 <?php include "inc/footer.php"; ?>
 

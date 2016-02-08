@@ -130,13 +130,12 @@ window.onload = validateSubnet;
 
 		<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 		<span class="label label-default">New NetBoot Image</span>
-		<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
-		<input type="button" name="uploadnbi" id="uploadnbi" class="insideActionButton" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
 
-		<br>
-		<br>
+		<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
+		<input type="button" name="uploadnbi" id="uploadnbi" class="btn btn-sm btn-primary" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
 
 		<span class="label label-default">NetBoot Image</span>
+
 		<span class="description">NetBoot image that computers boot to</span>
 		<select style="min-width:100px;" name="NetBootImage" id="NetBootImage" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
 			<?php
@@ -162,21 +161,17 @@ window.onload = validateSubnet;
 			?>
 		</select>
 
-		<br>
-		<br>
-
 		<span class="label label-default">Subnets</span>
+
 		<span class="description">Subnets on which to listen for the NetBoot image. One of the subnets must include the IP address of the NetBoot server</span>
 
 		<span>Subnet</span>
 		<input type="text" name="subnet" id="subnet" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentSubnet; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
 
-		<br>
-		<br>
-
 		<span class="label label-default">Netmask</span>
+
 		<input type="text" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
-		<input type="submit" name="addsubnet" id="addsubnet" class="insideActionButton" value="Add" disabled="disabled" />
+		<input type="submit" name="addsubnet" id="addsubnet" class="btn btn-sm btn-primary" value="Add" disabled="disabled" />
 
 		<br>
 		<br>
@@ -224,7 +219,7 @@ window.onload = validateSubnet;
 		else
 		{
 			?>
-			<input type="submit" class="insideActionButton" value="Enable NetBoot" name="enablenetboot" onClick="javascript:return toggle_creating('enabling')" />
+			<input type="submit" class="btn btn-sm btn-primary" value="Enable NetBoot" name="enablenetboot" onClick="javascript:return toggle_creating('enabling')" />
 			<?php
 		}
 		?>

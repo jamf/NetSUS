@@ -42,157 +42,157 @@ if ($conf->needsToChangeAnyPasses())
 ?>
 	<h3>Software Update Server</h3>
 
-	<div class="alert alert-info">
-	<div class="row">
-		<!-- Column -->
-		<div class="col-xs-6 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Last Sync</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
-				</div>
-			</div>
-		</div>
-		<!-- /Column -->
-
-		<!-- Column -->
-		<div class="col-xs-6 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Sync Status</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+	<div class="well">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-6 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Last Sync</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Column -->
+			<!-- /Column -->
 
-		<div class="clearfix visible-xs-block visible-sm-block"></div>
-
-		<!-- Column -->
-		<div class="col-xs-6 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Disk Usage</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("getsussize"); ?></span>
+			<!-- Column -->
+			<div class="col-xs-6 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Sync Status</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Column -->
+			<!-- /Column -->
 
-		<!-- Column -->
-		<div class="col-xs-6 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Number of Branches</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("numofbranches"); ?></span>
+			<div class="clearfix visible-xs-block visible-sm-block"></div>
+
+			<!-- Column -->
+			<div class="col-xs-6 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Disk Usage</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("getsussize"); ?></span>
+					</div>
 				</div>
 			</div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-6 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Number of Branches</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("numofbranches"); ?></span>
+					</div>
+				</div>
+			</div>
+			<!-- /Column -->
 		</div>
-		<!-- /Column -->
-	</div>
-	<!-- /Row -->
+		<!-- /Row -->
 	</div>
 
 	<h3>NetBoot Server</h3>
 
-	<div class="alert alert-info">
-	<div class="row">
-		<!-- Column -->
-		<div class="col-xs-4 col-md-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>DHCP Status</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php if (getNetBootStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
-				</div>
-			</div>
-		</div>
-		<!-- /Column -->
-
-		<!-- Column -->
-		<div class="col-xs-4 col-md-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>NetBoot Image Size</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("netbootusage"); ?></span>
+	<div class="well">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>DHCP Status</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php if (getNetBootStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Column -->
+			<!-- /Column -->
 
-		<!-- Column -->
-		<div class="col-xs-4 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Active SMB Connections</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("smbconns"); ?></span>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>NetBoot Image Size</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("netbootusage"); ?></span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Column -->
+			<!-- /Column -->
 
-		<div class="clearfix visible-xs-block visible-sm-block"></div>
-
-		<!-- Column -->
-		<div class="col-xs-4 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Active AFP Connections</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("afpconns"); ?></span>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Active SMB Connections</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("smbconns"); ?></span>
+					</div>
 				</div>
 			</div>
-		</div>
-		<!-- /Column -->
+			<!-- /Column -->
 
-		<!-- Column -->
-		<div class="col-xs-4 col-md-2">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Shadow File Usage</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php echo suExec("shadowusage");?></span>
+			<div class="clearfix visible-xs-block visible-sm-block"></div>
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Active AFP Connections</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("afpconns"); ?></span>
+					</div>
 				</div>
 			</div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>Shadow File Usage</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php echo suExec("shadowusage");?></span>
+					</div>
+				</div>
+			</div>
+			<!-- /Column -->
 		</div>
-		<!-- /Column -->
-	</div>
-	<!-- /Row -->
+		<!-- /Row -->
 	</div>
 
 	<h3>LDAP Proxy Server</h3>
 
-	<div class="alert alert-info">
-	<div class="row">
-		<!-- Column -->
-		<div class="col-xs-4 col-md-3">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>LDAP Proxy Status</strong>
-				</div>
-				<div class="panel-body">
-					<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+	<div class="well">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-4 col-md-3">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<strong>LDAP Proxy Status</strong>
+					</div>
+					<div class="panel-body">
+						<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+					</div>
 				</div>
 			</div>
+			<!-- /Column -->
 		</div>
-		<!-- /Column -->
-	</div>
-	<!-- /Row -->
+		<!-- /Row -->
 	</div>
 
 

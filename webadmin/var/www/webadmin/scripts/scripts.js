@@ -119,23 +119,6 @@ function disableForm(){
 	$('#form-inside').find('input, textarea, button, select, submit').attr('disabled','disabled');
 }
 
-function changeTab(tab){
-	$('#form-wrapper ul.tabs').find('li').attr('class','');
-	$('#form-inside').find('div.pane').attr('style','display:none');
-	
-	document.getElementById(tab).setAttribute("class", "active");
-	document.getElementById(tab + "_Pane").style.display="";
-	
-	if(document.getElementById("tab")!=null){
-		if(document.getElementById("tab").value=="null"){
-			document.getElementById("tab").value = "";
-		}else{
-			document.getElementById("tab").value = tab;
-		}
-	}
-}
-
-
 function getXMLValue(xmlDocument, elementName){
 	if(xmlDocument.getElementsByTagName(elementName).length != 0){
 		if(xmlDocument.getElementsByTagName(elementName)[0].childNodes[0]!=null){
