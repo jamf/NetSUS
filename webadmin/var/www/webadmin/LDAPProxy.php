@@ -91,7 +91,7 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 
 		<span class="description">Proxies that will be available for use.  You can connect to several directories or to several specific OU's in one directory.</span>
 
-		<span class="label">Exposed Distinguished Name</span>
+		<span class="label label-default">Exposed Distinguished Name</span>
 		<span class="description">Example: DC=jss,DC=corp</span>
 		<input type="text" name="outLDAP" id="outLDAP" value="" />
 

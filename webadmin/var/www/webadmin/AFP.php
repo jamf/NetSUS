@@ -52,60 +52,51 @@ if (isset($_POST['afppass']))
 // }
 </script>
 
-<style>
-	#restarting li { display: inline; list-style-type: none; font-size: 20px; } 
-	#restarting li:last-child { vertical-align: 15px; }
-</style>
-
-<div id="restarting" style="display:none;">
-	<ul>
-		<li><img src="images/progress.gif"></li>
-		<li>Restarting...</li>
-	</ul>
+<div id="restarting" class="alert alert-warning alert-margin-top">
+	<span><img src="images/progress.gif" width="25"> Restarting...</span>
 </div>
 
 <?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"errorMessage\" >ERROR: " . $accounterror . "</div>" ?>
+	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
 <?php } ?>
 
 <?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"successMessage\">" . $accountsuccess . "</div>" ?></span>
+	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
 <h2>AFP</h2>
+
+<ul class="nav nav-tabs"></ul>
 
 <div id="form-wrapper">
 
 	<form action="AFP.php" method="post" name="AFP" id="AFP">
 
-		<div id="form-inside">
+		<span class="label label-short">AFP Service</span>
+		<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
+		<br>
 
-			<span class="label">AFP Service</span>
-			<input type="button" value="Restart" class="insideActionButton" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
-			<br>
+		<span class="label label-short">New Password</span>
+		<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+		<br>
 
-			<span class="label">New Password</span>
-			<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-			<br>
+		<span class="label label-short">Verify New Password</span>
+		<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+		<br>
+		<br>
 
-			<span class="label">Verify New Password</span>
-			<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-			<br>
-			<input type="submit" name="afppass" id="afppass" value="Save" class="insideActionButton" />
-
-		</div> <!-- end #form-inside -->
-
-		<div id="form-buttons">
-
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='settings.php'">
-
-			</div>
-
-		</div>
+		<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-sm btn-primary" />
+		<br>
+		<br>
 
 	</form> <!-- end AFP form -->
+
+	<ul class="nav nav-tabs"></ul>
+
+	<br>
+
+	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
+
 
 </div><!--  end #form-wrapper -->
 

@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="10;url=index.php">';
-	echo '<div class="noticeMessage">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
+	echo '<div class="alert alert-warning alert-margin-top">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
 	
 		$conf->setSetting("webadmingui", "Disabled");
 
@@ -37,30 +37,26 @@ session_destroy();
 
 <h2>Disable GUI</h2>
 
+<ul class="nav nav-tabs"></ul>
+
 <div id="form-wrapper">
 
 	<form action="disablegui.php" method="POST" name="disablegui" id="disablegui" >
 
-		<div id="form-inside">
+		<br>
 
-			<span class="label">Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</span>
-			<br>
+		<p>Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</p>
 
-			<input type="submit" id="confirm" name="confirm" class="insideActionButton" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
-
-		</div> <!-- end #form-inside -->
-
-		<div id="form-buttons">
-
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
-
-			</div>
-
-		</div>
+		<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+		<br>
+		<br>
 
 	</form> <!-- end form Restart -->
+
+	<ul class="nav nav-tabs"></ul>
+	<br>
+
+	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
 
 </div><!--  end #form-wrapper -->
 

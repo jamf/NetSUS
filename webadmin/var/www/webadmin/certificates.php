@@ -13,41 +13,41 @@ if (isset($_POST['privatekey']) && isset($_POST['certificate']) && isset($_POST[
 {
 	if(openssl_pkey_get_private($_POST['privatekey']) === FALSE)
 	{
-	echo "<div class=\"errorMessage\">ERROR: Unable to read the private key, aborting</div>";
+	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to read the private key, aborting</div>";
 	return;
 	}	
 	if(openssl_x509_read($_POST['certificate']) === FALSE)
 	{
-	echo "<div class=\"errorMessage\">ERROR: Unable to read the certificate, aborting</div>";
+	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to read the certificate, aborting</div>";
 	return;
 	}
 	
 	if(openssl_x509_read($_POST['chain']) === FALSE)
 	{
-	echo "<div class=\"errorMessage\">ERROR: Unable to read the chain, aborting</div>";
+	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to read the chain, aborting</div>";
 	return;
 	}
 	
 suExec("touchconf \"/var/appliance/conf/appliance.private.key\"");	
 	if(file_put_contents("/var/appliance/conf/appliance.private.key", $_POST['privatekey']) === FALSE)
 	{
-		echo "<div class=\"errorMessage\">ERROR: Unable to update appliance.private.key</div>";
+		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update appliance.private.key</div>";
 		return;
 	}
 suExec("touchconf \"/var/appliance/conf/appliance.certificate.pem\"");
 	if(file_put_contents("/var/appliance/conf/appliance.certificate.pem", $_POST['certificate']) === FALSE)
 	{
-		echo "<div class=\"errorMessage\">ERROR: Unable to update appliance.certificate.pem</div>";
+		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update appliance.certificate.pem</div>";
 		return;
 	}
 suExec("touchconf \"/var/appliance/conf/appliance.chain.pem\"");
 	if(file_put_contents("/var/appliance/conf/appliance.chain.pem", $_POST['chain']) === FALSE)
 	{
-		echo "<div class=\"errorMessage\">ERROR: Unable to update appliance.chain.pem</div>";
+		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update appliance.chain.pem</div>";
 		return;
 	}
 suExec("updateCert");
-echo "<div class=\"successMessage\">Configuration saved.  Restart required.</div>";
+echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  Restart required.</div>";
 }
 
 
@@ -55,37 +55,37 @@ echo "<div class=\"successMessage\">Configuration saved.  Restart required.</div
 
 <h2>Certificates</h2>
 
+<ul class="nav nav-tabs"></ul>
+
 <div id="form-wrapper">
 
 	<form action="certificates.php" method="post" name="certificates" id="certificates">
 
-		<div id="form-inside">
+		<div class="row">
+			<div class="col-xs-12 col-sm-8 col-md-6">
 
-			<span class="label">Private Key</span>
-			<textarea class="wide" name="privatekey" cols="40" rows="40"></textarea>
-			<br>
-			<span class="label">Certificate</span>
-			<textarea class="wide" name="certificate" cols="40" rows="40"></textarea>
-			<br>
-			<span class="label">Chain</span>
-			<textarea class="wide" name="chain" cols="40" rows="40"></textarea>
-			<br>
-			
-			<input type="submit" name="certs" id="certs" class="insideActionButton" value="Save" />
+				<span class="label label-default">Private Key</span>
+				<textarea class="form-control" name="privatekey" rows="3"></textarea>
 
-		</div> <!-- end #form-inside -->
+				<span class="label label-default">Certificate</span>
+				<textarea class="form-control" name="certificate" rows="3"></textarea>
 
-		<div id="form-buttons">
+				<span class="label label-default">Chain</span>
+				<textarea class="form-control" name="chain" rows="3"></textarea>
+				<br>
 
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='settings.php'">
+				<input type="submit" name="certs" id="certs" class="btn btn-sm btn-primary" value="Save" />
+				<br>
+				<br>
 
 			</div>
-
 		</div>
-
 	</form> <!-- end SMB form -->
+
+	<ul class="nav nav-tabs"></ul>
+	<br>
+
+	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 </div><!--  end #form-wrapper -->
 

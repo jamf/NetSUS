@@ -36,64 +36,53 @@ if (isset($_POST['smbpass']))
 
 ?>
 
-<style> 
-	/*#restarting { display: none; }*/
-	#restarting li { display: inline; list-style-type: none; font-size: 20px; } 
-	#restarting li:last-child { vertical-align: 15px; }
-</style>
-
-<div id="restarting" style="display:none;">
-	<ul>
-		<li><img src="images/progress.gif"></li>
-		<li>Restarting...</li>
-	</ul>
+<div id="restarting" class="alert alert-warning alert-margin-top">
+	<span><img src="images/progress.gif" width="25"> Restarting...</span>
 </div>
 
 <?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"errorMessage\" >ERROR: " . $accounterror . "</div>" ?>
+	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
 <?php } ?>
 
 <?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"successMessage\">" . $accountsuccess . "</div>" ?></span>
+	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
 <h2>SMB</h2>
+
+<ul class="nav nav-tabs"></ul>
 
 <div id="form-wrapper">
 
 	<form action="SMB.php" method="post" name="SMB" id="SMB">
 
-		<div id="form-inside">
+		<span class="label label-short">SMB Service</span>
+		<input type="button" value="Restart" class="btn btn-sm btn-primary"
+						onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
+		<br>
 
-			<span class="label">SMB Service</span>
-			<input type="button" value="Restart" class="insideActionButton" 
-							onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
-			<br>
+		<span class="label label-short">New Password</span>
+		<input type="password" name="smbpass1" id="smbpass1" value="" placeholder="[Required]"
+						onKeyUp="validatePW();" onChange="validatePW();" />
+		<br>
 
-			<span class="label">New Password</span>
-			<input type="password" name="smbpass1" id="smbpass1" value="" placeholder="[Required]"
-							onKeyUp="validatePW();" onChange="validatePW();" />
-			<br>
+		<span class="label label-short">Confirm New Password</span>
+		<input type="password" name="smbpass2" id="smbpass2" value="" placeholder="[Required]"
+						onKeyUp="validatePW();" onChange="validatePW();" />
+		<br>
+		<br>
 
-			<span class="label">Confirm New Password</span>
-			<input type="password" name="smbpass2" id="smbpass2" value="" placeholder="[Required]"
-							onKeyUp="validatePW();" onChange="validatePW();" />
-			<br>
-			<input type="submit" name="smbpass" id="smbpass" class="insideActionButton" value="Save" />
-
-		</div> <!-- end #form-inside -->
-
-		<div id="form-buttons">
-
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='settings.php'">
-
-			</div>
-
-		</div>
+		<input type="submit" name="smbpass" id="smbpass" class="btn btn-sm btn-primary" value="Save" />
+		<br>
+		<br>
 
 	</form> <!-- end SMB form -->
+
+	<ul class="nav nav-tabs"></ul>
+
+	<br>
+
+	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 </div><!--  end #form-wrapper -->
 

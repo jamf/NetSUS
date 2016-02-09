@@ -85,7 +85,6 @@ $title = "Accounts";
 
 include "inc/header.php";
 
-
 ?>
 
 <?php if ($accounterror != "") { ?>
@@ -100,70 +99,76 @@ include "inc/header.php";
 
 <div id="form-wrapper">
 
-		<ul class="nav nav-tabs" id="top-tabs">
-			<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
-			<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
-		</ul>
+	<ul class="nav nav-tabs" id="top-tabs">
+		<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
+		<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
+	</ul>
 
-		<div class="tab-content">
+	<div class="tab-content">
 
-			<div class="tab-pane active" id="webadmin-tab">
+		<div class="tab-pane active" id="webadmin-tab">
 
-				<form method="POST" name="WebAdmin" id="WebAdmin" >
-						<input type="hidden" name="userAction" value="WebAdmin">
+			<form method="POST" name="WebAdmin" id="WebAdmin">
+					<input type="hidden" name="userAction" value="WebAdmin">
 
-						<span class="label">Current Username</span>
-						<input type="text" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
-						<br>
+					<span class="label label-short">Current Username</span>
+					<input type="text" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
+					<br>
 
-						<span class="label">Current Password</span>
-						<input type="password" name="confirmold" id="confirmold" value="" />
-						<br>
+					<span class="label label-short">Current Password</span>
+					<input type="password" name="confirmold" id="confirmold" value="" />
+					<br>
 
-						<span class="label">New Username</span>
-						<input type="text" name="username" id="username" value="<?php echo getCurrentWebUser();?>" />
-						<br>
+					<span class="label label-short">New Username</span>
+					<input type="text" name="username" id="username" value="<?php echo getCurrentWebUser();?>" />
+					<br>
 
-						<span class="label">New Password</span>
-						<input type="password" name="password" id="password" value="" />
-						<br>
+					<span class="label label-short">New Password</span>
+					<input type="password" name="password" id="password" value="" />
+					<br>
 
-						<span class="label">Verify New Password</span>
-						<input type="password" name="confirm" id="confirm" value="" />
-						<br>
+					<span class="label label-short">Verify New Password</span>
+					<input type="password" name="confirm" id="confirm" value="" />
 
-						<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="insideActionButton" />
-				</form>
+					<br>
+					<br>
 
-			</div>
+					<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-sm btn-primary" />
+			</form>
+		</div>
 
-			<div class="tab-pane" id="shell-tab">
+		<div class="tab-pane" id="shell-tab">
 
-				<form method="POST" name="ShellForm" id="ShellForm">
-						<input type="hidden" name="userAction" value="Shell">
+			<form method="POST" name="ShellForm" id="ShellForm">
+					<input type="hidden" name="userAction" value="Shell">
 
-						<span class="label">New Username</span>
-						<input type="text" name="shellUsername" id="shellUsername" value="<?php echo $conf->getSetting("shelluser")?>" />
-						<br>
+					<span class="label label-short">New Username</span>
+					<input type="text" name="shellUsername" id="shellUsername" value="<?php echo $conf->getSetting("shelluser")?>" />
+					<br>
 
-						<span class="label">New Password</span>
-						<input type="password" name="shellPassword" id="shellPassword" value="" />
-						<br>
+					<span class="label label-short">New Password</span>
+					<input type="password" name="shellPassword" id="shellPassword" value="" />
+					<br>
 
-						<span class="label">Verify New Password</span>
-						<input type="password" name="shellConfirm" id="shellConfirm" value="" />
-						<br>
+					<span class="label label-short">Verify New Password</span>
+					<input type="password" name="shellConfirm" id="shellConfirm" value="" />
 
-						<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="insideActionButton" />
-				</form>
+					<br>
+					<br>
 
-			</div>
+					<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-sm btn-primary" />
+			</form>
+		</div>
 
-		</div> <!-- end .tab-content -->
+	</div> <!-- end .tab-content -->
 
-		<br>
+	<br>
 
-		<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='settings.php'">
+	<ul class="nav nav-tabs"></ul>
+
+	<br>
+
+	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 
 </div><!--  end #form-wrapper -->
