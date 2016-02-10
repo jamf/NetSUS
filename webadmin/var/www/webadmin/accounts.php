@@ -108,57 +108,59 @@ include "inc/header.php";
 
 		<div class="tab-pane active" id="webadmin-tab">
 
-			<form method="POST" name="WebAdmin" id="WebAdmin">
-					<input type="hidden" name="userAction" value="WebAdmin">
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-					<span class="label label-short">Current Username</span>
-					<input type="text" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
-					<br>
+					<form method="POST" name="WebAdmin" id="WebAdmin">
+							<input type="hidden" name="userAction" value="WebAdmin">
 
-					<span class="label label-short">Current Password</span>
-					<input type="password" name="confirmold" id="confirmold" value="" />
-					<br>
+							<span class="label label-default">Current Username</span>
+							<input type="text" class="form-control" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
 
-					<span class="label label-short">New Username</span>
-					<input type="text" name="username" id="username" value="<?php echo getCurrentWebUser();?>" />
-					<br>
+							<span class="label label-default">Current Password</span>
+							<input type="password" name="confirmold" id="confirmold" class="form-control"  value="" />
 
-					<span class="label label-short">New Password</span>
-					<input type="password" name="password" id="password" value="" />
-					<br>
+							<span class="label label-default">New Username</span>
+							<input type="text" name="username" id="username" class="form-control"  value="<?php echo getCurrentWebUser();?>" />
 
-					<span class="label label-short">Verify New Password</span>
-					<input type="password" name="confirm" id="confirm" value="" />
+							<span class="label label-default">New Password</span>
+							<input type="password" name="password" id="password" class="form-control"  value="" />
 
-					<br>
-					<br>
+							<span class="label label-default">Verify New Password</span>
+							<input type="password" name="confirm" id="confirm" class="form-control"  value="" />
 
-					<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-sm btn-primary" />
-			</form>
-		</div>
+							<br>
+
+							<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-sm btn-primary" />
+					</form>
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+		</div><!-- /.tab-pane -->
 
 		<div class="tab-pane" id="shell-tab">
 
-			<form method="POST" name="ShellForm" id="ShellForm">
-					<input type="hidden" name="userAction" value="Shell">
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-					<span class="label label-short">New Username</span>
-					<input type="text" name="shellUsername" id="shellUsername" value="<?php echo $conf->getSetting("shelluser")?>" />
-					<br>
+					<form method="POST" name="ShellForm" id="ShellForm">
+						<input type="hidden" name="userAction" value="Shell">
 
-					<span class="label label-short">New Password</span>
-					<input type="password" name="shellPassword" id="shellPassword" value="" />
-					<br>
+						<span class="label label-default">New Username</span>
+						<input type="text" name="shellUsername" id="shellUsername" class="form-control" value="<?php echo $conf->getSetting("shelluser")?>" />
 
-					<span class="label label-short">Verify New Password</span>
-					<input type="password" name="shellConfirm" id="shellConfirm" value="" />
+						<span class="label label-default">New Password</span>
+						<input type="password" name="shellPassword" id="shellPassword" class="form-control"  value="" />
 
-					<br>
-					<br>
+						<span class="label label-default">Verify New Password</span>
+						<input type="password" name="shellConfirm" id="shellConfirm" class="form-control"  value="" />
 
-					<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-sm btn-primary" />
-			</form>
-		</div>
+						<br>
+
+						<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-sm btn-primary" />
+					</form>
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+		</div><!-- /.tab-pane -->
 
 	</div> <!-- end .tab-content -->
 

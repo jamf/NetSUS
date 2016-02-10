@@ -54,29 +54,30 @@ if (isset($_POST['smbpass']))
 
 <div id="form-wrapper">
 
-	<form action="SMB.php" method="post" name="SMB" id="SMB">
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-		<span class="label label-short">SMB Service</span>
-		<input type="button" value="Restart" class="btn btn-sm btn-primary"
-						onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
-		<br>
+			<form action="SMB.php" method="post" name="SMB" id="SMB">
 
-		<span class="label label-short">New Password</span>
-		<input type="password" name="smbpass1" id="smbpass1" value="" placeholder="[Required]"
-						onKeyUp="validatePW();" onChange="validatePW();" />
-		<br>
+				<span class="label label-default">SMB Service</span>
+				<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
+				<br>
 
-		<span class="label label-short">Confirm New Password</span>
-		<input type="password" name="smbpass2" id="smbpass2" value="" placeholder="[Required]"
-						onKeyUp="validatePW();" onChange="validatePW();" />
-		<br>
-		<br>
+				<span class="label label-default">New Password</span>
+				<input type="password" name="smbpass1" id="smbpass1" class="form-control" value="" placeholder="[Required]" onKeyUp="validatePW();" onChange="validatePW();" />
 
-		<input type="submit" name="smbpass" id="smbpass" class="btn btn-sm btn-primary" value="Save" />
-		<br>
-		<br>
+				<span class="label label-default">Confirm New Password</span>
+				<input type="password" name="smbpass2" id="smbpass2" class="form-control" value="" placeholder="[Required]" onKeyUp="validatePW();" onChange="validatePW();" />
+				<br>
 
-	</form> <!-- end SMB form -->
+				<input type="submit" name="smbpass" id="smbpass" class="btn btn-sm btn-primary" value="Save" />
+				<br>
+				<br>
+
+			</form> <!-- end SMB form -->
+
+		</div>
+	</div>
 
 	<ul class="nav nav-tabs"></ul>
 

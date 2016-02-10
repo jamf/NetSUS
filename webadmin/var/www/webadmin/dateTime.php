@@ -30,29 +30,34 @@ if (isset($_POST['SaveDateTime'])) {
 
 <div id="form-wrapper">
 
-	<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
-		<input type="hidden" name="userAction" value="DateTime">
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-		<span class="label label-short">Current Time</span>
-		<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
-		<span><?php print getLocalTime();?></span>
-		<br>
+			<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
+				<input type="hidden" name="userAction" value="DateTime">
 
-		<span class="label label-short">Current Time Zone</span>
-		<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
-		<span><?php echo getSystemTimeZoneMenu();?></span>
-		<br>
+				<span class="label label-default">Current Time</span>
+				<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
+				<span><?php print getLocalTime();?></span>
+				<br>
 
-		<span class="label label-short">Network Time Server</span>
-		<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-		<input type="text" name="timeserver" id="timeserver" value="<?php echo getCurrentTimeServer();?>" />
+				<span class="label label-default">Current Time Zone</span>
+				<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
+				<span><?php echo getSystemTimeZoneMenu();?></span>
+				<br>
 
-		<br>
-		<br>
+				<span class="label label-default">Network Time Server</span>
+				<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
+				<input type="text" name="timeserver" id="timeserver" class="form-control" value="<?php echo getCurrentTimeServer();?>" />
 
-		<input type="submit" class="btn btn-sm btn-primary" value="Save" name="SaveDateTime"/>
+				<br>
 
-	</form>
+				<input type="submit" class="btn btn-sm btn-primary" value="Save" name="SaveDateTime"/>
+
+			</form>
+
+		</div><!-- /.col -->
+	</div><!-- /.row -->
 
 	<br>
 
@@ -62,6 +67,7 @@ if (isset($_POST['SaveDateTime'])) {
 
 	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
-</div><!--  end #form-wrapper -->
+</div><!-- /#form-wrapper -->
+
 
 <?php include "inc/footer.php"; ?>

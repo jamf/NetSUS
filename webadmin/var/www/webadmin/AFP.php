@@ -70,26 +70,30 @@ if (isset($_POST['afppass']))
 
 <div id="form-wrapper">
 
-	<form action="AFP.php" method="post" name="AFP" id="AFP">
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-		<span class="label label-short">AFP Service</span>
-		<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
-		<br>
+			<form action="AFP.php" method="post" name="AFP" id="AFP">
 
-		<span class="label label-short">New Password</span>
-		<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-		<br>
+				<span class="label label-default">AFP Service</span>
+				<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
+				<br>
 
-		<span class="label label-short">Verify New Password</span>
-		<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-		<br>
-		<br>
+				<span class="label label-default">New Password</span>
+				<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" class="form-control" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 
-		<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-sm btn-primary" />
-		<br>
-		<br>
+				<span class="label label-default">Confirm New Password</span>
+				<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" class="form-control" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+				<br>
 
-	</form> <!-- end AFP form -->
+				<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-sm btn-primary" />
+				<br>
+				<br>
+
+			</form> <!-- end AFP form -->
+
+		</div>
+	</div>
 
 	<ul class="nav nav-tabs"></ul>
 
