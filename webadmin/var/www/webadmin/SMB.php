@@ -36,26 +36,26 @@ if (isset($_POST['smbpass']))
 
 ?>
 
-<div id="restarting" class="alert alert-warning alert-margin-top">
-	<span><img src="images/progress.gif" width="25"> Restarting...</span>
-</div>
-
-<?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
-<?php } ?>
-
-<?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
-<?php } ?>
-
 <h2>SMB</h2>
-
-<ul class="nav nav-tabs"></ul>
 
 <div id="form-wrapper">
 
 	<div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+
+			<hr>
+
+			<div id="restarting" class="alert alert-warning alert-margin-top">
+				<span><img src="images/progress.gif" width="25"> Restarting...</span>
+			</div>
+
+			<?php if ($accounterror != "") { ?>
+				<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
+			<?php } ?>
+
+			<?php if ($accountsuccess != "") { ?>
+				<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
+			<?php } ?>
 
 			<form action="SMB.php" method="post" name="SMB" id="SMB">
 
@@ -70,20 +70,18 @@ if (isset($_POST['smbpass']))
 				<input type="password" name="smbpass2" id="smbpass2" class="form-control" value="" placeholder="[Required]" onKeyUp="validatePW();" onChange="validatePW();" />
 				<br>
 
-				<input type="submit" name="smbpass" id="smbpass" class="btn btn-sm btn-primary" value="Save" />
+				<input type="submit" name="smbpass" id="smbpass" class="btn btn-primary" value="Save" />
 				<br>
 				<br>
 
 			</form> <!-- end SMB form -->
 
+			<hr>
+			<br>
+			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+
 		</div>
 	</div>
-
-	<ul class="nav nav-tabs"></ul>
-
-	<br>
-
-	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 </div><!--  end #form-wrapper -->
 

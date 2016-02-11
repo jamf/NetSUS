@@ -90,8 +90,6 @@ window.onload = function()
 
 <h2>Network</h2>
 
-<ul class="nav nav-tabs"></ul>
-
 <div id="form-wrapper">
 
 	<form action="networkSettings.php" method="post" name="NetworkSettings" id="NetworkSettings">
@@ -99,7 +97,12 @@ window.onload = function()
 		<input type="hidden" name="userAction" value="Network">
 
 		<div class="row">
+			<div class="col-xs-12 col-md-8 col-lg-6">
+				<hr>
+			</div>
+		</div>
 
+		<div class="row">
 			<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 
 				<span class="label label-default">Hostname</span>
@@ -156,16 +159,17 @@ window.onload = function()
 
 		<br>
 
-		<input type="submit" class="btn btn-sm btn-primary" value="Save" name="SaveNetwork"/>
+		<div class="row">
+			<div class="col-xs-12 col-md-8 col-lg-6">
+				<input type="submit" class="btn btn-primary" value="Save" name="SaveNetwork"/>
+				<br>
+				<br>
+				<hr>
+				<br>
+				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+			</div>
+		</div>
 
-		<br>
-		<br>
-
-		<ul class="nav nav-tabs"></ul>
-
-		<br>
-
-		<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 	</form> <!-- end network settings form -->
 

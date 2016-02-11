@@ -55,14 +55,14 @@ echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  
 
 <h2>Certificates</h2>
 
-<ul class="nav nav-tabs"></ul>
-
 <div id="form-wrapper">
 
 	<form action="certificates.php" method="post" name="certificates" id="certificates">
 
 		<div class="row">
 			<div class="col-xs-12 col-sm-8 col-md-6">
+
+				<hr>
 
 				<span class="label label-default">Private Key</span>
 				<textarea class="form-control" name="privatekey" rows="3"></textarea>
@@ -74,18 +74,19 @@ echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  
 				<textarea class="form-control" name="chain" rows="3"></textarea>
 				<br>
 
-				<input type="submit" name="certs" id="certs" class="btn btn-sm btn-primary" value="Save" />
+				<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Save" />
 				<br>
 				<br>
+				<hr>
+				<br>
+
+				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
 			</div>
 		</div>
 	</form> <!-- end SMB form -->
 
-	<ul class="nav nav-tabs"></ul>
-	<br>
 
-	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 </div><!--  end #form-wrapper -->
 

@@ -52,26 +52,26 @@ if (isset($_POST['afppass']))
 // }
 </script>
 
-<div id="restarting" class="alert alert-warning alert-margin-top">
-	<span><img src="images/progress.gif" width="25"> Restarting...</span>
-</div>
-
-<?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
-<?php } ?>
-
-<?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
-<?php } ?>
-
-<h2>AFP</h2>
-
-<ul class="nav nav-tabs"></ul>
-
 <div id="form-wrapper">
+
+	<h2>AFP</h2>
 
 	<div class="row">
 		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+
+			<hr>
+
+			<div id="restarting" class="alert alert-warning alert-margin-top">
+				<span><img src="images/progress.gif" width="25"> Restarting...</span>
+			</div>
+
+			<?php if ($accounterror != "") { ?>
+				<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
+			<?php } ?>
+
+			<?php if ($accountsuccess != "") { ?>
+				<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
+			<?php } ?>
 
 			<form action="AFP.php" method="post" name="AFP" id="AFP">
 
@@ -86,21 +86,18 @@ if (isset($_POST['afppass']))
 				<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" class="form-control" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 				<br>
 
-				<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-sm btn-primary" />
+				<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" />
 				<br>
 				<br>
 
 			</form> <!-- end AFP form -->
 
+			<hr>
+			<br>
+			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+
 		</div>
 	</div>
-
-	<ul class="nav nav-tabs"></ul>
-
-	<br>
-
-	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
-
 
 </div><!--  end #form-wrapper -->
 

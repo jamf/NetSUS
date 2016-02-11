@@ -36,7 +36,7 @@ function getSystemTimeZones($path="/usr/share/zoneinfo/right")
 function getSystemTimeZoneMenu()
 {
 	$currentTZ = getCurrentTimeZone();
-	echo "<select id=\"timezone\" name=\"timezone\">\n";
+	echo "<select id=\"timezone\" class=\"form-control\" name=\"timezone\">\n";
     $timezone_identifiers = DateTimeZone::listIdentifiers();
     foreach($timezone_identifiers as $value){
         if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))

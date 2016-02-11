@@ -99,10 +99,14 @@ include "inc/header.php";
 
 <div id="form-wrapper">
 
-	<ul class="nav nav-tabs" id="top-tabs">
-		<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
-		<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
-	</ul>
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<ul class="nav nav-tabs nav-justified" id="top-tabs">
+				<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
+				<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
+			</ul>
+		</div>
+	</div>
 
 	<div class="tab-content">
 
@@ -131,7 +135,7 @@ include "inc/header.php";
 
 							<br>
 
-							<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-sm btn-primary" />
+							<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-primary" />
 					</form>
 				</div><!-- /.col -->
 			</div><!-- /.row -->
@@ -156,7 +160,7 @@ include "inc/header.php";
 
 						<br>
 
-						<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-sm btn-primary" />
+						<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-primary" />
 					</form>
 				</div><!-- /.col -->
 			</div><!-- /.row -->
@@ -166,11 +170,14 @@ include "inc/header.php";
 
 	<br>
 
-	<ul class="nav nav-tabs"></ul>
+	<div class="row">
+		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+			<hr>
+			<br>
+			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+		</div>
+	</div>
 
-	<br>
-
-	<input type="button" id="back-button" name="action" class="btn btn-sm btn-primary" value="Back" onclick="document.location.href='settings.php'">
 
 
 </div><!--  end #form-wrapper -->

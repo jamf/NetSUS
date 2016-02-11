@@ -83,14 +83,14 @@ function validateField(fieldid, buttonid)
 
 <h2>Software Update Server</h2>
 
-<ul class="nav nav-tabs"></ul>
-
 <div id="form-wrapper">
 
 	<div class="row">
-		<div class="col-xs-12 col-md-10">
+		<div class="col-xs-12 col-sm-10 col-lg-8"
 
 			<form action="SUS.php" method="post" name="SUS" id="SUS">
+
+				<hr>
 
 				<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 
@@ -176,7 +176,7 @@ function validateField(fieldid, buttonid)
 				<span class="label label-default">Daily Sync Time</span>
 
 				<span class="description">Time at which to sync the list of available updates with Apple's Software Update server each day</span>
-				<select id="syncsch" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
+				<select id="syncsch" class="form-control" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
 					<option value="Off"<?php echo ($syncschedule == "Off" ? " selected=\"selected\"" : "")?>>None</option>
 					<option value="0"<?php echo ($syncschedule == "0" ? " selected=\"selected\"" : "")?>>12 a.m.</option>
 					<option value="3"<?php echo ($syncschedule == "3" ? " selected=\"selected\"" : "")?>>3 a.m.</option>
@@ -188,7 +188,6 @@ function validateField(fieldid, buttonid)
 				</select>
 
 				<br>
-				<br>
 
 				<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
 
@@ -197,9 +196,6 @@ function validateField(fieldid, buttonid)
 	</div><!-- /.row -->
 
 </div> <!-- end #form-wrapper -->
-
-<br>
-<ul class="nav nav-tabs"></ul>
 
 <?php include "inc/footer.php"; ?>
 

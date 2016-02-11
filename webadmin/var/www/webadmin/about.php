@@ -20,6 +20,8 @@ include "inc/header.php";
 
 	<h2>About</h2>
 
+	<hr>
+
 	<h3>Open Source Acknowledgments</h3>
 	<div class="about">
 
