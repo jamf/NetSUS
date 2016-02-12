@@ -20,6 +20,6 @@ function CustomOver(text, title, id, id2) {
 	{
 		return;
 	}
-	return overlib(text, CAPTION, title, STICKY, WIDTH, 300, BGCOLOR, "#1F448E", FGCOLOR, "#FFFFFF");
+	return overlib(text, CAPTION, title, STICKY, WIDTH, 300, BGCOLOR, "#383F47", FGCOLOR, "#E6E6E6", TEXTPADDING, 5, CAPTIONPADDING, 5, BORDER, 0);
 }
 

@@ -167,7 +167,6 @@ function validateField(fieldid, buttonid)
 
 				<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
 
-
 				<span class="label label-default">Manual Sync</span>
 
 				<span class="description">Manual method for syncing the list of available updates with Apple's Software Update server</span>

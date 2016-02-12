@@ -10,6 +10,12 @@ body {
 .table {
     margin-bottom: 5px;
 }
+#overDiv {
+    padding: 5px;
+}
+#overCap {
+    background-color: #383F47;
+}
 
 /*----------------------------------------------
 1 Upper Navigation

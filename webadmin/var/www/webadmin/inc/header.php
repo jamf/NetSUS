@@ -18,7 +18,7 @@ $pageURI = $parts[count($parts) -1];
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title><?php echo (isset($title) ? $title : "NetBoot/SUS/LDAP Proxy Server") ?></title>
 
-<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,700' rel='stylesheet' type='text/css'>
 
 <!-- Bootstrap CSS -->
 <link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
@@ -35,7 +35,7 @@ $pageURI = $parts[count($parts) -1];
 <!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
 <script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
 <script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
-<script type="text/javascript" src="scripts/overlib.js"></script>
+<script type="text/javascript" src="scripts/overlibmws.js"></script>
 <script type="text/javascript" src="scripts/infoPanel.js"></script>
 <script type="text/javascript" src="scripts/ajax.js"></script>
 

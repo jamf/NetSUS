@@ -188,13 +188,8 @@ function filterPackages()
 				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
 				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
-<<<<<<< HEAD
-				tableContents += "<td>"+pieces[0]+"</td>";
-				tableContents += "<td nowrap align=\"center\"><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
-=======
 				tableContents += "<td id= \"titletd_"+key+"\" >"+pieces[0]+"</td>";
 				tableContents += "<td><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageInfo('"+key+"'), document.getElementById('titletd_"+key+"').innerText, '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
->>>>>>> 423a45a3fb9ea7ae6bc8e7350d3ff0400dbda8f6
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
 				tableContents += "<td nowrap>"+pieces[2]+"</td>";
 				tableContents += "</tr>";
@@ -250,75 +245,10 @@ else if ($statusMessage != "")
 
 <div id="form-wrapper">
 
-<<<<<<< HEAD
 	<div class="row">
 		<div class="col-xs-12 col-sm-10 col-lg-8">
 
 			<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
-=======
-	<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
-
-		<div id="form-inside">
-
-			<input type="hidden" name="userAction" value="branchPackages">
-
-			<span class="label">Branch Displayed: 
-			<select name="chooseBranch" id="chooseBranch" onChange="javascript:location.href='managebranch.php?branch='+this.value">
-				<?php
-				$branchstr = trim(suExec("getBranchlist"));
-				$branches = explode(" ",$branchstr);
-				if (count($branches) == 0)
-					echo "<tr><td>No branches</td></tr>\n";
-				else
-				{
-					sort($branches);
-				}
-				foreach($branches as $branch)
-				{
-					?>
-					<option value="<?php echo $branch?>" <?php echo ($currentBranch == $branch ? "selected=\"selected\"" : "")?>><?php echo $branch?></option>
-					<?php
-				}
-				?>
-			</select>
-			</span>
-
-
-			<label for="autosync" class="label">
-			<input type="checkbox" name="autosync" value="autosync"
-	      <?php if ($conf->containsAutosyncBranch($currentBranch))
-	      {
-	      	echo "checked=\"checked\"";
-	      }?> />
-      Automatically Enable New Updates</label>
-
-      <label for="rootbranch" class="label">
-		  <input type="checkbox" name="rootbranch" value="rootbranch"
-						<?php if ($conf->getSetting("rootbranch") == $currentBranch)
-						{
-							echo "checked=\"checked\"";
-						}?> />
-			Use as Root Branch</label>
-			<br>
-
-			<span class="label">Filter updates by:
-				<input type="text" name="filterBy" id="filterBy" style="min-width:20%; margin-top:-3px;" onKeyUp="javascript:filterPackages();"/>
-			</span>
-
-			<br>
-
-			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
-			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
-			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
-
-			<br>
-			<br>
-
-			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="insideActionButton" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
-
-			<br>
-			<br>
->>>>>>> 423a45a3fb9ea7ae6bc8e7350d3ff0400dbda8f6
 
 				<input type="hidden" name="userAction" value="branchPackages">
 
@@ -398,8 +328,6 @@ else if ($statusMessage != "")
 
 		</div>
 	</div>
-
-
 
 </div> <!-- end #form-wrapper -->
 
