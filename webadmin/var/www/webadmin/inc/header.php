@@ -24,7 +24,7 @@ $pageURI = $parts[count($parts) -1];
 <link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
 
 <!-- <link rel="stylesheet" href="theme/reset.css" type="text/css"> -->
-<link rel="stylesheet" href="theme/styles-fresh.css" type="text/css">
+<link rel="stylesheet" href="theme/styles.css" type="text/css">
 
 <script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
 
@@ -90,7 +90,7 @@ $pageURI = $parts[count($parts) -1];
 <!-- Sidebar -->
 <div id="sidebar-wrapper" class="nav navbar-default">
     <div id="logo-wrapper">
-        <a href="dashboard.php"><img src="images/navigation/NSUS-logo.png"></a>
+        <a href="dashboard.php"><img src="images/NSUS-logo.png"></a>
     </div>
     <div id="navbar">
         <ul class="nav sidebar-nav">

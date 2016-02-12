@@ -1,3 +1,12 @@
 .DS_Store
 .svn
 
+NetSUSLPInstaller.run
+.name
+compiler.xml
+misc.xml
+modules.xml
+NetSUS.iml
+vcs.xml
+workspace.xml
+profiles_settings.xml

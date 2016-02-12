@@ -37,8 +37,8 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	    <title>NetBoot/SUS/LDAP Proxy Server</title>
 	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	    <meta http-equiv="expires" content="0">
-	    <meta http-equiv="pragma" content="no-cache"> 
-		<link rel="stylesheet" href="theme/reset.css" type="text/css">
+	    <meta http-equiv="pragma" content="no-cache">
+		<link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
 	</head> 
 
@@ -60,7 +60,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<meta http-equiv="expires" content="0">
 		<meta http-equiv="pragma" content="no-cache">
 		<link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
-		<link rel="stylesheet" href="theme/styles-fresh.css" type="text/css">
+		<link rel="stylesheet" href="theme/styles.css" type="text/css">
 		<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 	</head> 
@@ -74,7 +74,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 				<div class="panel panel-default panel-login">
 
 					<div class="panel-heading">
-						<div class="panel-title text-center"><img src="images/navigation/NSUS-logo.png" height="75"></div>
+						<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="75"></div>
 					</div>
 
 					<div class="panel-body">

@@ -189,7 +189,7 @@ function filterPackages()
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
 				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
 				tableContents += "<td>"+pieces[0]+"</td>";
-				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
+				tableContents += "<td nowrap align=\"center\"><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
 				tableContents += "<td nowrap>"+pieces[2]+"</td>";
 				tableContents += "</tr>";
@@ -252,7 +252,7 @@ else if ($statusMessage != "")
 
 				<input type="hidden" name="userAction" value="branchPackages">
 
-				<div class="input-group">
+				<div class="input-group alert-margin-top">
 					<div class="input-group-addon">Branch Displayed</div>
 					<select name="chooseBranch" id="chooseBranch" class="form-control" onChange="javascript:location.href='managebranch.php?branch='+this.value">
 						<?php

@@ -100,7 +100,7 @@ include "inc/header.php";
 <div id="form-wrapper">
 
 	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+		<div class="col-xs-12 col-sm-6 col-md-4">
 			<ul class="nav nav-tabs nav-justified" id="top-tabs">
 				<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
 				<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
@@ -113,7 +113,7 @@ include "inc/header.php";
 		<div class="tab-pane active" id="webadmin-tab">
 
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+				<div class="col-xs-12 col-sm-6 col-md-4">
 
 					<form method="POST" name="WebAdmin" id="WebAdmin">
 							<input type="hidden" name="userAction" value="WebAdmin">
@@ -144,7 +144,7 @@ include "inc/header.php";
 		<div class="tab-pane" id="shell-tab">
 
 			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+				<div class="col-xs-12 col-sm-6 col-md-4">
 
 					<form method="POST" name="ShellForm" id="ShellForm">
 						<input type="hidden" name="userAction" value="Shell">
@@ -171,7 +171,7 @@ include "inc/header.php";
 	<br>
 
 	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+		<div class="col-xs-12 col-sm-6 col-md-4">
 			<hr>
 			<br>
 			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
