@@ -156,7 +156,7 @@ window.onload = validateSubnet;
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<strong>Add Netboot</strong>
+						<strong>Add Netboot Server</strong>
 					</div>
 
 					<div class="panel-body no-pad-top">
