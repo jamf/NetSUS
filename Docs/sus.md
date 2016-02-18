@@ -24,8 +24,7 @@
 ## Configuring SUS Branches
 The NetBoot/SUS/LP server web application allows you to do the following for each branch:
 * Make the branch the root.* Manually enable or disable software updates. 
-* Automatically enable new software updates.
-1. Log in to the NetBoot/SUS/LP server web application.2. Click Software Update Server.On a smartphone, this option is in the pop-up menu.3. Click the branch you want to configure.4. Configure the branch using the settings on the pane.
+* Automatically enable new software updates.1. Log in to the NetBoot/SUS/LP server web application.2. Click Software Update Server.On a smartphone, this option is in the pop-up menu.3. Click the branch you want to configure.4. Configure the branch using the settings on the pane.
 
 	```
 	NEED IMAGE HERE
