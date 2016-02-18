@@ -59,7 +59,9 @@ The Network settings allow you to configure the following:
 * DNS servers 
 * Enabling/Disabling SSH
 * Enabling/Disabling Firewall
-&nbsp
+
+&nbsp;
+
 1. Log in to the NetBoot/SUS/LP server web application.
 
 2. In the top-right corner of the page, click **Settings**.
