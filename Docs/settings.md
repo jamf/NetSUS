@@ -60,7 +60,7 @@ The Network settings allow you to configure the following:
 * Enabling/Disabling SSH
 * Enabling/Disabling Firewall
 
-&nbsp;
+<!-- -->
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
@@ -79,6 +79,9 @@ The Date/Time settings allow you to do the following:
 * View the current time on the NetBoot/SUS/LP server. 
 * Change the current time zone on the NetBoot/SUS/LP server. 
 * Use a network time server to synchronize the date/time.
+
+<!-- -->
+
 1. Log in to the NetBoot/SUS/LP server web application.
 
 2. In the top-right corner of the page, click **Settings**.
