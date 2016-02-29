@@ -8,7 +8,8 @@
 
 * The OVA file for the NetBoot/SUS/LP server, available at:<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>* Virtualization software that supports Open Virtualization Format 
 * 300 GB of disk space available* 2 GB of RAM
-To host a NetBoot server using the NetBoot/SUS/LP server, you need a NetBoot image (.nbi folder). For more information, see the following Knowledge Base article:Creating a NetBoot Image and Setting Up a NetBoot Server
+To host a NetBoot server using the NetBoot/SUS/LP server, you need a NetBoot image (.nbi folder). For more information, see the following Knowledge Base article:
+[Creating a NetBoot Image and Setting Up a NetBoot Server](https://jamfnation.jamfsoftware.com/article.html?id=307)
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
 
 ## Installing the NetBoot/SUS/LP Server Using an Installer1. Copy the NetBoot/SUS/LP Installer (.run) to the server on which you plan to install the NetBoot/SUS /LP server.
