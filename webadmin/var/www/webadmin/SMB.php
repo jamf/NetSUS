@@ -45,7 +45,7 @@ if (isset($_POST['smbpass']))
 
 			<hr>
 
-			<div id="restarting" class="alert alert-warning alert-margin-top">
+			<div id="restarting" class="alert alert-warning alert-margin-top" style="display:none">
 				<span><img src="images/progress.gif" width="25"> Restarting...</span>
 			</div>
 
