@@ -1,10 +1,10 @@
-
-
 # What is NetSUS?
 
 The NetBoot/SUS/LP server allows you to host an internal software update server (SUS), a NetBoot server, and a LDAP Proxy server **all on the same Linux system**. For a list of supported Linux distributions see [Requirements](#requirements).
 
 The NetBoot/SUS/LP server includes a **web application** that can be used to easily manage your NetBoot and Software Update Servers as well as your LDAP Proxy.
+
+<p align="center"><img src="docs/screenshots/dashboard.png" height="250"></p>
 
 ## Features
 
