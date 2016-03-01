@@ -1,4 +1,4 @@
-# Managing the SUS
+# Managing a Software Update Server (SUS)
 The SUS hosted by the NetBoot/SUS/LP server uses Reposado, an open source software update application.Unlike a standard SUS, you can divide the SUS hosted by the NetBoot/SUS/LP server into branches and enable different software updates on each branch. This gives you more control over which updates should be installed on each computer in your organization.
 
 ## Setting Up the SUS1. Log in to the NetBoot/SUS/LP server web application.2. Click Software Update Server.On a smartphone, this option is in the pop-up menu.3. Enter a base URL and click Change URL.

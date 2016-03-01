@@ -2,17 +2,19 @@
 
 The NetBoot/SUS/LP server allows you to host an internal software update server (SUS), a NetBoot server, and a LDAP Proxy server **all on the same Linux system**. For a list of supported Linux distributions see [Requirements](#requirements).
 
-The NetBoot/SUS/LP server includes a **web application** that can be used to easily manage your NetBoot and Software Update Servers as well as your LDAP Proxy.
+<p align="center"><img src="docs/screenshots/dashboard.png" height="270"></p>
 
-<p align="center"><img src="docs/screenshots/dashboard.png" height="250"></p>
+* **Software Update Server** - Unlike a standard SUS, the SUS hosted by the NetBoot/SUS/LP server allows you to control which software updates should be installed on each computer in your organization.
 
-## Features
+* **NetBoot Server** - The NetBoot/SUS/LP server allows you to host a NetBoot image. You can boot computers to a NetBoot image in place of a recovery partition or external drive when imaging.
 
-**Software Update Server** - Unlike a standard SUS, the SUS hosted by the NetBoot/SUS/LP server allows you to control which software updates should be installed on each computer in your organization.
+* **LDAP Proxy** - Use the NetBoot/SUS/LP server as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers.
 
-**NetBoot Server** - The NetBoot/SUS/LP server allows you to host a NetBoot image. You can boot computers to a NetBoot image in place of a recovery partition or external drive when imaging.
+* **Web Application** - The NetBoot/SUS/LP server includes a web application that can be used to easily manage your NetBoot and Software Update Servers as well as your LDAP Proxy. The dashboard page is shown above.
 
-**LDAP Proxy** - Use the NetBoot/SUS/LP server as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers for load balancing, fail-over, centralized auditing, and more.
+## Documentation
+
+For a getting started guide and step-by-step walkthroughs check out the **[documentation for the current release](docs/README.md)**
 
 ## <a name="requirements"></a>Requirements
 
@@ -30,12 +32,9 @@ The NetBoot/SUS/LP server includes a **web application** that can be used to eas
 * 300 GB of disk space available* 2 GB of RAM
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
 
-## Documentation
-
-For a getting started guide and and step-by-step documentation see **[Documentation for NetSUS](docs/getting_started.md)**
 
 ## Want to Contribute?
 
-Anyone can help make this project better - check out our Contributing guide!
+Anyone can help make this project better - check out the [Contributing Guide!](CONTRIBUTING.md)
 
 
