@@ -1,10 +1,10 @@
 # NetSUS Documentation
 
 * [Getting Started](getting_started.md) - requirements and installation guide
-* [Software Update Server](sus.md) - how to set up and manage a software update server
-* [NetBoot Server](netboot.md) - how to set up and manage a NetBoot server
+* [Software Update Server](sus.md) - how to set up a software update server
+* [NetBoot Server](netboot.md) - how to set up a NetBoot server
 * [LDAP Proxy](ldap_proxy.md) - how to set up an LDAP proxy
-* [Accounts](accounts.md) - how to change and manage all assoicated account credentials
+* [Accounts](accounts.md) - how to change all assoicated account credentials
 * [Settings](settings.md) - walkthroughs of each additional option found in the settings page
 
 ## Still have Questions?
