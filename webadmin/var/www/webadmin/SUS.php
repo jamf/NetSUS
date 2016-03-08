@@ -167,6 +167,10 @@ function validateField(fieldid, buttonid)
 
 				<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
 
+				<span class="label label-default">Deprecated Updates</span>
+				<span class="description">Removes all deprecated updates that are no longer included in any branches</span>
+				<input type="button" value="Purge Deprecated" class="btn btn-primary btn-sm" onClick="javascript: return goTo(true, 'susCtl.php?purge=true');"/>
+
 				<span class="label label-default">Manual Sync</span>
 
 				<span class="description">Manual method for syncing the list of available updates with Apple's Software Update server</span>
