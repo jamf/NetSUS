@@ -81,6 +81,35 @@ else
 	}
 }
 
+
+$ldaperror = "";
+$ldapsuccess = "";
+$title = "LDAP";
+if (isset($_POST['saveLDAPConfiguration']) && isset($_POST['server']) && isset($_POST['domain']))
+{
+	if ($_POST['server'] == "")
+	{
+		$ldaperror = "Specify LDAP server.";
+	}
+	else if ($_POST['domain'] == "")
+	{
+		$ldaperror = "Specify a domain.";
+	}
+	else {
+		$conf->setSetting("ldapserver", $_POST['server']);
+		$conf->setSetting("ldapdomain", $_POST['domain']);
+		$ldapsuccess = "Saved LDAP configuration.";
+	}
+}
+if (isset($_POST['addadmin']) && isset($_POST['cn']) && $_POST['cn'] != "")
+{
+	$conf->addAdmin($_POST['cn']);
+}
+if (isset($_GET['deleteAdmin']) && $_GET['deleteAdmin'] != "")
+{
+	$conf->deleteAdmin($_GET['deleteAdmin']);
+}
+
 $title = "Accounts";
 
 include "inc/header.php";
@@ -95,15 +124,33 @@ include "inc/header.php";
 	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
+<?php if ($ldaperror != "") { ?>
+	<?php echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: " . $ldaperror . "</div>" ?>
+<?php } ?>
+
+<?php if ($ldapsuccess != "") { ?>
+	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $ldapsuccess . "</div>" ?></span>
+<?php } ?>
+
+<script>
+	function validateLDAPAdmin()
+	{
+		if (document.getElementById("cn").value != "")
+			document.getElementById("addadmin").disabled = false;
+		else
+			document.getElementById("addadmin").disabled = true;
+	}
+</script>
+
 <h2>Accounts</h2>
 
 <div id="form-wrapper">
 
 	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4">
+		<div class="col-xs-12 col-md-8">
 			<ul class="nav nav-tabs nav-justified" id="top-tabs">
-				<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application</a></li>
-				<li><a href="#shell-tab" role="tab" data-toggle="tab">Shell</a></li>
+				<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application Accounts</a></li>
+				<li><a href="#shell-tab" role="tab" data-toggle="tab">Linux Shell Accounts</a></li>
 			</ul>
 		</div>
 	</div>
@@ -116,26 +163,73 @@ include "inc/header.php";
 				<div class="col-xs-12 col-sm-6 col-md-4">
 
 					<form method="POST" name="WebAdmin" id="WebAdmin">
-							<input type="hidden" name="userAction" value="WebAdmin">
 
-							<span class="label label-default">Current Username</span>
-							<input type="text" class="form-control" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
+						<input type="hidden" name="userAction" value="WebAdmin">
 
-							<span class="label label-default">Current Password</span>
-							<input type="password" name="confirmold" id="confirmold" class="form-control"  value="" />
+						<span class="label label-default">Local Accounts</span>
 
-							<span class="label label-default">New Username</span>
-							<input type="text" name="username" id="username" class="form-control"  value="<?php echo getCurrentWebUser();?>" />
+						<label class="control-label">Current Username</label>
+						<input type="text" class="form-control input-sm" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
 
-							<span class="label label-default">New Password</span>
-							<input type="password" name="password" id="password" class="form-control"  value="" />
+						<label class="control-label">Current Password</label>
+						<input type="password" name="confirmold" id="confirmold" class="form-control input-sm"  value="" />
 
-							<span class="label label-default">Verify New Password</span>
-							<input type="password" name="confirm" id="confirm" class="form-control"  value="" />
+						<label class="control-label">New Username</label>
+						<input type="text" name="username" id="username" class="form-control input-sm"  value="<?php echo getCurrentWebUser();?>" />
 
-							<br>
+						<label class="control-label">New Password</label>
+						<input type="password" name="password" id="password" class="form-control input-sm"  value="" />
 
-							<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-primary" />
+						<label class="control-label">Verify New Password</label>
+						<input type="password" name="confirm" id="confirm" class="form-control input-sm"  value="" />
+
+						<br>
+
+						<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-primary" />
+
+					</form>
+				</div><!-- /.col -->
+				<div class="col-xs-12 col-sm-6 col-md-4">
+
+					<form method="POST" name="LDAP" id="LDAP">
+
+						<span class="label label-default">LDAP Accounts</span>
+
+						<label class="control-label">LDAP Server</label>
+						<input type="text" name="server" id="server" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapserver'); ?>" />
+
+						<label class="control-label">LDAP Domain</label>
+						<input type="text" name="domain" id="domain" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapdomain'); ?>" />
+
+						<br>
+
+						<input type="submit" value="Save" name="saveLDAPConfiguration" id="saveLDAPConfiguration" class="btn btn-primary" />
+
+						<br><br>
+
+						<label class="control-label">Administration Groups</label>
+						<div class="input-group">
+							<input type="text" name="cn" id="cn" value="" class="form-control input-sm" onKeyUp="validateLDAPAdmin();" onChange="validateLDAPAdmin();" />
+							<span class="input-group-btn">
+								<input type="submit" name="addadmin" id="addadmin" class="btn btn-primary btn-sm" value="Add" disabled="disabled" />
+							</span>
+						</div>
+
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered table-condensed">
+								<tr>
+									<th>Group Name</th>
+									<th></th>
+								</tr>
+								<?php foreach($conf->getAdmins() as $key => $value) { ?>
+									<tr class="<?php ($key % 2 == 0 ? "object0" : "object1"); ?>">
+										<td><?php echo $value['cn']?></td>
+										<td><a href="ldap.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
+									</tr>
+								<? } ?>
+							</table>
+						</div>
+
 					</form>
 				</div><!-- /.col -->
 			</div><!-- /.row -->
@@ -171,7 +265,7 @@ include "inc/header.php";
 	<br>
 
 	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4">
+		<div class="col-xs-12 col-md-8">
 			<hr>
 			<br>
 			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">

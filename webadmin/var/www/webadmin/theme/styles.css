@@ -160,6 +160,12 @@ hr {
     border-radius:3px;
 }
 
+.control-label {
+    padding-top: 7px;
+    margin-bottom: 2px;
+    font-size: 10pt;
+}
+
 /*----------------------------------------------
 6 Buttons/Input
 ------------------------------------------------*/
@@ -173,7 +179,7 @@ hr {
     overflow: auto;
     line-height: 30px;
 }
-.input-group-addon {
+.input-group-addon .min-width {
     min-width: 140px;
 }
 
@@ -250,6 +256,7 @@ hr {
         left: 220px;
     }
 }
+
 
 
 

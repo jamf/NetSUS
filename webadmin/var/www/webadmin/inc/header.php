@@ -20,7 +20,7 @@ $pageURI = $parts[count($parts) -1];
         <!-- Roboto Font CSS -->
         <link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
         <!-- Bootstrap CSS -->
-        <link href="theme/bootstrap.min.css" rel="stylesheet" media="all">
+        <link href="theme/bootstrap.css" rel="stylesheet" media="all">
         <!-- Project CSS -->
         <link rel="stylesheet" href="theme/styles.css" type="text/css">
         <!-- JQuery -->
@@ -100,7 +100,7 @@ $pageURI = $parts[count($parts) -1];
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
-    <div id="page-content-wrapper">
+    <div class="container-fluid" id="page-content-wrapper">
 
 
 
