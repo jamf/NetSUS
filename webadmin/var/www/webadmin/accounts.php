@@ -84,7 +84,7 @@ else
 
 $ldaperror = "";
 $ldapsuccess = "";
-$title = "LDAP";
+
 if (isset($_POST['saveLDAPConfiguration']) && isset($_POST['server']) && isset($_POST['domain']))
 {
 	if ($_POST['server'] == "")
