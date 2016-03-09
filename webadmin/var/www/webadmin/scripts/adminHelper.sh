@@ -64,7 +64,7 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "address $2" >> /etc/network/interfaces
 	echo "netmask $3" >> /etc/network/interfaces
 	echo "gateway $4" >> /etc/network/interfaces
-	service networking restart
+	/etc/init.d/networking restart
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
@@ -92,7 +92,7 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "iface lo inet loopback" >> /etc/network/interfaces
 	echo "auto eth0" >> /etc/network/interfaces
 	echo "iface eth0 inet dhcp" >> /etc/network/interfaces
-	service networking restart
+	/etc/init.d/networking restart
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
@@ -324,6 +324,7 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	rm -f /etc/init/smbd.override
 	rm -f /etc/init/tftpd-hpa.override
 	rm -f /etc/init/openbsd-inetd.override
+	service tftpd-hpa start
 fi
 if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
@@ -414,14 +415,20 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 		if ! iptables -L | grep DROP | grep -q 'tcp dpt:afpovertcp' ; then
 			iptables -I INPUT -p tcp --dport 548 -j DROP
 			iptables -D INPUT -p tcp --dport 548 -j ACCEPT
+		if ! iptables -L | grep DENY | grep -q 'tcp dpt:afpovertcp' ; then
+			iptables -I INPUT -p tcp --dport 548 -j DENY
 		fi
 		if ! iptables -L | grep DROP | grep -q 'udp dpt:bootps' ; then
 			iptables -I INPUT -p udp --dport 67 -j DROP
 			iptables -D INPUT -p udp --dport 67 -j ACCEPT
+		if ! iptables -L | grep DENY | grep -q 'udp dpt:bootps' ; then
+			iptables -I INPUT -p udp --dport 67 -j DENY
 		fi
 		if ! iptables -L | grep DROP | grep -q 'udp dpt:tftp' ; then
 			iptables -I INPUT -p udp --dport 69 -j DROP
 			iptables -D INPUT -p udp --dport 67 -j ACCEPT
+		if ! iptables -L | grep DENY | grep -q 'udp dpt:tftp' ; then
+			iptables -I INPUT -p udp --dport 69 -j DENY
 		fi
     	service iptables save
 	fi
@@ -431,6 +438,8 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
     service netatalk stop
     chkconfig smb off
     chkconfig netatalk off
+	chkconfig tftp off
+	service xinetd restart
 	rm -f /sbin/ifup-local
 fi
 killall dhcpd
@@ -557,6 +566,9 @@ echo $abranch
 ;;
 reposync)
 /var/appliance/sus_sync.py > /dev/null 2>&1 &
+;;
+repopurge)
+/var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
 ;;
 removefrombranch)
 rbranch=`/var/lib/reposado/repoutil --remove-product=$2 $3`
