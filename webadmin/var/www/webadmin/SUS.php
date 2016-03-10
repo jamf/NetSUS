@@ -1,13 +1,9 @@
 <?php
-
 include "inc/config.php";
 include "inc/auth.php";
 include "inc/functions.php";
-
 $title = "Software Update Server";
-
 include "inc/header.php";
-
 if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") == "")
 {
 	if ($_SERVER['HTTP_HOST'] != "")
@@ -22,24 +18,17 @@ if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") =
 		$conf->setSetting("susbaseurl", "http://".getCurrentHostname()."/");
 	}
 }
-
 if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule") == "")
 {
 	$conf->setSetting("syncschedule", "Off");
 }
-
 $syncschedule = $conf->getSetting("syncschedule");
-
 if (isset($_POST['addbranch']))
-	echo "<div class=\"alert alert-info alert-margin-top\"><strong>DEBUG: </strong>addbranch is set</div>";
 {
 	if(isset($_POST['branchname']) && $_POST['branchname'] != "")
 	{
 		$branchname = $_POST['branchname'];
 		$res = trim(suExec("createBranch $branchname"));
-
-		echo "<div class=\"alert alert-info alert-margin-top\"><strong>DEBUG: </strong> Contents of createBranch: $res</div>";
-
 		if ($res != "")
 		{
 			echo "<div class=\"alert alert-warning alert-margin-top\"><strong>ERROR: </strong> Unable to create the SUS branch &quot;$branchname&quot; ($res).</div>";
@@ -54,43 +43,40 @@ if (isset($_POST['addbranch']))
 		echo "<div class=\"alert alert-warning alert-margin-top\"><strong>ERROR:</strong> Specify a SUS branch name.</div>";
 	}
 }
-
 if (isset($_GET['deletebranch']) && $_GET['deletebranch'] != "")
 {
 	suExec("deleteBranch \"".$_GET['deletebranch']."\"");
 }
-
 if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 {
 	$baseurl = $_POST['baseurl'];
 	$conf->setSetting("susbaseurl", $_POST['baseurl']);
 	if ($conf->getSetting("mirrorpkgs") == "true")
-		{
-			suExec("setbaseurl ".$conf->getSetting("susbaseurl"));
-		}
+	{
+		suExec("setbaseurl ".$conf->getSetting("susbaseurl"));
+	}
 }
-
 // ####################################################################
 // End of GET/POST parsing
 // ####################################################################
 ?>
 
-<script>
-function validateField(fieldid, buttonid)
-{
-	if (document.getElementById(fieldid).value != "")
-		document.getElementById(buttonid).disabled = false;
-	else
-		document.getElementById(buttonid).disabled = true;
-}
-</script>
+	<script>
+		function validateField(fieldid, buttonid)
+		{
+			if (document.getElementById(fieldid).value != "")
+				document.getElementById(buttonid).disabled = false;
+			else
+				document.getElementById(buttonid).disabled = true;
+		}
+	</script>
 
-<h2>Software Update Server</h2>
+	<h2>Software Update Server</h2>
 
-<div id="form-wrapper">
+	<div id="form-wrapper">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-lg-8"
+		<div class="row">
+			<div class="col-xs-12 col-sm-10 col-lg-8"
 
 			<form action="SUS.php" method="post" name="SUS" id="SUS">
 
@@ -98,58 +84,60 @@ function validateField(fieldid, buttonid)
 
 				<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 
-				<span class="label label-default">Base URL</span>
+					<span class="label label-default">Base URL</span>
 
-				<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
+					<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
-				<div class="input-group">
-					<input type="text" name="baseurl" id="baseurl" class="form-control" class="long-text-input"
-						   value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
+					<div class="input-group">
+						<input type="text" name="baseurl" id="baseurl" class="form-control" class="long-text-input"
+							   value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
 					<span class="input-group-btn">
 						<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary" value="Change URL" disabled="disabled" />
 					</span>
-				</div>
+					</div>
 
-				<span class="label label-default">Branches</span>
+					<span class="label label-default">Branches</span>
 
-				<div class="table-responsive">
-					<table class="table table-striped table-bordered table-condensed">
-						<?php
-						$branchstr = trim(suExec("getBranchlist"));
-						$branches = explode(" ",$branchstr);
-						?>
-						<thead>
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-condensed">
+							<?php
+							$branchstr = trim(suExec("getBranchlist"));
+							$branches = explode(" ",$branchstr);
+							?>
+							<thead>
 							<tr>
 								<th>Root</th>
 								<th>Name</th>
 								<th>URL</th>
 								<th></th>
 							</tr>
-						</thead>
-						<tobdy>
-							<?php foreach ($branches as $key => $value) {
-							if ($value != "") {?>
-							<tr>
-								<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
-								<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
-								<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
-								<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
-							</tr>
-							<?php } } ?>
-						</tobdy>
-					</table>
-				</div>
+							</thead>
+							<tobdy>
+								<?php foreach ($branches as $key => $value) {
+									if ($value != "") {?>
+										<tr>
+											<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
+											<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
+											<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
+											<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
+										</tr>
+									<?php } } ?>
+							</tobdy>
+						</table>
+					</div>
 
-				<span class="label label-default">New Branch</span>
+					<span class="label label-default">New Branch</span>
 
-				<div class="input-group">
-					<input type="text" name="branchname" id="branchname" class="form-control" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+					<div class="input-group">
+						<input type="text" name="branchname" id="branchname" class="form-control" value=""
+							   onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+
 					<span class="input-group-btn">
 						<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary" value="Add Branch" disabled="disabled"/>
 					</span>
-				</div>
+					</div>
 
-				<?php
+					<?php
 				}
 				else { ?>
 					<h3>Managed by the JSS</h3>
@@ -158,11 +146,11 @@ function validateField(fieldid, buttonid)
 				<div class="checkbox">
 					<label>
 						<input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
-						<?php if ($conf->getSetting("mirrorpkgs") == "true")
-						{
-							echo "checked=\"checked\"";
-						}?>
-						onChange="javascript:ajaxPost('ajax.php?service=SUS', 'mirrorpkgs=' + this.checked);"/>
+							<?php if ($conf->getSetting("mirrorpkgs") == "true")
+							{
+								echo "checked=\"checked\"";
+							}?>
+							   onChange="javascript:ajaxPost('ajax.php?service=SUS', 'mirrorpkgs=' + this.checked);"/>
 						Store software updates on the NetBoot/SUS/LDAP Proxy server
 					</label>
 				</div>
@@ -200,11 +188,6 @@ function validateField(fieldid, buttonid)
 		</div><!-- /.col -->
 	</div><!-- /.row -->
 
-</div> <!-- end #form-wrapper -->
+	</div> <!-- end #form-wrapper -->
 
 <?php include "inc/footer.php"; ?>
-
-
-
-
-					
