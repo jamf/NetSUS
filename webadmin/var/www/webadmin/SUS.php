@@ -36,6 +36,9 @@ if (isset($_POST['addbranch']))
 	{
 		$branchname = $_POST['branchname'];
 		$res = trim(suExec("createBranch $branchname"));
+
+		echo "<div class=\"alert alert-info alert-margin-top\"><strong>DEBUG: </strong> Contents of createBranch: $res</div>";
+
 		if ($res != "")
 		{
 			echo "<div class=\"alert alert-warning alert-margin-top\"><strong>ERROR: </strong> Unable to create the SUS branch &quot;$branchname&quot; ($res).</div>";
@@ -139,9 +142,7 @@ function validateField(fieldid, buttonid)
 				<span class="label label-default">New Branch</span>
 
 				<div class="input-group">
-					<input type="text" name="branchname" id="branchname" class="form-control" value=""
-						onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
-
+					<input type="text" name="branchname" id="branchname" class="form-control" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
 					<span class="input-group-btn">
 						<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary" value="Add Branch" disabled="disabled"/>
 					</span>

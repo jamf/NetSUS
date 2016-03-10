@@ -224,7 +224,7 @@ include "inc/header.php";
 								<?php foreach($conf->getAdmins() as $key => $value) { ?>
 									<tr class="<?php ($key % 2 == 0 ? "object0" : "object1"); ?>">
 										<td><?php echo $value['cn']?></td>
-										<td><a href="ldap.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
+										<td><a href="accounts.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
 									</tr>
 								<? } ?>
 							</table>
