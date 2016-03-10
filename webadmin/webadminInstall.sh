@@ -23,7 +23,7 @@ if [[ "$detectedOS" == 'Ubuntu' ]]; then
     apt-get -qq -y install python-m2crypto >> $logFile
     apt-get -qq -y install python-pycurl >> $logFile
     apt-get -qq -y install gawk >> $logFile
-    
+
 fi
 
 if [[ "$detectedOS" == 'CentOS' ]] || [[ "$detectedOS" == 'RedHat' ]]; then
@@ -134,10 +134,10 @@ fi
 #Remove default it works page
 if [ -f "/var/www/index.html" ]; then
 	rm /var/www/index.html
-fi 
+fi
 if [ -f "/var/www/html/index.html" ]; then
 	rm /var/www/html/index.html
-fi 
+fi
 
 #Prevent writes to the webadmin's helper script
 
