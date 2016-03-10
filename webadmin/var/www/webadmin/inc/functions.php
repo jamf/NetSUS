@@ -218,6 +218,18 @@ function getNetBootStatus()
 	}
 }
 
+function getLDAPProxyStatus()
+{
+	if (trim(suExec("getldapproxystatus")) == "true")
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 function getSyncStatus()
 {
 	if (trim(suExec("getsyncstatus")) == "true")

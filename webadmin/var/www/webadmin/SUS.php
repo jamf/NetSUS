@@ -31,6 +31,7 @@ if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule
 $syncschedule = $conf->getSetting("syncschedule");
 
 if (isset($_POST['addbranch']))
+	echo "<div class=\"alert alert-info alert-margin-top\"><strong>DEBUG: </strong>addbranch is set</div>";
 {
 	if(isset($_POST['branchname']) && $_POST['branchname'] != "")
 	{
