@@ -20,7 +20,7 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 		{
 			ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
-			if (ldap_bind($ldapconn, $username."@".$conf->getSettisng("ldapdomain"), $_POST['password']))
+			if (ldap_bind($ldapconn, $username."@".$conf->getSetting("ldapdomain"), $_POST['password']))
 			{
 				$basedn = "DC=".implode(",DC=", explode(".", $conf->getSetting("ldapdomain")));
 				$userdn = getDN($ldapconn, $username, $basedn);
@@ -53,7 +53,7 @@ if ($isAuth) {
 		print $_SESSION['isAuth'];
 	}
 	if (!($debug)) {
-		header('Location: ' . $sURL);
+		header('Location: '. $sURL);
 	}
 }
 elseif ($conf->getSetting("webadmingui") == "Disabled") {

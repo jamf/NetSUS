@@ -4,6 +4,17 @@ include "inc/auth.php";
 include "inc/functions.php";
 $title = "Software Update Server";
 include "inc/header.php";
+
+function debug_to_console( $data ) {
+
+	if ( is_array( $data ) )
+		$output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+	else
+		$output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
+
+	echo $output;
+}
+
 if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") == "")
 {
 	if ($_SERVER['HTTP_HOST'] != "")
@@ -23,7 +34,10 @@ if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule
 	$conf->setSetting("syncschedule", "Off");
 }
 $syncschedule = $conf->getSetting("syncschedule");
+
 if (isset($_POST['addbranch']))
+
+	debug_to_console( "it got here!" );
 {
 	if(isset($_POST['branchname']) && $_POST['branchname'] != "")
 	{
@@ -40,6 +54,7 @@ if (isset($_POST['addbranch']))
 	}
 	else
 	{
+		debug_to_console( "it got heresdfsdf!" );
 		echo "<div class=\"alert alert-warning alert-margin-top\"><strong>ERROR:</strong> Specify a SUS branch name.</div>";
 	}
 }
@@ -78,7 +93,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 		<div class="row">
 			<div class="col-xs-12 col-sm-10 col-lg-8"
 
-			<form action="SUS.php" method="post" name="SUS" id="SUS">
+			<form action="SUS.php" method="POST" name="SUS" id="SUS">
 
 				<hr>
 
@@ -129,12 +144,10 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 					<span class="label label-default">New Branch</span>
 
 					<div class="input-group">
-						<input type="text" name="branchname" id="branchname" class="form-control" value=""
-							   onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
-
-					<span class="input-group-btn">
-						<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary" value="Add Branch" disabled="disabled"/>
-					</span>
+						<input type="text" name="branchname" id="branchname" class="form-control" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+						<div class="input-group-btn">
+							<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary" value="Add Branch" disabled="disabled"/>
+						</div>
 					</div>
 
 					<?php
