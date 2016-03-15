@@ -11,36 +11,34 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username=$_POST['username'];
 	$password=hash("sha256",$_POST['password']);
 	$_SESSION['username'] = $username;
+	define(LDAP_OPT_DIAGNOSTIC_MESSAGE, 0x0032);
 	if (($username != "") && ($password != "")) {
 		if ($username == $admin_username && $password == $admin_password) {
 			$isAuth=TRUE;
 		}
 		$ldapconn = ldap_connect($conf->getSetting("ldapserver"));
-		if ($ldapconn)
-		{
+		if ($ldapconn) {
 			ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
-			if (ldap_bind($ldapconn, $username."@".$conf->getSetting("ldapdomain"), $_POST['password']))
-			{
-				$basedn = "DC=".implode(",DC=", explode(".", $conf->getSetting("ldapdomain")));
+			if (ldap_bind($ldapconn, $username/*."@".$conf->getSetting("ldapdomain")*/, $_POST['password'])) {
+				$basedn = /*"DC=".implode(",DC=", explode(".", */$conf->getSetting("ldapdomain")/*))*/;
 				$userdn = getDN($ldapconn, $username, $basedn);
-				foreach ($conf->getAdmins() as $key => $value)
-				{
+				foreach ($conf->getAdmins() as $key => $value) {
 					$groupdn = getDN($ldapconn, $value['cn'], $basedn);
-					if (checkLDAPGroupEx($ldapconn, $userdn, $groupdn))
-					{
+					if (checkLDAPGroupEx($ldapconn, $userdn, $groupdn)) {
 						$isAuth=TRUE;
 					}
 				}
 				ldap_unbind($ldapconn);
 			}
-			else
-			{
-				$ldaperror = "LDAP: invalid credentials";
+			else if (ldap_get_option($ldapconn, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
+				$ldaperror = "Error Binding to LDAP: $extended_error";
+			}
+			else {
+				$ldaperror = "LDAP: Invalid Credentials";
 			}
 		}
-		else
-		{
+		else {
 			$ldaperror = "LDAP: uanble to connect";
 		}
 	}
@@ -73,7 +71,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 
 	<body> 
 
-			<div class="alert alert-warning">WebAdmin GUI is disabled</div>
+		<div class="alert alert-warning">WebAdmin GUI is disabled</div>
 
 	</body>
 </html>
@@ -94,34 +92,42 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 	</head> 
 
-	<body id="login-body">
+	<body>
 
-		<div class="container">
-
-			<div id="loginbox" class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3">
-
+			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
 				<div class="panel panel-default panel-login">
 
 					<div class="panel-heading">
-						<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="75"></div>
+						<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
 					</div>
 
 					<div class="panel-body">
 
-						<form name="loginForm" class="form-horizontal" id="form" method="post" action="">
+							<div class="container">
+								<?php if(isset($ldaperror)) { ?> <div class="alert alert-danger"> <?php echo $ldaperror; ?> </div> <?php } ?>
+								<div class="alert alert-danger">
+									<?php
+									$ldapconn = ldap_connect("ldap://ad1.ad.jamfsw.corp:389/");
+									if (ldap_bind($ldapconn, "Administrator@CN=Administrator,CN=Users,DC=ad,DC=jamfsw,DC=corp", "j@mf1234")) {
+										echo "Bind Success";
+									} else {
+										echo "Bind Fail";
+									}
+									?>
+								</div>
 
-							<div><input id="username" type="text" class="form-control" name="username" value="" placeholder="Username"></div>
-							<div><input id="password" type="password" class="form-control" name="password" placeholder="Password"></div>
+								<form name="loginForm" class="form-horizontal" id="login-form" method="post" action="">
+									<div class="username"><input id="username" type="text" class="form-control" name="username" value="" placeholder="Username"></div>
+									<div class="password"><input id="password" type="password" class="form-control" name="password" placeholder="Password"></div>
+									<div><input type="submit" class="btn btn-primary pull-right" name="submit" value="Log In"></div>
+								</form>
+							</div>
 
-							<div><input type="submit" class="btn btn-primary pull-right" name="submit" value="Log In"></div>
-
-						</form>
 					</div>
+
 				</div>
 			</div>
-		</div>
 
-	
 	</body>
 </html>
 <?php

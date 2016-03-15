@@ -230,6 +230,11 @@ include "inc/header.php";
 							</table>
 						</div>
 
+						<br>
+						<?php
+						print_r($conf->getAdmins())
+						?>
+
 					</form>
 				</div><!-- /.col -->
 			</div><!-- /.row -->

@@ -303,6 +303,11 @@ class WebadminConfig
 		}
 	}
 
+	public function printAdmins()
+	{
+		print_r($this->admins);
+	}
+
 	public function getAdmins()
 	{
 		return $this->admins;

@@ -211,32 +211,27 @@ hr {
 /*----------------------------------------------
 10 Login Page
 ------------------------------------------------*/
-#login-body {
-    background-color: #fff;
-}
-#loginbox {
-    margin-top: 50px;
-}
-#loginbox > div:first-child {
-    padding-bottom: 10px;
-}
 .panel-login {
     background-image: none;
     background-color: #f5f5f5;
     border: none;
+    margin-top: 70px;
 }
 .panel-login > .panel-heading {
     background-color: #303641;
 }
 .panel-login > .panel-body {
-    padding-top: 30px;
+    padding: 20px;
 }
-#form > div {
+#login-form > div {
     margin-bottom: 25px;
 }
-#form > div:last-child {
+#login-form > .username {
     margin-top: 10px;
-    margin-bottom: 10px;
+}
+#login-form > .password {
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 /*----------------------------------------------
