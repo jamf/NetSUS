@@ -3,9 +3,8 @@
 
 1. Log in to the NetBoot/SUS/LP server web application.2. Click **NetBoot Server**.On a smartphone, this option is in the pop-up menu.3. Upload a NetBoot image:	* Click **Upload NetBoot Image**.
 
-		```
-		NEED IMAGE HERE
-		```		You will be connected to the SMB share where NetBoot images are stored.	* Enter credentials for the SMB share and click **Connect**.	* Copy a NetBoot image (.nbi) to the SMB share.
+		<p align="left"><img src="images/attachments/netboot.png" width="500"></p>
+			* You will be connected to the SMB share where NetBoot images are stored.	* Enter credentials for the SMB share and click **Connect**.	* Copy a NetBoot image (.nbi) to the SMB share.
 
 		**Important:** The name of the folder cannot contain any spaces.4. Return to the NetBoot/SUS/LP server web application and refresh the page.5. Choose the NetBoot image from the pop-up menu.6. Choose subnets for the NetBoot image by entering a subnet and a netmask. Then click **Add Subnet**. 
 

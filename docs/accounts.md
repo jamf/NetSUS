@@ -11,6 +11,6 @@ You can change the usernames and passwords for the web application and shell acc
 
 ## Changing the Web Application or Shell Credentials
 1. Log in to the NetBoot/SUS/LP server web application.
-2. In the top-right corner of the page, click Settings.3. In the "NetBoot/SUS/LDAP Proxy Server" section, click Accounts .4. Change the credentials using the fields and tabs provided.5. Click Save. A message displays, reporting the success or failure of the change.
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .4. Change the credentials using the fields and tabs provided.5. Click **Save**. A message displays, reporting the success or failure of the change.
 
-## Changing the Password for the AFP or SMB Share1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click Settings.3. In the "Shares" section, click AFP or SMB.4. Enter and verify the new password.5. Click Save. A message displays, reporting the success or failure of the change.
+## Changing the Password for the AFP or SMB Share1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "Shares" section, click **AFP** or **SMB** <img height="20" src="images/thumbnails/categories_icon.png"> .4. Enter and verify the new password.5. Click **Save**. A message displays, reporting the success or failure of the change.

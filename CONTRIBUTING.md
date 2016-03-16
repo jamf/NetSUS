@@ -36,8 +36,8 @@ We will exclude you from interaction if you insult, demean or harass anyone. Tha
 Likewise any spamming, trolling, flaming, baiting or other attention-stealing behavior is not welcome.
 
 # Communication
-There is a discussion board located on [JAMF Nation](https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=discussions). You are welcome to create an account and contribute to the discussion by asking questions, discussing bugs, or answering questions you may have knowledge about.
-
 GitHub issues are the primary way for communicating about specific proposed changes to this project.
+
+There is a discussion board located on [JAMF Nation](https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=discussions). You are welcome to create an account and contribute to the discussion by asking questions, discussing bugs, or answering questions you may have knowledge about.
 
 In both contexts, please follow the conduct guidelines above. Language issues are often contentious and we'd like to keep discussion brief, civil and focused on what we're actually doing.

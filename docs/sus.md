@@ -3,10 +3,7 @@
 
 ## Setting Up the SUS1. Log in to the NetBoot/SUS/LP server web application.2. Click Software Update Server.On a smartphone, this option is in the pop-up menu.3. Enter a base URL and click Change URL.
 
-	```
-	NEED IMAGE HERE
-
-	```
+<p align="center"><img src="images/attachments/sus_no_branches.png" width="500"></p>
 
 4. Create at least one branch by typing a branch name in the New Branch field and clicking Add. Repeat as needed for each branch.
 
@@ -16,26 +13,17 @@
 
 3. Sync the list of available software updates manually, or choose a time to sync the list each day.
 
-	```
-	NEED IMAGE HERE
-
-	```
+<p align="center"><img src="images/attachments/sus_with_branch.png" width="500"></p>
 	
 ## Configuring SUS Branches
 The NetBoot/SUS/LP server web application allows you to do the following for each branch:
 * Make the branch the root.* Manually enable or disable software updates. 
 * Automatically enable new software updates.1. Log in to the NetBoot/SUS/LP server web application.2. Click Software Update Server.On a smartphone, this option is in the pop-up menu.3. Click the branch you want to configure.4. Configure the branch using the settings on the pane.
 
-	```
-	NEED IMAGE HERE
-
-	```    
+<p align="center"><img src="images/attachments/sus_branch_upper.png" width="500"></p>    
 5. Click Apply below the list of software updates.
 
- 	```
-	NEED IMAGE HERE
-
-	```
+<p align="center"><img src="images/attachments/sus_branch_lower.png" width="500"></p>
 	
 # Using the SUS with the Casper Suite
 Like a standard SUS, you can use the SUS hosted by the NetBoot/SUS/LP server to run Software Update on computers that are enrolled with the JSS. This involves pointing computers at a branch, and then using a policy or Casper Remote to run Software Update on the computers.
