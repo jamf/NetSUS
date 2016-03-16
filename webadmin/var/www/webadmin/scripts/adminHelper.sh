@@ -530,28 +530,26 @@ mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
 
 
 getSUSlist)
-/var/lib/reposado/repoutil --products 2>/dev/null
-/var/lib/reposado/repoutil --updates 2>/dev/null
+/var/lib/reposado/repoutil --products
+/var/lib/reposado/repoutil --updates
 ;;
 getBranchlist)
-branches=`/var/lib/reposado/repoutil --branches 2>/dev/null`
+branches=`/var/lib/reposado/repoutil --branches`
 echo $branches
 ;;
 createBranch)
 cbranch=`/var/lib/reposado/repoutil --new-branch $2`
-/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
 echo $cbranch
 ;;
 deleteBranch)
 dbranch=`echo y | /var/lib/reposado/repoutil --delete-branch $2`
-/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
 echo $dbranch
 ;;
 listBranch)
-/var/lib/reposado/repoutil --list-branch $2 2>/dev/null
+/var/lib/reposado/repoutil --list-branch $2
 ;;
 prodinfo)
-/var/lib/reposado/repoutil --info $2  2>/dev/null
+/var/lib/reposado/repoutil --info $2
 ;;
 addtobranch)
 abranch=`/var/lib/reposado/repoutil --add=$2 $3`
@@ -590,7 +588,7 @@ sususage)
 du -h /srv/SUS | tail -1 | awk '{print $1}'
 ;;
 lastsussync)
-echo `ls -lt /srv/SUS/html/content/catalogs/ /srv/SUS/html/content/catalogs/others/ | grep '\.sucatalog$' | head -1 | awk '{print $6" "$7}'`
+echo `ls -al /srv/SUS/html/content/catalogs/ | grep index.sucatalog | head -1 | awk '{print $6" "$7}'`
 ;;
 afpconns)
 echo `ss | grep afpovertcp | wc | awk '{print $1}'`
@@ -608,13 +606,18 @@ echo "false"
 fi
 ;;
 getsussize)
-echo `du -sh /srv/SUS/ | awk '{print $1}'`
+echo `du -h /srv/SUS/ | tail -1 | awk '{print $1}'`
 ;;
 numofbranches)
 echo `/var/lib/reposado/repoutil --branches | wc | awk '{print $1}'`
 ;;
 rootBranch)
-/var/appliance/sus_sync.py --rewrite > /dev/null 2>&1
+catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
+for i in ${catalogArray}; do
+catalogName="$(basename "${i}" "_${2}.sucatalog")"
+cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
+done
+cp "/srv/SUS/html/content/catalogs/index_$2.sucatalog" "/srv/SUS/html/index.sucatalog"
 ;;
 addsch)
 crontab -l > /tmp/mycron

@@ -86,6 +86,7 @@ foreach ($packages as $key => $value)
 	
 	$formattedpackages[$packagearr[0]] = $packagearr[1]."%".$packagearr[2]."%".$packagearr[3]."%".$checked;
 }
+uksort($formattedpackages);
 $formattedpackages = array_reverse($formattedpackages, TRUE);
 
 /*

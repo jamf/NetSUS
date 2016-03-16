@@ -94,12 +94,12 @@ if [[ $detectedOS == 'Ubuntu' ]]; then
     if [ -f "/etc/apache2/sites-enabled/000-default" ]; then
     	sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default
     
-    	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions FollowSymLinks\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
+    	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tOrder allow,deny\n\t\tallow from all\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default
 	fi
 	if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
     	sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
     
-    	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions FollowSymLinks\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+    	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
 	fi
 fi
 if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
@@ -110,7 +110,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
     	echo '
     	<Directory "/srv/NetBoot">
-    	Options FollowSymLinks
+    	Options Indexes FollowSymLinks MultiViews
     	AllowOverride None
     	Order allow,deny
     	Allow from all
@@ -120,7 +120,7 @@ if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
     	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
     	echo '
     	<Directory "/srv/NetBoot">
-    	Options FollowSymLinks
+    	Options Indexes FollowSymLinks MultiViews
     	AllowOverride None
     	Require all granted
     	</Directory>' >> /etc/httpd/conf/httpd.conf
