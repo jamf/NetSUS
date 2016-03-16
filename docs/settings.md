@@ -23,12 +23,16 @@ On a mobile device these options are available from the navigation drop down men
 * Hostname* Network type (DHCP or static) 
 * IP address* Netmask* Gateway* DNS servers 
 * Enabling/Disabling SSH
-* Enabling/Disabling Firewall1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.4. Configure the settings on the pane.5. Click **Save**.
+* Enabling/Disabling Firewall
+
+1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.4. Configure the settings on the pane.5. Click **Save**.
 
 
 ## Date/Time SettingsThe Date/Time settings allow you to do the following:* View the current time on the NetBoot/SUS/LP server. 
 * Change the current time zone on the NetBoot/SUS/LP server. 
-* Use a network time server to synchronize the date/time.1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .4. Configure the settings on the pane.5. Click **Save**.
+* Use a network time server to synchronize the date/time.
+
+1. Log in to the NetBoot/SUS/LP server web application.2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .4. Configure the settings on the pane.5. Click **Save**.
 
 
 ## Certificates SettingsCertificates Settings allows you to modify the server settings with either a Tomcat or Slapd certificate to be used for communication with the NetSUSLP Server.
