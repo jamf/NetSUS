@@ -25,7 +25,7 @@ $pageURI = $parts[count($parts) -1];
 <!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
 <script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
 <script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
-<script type="text/javascript" src="scripts/overlib.js"></script>
+<script type="text/javascript" src="scripts/overlibmws.js"></script>
 <script type="text/javascript" src="scripts/infoPanel.js"></script>
 <script type="text/javascript" src="scripts/ajax.js"></script>
 

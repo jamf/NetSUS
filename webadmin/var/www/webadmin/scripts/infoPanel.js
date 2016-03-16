@@ -14,13 +14,14 @@ function browserObject(objid)
 	}
 }
 
-function CustomOver(text, id, id2) {
+function CustomOver(text, title, id, id2) {
 	var o1 = browserObject(id); var o2 = browserObject(id2);
 	if (!o1 || !o2)
 	{
 		return;
 	}
 
-	return overlib(text, FOLLOWMOUSE, WIDTH, 100, BGCOLOR, "#1F448E", FGCOLOR, "#FFFFFF");
+	return overlib(text, CAPTION, title, STICKY, WIDTH, 100, CGCOLOR, "#1F448E", FGCOLOR, "#FFFFFF", BGCOLOR, "#1F448E", BORDER, 0);
+
 }
 

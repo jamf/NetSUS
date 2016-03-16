@@ -755,7 +755,7 @@ table {
     border-bottom: 1px solid #b5b3b4;
     border-top: 1px solid #b5b3b4;
     float: left;
-    width: 100%;
+    /*width: 100%;*/
     border-collapse: collapse;
     margin-bottom: 20px;
 }

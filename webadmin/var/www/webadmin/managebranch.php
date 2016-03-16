@@ -188,8 +188,8 @@ function filterPackages()
 				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
 				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
-				tableContents += "<td>"+pieces[0]+"</td>";
-				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
+				tableContents += "<td id= \"titletd_"+key+"\" >"+pieces[0]+"</td>";
+				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), document.getElementById('titletd_"+key+"').innerText, '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
 				tableContents += "<td nowrap>"+pieces[2]+"</td>";
 				tableContents += "</tr>";
