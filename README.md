@@ -19,22 +19,27 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 ## <a name="requirements"></a>Requirements
 
 #### Supported Linux distributions:
-* Ubuntu 10.04 LTS Server* Ubuntu 12.04 LTS Server* Ubuntu 14.04 LTS Server* Red Hat Enterprise Linux (RHEL) 6.4 or later
+
+* Ubuntu 10.04 LTS Server
+* Ubuntu 12.04 LTS Server
+* Ubuntu 14.04 LTS Server
+* Red Hat Enterprise Linux (RHEL) 6.4 or later
 * CentOS 6.4 or later
 
 #### To install the NetBoot/SUS/LP server using an installer, you need:
 
-* The NetBoot/SUS/LP Server Installer (.run), available at:  <https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>* 300 GB of disk space available 
+* The NetBoot/SUS/LP Server Installer (.run), available at:  
+<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+* 300 GB of disk space available 
 * 1 GB of RAM
-#### To set up the NetBoot/SUS/LP server as an appliance, you need:
 
-* The OVA file for the NetBoot/SUS/LP server, available at:<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>* Virtualization software that supports Open Virtualization Format 
-* 300 GB of disk space available* 2 GB of RAM
-**Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
+#### To set up the NetBoot/SUS/LP server as an appliance, you need:
 
+* The OVA file for the NetBoot/SUS/LP server, available at:
+<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+* Virtualization software that supports Open Virtualization Format 
+* 300 GB of disk space available
+* 2 GB of RAM
 
-## Want to Contribute?
-
-Anyone can help make this project better - check out the [Contributing Guide!](CONTRIBUTING.md)
-
+**Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
 
