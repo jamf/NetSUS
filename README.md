@@ -1,3 +1,16 @@
+
+NetSUS Downloads
+======
+
+Installer:
+http://content.jamfcloud.com/NetSUSLP_4.0.0.run
+
+OVA:
+http://content.jamfcloud.com/NetSUSLP_4.0.0.ova
+
+
+
+
 # What is NetSUS?
 
 The NetBoot/SUS/LP server allows you to host an internal software update server (SUS), a NetBoot server, and a LDAP Proxy server **all on the same Linux system**. For a list of supported Linux distributions see [Requirements](#requirements).
