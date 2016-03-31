@@ -379,7 +379,7 @@ window.addEventListener("load",function() {
     addListenersToFields();
     
     
-	$('#content-inside').find('table.tablesorter').tablesorter();
+	//$('#content-inside').find('table.tablesorter').tablesorter();
 
 
     

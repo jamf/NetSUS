@@ -110,7 +110,7 @@ function validateField(fieldid, buttonid)
 
 			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 			<span class="label">Base URL</span>
-			<span class="description">Base URL for the software update server (e.g. "https://sus.mycompany.corp")</span>
+			<span class="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 			<input type="text" name="baseurl" id="baseurl" 
 							value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
 			<input type="submit" name="setbaseurl" id="setbaseurl" class="insideActionButton" value="Change URL" disabled="disabled" />

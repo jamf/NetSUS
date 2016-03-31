@@ -14,9 +14,20 @@ $currentSubnet = trim(getNetAddress($currentIP, $currentNetmask));
 
 $netbootimgdir = "/srv/NetBoot/NetBootSP0/";
 
+if (isset($_POST['netbootName']))
+{
+	$conf->setSetting("netbootname", $_POST['netbootName']);
+}
+
+if (isset($_POST['enablenetboot']) && !isset($_POST['NetBootImage']))
+{
+	echo "<div class=\"errorMessage\">ERROR: Ensure you have uploaded a properly configured NetBoot image</div>";
+}
+
 if (isset($_POST['NetBootImage']))
 {
 	$wasrunning = getNetBootStatus();
+	$netbootname = $conf->getSetting("netbootname");
 	$nbi = $_POST['NetBootImage'];
 	if ($nbi != "")
 	{
@@ -36,11 +47,14 @@ if (isset($_POST['NetBootImage']))
 		suExec("disablenetboot");
 		suExec("installdhcpdconf");
 		
-		if ($wasrunning || isset($_POST['enablenetboot']))
-		{
-			suExec("setnbimages ".$nbi);
+		if ($wasrunning || isset($_POST['enablenetboot'])) {
+			suExec("setnbimages " . $nbi . " " . $netbootname);
 		}
 		$conf->setSetting("netbootimage", $nbi);
+
+		if (isset($_POST['enablenetboot']) && !getNetBootStatus()) {
+			echo "<div class=\"errorMessage\">ERROR: Unable to start NetBoot service. Ensure your .nbi directory is properly configured</div>";
+		}
 	}
 }
 
@@ -174,6 +188,11 @@ window.onload = validateSubnet;
 
 				?>
 			</select>
+			<br>
+
+			<span class="label">NetBoot Name</span>
+			<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name. Cannot contain spaces</span>
+			<input type="text" name="netbootName" id="netbootName" value="<?php echo $conf->getSetting("netbootname")?>" />
 			<br>
 
 			<div class="labelDescriptionWrapper">

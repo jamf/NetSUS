@@ -172,7 +172,7 @@ function filterPackages()
 <?php
 		foreach($formattedpackages as $key => $value)
 		{
-			echo "		pkgList[\"$key\"] = \"".$value."\";\n";
+			echo "pkgList[\"$key\"] = \"".$value."\";\n";
 		}
 ?>
 
@@ -183,12 +183,12 @@ function filterPackages()
 			var deprecated = "";
 			if (search == "" || pattern.test(value))
 			{
-				pieces = pkgList[key].split("%");
+				var pieces = pkgList[key].split("%");
 				checked = (pkgCheckedList[key] ? "checked=\"checked\"" : "");
 				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
 				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
-				tableContents += "<td id= \"titletd_"+key+"\" >"+pieces[0]+"</td>";
+				tableContents += "<td id=\"titletd_"+key+"\" >"+pieces[0]+"</td>";
 				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), document.getElementById('titletd_"+key+"').innerText, '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
 				tableContents += "<td nowrap>"+pieces[2]+"</td>";
@@ -275,29 +275,54 @@ else if ($statusMessage != "")
 
 			<label for="autosync" class="label">
 			<input type="checkbox" name="autosync" value="autosync"
-	      <?php if ($conf->containsAutosyncBranch($currentBranch))
-	      {
-	      	echo "checked=\"checked\"";
-	      }?> />
-      Automatically Enable New Updates</label>
+			  <?php if ($conf->containsAutosyncBranch($currentBranch))
+			  {
+				echo "checked=\"checked\"";
+			  }?> />
+				Automatically Enable New Updates</label>
 
-      <label for="rootbranch" class="label">
-		  <input type="checkbox" name="rootbranch" value="rootbranch"
-						<?php if ($conf->getSetting("rootbranch") == $currentBranch)
-						{
-							echo "checked=\"checked\"";
-						}?> />
+			<label for="rootbranch" class="label">
+		  	<input type="checkbox" name="rootbranch" value="rootbranch"
+				<?php if ($conf->getSetting("rootbranch") == $currentBranch)
+				{
+					echo "checked=\"checked\"";
+				}?> />
 			Use as Root Branch</label>
 			<br>
 
-			<span class="label">Filter updates by:
-				<input type="text" name="filterBy" id="filterBy" style="min-width:20%; margin-top:-3px;" onKeyUp="javascript:filterPackages();"/>
-			</span>
+			Search Filter:
+			<input type="text" name="filterBy" id="filterBy" onkeyup="javascript:filterPackages();"/>
+
+			<!-- Select OS Filter
+			<br>
+			<span class="nowrap">
+				Filter by OS:&nbsp;
+				<select name="selectOS" id="selectOS" onChange="javascript:filterPackages();">
+					<option value="all">All</option>
+					<option value="os1011">10.11 El Capitan</option>
+					<option value="os1010">10.10 Yosemite</option>
+					<option value="os109">10.9 Mavericks</option>
+					<option value="os108">10.8 Mountain Lion</option>
+					<option value="os107">10.7 Lion</option>
+					<option value="os106">10.6 Snow Leopard</option>
+					<option value="os105">10.5 Leopard</option>
+				</select>
+			</span> -->
+
+			<br>
+			<br>
 
 			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
 			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
 			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
 
+			<br>
+			<br>
+
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="insideActionButton" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+
+			<br>
+			<br>
 
 			<table id="packageTable" style="width:90%;">
 				<?php /* Auto-filled by JavaScript */ ?>

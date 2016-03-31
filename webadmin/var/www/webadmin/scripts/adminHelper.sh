@@ -286,6 +286,12 @@ if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0
 	else
 		isinstall=0
 	fi
+	if [ "$3" != "" ]; then
+        python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    else
+        defaultname=$(basename "$2" .nbi)
+        python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    fi
 	kind=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Kind']"`
 	index=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Index']"`
 	indexhex=`printf "%x" ${index} | tr "[:lower:]" "[:upper:]"`
@@ -309,6 +315,7 @@ else
 	namelenhex="0C"
 	namehex="46:61:75:78:20:4E:65:74:42:6F:6F:74"
 fi
+
 curimageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
 sed -i "s/${curimageid}/${imageid}/g" /etc/dhcpd.conf
 sed -i "s/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:.*/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:${listlenhex}:${imageid}:${namelenhex}:${namehex};/" /etc/dhcpd.conf

@@ -55,15 +55,6 @@ ADDED STYLES
   #packageTable td:nth-of-type(5):before { content: "Date";}
 }
 
-
-
-
-
-
-
-
-
-
 /*----------------------------------------------
 01 - Base Styles
 ------------------------------------------------*/
@@ -2109,6 +2100,15 @@ ul.sideNavigation li span.heading{
       margin-top: -1px;
       margin-left: 0px;
       background:url(../images/startup/aqua-progress-bar.gif);
+}
+input#filterBy {
+    background-image: url(../images/search-icon.png);
+    background-repeat: no-repeat;
+    background-size: 16px;
+    background-position: 2px 2px;
+    text-indent: 22px;
+    margin-top: -2px;
+    width: 150px;
 }
 
 
