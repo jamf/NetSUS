@@ -26,11 +26,13 @@ This will output a list of logs related to the dhcpd service to your terminal wi
 
 ###Common Issues
 
-* Your NetBoot server shows up with the name "Faux NetBoot"
-	* Solution: Ensure your .nbi folder contains a .plist file. This file determines various settings for that NetBoot image, including the name. It should be located in this directory `/srv/NetBoot/NetBootSP0/your_nbi_name.nbi` Be sure to restart your netboot server if any changes are made.
+* Your NetBoot image shows the name "Faux NetBoot"
 
+	Solution: Ensure your .nbi folder contains a .plist file. This file determines various settings for that NetBoot image, including the name. It should be located in this directory `/srv/NetBoot/NetBootSP0/your_nbi_name.nbi`. This file should be generated when the .nbi folder is created.
+	
 * The name entered in the web interface is not changing the NetBoot name
-	* Solution: You may not have write permisson for the .plist file located in this directory `/srv/NetBoot/NetBootSP0/your_nbi_name.nbi`. Locate the plist file on your server and enter `chmod +w your_file.plist`. Be sure to restart your netboot server once this change has been made.
+
+	Solution: You may not have write permisson for the .plist file in your .nbi folder. After you upload your .nbi folder the .plist file will be located in this directory `/srv/NetBoot/NetBootSP0/your_nbi_name.nbi`. Locate the plist file on your server and enter `chmod +w your_file.plist`. Be sure to stop and start your NetBoot instance through the web interface once this change has been made.
 	
 ## Using the NetBoot Server with the Casper Suite**Note**: The instructions in this section are for the Casper Suite v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
 Like standard NetBoot servers, you can add the NetBoot server hosted by the NetBoot/SUS/LP server to the JSS. This allows you to use a policy or Casper Remote to boot managed computers to a NetBoot image.

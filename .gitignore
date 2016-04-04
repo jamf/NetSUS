@@ -11,3 +11,4 @@ NetSUSLPInstaller.run
 .idea/vcs.xml
 .idea/workspace.xml
 .idea/copyright/profiles_settings.xml
+installnetsuslp.sh
