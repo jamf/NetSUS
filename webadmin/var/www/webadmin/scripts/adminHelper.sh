@@ -287,6 +287,7 @@ if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0
 		isinstall=0
 	fi
 	if [ "$3" != "" ]; then
+	    chmod +w "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
         python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
     else
         defaultname=$(basename "$2" .nbi)
