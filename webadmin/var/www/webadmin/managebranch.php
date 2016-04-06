@@ -293,7 +293,9 @@ else if ($statusMessage != "")
 				</label>
 			</div>
 
-			<br>
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+
+			<br><br>
 
 			<div class="btn-group">
 				<button type="button" name="selectAll" id="selectAll" class="btn btn-default" onClick="javascript:selectAllVisible();">Select All</button>
@@ -304,9 +306,11 @@ else if ($statusMessage != "")
 			<br><br>
 
 			<div class="input-group">
-				<div class="input-group-addon">Filter Updates</div>
+				<div class="input-group-addon">Filter Updates <span class="glyphicon glyphicon-search"></span></div>
 				<input type="text" name="filterBy" id="filterBy" class="form-control input-sm" onKeyUp="javascript:filterPackages();"/>
 			</div>
+
+			<br>
 
 			<div class="table-responsive">
 				<table id="packageTable" class="table table-striped table-bordered table-condensed">

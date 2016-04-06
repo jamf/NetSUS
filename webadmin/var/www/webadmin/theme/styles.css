@@ -1,5 +1,5 @@
 /*----------------------------------------------
-New GUI Styles Page Added 1/2016
+Miscellaneous
 ------------------------------------------------*/
 html {
     overflow-x: hidden;
@@ -10,100 +10,6 @@ body {
 .table {
     margin-bottom: 5px;
 }
-
-.radio {
-    padding-left: 20px; }
-.radio label {
-    display: inline-block;
-    position: relative;
-    padding-left: 5px; }
-.radio label::before {
-    content: "";
-    display: inline-block;
-    position: absolute;
-    width: 17px;
-    height: 17px;
-    left: 0;
-    margin-left: -20px;
-    border: 1px solid #cccccc;
-    border-radius: 50%;
-    background-color: #fff;
-    -webkit-transition: border 0.15s ease-in-out;
-    -o-transition: border 0.15s ease-in-out;
-    transition: border 0.15s ease-in-out; }
-.radio label::after {
-    display: inline-block;
-    position: absolute;
-    content: " ";
-    width: 11px;
-    height: 11px;
-    left: 3px;
-    top: 3px;
-    margin-left: -20px;
-    border-radius: 50%;
-    background-color: #555555;
-    -webkit-transform: scale(0, 0);
-    -ms-transform: scale(0, 0);
-    -o-transform: scale(0, 0);
-    transform: scale(0, 0);
-    -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
-    -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
-    -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
-    transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33); }
-.radio input[type="radio"] {
-    opacity: 0; }
-.radio input[type="radio"]:checked + label::after {
-    -webkit-transform: scale(1, 1);
-    -ms-transform: scale(1, 1);
-    -o-transform: scale(1, 1);
-    transform: scale(1, 1); }
-.radio input[type="radio"]:disabled + label {
-    opacity: 0.65; }
-.radio input[type="radio"]:disabled + label::before {
-    cursor: not-allowed; }
-.radio.radio-inline {
-    margin-top: 0; }
-
-.radio-primary input[type="radio"] + label::after {
-    background-color: #337ab7; }
-.radio-primary input[type="radio"]:checked + label::before {
-    border-color: #337ab7; }
-.radio-primary input[type="radio"]:checked + label::after {
-    background-color: #337ab7; }
-
-.radio-danger input[type="radio"] + label::after {
-    background-color: #d9534f; }
-.radio-danger input[type="radio"]:checked + label::before {
-    border-color: #d9534f; }
-.radio-danger input[type="radio"]:checked + label::after {
-    background-color: #d9534f; }
-
-.radio-info input[type="radio"] + label::after {
-    background-color: #5bc0de; }
-.radio-info input[type="radio"]:checked + label::before {
-    border-color: #5bc0de; }
-.radio-info input[type="radio"]:checked + label::after {
-    background-color: #5bc0de; }
-
-.radio-warning input[type="radio"] + label::after {
-    background-color: #f0ad4e; }
-.radio-warning input[type="radio"]:checked + label::before {
-    border-color: #f0ad4e; }
-.radio-warning input[type="radio"]:checked + label::after {
-    background-color: #f0ad4e; }
-
-.radio-success input[type="radio"] + label::after {
-    background-color: #5cb85c; }
-.radio-success input[type="radio"]:checked + label::before {
-    border-color: #5cb85c; }
-.radio-success input[type="radio"]:checked + label::after {
-    background-color: #5cb85c; }
-
-.vcenter {
-    display: flex;
-    align-items: center;
-}
-
 .no-background {
     background: none;
     border: none;
@@ -114,13 +20,72 @@ body {
 .proxy-min-width {
     min-width: 200px;
 }
+.no-border {
+    border: none;
+}
 
-.no-margin-top {
-    margin-top: 0px;
+/*----------------------------------------------
+BS Callouts for Dashboard
+------------------------------------------------*/
+.bs-callout {
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+    background-color: #F8F8F8;
 }
-.no-margin-bot {
-    margin-bottom: 0px;
+.bs-callout h4 {
+    font-size: 11pt;
+    margin-top: 0;
+    margin-bottom: 8px;
 }
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+.bs-callout code {
+    border-radius: 3px;
+}
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+.bs-callout-default {
+    border-left-color: #777;
+}
+.bs-callout-default h4 {
+    color: #777;
+}
+.bs-callout-primary {
+    border-left-color: #428bca;
+}
+.bs-callout-primary h4 {
+    color: #428bca;
+}
+.bs-callout-success {
+    border-left-color: #5cb85c;
+}
+.bs-callout-success h4 {
+    color: #5cb85c;
+}
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+.bs-callout-info {
+    border-left-color: #5bc0de;
+}
+.bs-callout-info h4 {
+    color: #5bc0de;
+}
+
 /*----------------------------------------------
 1 Upper Navigation
 ------------------------------------------------*/
@@ -291,6 +256,97 @@ hr {
 }
 
 /*----------------------------------------------
+7 Radio Buttons
+------------------------------------------------*/
+.radio {
+    padding-left: 20px; }
+.radio label {
+    display: inline-block;
+    position: relative;
+    padding-left: 5px; }
+.radio label::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    width: 17px;
+    height: 17px;
+    left: 0;
+    margin-left: -20px;
+    border: 1px solid #cccccc;
+    border-radius: 50%;
+    background-color: #fff;
+    -webkit-transition: border 0.15s ease-in-out;
+    -o-transition: border 0.15s ease-in-out;
+    transition: border 0.15s ease-in-out; }
+.radio label::after {
+    display: inline-block;
+    position: absolute;
+    content: " ";
+    width: 11px;
+    height: 11px;
+    left: 3px;
+    top: 3px;
+    margin-left: -20px;
+    border-radius: 50%;
+    background-color: #555555;
+    -webkit-transform: scale(0, 0);
+    -ms-transform: scale(0, 0);
+    -o-transform: scale(0, 0);
+    transform: scale(0, 0);
+    -webkit-transition: -webkit-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+    -moz-transition: -moz-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+    -o-transition: -o-transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33);
+    transition: transform 0.1s cubic-bezier(0.8, -0.33, 0.2, 1.33); }
+.radio input[type="radio"] {
+    opacity: 0; }
+.radio input[type="radio"]:checked + label::after {
+    -webkit-transform: scale(1, 1);
+    -ms-transform: scale(1, 1);
+    -o-transform: scale(1, 1);
+    transform: scale(1, 1); }
+.radio input[type="radio"]:disabled + label {
+    opacity: 0.65; }
+.radio input[type="radio"]:disabled + label::before {
+    cursor: not-allowed; }
+.radio.radio-inline {
+    margin-top: 0; }
+
+.radio-primary input[type="radio"] + label::after {
+    background-color: #337ab7; }
+.radio-primary input[type="radio"]:checked + label::before {
+    border-color: #337ab7; }
+.radio-primary input[type="radio"]:checked + label::after {
+    background-color: #337ab7; }
+
+.radio-danger input[type="radio"] + label::after {
+    background-color: #d9534f; }
+.radio-danger input[type="radio"]:checked + label::before {
+    border-color: #d9534f; }
+.radio-danger input[type="radio"]:checked + label::after {
+    background-color: #d9534f; }
+
+.radio-info input[type="radio"] + label::after {
+    background-color: #5bc0de; }
+.radio-info input[type="radio"]:checked + label::before {
+    border-color: #5bc0de; }
+.radio-info input[type="radio"]:checked + label::after {
+    background-color: #5bc0de; }
+
+.radio-warning input[type="radio"] + label::after {
+    background-color: #f0ad4e; }
+.radio-warning input[type="radio"]:checked + label::before {
+    border-color: #f0ad4e; }
+.radio-warning input[type="radio"]:checked + label::after {
+    background-color: #f0ad4e; }
+
+.radio-success input[type="radio"] + label::after {
+    background-color: #5cb85c; }
+.radio-success input[type="radio"]:checked + label::before {
+    border-color: #5cb85c; }
+.radio-success input[type="radio"]:checked + label::after {
+    background-color: #5cb85c; }
+
+/*----------------------------------------------
 8 Alert Boxes
 ------------------------------------------------*/
 .alert-margin-top {
@@ -313,24 +369,21 @@ hr {
 .panel-login {
     background-image: none;
     background-color: #f5f5f5;
-    border: none;
+    /*border: none;*/
     margin-top: 70px;
 }
 .panel-login > .panel-heading {
     background-color: #303641;
-    border: none;
     -webkit-box-shadow: 0 4px 4px -2px #D3D3D3;
     -moz-box-shadow: 0 4px 4px -2px #D3D3D3;
     box-shadow: 0 4px 4px -2px #D3D3D3;
+    padding-bottom: 13px;
 }
 .panel-login > .panel-body {
     padding: 20px;
 }
 #login-form > div {
     margin-bottom: 25px;
-}
-#login-form > .username {
-    margin-top: 10px;
 }
 #login-form > .password {
     margin-top: 10px;
