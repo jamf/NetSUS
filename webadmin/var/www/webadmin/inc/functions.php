@@ -36,7 +36,7 @@ function getSystemTimeZones($path="/usr/share/zoneinfo/right")
 function getSystemTimeZoneMenu()
 {
 	$currentTZ = getCurrentTimeZone();
-	echo "<select id=\"timezone\" name=\"timezone\">\n";
+	echo "<select class=\"form-control input-sm\" id=\"timezone\" name=\"timezone\">\n";
     $timezone_identifiers = DateTimeZone::listIdentifiers();
     foreach($timezone_identifiers as $value){
         if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
@@ -161,22 +161,6 @@ function getDN($ldapconn, $samaccountname, $basedn)
         return $entries[0]['dn'];
     else
         return '';
-};
-
-function getCN($dn)
-{
-    preg_match('/[^,]*/', $dn, $matchs, PREG_OFFSET_CAPTURE, 3);
-    return $matchs[0][0];
-};
-
-function checkLDAPGroup($ldapconn, $userdn, $groupdn)
-{
-    $attributes = array("members");
-    $result = ldap_read($ldapconn, $userdn, "(memberof=".$groupdn.")", $attributes);
-    if ($result === FALSE)
-        return FALSE;
-    $entries = ldap_get_entries($ldapconn, $result);
-    return ($entries['count'] > 0);
 };
 
 function checkLDAPGroupEx($ldapconn, $userdn, $groupdn)

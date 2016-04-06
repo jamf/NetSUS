@@ -243,93 +243,89 @@ else if ($statusMessage != "")
 }
 ?>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-lg-8">
+		<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
 
-			<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
+			<input type="hidden" name="userAction" value="branchPackages">
 
-				<input type="hidden" name="userAction" value="branchPackages">
-
-				<div class="input-group alert-margin-top">
-					<div class="input-group-addon">Branch Displayed</div>
-					<select name="chooseBranch" id="chooseBranch" class="form-control" onChange="javascript:location.href='managebranch.php?branch='+this.value">
-						<?php
-						$branchstr = trim(suExec("getBranchlist"));
-						$branches = explode(" ",$branchstr);
-						if (count($branches) == 0)
-							echo "<tr><td>No branches</td></tr>\n";
-						else
-						{
-							sort($branches);
-						}
-						foreach($branches as $branch)
-						{
-							?>
-							<option value="<?php echo $branch?>" <?php echo ($currentBranch == $branch ? "selected=\"selected\"" : "")?>><?php echo $branch?></option>
-							<?php
-						}
+			<div class="input-group alert-margin-top">
+				<div class="input-group-addon">Branch Displayed</div>
+				<select name="chooseBranch" id="chooseBranch" class="form-control input-sm" onChange="javascript:location.href='managebranch.php?branch='+this.value">
+					<?php
+					$branchstr = trim(suExec("getBranchlist"));
+					$branches = explode(" ",$branchstr);
+					if (count($branches) == 0)
+						echo "<tr><td>No branches</td></tr>\n";
+					else
+					{
+						sort($branches);
+					}
+					foreach($branches as $branch)
+					{
 						?>
-					</select>
-				</div>
+						<option value="<?php echo $branch?>" <?php echo ($currentBranch == $branch ? "selected=\"selected\"" : "")?>><?php echo $branch?></option>
+						<?php
+					}
+					?>
+				</select>
+			</div>
 
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" name="autosync" value="autosync"
-							<?php if ($conf->containsAutosyncBranch($currentBranch))
-							{
-								echo "checked=\"checked\"";
-							}?> />
-						 Automatically Enable New Updates
-					</label>
-				</div>
-				<div class="checkbox">
-					<label>
-						<input type="checkbox" name="rootbranch" value="rootbranch"
-							<?php if ($conf->getSetting("rootbranch") == $currentBranch)
-							{
-								echo "checked=\"checked\"";
-							}?> />
-						 Use as Root Branch
-					</label>
-				</div>
-
-				<br>
-
-				<div class="btn-group">
-					<button type="button" name="selectAll" id="selectAll" class="btn btn-default" onClick="javascript:selectAllVisible();">Select All</button>
-					<button type="button" name="clearAll" id="clearAll" class="btn btn-default" onClick="javascript:clearAllVisible();">Clear All</button>
-					<button type="button" name="clearDeprecated" id="clearDeprecated" class="btn btn-default" onClick="javascript:clearAllDeprecated();">Clear All Deprecated</button>
-				</div>
-
-				<br><br>
-
-				<div class="input-group">
-					<div class="input-group-addon">Filter Updates</div>
-					<input type="text" name="filterBy" id="filterBy" class="form-control" onKeyUp="javascript:filterPackages();"/>
-				</div>
-
-				<div class="table-responsive">
-					<table id="packageTable" class="table table-striped table-bordered table-condensed">
-						<?php /* Auto-filled by JavaScript */ ?>
-					</table>
-				</div>
-
-				<br>
-
-				<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
-			</form>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="autosync" value="autosync"
+						<?php if ($conf->containsAutosyncBranch($currentBranch))
+						{
+							echo "checked=\"checked\"";
+						}?> />
+					 Automatically Enable New Updates
+				</label>
+			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="rootbranch" value="rootbranch"
+						<?php if ($conf->getSetting("rootbranch") == $currentBranch)
+						{
+							echo "checked=\"checked\"";
+						}?> />
+					 Use as Root Branch
+				</label>
+			</div>
 
 			<br>
-			<hr>
-			<br>
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='SUS.php'">
 
-		</div>
+			<div class="btn-group">
+				<button type="button" name="selectAll" id="selectAll" class="btn btn-default" onClick="javascript:selectAllVisible();">Select All</button>
+				<button type="button" name="clearAll" id="clearAll" class="btn btn-default" onClick="javascript:clearAllVisible();">Clear All</button>
+				<button type="button" name="clearDeprecated" id="clearDeprecated" class="btn btn-default" onClick="javascript:clearAllDeprecated();">Clear All Deprecated</button>
+			</div>
+
+			<br><br>
+
+			<div class="input-group">
+				<div class="input-group-addon">Filter Updates</div>
+				<input type="text" name="filterBy" id="filterBy" class="form-control input-sm" onKeyUp="javascript:filterPackages();"/>
+			</div>
+
+			<div class="table-responsive">
+				<table id="packageTable" class="table table-striped table-bordered table-condensed">
+					<?php /* Auto-filled by JavaScript */ ?>
+				</table>
+			</div>
+
+			<br>
+
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+		</form>
+
+		<br>
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='SUS.php'">
+
 	</div>
-
-</div> <!-- end #form-wrapper -->
+</div>
 
 <script>
 filterPackages();

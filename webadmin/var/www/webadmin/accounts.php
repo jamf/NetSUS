@@ -144,141 +144,130 @@ include "inc/header.php";
 
 <h2>Accounts</h2>
 
-<div id="form-wrapper">
-
-	<div class="row">
-		<div class="col-xs-12 col-md-8">
-			<ul class="nav nav-tabs nav-justified" id="top-tabs">
-				<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application Accounts</a></li>
-				<li><a href="#shell-tab" role="tab" data-toggle="tab">Linux Shell Accounts</a></li>
-			</ul>
-		</div>
+<div class="row">
+	<div class="col-xs-12 col-md-8">
+		<ul class="nav nav-tabs nav-justified" id="top-tabs">
+			<li class="active"><a href="#webadmin-tab" role="tab" data-toggle="tab">Web Application Accounts</a></li>
+			<li><a href="#shell-tab" role="tab" data-toggle="tab">Linux Shell Account</a></li>
+		</ul>
 	</div>
+</div>
 
-	<div class="tab-content">
+<div class="tab-content">
 
-		<div class="tab-pane active" id="webadmin-tab">
+	<div class="tab-pane active" id="webadmin-tab">
 
-			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-4">
 
-					<form method="POST" name="WebAdmin" id="WebAdmin">
+				<form method="POST" name="WebAdmin" id="WebAdmin">
 
-						<input type="hidden" name="userAction" value="WebAdmin">
+					<input type="hidden" name="userAction" value="WebAdmin">
 
-						<span class="label label-default">Local Accounts</span>
+					<span class="label label-default">Local Account</span>
 
-						<label class="control-label">Current Username</label>
-						<input type="text" class="form-control input-sm" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
+					<label class="control-label">Current Username</label>
+					<input type="text" class="form-control input-sm" value="<?php echo getCurrentWebUser();?>" readonly class="disabled"/>
 
-						<label class="control-label">Current Password</label>
-						<input type="password" name="confirmold" id="confirmold" class="form-control input-sm"  value="" />
+					<label class="control-label">Current Password</label>
+					<input type="password" name="confirmold" id="confirmold" class="form-control input-sm"  value="" />
 
-						<label class="control-label">New Username</label>
-						<input type="text" name="username" id="username" class="form-control input-sm"  value="<?php echo getCurrentWebUser();?>" />
+					<label class="control-label">New Username</label>
+					<input type="text" name="username" id="username" class="form-control input-sm"  value="<?php echo getCurrentWebUser();?>" />
 
-						<label class="control-label">New Password</label>
-						<input type="password" name="password" id="password" class="form-control input-sm"  value="" />
+					<label class="control-label">New Password</label>
+					<input type="password" name="password" id="password" class="form-control input-sm"  value="" />
 
-						<label class="control-label">Verify New Password</label>
-						<input type="password" name="confirm" id="confirm" class="form-control input-sm"  value="" />
+					<label class="control-label">Verify New Password</label>
+					<input type="password" name="confirm" id="confirm" class="form-control input-sm"  value="" />
 
-						<br>
+					<br>
 
-						<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-primary" />
+					<input type="submit" value="Save" name="SaveWebAccount" id="SaveWebAccount" class="btn btn-primary" />
 
-					</form>
-				</div><!-- /.col -->
-				<div class="col-xs-12 col-sm-6 col-md-4">
+				</form>
+			</div><!-- /.col -->
+			<div class="col-xs-12 col-sm-6 col-md-4">
 
-					<form method="POST" name="LDAP" id="LDAP">
+				<form method="POST" name="LDAP" id="LDAP">
 
-						<span class="label label-default">LDAP Accounts</span>
+					<span class="label label-default">Active Directory Accounts</span>
 
-						<label class="control-label">LDAP Server</label>
-						<input type="text" name="server" id="server" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapserver'); ?>" />
+					<label class="control-label">LDAP Server</label>
+					<input type="text" name="server" id="server" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapserver'); ?>" />
 
-						<label class="control-label">LDAP Domain</label>
-						<input type="text" name="domain" id="domain" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapdomain'); ?>" />
+					<label class="control-label">LDAP Domain</label>
+					<input type="text" name="domain" id="domain" class="form-control input-sm" value="<?php echo $conf->getSetting('ldapdomain'); ?>" />
 
-						<br>
+					<label class="control-label">Administration Groups</label>
+					<div class="input-group">
+						<input type="text" name="cn" id="cn" value="" class="form-control input-sm" onKeyUp="validateLDAPAdmin();" onChange="validateLDAPAdmin();" />
+						<span class="input-group-btn">
+							<input type="submit" name="addadmin" id="addadmin" class="btn btn-primary btn-sm" value="Add" disabled="disabled" />
+						</span>
+					</div>
 
-						<input type="submit" value="Save" name="saveLDAPConfiguration" id="saveLDAPConfiguration" class="btn btn-primary" />
-
-						<br><br>
-
-						<label class="control-label">Administration Groups</label>
-						<div class="input-group">
-							<input type="text" name="cn" id="cn" value="" class="form-control input-sm" onKeyUp="validateLDAPAdmin();" onChange="validateLDAPAdmin();" />
-							<span class="input-group-btn">
-								<input type="submit" name="addadmin" id="addadmin" class="btn btn-primary btn-sm" value="Add" disabled="disabled" />
-							</span>
-						</div>
-
-						<div class="table-responsive">
-							<table class="table table-striped table-bordered table-condensed">
-								<tr>
-									<th>Group Name</th>
-									<th></th>
+					<div class="table-responsive">
+						<table class="table table-striped table-bordered table-condensed">
+							<tr>
+								<th>Group Name</th>
+								<th></th>
+							</tr>
+							<?php foreach($conf->getAdmins() as $key => $value) { ?>
+								<tr class="<?php ($key % 2 == 0 ? "object0" : "object1"); ?>">
+									<td><?php echo $value['cn']?></td>
+									<td><a href="accounts.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
 								</tr>
-								<?php foreach($conf->getAdmins() as $key => $value) { ?>
-									<tr class="<?php ($key % 2 == 0 ? "object0" : "object1"); ?>">
-										<td><?php echo $value['cn']?></td>
-										<td><a href="accounts.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
-									</tr>
-								<? } ?>
-							</table>
-						</div>
+							<? } ?>
+						</table>
+					</div>
 
-						<br>
-						<?php
-						print_r($conf->getAdmins())
-						?>
+					<br>
 
-					</form>
-				</div><!-- /.col -->
-			</div><!-- /.row -->
-		</div><!-- /.tab-pane -->
+					<input type="submit" value="Save" name="saveLDAPConfiguration" id="saveLDAPConfiguration" class="btn btn-primary" />
 
-		<div class="tab-pane" id="shell-tab">
+				</form>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.tab-pane -->
 
-			<div class="row">
-				<div class="col-xs-12 col-sm-6 col-md-4">
+	<div class="tab-pane" id="shell-tab">
 
-					<form method="POST" name="ShellForm" id="ShellForm">
-						<input type="hidden" name="userAction" value="Shell">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-4">
 
-						<span class="label label-default">New Username</span>
-						<input type="text" name="shellUsername" id="shellUsername" class="form-control" value="<?php echo $conf->getSetting("shelluser")?>" />
+				<form method="POST" name="ShellForm" id="ShellForm">
+					<input type="hidden" name="userAction" value="Shell">
 
-						<span class="label label-default">New Password</span>
-						<input type="password" name="shellPassword" id="shellPassword" class="form-control"  value="" />
+					<span class="label label-default">Linux Shell Account</span>
 
-						<span class="label label-default">Verify New Password</span>
-						<input type="password" name="shellConfirm" id="shellConfirm" class="form-control"  value="" />
+					<label class="control-label">New Username</label>
+					<input type="text" name="shellUsername" id="shellUsername" class="form-control input-sm" value="<?php echo $conf->getSetting("shelluser")?>" />
 
-						<br>
+					<label class="control-label">New Password</label>
+					<input type="password" name="shellPassword" id="shellPassword" class="form-control input-sm"  value="" />
 
-						<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-primary" />
-					</form>
-				</div><!-- /.col -->
-			</div><!-- /.row -->
-		</div><!-- /.tab-pane -->
+					<label class="control-label">Verify New Password</label>
+					<input type="password" name="shellConfirm" id="shellConfirm" class="form-control input-sm"  value="" />
 
-	</div> <!-- end .tab-content -->
+					<br>
 
-	<br>
+					<input type="submit" value="Save" name="saveShellAccount" id="saveShellAccount" class="btn btn-primary" />
+				</form>
+			</div><!-- /.col -->
+		</div><!-- /.row -->
+	</div><!-- /.tab-pane -->
 
-	<div class="row">
-		<div class="col-xs-12 col-md-8">
-			<hr>
-			<br>
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
-		</div>
+</div> <!-- end .tab-content -->
+
+<br>
+
+<div class="row">
+	<div class="col-xs-12 col-md-8">
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 	</div>
-
-
-
-</div><!--  end #form-wrapper -->
+</div>
 
 <?php include "inc/footer.php"; ?>

@@ -26,44 +26,39 @@ if (isset($_POST['SaveDateTime'])) {
 
 <h2>Date/Time</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-6 col-md-4">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4">
+		<hr>
 
-			<hr>
+		<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
+			<input type="hidden" name="userAction" value="DateTime">
 
-			<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
-				<input type="hidden" name="userAction" value="DateTime">
+			<span class="label label-default">Current Time</span>
+			<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
+			<span><?php print getLocalTime();?></span>
+			<br>
 
-				<span class="label label-default">Current Time</span>
-				<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
-				<span><?php print getLocalTime();?></span>
-				<br>
+			<span class="label label-default">Current Time Zone</span>
+			<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
+			<span><?php echo getSystemTimeZoneMenu();?></span>
 
-				<span class="label label-default">Current Time Zone</span>
-				<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
-				<span><?php echo getSystemTimeZoneMenu();?></span>
-
-				<span class="label label-default">Network Time Server</span>
-				<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-				<input type="text" name="timeserver" id="timeserver" class="form-control" value="<?php echo getCurrentTimeServer();?>" />
-
-				<br>
-
-				<input type="submit" class="btn btn-primary" value="Save" name="SaveDateTime"/>
-
-			</form>
+			<span class="label label-default">Network Time Server</span>
+			<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
+			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" />
 
 			<br>
-			<hr>
-			<br>
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
-		</div><!-- /.col -->
-	</div><!-- /.row -->
+			<input type="submit" class="btn btn-primary" value="Save" name="SaveDateTime"/>
 
-</div><!-- /#form-wrapper -->
+		</form>
 
+		<br>
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+
+	</div><!-- /.col -->
+</div><!-- /.row -->
 
 <?php include "inc/footer.php"; ?>

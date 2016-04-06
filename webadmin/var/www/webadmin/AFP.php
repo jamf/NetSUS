@@ -38,67 +38,51 @@ if (isset($_POST['afppass']))
   	$accounterror = "All fields required.";
   }
 }
-
-
-
 ?>
-<script>
-// function validateafpPW()
-// {
-// 	if (document.getElementById("afppass1").value != "" && document.getElementById("afppass2").value != "" && document.getElementById("afppass1").value == document.getElementById("afppass2").value && document.getElementById("afppass1").value.indexOf("@") == -1)
-// 		document.getElementById("afppass").disabled = false;
-// 	else
-// 		document.getElementById("afppass").disabled = true;
-// }
-</script>
 
-<div id="form-wrapper">
+<div id="restarting" class="alert alert-warning alert-margin-top" style="display:none">
+	<span><img src="images/progress.gif" width="25"> Restarting...</span>
+</div>
 
-	<h2>AFP</h2>
+<?php if ($accounterror != "") { ?>
+	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
+<?php } ?>
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+<?php if ($accountsuccess != "") { ?>
+	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
+<?php } ?>
 
-			<hr>
+<div class="row">
+	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-			<div id="restarting" class="alert alert-warning alert-margin-top" style="display:none">
-				<span><img src="images/progress.gif" width="25"> Restarting...</span>
-			</div>
+		<h2>AFP</h2>
 
-			<?php if ($accounterror != "") { ?>
-				<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
-			<?php } ?>
+		<hr>
 
-			<?php if ($accountsuccess != "") { ?>
-				<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
-			<?php } ?>
+		<form action="AFP.php" method="post" name="AFP" id="AFP">
 
-			<form action="AFP.php" method="post" name="AFP" id="AFP">
+			<span class="label label-default">AFP Service</span>
+			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
+			<br><br>
 
-				<span class="label label-default">AFP Service</span>
-				<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
-				<br>
+			<label class="control-label">New Password</label>
+			<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 
-				<span class="label label-default">New Password</span>
-				<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" class="form-control" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-
-				<span class="label label-default">Confirm New Password</span>
-				<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" class="form-control" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
-				<br>
-
-				<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" />
-				<br>
-				<br>
-
-			</form> <!-- end AFP form -->
-
-			<hr>
+			<label class="control-label">Confirm New Password</label>
+			<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 			<br>
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
-		</div>
+			<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" />
+			<br>
+			<br>
+
+		</form> <!-- end AFP form -->
+
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+
 	</div>
-
-</div><!--  end #form-wrapper -->
+</div>
 
 <?php include "inc/footer.php"; ?>

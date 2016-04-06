@@ -90,8 +90,6 @@ window.onload = function()
 
 <h2>Network</h2>
 
-<div id="form-wrapper">
-
 	<form action="networkSettings.php" method="post" name="NetworkSettings" id="NetworkSettings">
 
 		<input type="hidden" name="userAction" value="Network">
@@ -105,55 +103,52 @@ window.onload = function()
 		<div class="row">
 			<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 
-				<span class="label label-default">Hostname</span>
-				<input type="text" name="hostname" id="hostname" class="form-control" value="<?php echo getCurrentHostname(); ?>" />
+				<label class="control-label">Hostname</label>
+				<input type="text" name="hostname" id="hostname" class="form-control input-sm" value="<?php echo getCurrentHostname(); ?>" />
 
-				<span class="label label-default">Type</span>
+				<label class="control-label">Type</label>
 				<!-- <select onchange="disableStaticOptions(this.value);" name="selectedNetType">
 					<option name="nettype" value="dhcp" id="dhcp" <?php echo ($type=="dhcp"?" selected=\"selected\"":"") ?>>DHCP</option>
 					<option name="nettype" value="static" id="static" <?php echo ($type=="static"?" selected=\"selected\"":"") ?>>Static</option>
 				</select> -->
 
-				<div class="radio">
-					<label>
-						<input type="radio" name="nettype" value="dhcp" id="dhcp" <?php echo ($type=="dhcp"?" checked=\"checked\"":"") ?> onclick="disableStaticOptions(this.value);" />
-						DHCP
-					</label>
-				</div>
-				<div class="radio">
-					<label>
-						<input type="radio" name="nettype" value="static" id="static" <?php echo ($type=="static"?" checked=\"checked\"":"") ?> onclick="disableStaticOptions(this.value);" />
-						Static
-					</label>
+				<div class="radio radio-primary">
+					<input type="radio" name="nettype" value="dhcp" id="dhcp" <?php echo ($type=="dhcp"?" checked=\"checked\"":"") ?> onclick="disableStaticOptions(this.value);" />
+					<label for="dhcp">DHCP</label>
 				</div>
 
-				<span class="label label-default">IP Address</span>
-				<input type="text" name="ip" id="ip"  class="form-control"value="<?php echo getCurrentIP(); ?>" />
+				<div class="radio radio-primary">
+					<input type="radio" name="nettype" value="static" id="static" <?php echo ($type=="static"?" checked=\"checked\"":"") ?> onclick="disableStaticOptions(this.value);" />
+					<label for="static">Static</label>
+				</div>
 
-				<span class="label label-default">Netmask</span>
-				<input type="text" name="netmask" id="netmask" class="form-control" value="<?php echo getCurrentNetmask(); ?>" />
+				<label class="control-label">IP Address</label>
+				<input type="text" name="ip" id="ip"  class="form-control input-sm" value="<?php echo getCurrentIP(); ?>" />
+
+				<label class="control-label">Netmask</label>
+				<input type="text" name="netmask" id="netmask" class="form-control input-sm" value="<?php echo getCurrentNetmask(); ?>" />
 
 			</div>
 
 			<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 
-				<span class="label label-default">Gateway</span>
-				<input type="text" name="gateway" id="gateway" class="form-control" value="<?php echo getCurrentGateway(); ?>" />
+				<label class="control-label">Gateway</label>
+				<input type="text" name="gateway" id="gateway" class="form-control input-sm" value="<?php echo getCurrentGateway(); ?>" />
 
 
-				<span class="label label-default">DNS Server 1</span>
-				<input type="text" name="dns1" id="dns1" class="form-control" value="<?php if (isset($dns[0])) { echo $dns[0]; } ?>" />
+				<label class="control-label">DNS Server 1</label>
+				<input type="text" name="dns1" id="dns1" class="form-control input-sm" value="<?php if (isset($dns[0])) { echo $dns[0]; } ?>" />
 
 
-				<span class="label label-default">DNS Server 2</span>
-				<input type="text" name="dns2" id="dns2" class="form-control" value="<?php if (isset($dns[1])) { echo $dns[1]; } ?>" />
+				<label class="control-label">DNS Server 2</label>
+				<input type="text" name="dns2" id="dns2" class="form-control input-sm" value="<?php if (isset($dns[1])) { echo $dns[1]; } ?>" />
 				<br>
 
-				<input type="submit" class="btn btn-sm btn-primary" value="<?php if (getSSHstatus()) { echo "Disable"; } else { echo "Enable"; } ?> SSH" name="SSH"/>
+				<input type="submit" class="btn btn-sm <?php if (getSSHstatus()) { echo 'btn-success" value="Disable'; } else { echo'btn-danger" value="Enable'; } ?> SSH" name="SSH"/>
 				<br>
 				<br>
 
-				<input type="submit" class="btn btn-sm btn-primary" value="<?php if (getFirewallstatus()) { echo "Disable"; } else { echo "Enable"; } ?> Firewall" name="Firewall"/>
+				<input type="submit" class="btn btn-sm <?php if (getFirewallstatus()) { echo 'btn-success" value="Disable'; } else { echo'btn-danger" value="Enable'; } ?> Firewall" name="Firewall"/>
 			</div>
 		</div>
 
@@ -172,7 +167,5 @@ window.onload = function()
 
 
 	</form> <!-- end network settings form -->
-
-</div><!--  end #form-wrapper -->
 
 <?php include "inc/footer.php"; ?>

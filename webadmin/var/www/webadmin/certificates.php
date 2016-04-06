@@ -55,8 +55,6 @@ echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  
 
 <h2>Certificates</h2>
 
-<div id="form-wrapper">
-
 	<form action="certificates.php" method="post" name="certificates" id="certificates">
 
 		<div class="row">
@@ -64,14 +62,14 @@ echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  
 
 				<hr>
 
-				<span class="label label-default">Private Key</span>
-				<textarea class="form-control" name="privatekey" rows="3"></textarea>
+				<label class="control-label">Private Key</label>
+				<textarea class="form-control input-sm" name="privatekey" rows="3"></textarea>
 
-				<span class="label label-default">Certificate</span>
-				<textarea class="form-control" name="certificate" rows="3"></textarea>
+				<label class="control-label">Certificate</label>
+				<textarea class="form-control input-sm" name="certificate" rows="3"></textarea>
 
-				<span class="label label-default">Chain</span>
-				<textarea class="form-control" name="chain" rows="3"></textarea>
+				<label class="control-label">Chain</label>
+				<textarea class="form-control input-sm" name="chain" rows="3"></textarea>
 				<br>
 
 				<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Save" />
@@ -85,9 +83,5 @@ echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.  
 			</div>
 		</div>
 	</form> <!-- end SMB form -->
-
-
-
-</div><!--  end #form-wrapper -->
 
 <?php include "inc/footer.php"; ?>

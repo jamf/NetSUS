@@ -37,34 +37,30 @@ session_destroy();
 
 <h2>Disable GUI</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-lg-8">
+		<hr>
 
-			<hr>
+		<form action="disablegui.php" method="POST" name="disablegui" id="disablegui" >
 
-			<form action="disablegui.php" method="POST" name="disablegui" id="disablegui" >
-
-				<br>
-
-				<p>Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</p>
-
-				<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
-				<br>
-				<br>
-
-			</form> <!-- end form Restart -->
-
-			<hr>
 			<br>
 
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<p>Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</p>
 
-		</div>
+			<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<br>
+			<br>
+
+		</form> <!-- end form Restart -->
+
+		<hr>
+		<br>
+
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+
 	</div>
-
-</div><!--  end #form-wrapper -->
+</div>
 
 <?php include "inc/footer.php"; ?>
 

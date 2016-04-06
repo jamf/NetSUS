@@ -6,43 +6,56 @@ $amAuthURL="dashboard.php";
 if (isset($_SESSION['isAuthUser'])) {
 	header('Location: '. $amAuthURL);
 }
+
 $isAuth=FALSE;
+
+$type="suslogin";
+
 if ((isset($_POST['username'])) && (isset($_POST['password']))) {
-	$username=$_POST['username'];
-	$password=hash("sha256",$_POST['password']);
+	$username = $_POST['username'];
+	$password = hash("sha256", $_POST['password']);
 	$_SESSION['username'] = $username;
-	define(LDAP_OPT_DIAGNOSTIC_MESSAGE, 0x0032);
-	if (($username != "") && ($password != "")) {
-		if ($username == $admin_username && $password == $admin_password) {
-			$isAuth=TRUE;
+
+	if ($_POST['loginwith'] == 'suslogin') {
+		if (($username != "") && ($password != "")) {
+			if ($username == $admin_username && $password == $admin_password) {
+				$isAuth = TRUE;
+			} else {
+				$loginerror = "NetSUS: Invalid Credentials";
+			}
 		}
+	}
+
+	if ($_POST['loginwith'] == 'adlogin') {
+
+		define(LDAP_OPT_DIAGNOSTIC_MESSAGE, 0x0032);
+		$type="adlogin";
+
 		$ldapconn = ldap_connect($conf->getSetting("ldapserver"));
 		if ($ldapconn) {
 			ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
 			ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
-			if (ldap_bind($ldapconn, $username/*."@".$conf->getSetting("ldapdomain")*/, $_POST['password'])) {
-				$basedn = /*"DC=".implode(",DC=", explode(".", */$conf->getSetting("ldapdomain")/*))*/;
+			if (ldap_bind($ldapconn, $username . "@" . $conf->getSetting("ldapdomain"), $_POST['password'])) {
+				$basedn = "DC=" . implode(",DC=", explode(".", $conf->getSetting("ldapdomain")));
 				$userdn = getDN($ldapconn, $username, $basedn);
 				foreach ($conf->getAdmins() as $key => $value) {
 					$groupdn = getDN($ldapconn, $value['cn'], $basedn);
 					if (checkLDAPGroupEx($ldapconn, $userdn, $groupdn)) {
-						$isAuth=TRUE;
+						$isAuth = TRUE;
 					}
 				}
 				ldap_unbind($ldapconn);
+			} else if (ldap_get_option($ldapconn, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
+				$loginerror = "LDAP: Error on Bind - ".$extended_error;
+			} else {
+				$loginerror = "LDAP: Invalid Credentials";
 			}
-			else if (ldap_get_option($ldapconn, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
-				$ldaperror = "Error Binding to LDAP: $extended_error";
-			}
-			else {
-				$ldaperror = "LDAP: Invalid Credentials";
-			}
-		}
-		else {
-			$ldaperror = "LDAP: uanble to connect";
+		} else {
+			$loginerror = "LDAP: Unable to Connect to URL";
 		}
 	}
 }
+
 if ($isAuth) {
 	$_SESSION['isAuthUser'] = 1;
 	$sURL = "dashboard.php";
@@ -69,15 +82,24 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
 	</head> 
 
-	<body> 
-
-		<div class="alert alert-warning">WebAdmin GUI is disabled</div>
-
+	<body>
+		<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-login">
+				<div class="panel-heading">
+					<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
+				</div>
+				<div class="panel-body">
+					<div class="alert alert-danger">WebAdmin GUI is disabled</div>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>
+
 <?php
 } else {
 ?>
+
 <!DOCTYPE html>
 
 <html>
@@ -93,41 +115,36 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	</head> 
 
 	<body>
+		<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+			<div class="panel panel-default panel-login">
 
-			<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
-				<div class="panel panel-default panel-login">
+				<div class="panel-heading">
+					<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
+				</div>
 
-					<div class="panel-heading">
-						<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
-					</div>
+				<div class="panel-body">
 
-					<div class="panel-body">
+					<?php if(isset($loginerror)) {
+						echo "<div class=\"alert alert-danger\">".$loginerror."</div>";
+					} ?>
 
-							<div class="container">
-								<?php if(isset($ldaperror)) { ?> <div class="alert alert-danger"> <?php echo $ldaperror; ?> </div> <?php } ?>
-								<div class="alert alert-danger">
-									<?php
-									$ldapconn = ldap_connect("ldap://ad1.ad.jamfsw.corp:389/");
-									if (ldap_bind($ldapconn, "Administrator@CN=Administrator,CN=Users,DC=ad,DC=jamfsw,DC=corp", "j@mf1234")) {
-										echo "Bind Success";
-									} else {
-										echo "Bind Fail";
-									}
-									?>
-								</div>
-
-								<form name="loginForm" class="form-horizontal" id="login-form" method="post" action="">
-									<div class="username"><input id="username" type="text" class="form-control" name="username" value="" placeholder="Username"></div>
-									<div class="password"><input id="password" type="password" class="form-control" name="password" placeholder="Password"></div>
-									<div><input type="submit" class="btn btn-primary pull-right" name="submit" value="Log In"></div>
-								</form>
-							</div>
-
-					</div>
-
+					<form name="loginForm" class="form-horizontal" id="login-form" method="post" action="">
+						<legend>Login with</legend>
+						<div class="radio radio-inline radio-primary">
+							<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type=="suslogin"?" checked=\"checked\"":"") ?>>
+							<label for="suslogin">NetSUS Local</label>
+						</div>
+						<div class="radio radio-inline radio-primary">
+							<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type=="adlogin"?" checked=\"checked\"":"") ?>>
+							<label for="adlogin">Active Directory</label>
+						</div>
+						<div class="username"><input id="username" type="text" class="form-control input-sm" name="username" value="" placeholder="Username"></div>
+						<div class="password"><input id="password" type="password" class="form-control input-sm" name="password" placeholder="Password"></div>
+						<div><input type="submit" class="btn btn-primary pull-right" name="submit" value="Log In"></div>
+					</form>
 				</div>
 			</div>
-
+		</div>
 	</body>
 </html>
 <?php

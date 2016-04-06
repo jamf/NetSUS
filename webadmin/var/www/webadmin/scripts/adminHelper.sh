@@ -286,6 +286,13 @@ if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0
 	else
 		isinstall=0
 	fi
+	if [ "$3" != "" ]; then
+ 	    chmod +w "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+        python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    else
+        defaultname=$(basename "$2" .nbi)
+        python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    fi
 	kind=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Kind']"`
 	index=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Index']"`
 	indexhex=`printf "%x" ${index} | tr "[:lower:]" "[:upper:]"`

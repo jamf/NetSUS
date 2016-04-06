@@ -18,43 +18,39 @@ if (isset($_POST['confirm']))
 
 <h2>Shut Down</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-lg-8">
+		<hr>
 
-			<hr>
+		<form action="shutdown.php" method="POST" name="ShutDown" id="ShutDown" >
 
-			<form action="shutdown.php" method="POST" name="ShutDown" id="ShutDown" >
-
-				<br>
-
-				<span>Are you sure you want to shut down the NetBoot/SUS/LDAP Proxy Server?</span>
-				<span class="description">The NetBoot/SUS/LDAP Proxy Server will need to be restarted manually.</span>
-				<?php
-				$afpconns = trim(suExec("afpconns"));
-				$smbconns = trim(suExec("smbconns"));
-				if (($afpconns > 0) || ($smbconns > 0))
-				{
-					echo '<div class="well">There are '.($afpconns + $smbconns).' users connected to this server. If you shut down they will be disconnected.</div>';
-				}
-				?>
-
-				<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Shut Down" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
-				<br>
-				<br>
-
-			</form> <!-- end form ShutDown -->
-
-			<hr>
 			<br>
 
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<span>Are you sure you want to shut down the NetBoot/SUS/LDAP Proxy Server?</span>
+			<span class="description">The NetBoot/SUS/LDAP Proxy Server will need to be restarted manually.</span>
+			<?php
+			$afpconns = trim(suExec("afpconns"));
+			$smbconns = trim(suExec("smbconns"));
+			if (($afpconns > 0) || ($smbconns > 0))
+			{
+				echo '<div class="well">There are '.($afpconns + $smbconns).' users connected to this server. If you shut down they will be disconnected.</div>';
+			}
+			?>
 
-		</div>
+			<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Shut Down" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<br>
+			<br>
+
+		</form> <!-- end form ShutDown -->
+
+		<hr>
+		<br>
+
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+
 	</div>
-
-</div><!--  end #form-wrapper -->
+</div>
 
 <?php include "inc/footer.php"; ?>
 

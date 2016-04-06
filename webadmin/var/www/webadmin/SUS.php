@@ -74,10 +74,9 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 
 <h2>Software Update Server</h2>
 
-<div id="form-wrapper">
 
-	<div class="row">
-		<div class="col-xs-12 col-sm-10 col-lg-8">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
 		<form action="SUS.php" method="post" name="SUS" id="SUS">
 
@@ -90,10 +89,10 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
 			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control" class="long-text-input"
+				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input"
 					   value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
 			<span class="input-group-btn">
-				<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary" value="Change URL" disabled="disabled" />
+				<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
 			</span>
 			</div>
 
@@ -130,9 +129,9 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class="label label-default">New Branch</span>
 
 			<div class="input-group">
-				<input type="text" name="branchname" id="branchname" class="form-control" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
 				<span class="input-group-btn">
-					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary" value="Add Branch" disabled="disabled"/>
+					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" value="Add Branch" disabled="disabled"/>
 				</span>
 			</div>
 
@@ -156,7 +155,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 
 			<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
 
-			<span class="label label-default">Deprecated Updates</span>
+			<span class="label label-default">Purge Deprecated Updates</span>
 			<span class="description">Removes all deprecated updates that are no longer included in any branches</span>
 			<input type="button" value="Purge Deprecated" class="btn btn-primary btn-sm" onClick="javascript: return goTo(true, 'susCtl.php?purge=true');"/>
 
@@ -168,7 +167,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class="label label-default">Daily Sync Time</span>
 
 			<span class="description">Time at which to sync the list of available updates with Apple's Software Update server each day</span>
-			<select id="syncsch" class="form-control" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
+			<select id="syncsch" class="form-control input-sm" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
 				<option value="Off"<?php echo ($syncschedule == "Off" ? " selected=\"selected\"" : "")?>>None</option>
 				<option value="0"<?php echo ($syncschedule == "0" ? " selected=\"selected\"" : "")?>>12 a.m.</option>
 				<option value="3"<?php echo ($syncschedule == "3" ? " selected=\"selected\"" : "")?>>3 a.m.</option>
@@ -186,7 +185,5 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 		</form> <!-- end form SUS -->
 	</div><!-- /.col -->
 </div><!-- /.row -->
-
-</div> <!-- end #form-wrapper -->
 
 <?php include "inc/footer.php"; ?>
