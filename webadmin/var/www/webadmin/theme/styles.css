@@ -25,65 +25,22 @@ body {
 }
 
 /*----------------------------------------------
-BS Callouts for Dashboard
+bs-callout for Dashboard
 ------------------------------------------------*/
 .bs-callout {
-    padding: 15px;
-    margin: 15px 0;
-    border: 1px solid #eee;
-    border-left-width: 5px;
-    border-radius: 3px;
-    background-color: #F8F8F8;
+    padding: 10px;
+    height: 90px;
 }
 .bs-callout h4 {
-    font-size: 11pt;
+    font-size: 12pt;
     margin-top: 0;
     margin-bottom: 8px;
-}
-.bs-callout p:last-child {
-    margin-bottom: 0;
-}
-.bs-callout code {
-    border-radius: 3px;
-}
-.bs-callout+.bs-callout {
-    margin-top: -5px;
-}
-.bs-callout-default {
-    border-left-color: #777;
-}
-.bs-callout-default h4 {
     color: #777;
 }
-.bs-callout-primary {
-    border-left-color: #428bca;
-}
-.bs-callout-primary h4 {
-    color: #428bca;
-}
-.bs-callout-success {
-    border-left-color: #5cb85c;
-}
-.bs-callout-success h4 {
-    color: #5cb85c;
-}
-.bs-callout-danger {
-    border-left-color: #d9534f;
-}
-.bs-callout-danger h4 {
-    color: #d9534f;
-}
-.bs-callout-warning {
-    border-left-color: #f0ad4e;
-}
-.bs-callout-warning h4 {
-    color: #f0ad4e;
-}
-.bs-callout-info {
-    border-left-color: #5bc0de;
-}
-.bs-callout-info h4 {
-    color: #5bc0de;
+@media (max-width: 600px) {
+    .bs-callout {
+        height: 110px;
+    }
 }
 
 /*----------------------------------------------
@@ -176,6 +133,7 @@ BS Callouts for Dashboard
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    background-color: #F7F7F7;
 }
 
 /*----------------------------------------------
@@ -228,7 +186,7 @@ hr {
     text-align: left;
     color: black;
     background-color: #f6f6f6;
-    border-bottom: 1px solid #e6e6e6;
+    border: 1px solid #e6e6e6;
     padding: 6px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;

@@ -19,10 +19,16 @@ if (isset($_POST['netbootName']))
 	$conf->setSetting("netbootname", $_POST['netbootName']);
 }
 
-if (isset($_POST['enablenetboot']) && !isset($_POST['NetBootImage']))
+if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && empty($conf->getSubnets()))
+{
+	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Ensure you added a proper Subnet and Netmask</div>";
+}
+
+if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && !isset($_POST['NetBootImage']))
 {
 	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Ensure you have uploaded a properly configured NetBoot image</div>";
 }
+
 
 if (isset($_POST['NetBootImage']))
 {
@@ -47,12 +53,12 @@ if (isset($_POST['NetBootImage']))
 		suExec("disablenetboot");
 		suExec("installdhcpdconf");
 
-		if ($wasrunning || isset($_POST['enablenetboot'])) {
+		if ($wasrunning || isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) {
 			suExec("setnbimages " . $nbi . " " . $netbootname);
 		}
 		$conf->setSetting("netbootimage", $nbi);
 
-		if (isset($_POST['enablenetboot']) && !getNetBootStatus()) {
+		if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && !getNetBootStatus() && !empty($conf->getSubnets())) {
 			echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to start NetBoot service. Ensure your .nbi directory is properly configured</div>";
 		}
 	}
@@ -166,44 +172,59 @@ window.onload = validateSubnet;
 
 			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
 
-			<span class="label label-default">NetBoot Image</span>
-
+			<span class="label label-default">Upload NetBoot Image</span>
 			<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
 			<input type="button" name="uploadnbi" id="uploadnbi" class="btn btn-sm btn-primary" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
 
 			<br><br>
 
-			<label class="control-label">NetBoot Image</label>
-			<span class="description">NetBoot image that computers boot to</span>
-			<select name="NetBootImage" id="NetBootImage" class="form-control input-sm" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
-				<?php
-				$nbidircontents = scandir($netbootimgdir);
-				$curimg = $conf->getSetting("netbootimage");
-				$i = 0;
-				foreach($nbidircontents as $item)
-				{
-					if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
-					{
-						?>
-						<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
-						<?php
-					}
-					$i++;
-				}
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<strong>NetBoot Image and Name</strong>
+				</div>
+				<div class="panel-body">
+					<div class="input-group">
+						<div class="input-group-addon no-background">Image</div>
+						<span class="description">NetBoot image that computers boot to</span>
+						<select name="NetBootImage" id="NetBootImage" class="form-control input-sm" onChange="javascript:ajaxPost('ajax.php?service=NetBoot', 'NetBootImage='+this.value);">
+							<?php
+							$nbidircontents = scandir($netbootimgdir);
+							$curimg = $conf->getSetting("netbootimage");
+							$i = 0;
+							foreach($nbidircontents as $item)
+							{
+								if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
+								{
+									?>
+									<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
+									<?php
+								}
+								$i++;
+							}
 
-				if ($i == 0)
-				{
-					echo "<option value=\"\">---</option>\n";
-				}
+							if ($i == 0)
+							{
+								echo "<option value=\"\">---</option>\n";
+							}
 
-				?>
-			</select>
+							?>
+						</select>
+					</div>
 
-			<label class="control-label">NetBoot Name</label>
-			<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name. Cannot contain spaces</span>
-			<input type="text" name="netbootName" id="netbootName" class="form-control input-sm" value="<?php echo $conf->getSetting("netbootname")?>" />
+					<br>
 
-			<br>
+					<div class="input-group">
+						<div class="input-group-addon no-background">Name</div>
+						<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name. Cannot contain spaces</span>
+						<input type="text" name="netbootName" id="netbootName" class="form-control input-sm" value="<?php echo $conf->getSetting("netbootname")?>" />
+					</div>
+				</div>
+
+				<div class="panel-footer">
+					<input type="submit" name="changenetboot" id="changenetboot" class="btn btn-primary btn-sm" value="Change"/>
+				</div>
+
+			</div>
 
 			<div class="panel panel-default">
 				<div class="panel-heading">
