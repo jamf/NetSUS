@@ -1,7 +1,7 @@
 # LDAP Proxy Server
 The LDAP Proxy Server is a proxy server that allows you to expose an access point to an LDAP Server. In doing so it allows you to adjust the distinguished name to whatever you choose. You may find the following diagram helpful when filling out your proxy information.
 
-    <img height="140" src="images/attachments/proxy_diagram.png">
+<img height="140" src="images/attachments/proxy_diagram.png">
 
 1. Log in to the NetBoot/SUS/LP server web application.
 

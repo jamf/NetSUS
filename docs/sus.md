@@ -11,7 +11,7 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetBoot/SUS/LP serve
 
 3. Enter a base URL and click Change URL.
 
-    <img src="images/attachments/sus_no_branches.png" width="500">
+    <img src="images/attachments/sus_no_branch.png" width="500">
 
 4. Create at least one branch by typing a branch name in the New Branch field and clicking Add. Repeat as needed for each branch.
 
@@ -25,7 +25,7 @@ You can sync the list of available software updates with Apple’s Software Upda
 
 3. Sync the list of available software updates manually, or choose a time to sync the list each day.
 
-    <img src="images/attachments/sus_with_branch.png" width="500">
+    <img src="images/attachments/sus_sync.png" width="500">
 	
 ## Configuring SUS Branches
 
@@ -44,10 +44,8 @@ The NetBoot/SUS/LP server web application allows you to do the following for eac
 
     <img src="images/attachments/sus_branch_upper.png" width="500">
     
-5. Click Apply below the list of software updates.
+5. Click **Apply** below the list of software updates or at the top of the page.
 
-    <img src="images/attachments/sus_branch_lower.png" width="500">
-	
 # Using the SUS with the Casper Suite
 
 Like a standard SUS, you can use the SUS hosted by the NetBoot/SUS/LP server to run Software Update on computers that are enrolled with the JSS. This involves pointing computers at a branch, and then using a policy or Casper Remote to run Software Update on the computers.
