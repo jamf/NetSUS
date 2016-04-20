@@ -36,16 +36,16 @@ if (isset($_POST['smbpass']))
 
 ?>
 
-<div id="restarting" class="alert alert-warning alert-margin-top" style="display:none">
+<div id="restarting" class="alert alert-warning" style="display:none">
 	<span><img src="images/progress.gif" width="25"> Restarting...</span>
 </div>
 
 <?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
+	<?php echo "<div class=\"alert alert-danger\" >ERROR: " . $accounterror . "</div>" ?>
 <?php } ?>
 
 <?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
+	<?php echo "<div class=\"alert alert-success\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
 <div class="row">
@@ -61,10 +61,10 @@ if (isset($_POST['smbpass']))
 			<br><br>
 
 			<label class="control-label">New Password</label>
-			<input type="password" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" placeholder="[Required]" onKeyUp="validatePW();" onChange="validatePW();" />
+			<input type="password" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
 
 			<label class="control-label">Confirm New Password</label>
-			<input type="password" name="smbpass2" id="smbpass2" class="form-control input-sm" value="" placeholder="[Required]" onKeyUp="validatePW();" onChange="validatePW();" />
+			<input type="password" name="smbpass2" id="smbpass2" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
 			<br>
 
 			<input type="submit" name="smbpass" id="smbpass" class="btn btn-primary" value="Save" />

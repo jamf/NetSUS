@@ -226,7 +226,7 @@ class WebadminConfig
 		// Write the newly-created XML document to the settings file
 		if ($this->xmlDoc->save(CONF_FILE_PATH) === FALSE)
 		{
-			echo("Could not save settings");
+			echo(" ". CONF_FILE_PATH. ": Could not save settings");
 		}
 	}
 

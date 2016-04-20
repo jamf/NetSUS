@@ -32,16 +32,16 @@ if (isset($_POST['addbranch']))
 		$res = trim(suExec("createBranch $branchname"));
 		if ($res != "")
 		{
-			echo "<div class=\"alert alert-warning alert-margin-top\">ERROR: Unable to create the SUS branch &quot;$branchname&quot; ($res).</div>\n";
+			echo "<div class=\"alert alert-warning\">ERROR: Unable to create the SUS branch &quot;$branchname&quot; ($res).</div>\n";
 		}
 		else
 		{
-			echo "<div class=\"alert alert-success alert-margin-top\">Created SUS branch &quot;$branchname&quot;.</div>\n";
+			echo "<div class=\"alert alert-success\">Created SUS branch &quot;$branchname&quot;.</div>\n";
 		}
 	}
 	else
 	{
-		echo "<div class=\"alert alert-warning alert-margin-top\">ERROR: Specify a SUS branch name.\n";
+		echo "<div class=\"alert alert-warning\">ERROR: Specify a SUS branch name.\n";
 	}
 }
 if (isset($_GET['deletebranch']) && $_GET['deletebranch'] != "")
@@ -89,16 +89,18 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
 			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input"
-					   value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
-			<span class="input-group-btn">
-				<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
-			</span>
+				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
+				<span class="input-group-btn">
+					<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
+				</span>
 			</div>
 
-			<span class="label label-default">Branches</span>
+			<br>
 
-			<div class="table-responsive">
+			<div class="table-responsive panel panel-default">
+				<div class="panel-heading">
+					<strong>Branches</strong>
+				</div>
 				<table class="table table-striped table-bordered table-condensed">
 					<?php
 					$branchstr = trim(suExec("getBranchlist"));
@@ -116,7 +118,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 						<?php foreach ($branches as $key => $value) {
 							if ($value != "") {?>
 								<tr>
-									<td><?php if ($conf->getSetting("rootbranch") == $value) { echo "*"; }?></td>
+									<td class="table-center"><?php if ($conf->getSetting("rootbranch") == $value) { echo "<span class=\"glyphicon glyphicon-ok\"></span>"; }?></td>
 									<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
 									<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
 									<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
@@ -141,22 +143,21 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 				<h3>Managed by the JSS</h3>
 			<?php }?>
 
+			<span class="label label-default">Store Updates on the NetBoot/SUS/LDAP Proxy Server</span>
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
+					<input class="checkbox" type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
 						<?php if ($conf->getSetting("mirrorpkgs") == "true")
 						{
 							echo "checked=\"checked\"";
 						}?>
 						   onChange="javascript:ajaxPost('ajax.php?service=SUS', 'mirrorpkgs=' + this.checked);"/>
-					Store software updates on the NetBoot/SUS/LDAP Proxy server
+					Ensure that computers install software updates from the NetBoot/SUS/LDAP Proxy server instead of downloading and installing them from Apple's software update server
 				</label>
 			</div>
 
-			<span class="description">Ensure that computers install software updates from the NetBoot/SUS server instead of downloading and installing them from Apple's software update server</span>
-
 			<span class="label label-default">Purge Deprecated Updates</span>
-			<span class="description">Removes all deprecated updates that are no longer included in any branches</span>
+			<span class="description">Removes all deprecated products that are not in any branch catalogs</span>
 			<input type="button" value="Purge Deprecated" class="btn btn-primary btn-sm" onClick="javascript: return goTo(true, 'susCtl.php?purge=true');"/>
 
 			<span class="label label-default">Manual Sync</span>
@@ -181,6 +182,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<br>
 
 			<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
+
 
 		</form> <!-- end form SUS -->
 	</div><!-- /.col -->

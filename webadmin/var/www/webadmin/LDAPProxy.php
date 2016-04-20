@@ -33,7 +33,7 @@ if (isset($_POST['addProxy']) && isset($_POST['inLDAP']) && isset($_POST['outLDA
 	suExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE)
 	{
-		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update slapd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
 	}
 	$wasrunning = getLDAPProxyStatus();
 	if ($wasrunning)
@@ -61,7 +61,7 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 	suExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE)
 	{
-		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update slapd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
 	}
 	$wasrunning = getLDAPProxyStatus();
 	if ($wasrunning)
@@ -90,7 +90,7 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 
 			<hr>
 
-			<span class="label label-default">LDAP Proxy Status</span>
+			<br>
 
 			<?php
 			if (getLDAPProxyStatus())
@@ -141,26 +141,28 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 				</div>
 			</div>
 
-			<table class="table table-striped table-bordered table-condensed">
-				<thead>
-					<tr>
-						<th>Exposed Distinguished Name</th>
-						<th>Real Distinguished Name</th>
-						<th>LDAP URL</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach($conf->getProxies() as $key => $value) { ?>
-					<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
-						<td><?php echo $value['outLDAP']?></td>
-						<td><?php echo $value['inLDAP']?></td>
-						<td><?php echo $value['inURL']?></td>
-						<td><a href="LDAPProxy.php?service=LDAPProxy&deleteoutLDAP=<?php echo urlencode($value['outLDAP'])?>&deleteinLDAP=<?php echo urlencode($value['inLDAP'])?>&deleteinURL=<?php echo urlencode($value['inURL'])?>">Delete</a>
-					</tr>
-					<?php } ?>
-				</tbody>
-			</table>
+			<div class="table-responsive panel panel-default">
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>Exposed Distinguished Name</th>
+							<th>Real Distinguished Name</th>
+							<th>LDAP URL</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($conf->getProxies() as $key => $value) { ?>
+						<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
+							<td><?php echo $value['outLDAP']?></td>
+							<td><?php echo $value['inLDAP']?></td>
+							<td><?php echo $value['inURL']?></td>
+							<td><a href="LDAPProxy.php?service=LDAPProxy&deleteoutLDAP=<?php echo urlencode($value['outLDAP'])?>&deleteinLDAP=<?php echo urlencode($value['inLDAP'])?>&deleteinURL=<?php echo urlencode($value['inURL'])?>">Delete</a>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+			</div>
 
 			<br>
 

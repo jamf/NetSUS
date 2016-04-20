@@ -13,20 +13,21 @@ $currentNetmask = trim(getCurrentNetmask());
 $currentSubnet = trim(getNetAddress($currentIP, $currentNetmask));
 
 $netbootimgdir = "/srv/NetBoot/NetBootSP0/";
+$subnetcheck = $conf->getSubnets();
 
 if (isset($_POST['netbootName']))
 {
 	$conf->setSetting("netbootname", $_POST['netbootName']);
 }
 
-if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && empty($conf->getSubnets()))
+if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && empty($subnetcheck))
 {
-	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Ensure you added a proper Subnet and Netmask</div>";
+	echo "<div class=\"alert alert-danger\">ERROR: Ensure you added a proper Subnet and Netmask</div>";
 }
 
 if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && !isset($_POST['NetBootImage']))
 {
-	echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Ensure you have uploaded a properly configured NetBoot image</div>";
+	echo "<div class=\"alert alert-danger\">ERROR: Ensure you have uploaded a properly configured NetBoot image</div>";
 }
 
 
@@ -47,7 +48,7 @@ if (isset($_POST['NetBootImage']))
 		suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
 		if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
 		{
-			echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update dhcpd.conf</div>";
+			echo "<div class=\"alert alert-danger\">ERROR: Unable to update dhcpd.conf</div>";
 
 		}
 		suExec("disablenetboot");
@@ -58,8 +59,8 @@ if (isset($_POST['NetBootImage']))
 		}
 		$conf->setSetting("netbootimage", $nbi);
 
-		if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && !getNetBootStatus() && !empty($conf->getSubnets())) {
-			echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to start NetBoot service. Ensure your .nbi directory is properly configured</div>";
+		if ((isset($_POST['enablenetboot']) || isset($_POST['changenetboot'])) && !getNetBootStatus() && !empty($subnetcheck)) {
+			echo "<div class=\"alert alert-danger\">ERROR: Unable to start NetBoot service. Ensure your .nbi directory is properly configured</div>";
 		}
 	}
 }
@@ -84,7 +85,7 @@ if (isset($_POST['addsubnet']) && isset($_POST['subnet']) && isset($_POST['netma
 	suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
 	{
-		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update dhcpd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update dhcpd.conf</div>";
 	}
 	$wasrunning = getNetBootStatus();
 	if ($wasrunning)
@@ -112,7 +113,7 @@ if (isset($_GET['deleteSubnet']) && isset($_GET['deleteNetmask'])
 	suExec("touchconf \"/var/appliance/conf/dhcpd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/dhcpd.conf.new", $nbconf) === FALSE)
 	{
-		echo "<div class=\"alert alert-danger alert-margin-top\">ERROR: Unable to update dhcpd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update dhcpd.conf</div>";
 	}
 	$wasrunning = getNetBootStatus();
 	if ($wasrunning)
@@ -151,7 +152,7 @@ window.onload = validateSubnet;
 
 			<hr>
 
-			<span class="label label-default">NetBoot Status</span>
+			<br>
 
 			<?php
 			if (getNetBootStatus())
@@ -253,24 +254,26 @@ window.onload = validateSubnet;
 				</div>
 			</div>
 
-			<table class="table table-striped table-bordered table-condensed">
-				<thead>
-					<tr>
-						<th>Subnet</th>
-						<th>Netmask</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach($conf->getSubnets() as $key => $value) { ?>
-					<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
-						<td><?php echo $value['subnet']?></td>
-						<td><?php echo $value['netmask']?></td>
-						<td><a href="netBoot.php?service=NetBoot&deleteSubnet=<?php echo urlencode($value['subnet'])?>&deleteNetmask=<?php echo urlencode($value['netmask'])?>">Delete</a>
-					</tr>
-					<?php } ?>
-				</tbody>
-			</table>
+			<div class="table-responsive panel panel-default">
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>Subnet</th>
+							<th>Netmask</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($conf->getSubnets() as $key => $value) { ?>
+						<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
+							<td><?php echo $value['subnet']?></td>
+							<td><?php echo $value['netmask']?></td>
+							<td><a href="netBoot.php?service=NetBoot&deleteSubnet=<?php echo urlencode($value['subnet'])?>&deleteNetmask=<?php echo urlencode($value['netmask'])?>">Delete</a>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+			</div>
 
 		</form> <!-- end form NetBoot -->
 		<?php

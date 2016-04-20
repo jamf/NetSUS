@@ -15,7 +15,7 @@ include "inc/header.php";
 if ($conf->needsToChangeAnyPasses())
 {
 ?>
-<div class="alert alert-warning alert-margin-top" role="alert"><strong>WARNING: </strong> Credentials have not been changed for the following accounts:<br>
+<div class="alert alert-warning" role="alert"><strong>WARNING: </strong> Credentials have not been changed for the following accounts:<br>
 	<ul>
 		<?php
 		if ($conf->needsToChangePass("webaccount"))
@@ -41,15 +41,15 @@ if ($conf->needsToChangeAnyPasses())
 }
 ?>
 
-<div class="panel panel-default">
+<div class="panel panel-default panel-main">
 	<div class="panel-heading">
-		<h4>Software Update Server</h4>
+		<strong>Software Update Server</strong>
 	</div>
 
 	<div class="panel-body">
 		<div class="row">
 			<!-- Column -->
-			<div class="col-xs-6 col-md-3">
+			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Last Sync</h4>
 					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
@@ -58,7 +58,7 @@ if ($conf->needsToChangeAnyPasses())
 			<!-- /Column -->
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-3">
+			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Sync Status</h4>
 					<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
@@ -69,7 +69,7 @@ if ($conf->needsToChangeAnyPasses())
 			<div class="clearfix visible-xs-block visible-sm-block"></div>
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-3">
+			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Disk Usage</h4>
 					<span><?php echo suExec("getsussize"); ?></span>
@@ -78,7 +78,7 @@ if ($conf->needsToChangeAnyPasses())
 			<!-- /Column -->
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-3">
+			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Number of Branches</h4>
 					<span><?php echo suExec("numofbranches"); ?></span>
@@ -90,9 +90,9 @@ if ($conf->needsToChangeAnyPasses())
 	</div>
 </div>
 
-<div class="panel panel-default">
+<div class="panel panel-default panel-main">
 	<div class="panel-heading">
-		<h4>NetBoot Server</h4>
+		<strong>NetBoot Server</strong>
 	</div>
 	<div class="panel-body">
 		<div class="row">
@@ -115,7 +115,7 @@ if ($conf->needsToChangeAnyPasses())
 			<!-- /Column -->
 
 			<!-- Column -->
-			<div class="col-xs-4 col-md-3">
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Active SMB Connections</h4>
 					<span><?php echo suExec("smbconns"); ?></span>
@@ -126,7 +126,7 @@ if ($conf->needsToChangeAnyPasses())
 			<div class="clearfix visible-xs-block visible-sm-block"></div>
 
 			<!-- Column -->
-			<div class="col-xs-4 col-md-3">
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Active AFP Connections</h4>
 					<span><?php echo suExec("afpconns"); ?></span>
@@ -147,14 +147,14 @@ if ($conf->needsToChangeAnyPasses())
 	</div>
 </div>
 
-<div class="panel panel-default">
+<div class="panel panel-default panel-main">
 	<div class="panel-heading">
-		<h4>LDAP Proxy Server</h4>
+		<strong>LDAP Proxy Server</strong>
 	</div>
 	<div class="panel-body">
 		<div class="row">
 			<!-- Column -->
-			<div class="col-xs-4 col-md-3">
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>LDAP Proxy Status</h4>
 					<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>

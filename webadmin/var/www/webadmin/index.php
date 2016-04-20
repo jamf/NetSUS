@@ -83,7 +83,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	</head> 
 
 	<body>
-		<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+		<div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 col-centered">
 			<div class="panel panel-default panel-login">
 				<div class="panel-heading">
 					<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
@@ -115,11 +115,12 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	</head> 
 
 	<body>
-		<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
+<!--	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-5 col-lg-offset-3">-->
+		<div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 col-centered">
 			<div class="panel panel-default panel-login">
 
 				<div class="panel-heading">
-					<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="65"></div>
+					<div class="panel-title text-center"><img src="images/NSUS-logo.png" height="55"></div>
 				</div>
 
 				<div class="panel-body">
@@ -132,7 +133,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 						<legend>Login with</legend>
 						<div class="radio radio-inline radio-primary">
 							<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type=="suslogin"?" checked=\"checked\"":"") ?>>
-							<label for="suslogin">NetSUS Local</label>
+							<label for="suslogin">Local Account</label>
 						</div>
 						<div class="radio radio-inline radio-primary">
 							<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type=="adlogin"?" checked=\"checked\"":"") ?>>

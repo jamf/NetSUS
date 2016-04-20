@@ -19,7 +19,7 @@ if (isset($_POST['SaveDateTime'])) {
 		$ts = $_POST['timeserver'];
 		setTimeServer($ts);
 	}
-	echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.</div>";
+	echo "<div class=\"alert alert-success\">Configuration saved.</div>";
 }
 
 ?>

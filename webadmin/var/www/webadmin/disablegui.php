@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="10;url=index.php">';
-	echo '<div class="alert alert-warning alert-margin-top">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
+	echo '<div class="alert alert-warning">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
 	
 		$conf->setSetting("webadmingui", "Disabled");
 

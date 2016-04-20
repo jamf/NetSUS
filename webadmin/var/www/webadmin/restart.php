@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="60;url=index.php">';
-	echo '<div class="alert alert-warning alert-margin-top">NOTICE: Restarting the NetBoot/SUS/LDAP Proxy Server.</div>';
+	echo '<div class="alert alert-warning">NOTICE: Restarting the NetBoot/SUS/LDAP Proxy Server.</div>';
 }
 
 ?>

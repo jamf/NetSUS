@@ -1,9 +1,7 @@
 /*----------------------------------------------
 Miscellaneous
 ------------------------------------------------*/
-html {
-    overflow-x: hidden;
-}
+
 body {
     font-family: 'Roboto', sans-serif;
 }
@@ -20,9 +18,43 @@ body {
 .proxy-min-width {
     min-width: 200px;
 }
-.no-border {
-    border: none;
+.marg-right {
+    margin-right: 16px;
 }
+.dropdown-menu > li > a {
+    font-size: 9pt;
+}
+#overDiv {
+    -webkit-box-shadow: 0px 2px 10px 1px rgba(163,163,163,1);
+    -moz-box-shadow: 0px 2px 10px 1px rgba(163,163,163,1);
+    box-shadow: 0px 2px 10px 1px rgba(163,163,163,1);
+}
+.table-center {
+    text-align: center;
+    vertical-align: middle;
+}
+.form-inline > .input-group > .form-control {
+    width: auto;
+}
+.nav-tabs {
+    padding: 0;
+    white-space: nowrap;
+}
+h2 {
+    margin-top: 0;
+    color: #263238;
+}
+.label-marg-fix {
+    margin-top: 0;
+}
+.tab-pane {
+    margin-top: 10px;
+}
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}
+
 
 /*----------------------------------------------
 bs-callout for Dashboard
@@ -44,20 +76,23 @@ bs-callout for Dashboard
 }
 
 /*----------------------------------------------
-1 Upper Navigation
+Upper Navigation
 ------------------------------------------------*/
 .navbar {
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
+    -moz-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
+    -webkit-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
+    z-index: 100;
 }
-
 /*----------------------------------------------
-2 Side Navigation
+Side Navigation
 ------------------------------------------------*/
 .navbar-inverse {
-    background-color: rgb(56, 63, 71);
+    background-color: #212121;
 }
 #sidebar-wrapper {
     z-index: 1000;
@@ -69,14 +104,14 @@ bs-callout for Dashboard
     margin-top: 0;
     top: 0;
     overflow-y: auto;
-    background-color: rgb(56, 63, 71);
+    background-color: #292929;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
 #logo-wrapper {
-    background-color: #303641;
+    background-color: #1c1c1c;
     margin-top: 0;
     padding-bottom: 15px;
     padding-top: 12px;
@@ -84,9 +119,12 @@ bs-callout for Dashboard
     text-align: center;
     margin-right: auto;
     margin-left: auto;
+    box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
+    -moz-box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
+    -webkit-box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
 }
 #logo-wrapper > a > img {
-    max-width: 95%;
+    max-width: 80%;
     max-height: 100%;
 }
 
@@ -97,10 +135,8 @@ bs-callout for Dashboard
 }
 .navbar-inverse .navbar-nav > li > a,
 .sidebar-nav > li > a {
-    color: #eee;
-    -moz-box-shadow: inset 0 5px 5px -5px #505b6d;
-    -webkit-box-shadow: inset 0 5px 5px -5px #505b6d;
-    box-shadow: inset 0 5px 5px -5px #505b6d;
+    color: #959595;
+    font-size: 9pt;
 }
 
 .navbar-inverse .navbar-nav > li > a:focus,
@@ -108,7 +144,8 @@ bs-callout for Dashboard
 .sidebar-nav > li > a:focus,
 .sidebar-nav > li > a:hover {
     color: #fff;
-    background-color: #303641;
+    background-color: #23385e;
+    -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
 }
 
 .navbar-inverse .navbar-nav > .active > a,
@@ -118,26 +155,27 @@ bs-callout for Dashboard
 .sidebar-nav > .active > a:focus,
 .sidebar-nav > .active > a:hover {
     color: #fff;
-    background-color: #252a32;
+    background-color: #3f64a9;
+    -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;
 }
 
 /*----------------------------------------------
-3 Page Content Wrapper
+Page Content Wrapper
 ------------------------------------------------*/
 #page-content-wrapper {
     position: absolute;
     padding: 20px;
-    margin-top: 30px;
+    margin-top: 50px;
     width: 100%;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    background-color: #F7F7F7;
+    padding-bottom: 50px;
 }
 
 /*----------------------------------------------
-4 Text Styles
+Text Styles
 ------------------------------------------------*/
 .description {
     font-size: 12px;
@@ -145,65 +183,57 @@ bs-callout for Dashboard
     color: #999;
     display: block;
     text-decoration: none;
-    /*margin-top: 12px;*/
 }
 hr {
     margin: 0;
 }
 
-
 /*----------------------------------------------
-5 Panel/Label Sub Headings
+Panel/Label Sub Headings
 ------------------------------------------------*/
-.panel .panel-default {
-    border: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
+.panel-main {
+    box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.5);
+    -moz-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.5);
+    -webkit-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.5);
+    border: 1px solid #DDDDDD;
 }
+.panel-default > .panel-heading {
+    padding: 8px 8px 8px 12px;
+    font-size: 13px;
+    color: #6D6D6D;
+}
+.panel-default > .panel-footer {
+    padding: 8px 8px 8px 12px;
 
-.panel-heading .page-heading{
-    background-color: #EEE;
-    margin-bottom: 10px;
-    margin-top: 20px;
-    font-size: 12px;
-    padding: 5px;
 }
-
-.no-pad-top {
-    padding-top: 0;
-}
-.panel .panel-default > .panel-heading {
-    background-image: none;
-    background-color: white;
-}
-
 .label-default {
-    font-size: 14px;
+    font-size: 13px;
     display: block;
+    margin-top: 15px;
     margin-bottom: 10px;
-    margin-top: 20px;
-    background: none;
     text-align: left;
-    color: black;
-    background-color: #f6f6f6;
-    border: 1px solid #e6e6e6;
-    padding: 6px;
+    border: 1px solid #DDDDDD;
+    color: #6D6D6D;
+    background-color: #F5F5F5;
+    padding: 8px 8px 8px 12px;
     -moz-border-radius:3px;
     -webkit-border-radius:3px;
     border-radius:3px;
 }
-
 .control-label {
     padding-top: 7px;
     margin-bottom: 2px;
     font-size: 10pt;
 }
+.form-inline {
+    width: 100%;
+}
 
 /*----------------------------------------------
-6 Buttons/Input
+Buttons/Input
 ------------------------------------------------*/
 .btn-primary {
-    background: #426daf;
+    background: #3f64a9;
 }
 .alert-with-button {
     overflow: auto;
@@ -212,9 +242,16 @@ hr {
 .input-group-addon .min-width {
     min-width: 140px;
 }
+.s-info {
+    font-size: 14px;
+    cursor: pointer;
+}
+.tab-font {
+    font-size: 12px;
+}
 
 /*----------------------------------------------
-7 Radio Buttons
+Radio Buttons
 ------------------------------------------------*/
 .radio {
     padding-left: 20px; }
@@ -270,11 +307,11 @@ hr {
     margin-top: 0; }
 
 .radio-primary input[type="radio"] + label::after {
-    background-color: #337ab7; }
+    background-color: #3f64a9; }
 .radio-primary input[type="radio"]:checked + label::before {
-    border-color: #337ab7; }
+    border-color: #3f64a9; }
 .radio-primary input[type="radio"]:checked + label::after {
-    background-color: #337ab7; }
+    background-color: #3f64a9; }
 
 .radio-danger input[type="radio"] + label::after {
     background-color: #d9534f; }
@@ -305,14 +342,7 @@ hr {
     background-color: #5cb85c; }
 
 /*----------------------------------------------
-8 Alert Boxes
-------------------------------------------------*/
-.alert-margin-top {
-    margin-top: 20px;
-}
-
-/*----------------------------------------------
-9 Settings Page
+Settings Page
 ------------------------------------------------*/
 .settings-item a {
     text-align: center;
@@ -322,19 +352,20 @@ hr {
 }
 
 /*----------------------------------------------
-10 Login Page
+Login Page
 ------------------------------------------------*/
 .panel-login {
     background-image: none;
     background-color: #f5f5f5;
-    /*border: none;*/
     margin-top: 70px;
+    border: none;
+    -webkit-box-shadow: 0px 2px 8px 2px rgba(168,168,168,0.77);
+    -moz-box-shadow: 0px 2px 8px 2px rgba(168,168,168,0.77);
+    box-shadow: 0px 2px 8px 2px rgba(168,168,168,0.77);
 }
 .panel-login > .panel-heading {
-    background-color: #303641;
-    -webkit-box-shadow: 0 4px 4px -2px #D3D3D3;
-    -moz-box-shadow: 0 4px 4px -2px #D3D3D3;
-    box-shadow: 0 4px 4px -2px #D3D3D3;
+    border: none;
+    background-color: #263238;
     padding-bottom: 13px;
 }
 .panel-login > .panel-body {
@@ -349,7 +380,7 @@ hr {
 }
 
 /*----------------------------------------------
-11 Responsive Design
+Responsive Design
 ------------------------------------------------*/
 @media(min-width:768px) {
 

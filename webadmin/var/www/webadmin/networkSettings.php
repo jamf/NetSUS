@@ -40,7 +40,7 @@ if (isset($_POST['SaveNetwork']))
 				suExec("setdns ".$_POST['dns1']." ".$_POST['dns2']);
 			}
 		}
-		echo "<div class=\"alert alert-success alert-margin-top\">Configuration saved.</div>";
+		echo "<div class=\"alert alert-success\">Configuration saved.</div>";
 	}
 }
 
@@ -49,12 +49,12 @@ if (isset($_POST['SSH']))
 	if (getSSHstatus())
 	{
 		suExec("disableSSH");
-		echo "<div class=\"alert alert-warning alert-margin-top\">SSH Disabled.</div>";
+		echo "<div class=\"alert alert-warning\">SSH Disabled.</div>";
 	}
 	else
 	{
 		suExec("enableSSH");
-		echo "<div class=\"alert alert-success alert-margin-top\">SSH Enabled.</div>";
+		echo "<div class=\"alert alert-success\">SSH Enabled.</div>";
 	}
 }
 
@@ -63,12 +63,12 @@ if (isset($_POST['Firewall']))
 	if (getFirewallstatus())
 	{
 		suExec("disableFirewall");
-		echo "<div class=\"alert alert-warning alert-margin-top\">Firewall Disabled.</div>";
+		echo "<div class=\"alert alert-warning\">Firewall Disabled.</div>";
 	}
 	else
 	{
 		suExec("enableFirewall");
-		echo "<div class=\"alert alert-success alert-margin-top\">Firewall Enabled.</div>";
+		echo "<div class=\"alert alert-success\">Firewall Enabled.</div>";
 	}
 }
 

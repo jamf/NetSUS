@@ -40,16 +40,16 @@ if (isset($_POST['afppass']))
 }
 ?>
 
-<div id="restarting" class="alert alert-warning alert-margin-top" style="display:none">
+<div id="restarting" class="alert alert-warning" style="display:none">
 	<span><img src="images/progress.gif" width="25"> Restarting...</span>
 </div>
 
 <?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"alert alert-danger alert-margin-top\" >ERROR: " . $accounterror . "</div>" ?>
+	<?php echo "<div class=\"alert alert-danger\" >ERROR: " . $accounterror . "</div>" ?>
 <?php } ?>
 
 <?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"alert alert-success alert-margin-top\">" . $accountsuccess . "</div>" ?></span>
+	<?php echo "<div class=\"alert alert-success\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
 <div class="row">
@@ -66,10 +66,10 @@ if (isset($_POST['afppass']))
 			<br><br>
 
 			<label class="control-label">New Password</label>
-			<input type="password" placeholder="[Required]" name="afppass1" id="afppass1" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+			<input type="password" placeholder="Required" name="afppass1" id="afppass1" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 
 			<label class="control-label">Confirm New Password</label>
-			<input type="password" placeholder="[Required]" name="afppass2" id="afppass2" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+			<input type="password" placeholder="Required" name="afppass2" id="afppass2" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 			<br>
 
 			<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" />

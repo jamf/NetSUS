@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="15;url=https://jamfnation.jamfsoftware.com/viewProduct.html?id=180">';
-	echo '<div class="alert alert-danger alert-margin-top">NOTICE: Shutting down the NetBoot/SUS/LDAP Proxy Server.</div>';
+	echo '<div class="alert alert-danger">NOTICE: Shutting down the NetBoot/SUS/LDAP Proxy Server.</div>';
 }
 
 ?>

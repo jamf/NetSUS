@@ -27,8 +27,6 @@ $pageURI = $parts[count($parts) -1];
         <script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
         <!-- Bootstrap JavaScript -->
         <script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-        <!-- Project JavaScript -->
-        <script type="text/javascript" src="scripts/scripts.js"></script>
         <!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
         <script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
         <script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
@@ -39,7 +37,7 @@ $pageURI = $parts[count($parts) -1];
         <?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
     </head>
 <?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
-    <body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?> id="dual-navigation-page">
+    <body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?>>
     <!-- Fixed Top Navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container-fluid">
@@ -68,19 +66,17 @@ $pageURI = $parts[count($parts) -1];
                 </ul>
                 <div class="hidden-lg hidden-md hidden-sm navbar-inverse">
                     <ul class="nav navbar-nav navbar-inverse">
-                        <li class="<?php if ($pageURI == "dashboard.php") { echo "active"; } ?>"><a href="dashboard.php">Dashboard</a></li>
-                        <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php">Software Update Server</a></li>
-                        <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php">NetBoot Server</a></li>
-                        <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php">LDAP Proxy</a></li>
-                        <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php">Settings</a></li>
-                        <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php">About</a></li>
+                        <li class="<?php if ($pageURI == "dashboard.php") { echo "active"; } ?>"><a href="dashboard.php"><span class="glyphicon glyphicon-dashboard marg-right"></span>Dashboard</a></li>
+                        <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="glyphicon glyphicon-hdd marg-right"></span>Software Update Server</a></li>
+                        <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="glyphicon glyphicon-import marg-right"></span>NetBoot Server</a></li>
+                        <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-transfer marg-right"></span>LDAP Proxy</a></li>
+                        <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php"><span class="glyphicon glyphicon-cog marg-right"></span>Settings</a></li>
+                        <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php"><span class="glyphicon glyphicon-info-sign marg-right"></span>About</a></li>
                     </ul>
                 </div>
             </div>
         </div>
     </nav>
-
-    </div>
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper" class="nav navbar-default">
@@ -89,11 +85,12 @@ $pageURI = $parts[count($parts) -1];
         </div>
         <div id="navbar">
             <ul class="nav sidebar-nav">
-                <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php">Software Update Server</a></li>
-                <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php">NetBoot Server</a></li>
-                <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php">LDAP Proxy</a></li>
-                <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php">Settings</a></li>
-                <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php">About</a></li>
+                <li class="<?php if ($pageURI == "dashboard.php") { echo "active"; } ?>"><a href="dashboard.php"><span class="glyphicon glyphicon-dashboard marg-right"></span>Dashboard</a></li>
+                <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="glyphicon glyphicon-hdd marg-right"></span>Software Update Server</a></li>
+                <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="glyphicon glyphicon-import marg-right"></span>NetBoot Server</a></li>
+                <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-transfer marg-right"></span>LDAP Proxy</a></li>
+                <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php"><span class="glyphicon glyphicon-cog marg-right"></span>Settings</a></li>
+                <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php"><span class="glyphicon glyphicon-info-sign marg-right"></span>About</a></li>
             </ul>
         </div>
     </div>
