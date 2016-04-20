@@ -5,8 +5,7 @@ The LDAP Proxy Server is a proxy server that allows you to expose an access poin
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. Click **LDAP Proxy** in the side navigation menu.
-or in the mobile dropdown menu.
+2. Click **LDAP Proxy** in the side navigation menu or in the mobile dropdown menu.
 
 3. Enter your **Exposed Distinguished Name** that you intend to use to reach the proxy. For more information, see [Exposed Distinguished Name](#edn)
 
