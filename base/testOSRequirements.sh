@@ -35,7 +35,7 @@ case "$(readlink /etc/system-release)" in
     ;;
 "redhat-release")
 	if yum repolist | grep repolist | grep -q ': 0'; then 
-        logevent "This system is does not have any available repositories."
+        logEvent "This system is does not have any available repositories."
         failedAnyChecks=1
     fi
     detectedOS="RedHat"

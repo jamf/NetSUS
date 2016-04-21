@@ -21,7 +21,6 @@ The LDAP Proxy Server is a proxy server that allows you to expose an access poin
 
 8. Click **Enable LDAP Proxy**
 
-
 ## <a name="edn"></a>Exposed Distinguished Name
 
 This is the distinguished name of name of your proxy, which will serve as your exposed access point. This can be named however you wish. For example: 

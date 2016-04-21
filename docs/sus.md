@@ -128,6 +128,5 @@ Branch URLs vary depending on the operating system of enrolled computers. Exampl
 ### Running Software Update on Computers
 
 For instructions on using the Casper Suite to run Software Update on computers that are managed by the JSS, see the “Running Software Update” section in the Casper Suite Administrator’s Guide.
- 	
 
- 
+

@@ -1,14 +1,11 @@
 
-NetSUS Downloads
-======
+# NetSUS Downloads
 
 Installer:
 http://content.jamfcloud.com/NetSUSLP_4.0.0.run
 
 OVA:
 http://content.jamfcloud.com/NetSUSLP_4.0.0.ova
-
-
 
 
 # What is NetSUS?
@@ -55,4 +52,3 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 * 2 GB of RAM
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
-
