@@ -8,13 +8,19 @@ $title = "LDAP Proxy";
 
 include "inc/header.php";
 
+$proxies = $conf->getProxies();
+
+if (isset($_POST['enableproxy']) && empty($proxies))
+{
+	echo "<div class=\"alert alert-danger\">ERROR: Ensure you have added a LDAP Proxy specification</div>";
+}
 
 if (isset($_POST['disableproxy']))
 {
 	suExec("disableproxy");
 }
 
-if (isset($_POST['enableproxy']))
+if (isset($_POST['enableproxy']) && !empty($proxies))
 {
 	suExec("enableproxy");
 }
@@ -80,6 +86,25 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 // ####################################################################
 ?>
 
+<script>
+	//Ensure all inputs have values before enabling the add button
+
+	$(document).ready(function () {
+		validate();
+		$('#inLDAP, #outLDAP, #inURL').keyup(validate);
+		$('#inLDAP, #outLDAP, #inURL').change(validate);
+	});
+
+	function validate() {
+		if ($('#inLDAP').val().length > 0 &&
+			$('#outLDAP').val().length > 0 &&
+			$('#inURL').val().length > 0) {
+			$("#addProxy").prop("disabled", false);
+		} else {
+			$("#addProxy").prop("disabled", true);
+		}
+	}
+</script>
 
 <h2>LDAP Proxy</h2>
 
