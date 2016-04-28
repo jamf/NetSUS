@@ -298,6 +298,11 @@ else if ($statusMessage != "")
 			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
 			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
 
+			<br>
+			<br>
+
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="insideActionButton" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+
 
 			<table id="packageTable" style="width:90%;">
 				<?php /* Auto-filled by JavaScript */ ?>
