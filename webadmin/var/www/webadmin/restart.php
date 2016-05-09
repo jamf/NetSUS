@@ -11,48 +11,45 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="60;url=index.php">';
-	echo '<div class="noticeMessage">NOTICE: Restarting the NetBoot/SUS/LDAP Proxy Server.</div>';
+	echo '<div class="alert alert-warning">NOTICE: Restarting the NetBoot/SUS/LDAP Proxy Server.</div>';
 }
 
 ?>
 
 <h2>Restart</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<form action="restart.php" method="POST" name="Restart" id="Restart" >
+		<hr>
 
-		<div id="form-inside">
+		<form action="restart.php" method="POST" name="Restart" id="Restart">
 
-			<span class="label">Are you sure you want to restart the NetBoot/SUS/LDAP Proxy Server?</span>
+			<br>
+
+			<p>Are you sure you want to restart the NetBoot/SUS/LDAP Proxy Server?</p>
 			<?php
 			$afpconns = trim(suExec("afpconns"));
 			$smbconns = trim(suExec("smbconns"));
 			if (($afpconns > 0) || ($smbconns > 0))
 			{
-				echo '<span class="description">There are '.($afpconns + $smbconns).' users connected to this server.</span>';
-				echo '<span class="description">If you restart they will be disconnected.</span>';
+				echo '<div class="well">There are '.($afpconns + $smbconns).' users connected to this server. If you restart they will be disconnected.</div>';
 			}
 			?>
+
+			<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Restart" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<br>
 			<br>
 
-			<input type="submit" id="confirm" name="confirm" class="insideActionButton" value="Restart" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+		</form> <!-- end form Restart -->
 
-		</div> <!-- end #form-inside -->
+		<hr>
+		<br>
 
-		<div id="form-buttons">
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
 
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
-
-			</div>
-
-		</div>
-
-	</form> <!-- end form Restart -->
-
-</div><!--  end #form-wrapper -->
+	</div>
+</div>
 
 <?php include "inc/footer.php"; ?>
 

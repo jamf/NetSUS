@@ -85,7 +85,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	service network restart
 fi
 ;;
-setdhcp) 
+setdhcp)
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
 	echo "auto lo" >> /etc/network/interfaces
@@ -142,7 +142,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	if [ -f /etc/ntp/step-tickers ]; then
 		echo $(cat /etc/ntp/step-tickers | grep -m 1 -v '#')
 	fi
-fi	
+fi
 ;;
 
 #Set the time server
@@ -169,7 +169,7 @@ fi
 
 # *** Timezone retrieval done through PHP
 # Set time zone
-settz) 
+settz)
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	echo `echo $2 > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata`
 fi
@@ -177,7 +177,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	echo ZONE=\"$2\" > /etc/sysconfig/clock && ln -sf /usr/share/zoneinfo/$2 /etc/localtime
 fi
 ;;
-sethostname) 
+sethostname)
 if [ "$detectedOS" = 'Ubuntu' ]; then
 	oldname=`hostname`
 	sed -i "s/$oldname/$2/g" /etc/hosts
@@ -187,9 +187,9 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 	oldname=`hostname`
 	sed -i "s/$oldname/$2/g" /etc/sysconfig/network
 	/bin/hostname $2 && service avahi-daemon restart
-fi	
+fi
 ;;
-	
+
 
 # Admin services commands
 restartsmb)
@@ -286,6 +286,13 @@ if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0
 	else
 		isinstall=0
 	fi
+	chmod +w "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+	if [ "$3" != "" ]; then
+        python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    else
+        defaultname=$(basename "$2" .nbi)
+        python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+    fi
 	kind=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Kind']"`
 	index=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Index']"`
 	indexhex=`printf "%x" ${index} | tr "[:lower:]" "[:upper:]"`
@@ -356,7 +363,7 @@ if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
 		fi
     	service iptables save
     fi
-	
+
 fi
 ;;
 
@@ -438,7 +445,7 @@ killall dhcpd
 
 getnetbootstatus)
 SERVICE='dhcpd'
- 
+
 if ps ax | grep -v grep | grep $SERVICE > /dev/null
 then
     echo "true"
@@ -449,7 +456,7 @@ fi
 
 getldapproxystatus)
 SERVICE='slapd'
- 
+
 if ps ax | grep -v grep | grep $SERVICE > /dev/null
 then
     echo "true"
@@ -557,6 +564,9 @@ echo $abranch
 ;;
 reposync)
 /var/appliance/sus_sync.py > /dev/null 2>&1 &
+;;
+repopurge)
+/var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
 ;;
 removefrombranch)
 rbranch=`/var/lib/reposado/repoutil --remove-product=$2 $3`

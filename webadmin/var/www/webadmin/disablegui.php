@@ -11,7 +11,7 @@ include "inc/header.php";
 if (isset($_POST['confirm']))
 {
 	echo '<meta http-equiv="refresh" content="10;url=index.php">';
-	echo '<div class="noticeMessage">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
+	echo '<div class="alert alert-warning">NOTICE: GUI is disabled and you have been logged out.  File system access is required to enable WebAdmin.</div>';
 	
 		$conf->setSetting("webadmingui", "Disabled");
 
@@ -37,32 +37,30 @@ session_destroy();
 
 <h2>Disable GUI</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<form action="disablegui.php" method="POST" name="disablegui" id="disablegui" >
+		<hr>
 
-		<div id="form-inside">
+		<form action="disablegui.php" method="POST" name="disablegui" id="disablegui" >
 
-			<span class="label">Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</span>
 			<br>
 
-			<input type="submit" id="confirm" name="confirm" class="insideActionButton" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<p>Are you sure you want to disable the web interface for the NetBoot/SUS/LDAP Proxy Server?</p>
 
-		</div> <!-- end #form-inside -->
+			<input type="submit" id="confirm" name="confirm" class="btn btn-sm btn-primary" value="Disable" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+			<br>
+			<br>
 
-		<div id="form-buttons">
+		</form> <!-- end form Restart -->
 
-			<div id="read-buttons">
+		<hr>
+		<br>
 
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='<?php echo $_SERVER['HTTP_REFERER']; ?>'" <?php if (isset($_POST['confirm'])) { echo "disabled"; } ?>>
 
-			</div>
-
-		</div>
-
-	</form> <!-- end form Restart -->
-
-</div><!--  end #form-wrapper -->
+	</div>
+</div>
 
 <?php include "inc/footer.php"; ?>
 

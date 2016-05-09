@@ -1,14 +1,25 @@
-# LDAP Proxy ServerThe LDAP Proxy Server is a proxy server that allows you to expose an access point to an LDAP Server. In doing so it allows you to adjust the distinguished name to whatever you choose. You may find the following diagram helpful when filling out your proxy information.
+# LDAP Proxy Server
+The LDAP Proxy Server is a proxy server that allows you to expose an access point to an LDAP Server. In doing so it allows you to adjust the distinguished name to whatever you choose. You may find the following diagram helpful when filling out your proxy information.
 
-<p align="center"><img height="140" src="images/attachments/proxy_diagram.png"></p>
-1. Log in to the NetBoot/SUS/LP server web application.2. Click **LDAP Proxy** in the side navigation menu.On a smartphone, this option is in the pop-up menu.3. Enter your **Exposed Distinguished Name** that you intend to use to reach the proxy. For more information, see [Exposed Distinguished Name](#edn)4. Enter your **Real Distinguished Name** that you use to connect to the LDAP Server. For more information, see [Real Distinguished Name](#rdn)
+<img height="140" src="images/attachments/proxy_diagram.png">
 
-5. Enter your **LDAP URL** with the port of the LDAP Server. For more information, see [LDAP URL](#lu)6. Click **Add**
+1. Log in to the NetBoot/SUS/LP server web application.
 
-<p align="center"><img src="images/attachments/ldap_proxy.png" width="500"></p>7. Enter as many other LDAP Connections as you want to configure
+2. Click **LDAP Proxy** in the side navigation menu or in the mobile dropdown menu.
+
+3. Enter your **Exposed Distinguished Name** that you intend to use to reach the proxy. For more information, see [Exposed Distinguished Name](#edn)
+
+4. Enter your **Real Distinguished Name** that you use to connect to the LDAP Server. For more information, see [Real Distinguished Name](#rdn)
+
+5. Enter your **LDAP URL** with the port of the LDAP Server. For more information, see [LDAP URL](#lu)
+
+6. Click **Add**
+
+<img src="images/attachments/ldap_proxy.png" width="500">
+
+7. Enter as many other LDAP Connections as you want to configure
 
 8. Click **Enable LDAP Proxy**
-
 
 ## <a name="edn"></a>Exposed Distinguished Name
 

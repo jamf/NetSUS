@@ -15,8 +15,8 @@ include "inc/header.php";
 if ($conf->needsToChangeAnyPasses())
 {
 ?>
-<span class="noticeMessage">WARNING: Credentials have not been changed for the following accounts:<br>
-	<ul style="list-style-type: disc; padding-left:20px;">
+<div class="alert alert-warning" role="alert"><strong>WARNING: </strong> Credentials have not been changed for the following accounts:<br>
+	<ul>
 		<?php
 		if ($conf->needsToChangePass("webaccount"))
 		{
@@ -36,126 +36,145 @@ if ($conf->needsToChangeAnyPasses())
 		}
 		?>
 	</ul>
-</span>
+</div>
 <?php
 }
 ?>
-<br>
-	<div id="software-update-server">
 
-		<h3>Software Update Server</h3>
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>Software Update Server</strong>
+	</div>
 
-		<div class="container">
-
-			<ul>
-
-				<li>
-					<span>Last Sync:</span>
-					<br>
-					<br>
-					<br>
+	<div class="panel-body">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-6 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Last Sync</h4>
 					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Sync Status:</span>
-					<br>
-					<br>
-					<br>
+			<!-- Column -->
+			<div class="col-xs-6 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Sync Status</h4>
 					<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Disk Usage:</span>
-					<br>
-					<br>
-					<br>
+			<div class="clearfix visible-xs-block visible-sm-block"></div>
+
+			<!-- Column -->
+			<div class="col-xs-6 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Disk Usage</h4>
 					<span><?php echo suExec("getsussize"); ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Number of Branches:</span>
-					<br>
-					<br>
+			<!-- Column -->
+			<div class="col-xs-6 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Number of Branches</h4>
 					<span><?php echo suExec("numofbranches"); ?></span>
-				</li>
-
-			</ul>
-
+				</div>
+			</div>
+			<!-- /Column -->
 		</div>
-
+		<!-- /Row -->
 	</div>
+</div>
 
-
-	<div id="netboot-server">
-
-		<h3>NetBoot Server</h3>
-
-		<div class="container">
-
-			<ul>
-
-				<li>
-					<span>DHCP Status:</span>
-					<br>
-					<br>
-					<br>
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>NetBoot Server</strong>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>DHCP Status</h4>
 					<span><?php if (getNetBootStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Total NetBoot Image Size:</span>
-					<br>
-					<br>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>NetBoot Image Size</h4>
 					<span><?php echo suExec("netbootusage"); ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Number of Active SMB Connections:</span>
-					<br>
-					<br>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Active SMB Connections</h4>
 					<span><?php echo suExec("smbconns"); ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Number of Active AFP Connections:</span>
-					<br>
-					<br>
+			<div class="clearfix visible-xs-block visible-sm-block"></div>
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Active AFP Connections</h4>
 					<span><?php echo suExec("afpconns"); ?></span>
-				</li>
+				</div>
+			</div>
+			<!-- /Column -->
 
-				<li>
-					<span>Shadow File Usage:</span>
-					<br>
-					<br>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>Shadow File Usage</h4>
 					<span><?php echo suExec("shadowusage");?></span>
-				</li>
-
-			</ul>
-
+				</div>
+			</div>
+			<!-- /Column -->
 		</div>
-		</div>
-		
-		<div id="netboot-server">
-
-		<h3>LDAP Proxy Server</h3>
-
-		<div class="container">
-
-			<ul>
-
-				<li>
-					<span>LDAP Proxy Status:</span>
-					<br>
-					<br>
-					<br>
-					<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
-				</li>
-
-			</ul>
-
-		</div>
-		
+		<!-- /Row -->
 	</div>
+</div>
+
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>LDAP Proxy Server</strong>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h4>LDAP Proxy Status</h4>
+					<span><?php if (getLDAPProxyStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+				</div>
+			</div>
+			<!-- /Column -->
+		</div>
+		<!-- /Row -->
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
 <?php include "inc/footer.php";?>

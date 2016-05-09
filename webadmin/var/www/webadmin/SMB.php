@@ -36,65 +36,48 @@ if (isset($_POST['smbpass']))
 
 ?>
 
-<style> 
-	/*#restarting { display: none; }*/
-	#restarting li { display: inline; list-style-type: none; font-size: 20px; } 
-	#restarting li:last-child { vertical-align: 15px; }
-</style>
-
-<div id="restarting" style="display:none;">
-	<ul>
-		<li><img src="images/progress.gif"></li>
-		<li>Restarting...</li>
-	</ul>
+<div id="restarting" class="alert alert-warning" style="display:none">
+	<span><img src="images/progress.gif" width="25"> Restarting...</span>
 </div>
 
 <?php if ($accounterror != "") { ?>
-	<?php echo "<div class=\"errorMessage\" >ERROR: " . $accounterror . "</div>" ?>
+	<?php echo "<div class=\"alert alert-danger\" >ERROR: " . $accounterror . "</div>" ?>
 <?php } ?>
 
 <?php if ($accountsuccess != "") { ?>
-	<?php echo "<div class=\"successMessage\">" . $accountsuccess . "</div>" ?></span>
+	<?php echo "<div class=\"alert alert-success\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
-<h2>SMB</h2>
+<div class="row">
+	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
-<div id="form-wrapper">
+		<h2>SMB</h2>
+		<hr>
 
-	<form action="SMB.php" method="post" name="SMB" id="SMB">
+		<form action="SMB.php" method="post" name="SMB" id="SMB">
 
-		<div id="form-inside">
+			<span class="label label-default">SMB Service</span>
+			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
+			<br><br>
 
-			<span class="label">SMB Service</span>
-			<input type="button" value="Restart" class="insideActionButton" 
-							onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
+			<label class="control-label">New Password</label>
+			<input type="password" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
+
+			<label class="control-label">Confirm New Password</label>
+			<input type="password" name="smbpass2" id="smbpass2" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
 			<br>
 
-			<span class="label">New Password</span>
-			<input type="password" name="smbpass1" id="smbpass1" value="" placeholder="[Required]"
-							onKeyUp="validatePW();" onChange="validatePW();" />
+			<input type="submit" name="smbpass" id="smbpass" class="btn btn-primary" value="Save" />
+			<br>
 			<br>
 
-			<span class="label">Confirm New Password</span>
-			<input type="password" name="smbpass2" id="smbpass2" value="" placeholder="[Required]"
-							onKeyUp="validatePW();" onChange="validatePW();" />
-			<br>
-			<input type="submit" name="smbpass" id="smbpass" class="insideActionButton" value="Save" />
+		</form> <!-- end SMB form -->
 
-		</div> <!-- end #form-inside -->
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
-		<div id="form-buttons">
-
-			<div id="read-buttons">
-
-				<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='settings.php'">
-
-			</div>
-
-		</div>
-
-	</form> <!-- end SMB form -->
-
-</div><!--  end #form-wrapper -->
+	</div>
+</div>
 
 <?php include "inc/footer.php"; ?>

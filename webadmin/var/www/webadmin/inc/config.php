@@ -21,6 +21,7 @@ class WebadminConfig
 	private $topElement;
 	private $settings;
 	private $subnets;
+	private $admins;
 	private $proxies;
 	private $autosyncbranches;
 	private $defaultpasses;
@@ -30,6 +31,7 @@ class WebadminConfig
 	{
 		$this->settings = array();
 		$this->subnets = array();
+		$this->admins = array();
 		$this->proxies = array();
 		$this->autosyncbranches = array();
 		$this->defaultpasses = array();
@@ -106,7 +108,7 @@ class WebadminConfig
 	{
 		foreach($this->topElement->childNodes as $curNode)
 		{
-			if ($curNode->nodeName == "ldapproxies" || $curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files")
+			if ($curNode->nodeName == "ldapproxies" || $curNode->nodeName == "netbootsubnets" || $curNode->nodeName == "autosyncbranches" || $curNode->nodeName == "defaultpasses" || $curNode->nodeName == "files" || $curNode->nodeName == "ldapadmins")
 			{
 				continue;
 			}
@@ -118,8 +120,8 @@ class WebadminConfig
 		}
 
 		$this->loadSubnets();
+		$this->loadAdmins();
 		$this->loadProxies();
-		
 	}
 
 	public function saveSettings()
@@ -145,27 +147,6 @@ class WebadminConfig
 			}
 		}
 
-		// Create the ldapproxies node
-		$ldapproxies = $this->createElement("ldapproxies");
-		$this->topElement->appendChild($ldapproxies);
-
-
-		// Loop through the LDAP Proxies
-		foreach($this->proxies as $key => $value)
-		{
-			$newProxyNode = $this->createElement("ldapproxy");
-			$ldapproxies->appendChild($newProxyNode);
-			$newoutLDAP = $this->createElement("outLDAP");
-			$newoutLDAP->nodeValue = trim($value['outLDAP']);
-			$newProxyNode->appendChild($newoutLDAP);
-			$newinLDAP = $this->createElement("inLDAP");
-			$newinLDAP->nodeValue = trim($value['inLDAP']);
-			$newProxyNode->appendChild($newinLDAP);
-			$newinURL = $this->createElement("inURL");
-			$newinURL->nodeValue = trim($value['inURL']);
-			$newProxyNode->appendChild($newinURL);
-		}
-		
 		// Create the netbootsubnets node
 		$netbootsubnets = $this->createElement("netbootsubnets");
 		$this->topElement->appendChild($netbootsubnets);
@@ -183,11 +164,45 @@ class WebadminConfig
 			$newNetmask->nodeValue = trim($value['netmask']);
 			$newSubnetNode->appendChild($newNetmask);
 		}
-		
+
+		// Create the ldapadmins node
+		$ldapadmins = $this->createElement("ldapadmins");
+		$this->topElement->appendChild($ldapadmins);
+
+		// Loop through the LDAP admins
+		foreach($this->admins as $key => $value)
+		{
+			$newAdminNode = $this->createElement("ldapadmin");
+			$ldapadmins->appendChild($newAdminNode);
+			$newAdmin = $this->createElement("cn");
+			$newAdmin->nodeValue = trim($value['cn']);
+			$newAdminNode->appendChild($newAdmin);
+		}
+
+		// Create the ldapproxies node
+		$ldapproxies = $this->createElement("ldapproxies");
+		$this->topElement->appendChild($ldapproxies);
+
+		// Loop through the LDAP Proxies
+		foreach($this->proxies as $key => $value)
+		{
+			$newProxyNode = $this->createElement("ldapproxy");
+			$ldapproxies->appendChild($newProxyNode);
+			$newoutLDAP = $this->createElement("outLDAP");
+			$newoutLDAP->nodeValue = trim($value['outLDAP']);
+			$newProxyNode->appendChild($newoutLDAP);
+			$newinLDAP = $this->createElement("inLDAP");
+			$newinLDAP->nodeValue = trim($value['inLDAP']);
+			$newProxyNode->appendChild($newinLDAP);
+			$newinURL = $this->createElement("inURL");
+			$newinURL->nodeValue = trim($value['inURL']);
+			$newProxyNode->appendChild($newinURL);
+		}
+
 		// Create the autosyncbranches node
 		$autosyncbranches = $this->createElement("autosyncbranches");
 		$this->topElement->appendChild($autosyncbranches);
-		
+
 		// Loop through the autosync branches
 		foreach($this->autosyncbranches as $key => $value)
 		{
@@ -195,11 +210,11 @@ class WebadminConfig
 			$newBranchNode->nodeValue = $key;
 			$autosyncbranches->appendChild($newBranchNode);
 		}
-		
+
 		// Create the defaultpasses node
 		$defaultpasses = $this->createElement("defaultpasses");
 		$this->topElement->appendChild($defaultpasses);
-		
+
 		// Lopo through the default pass list
 		foreach($this->defaultpasses as $key => $value)
 		{
@@ -211,11 +226,11 @@ class WebadminConfig
 		// Write the newly-created XML document to the settings file
 		if ($this->xmlDoc->save(CONF_FILE_PATH) === FALSE)
 		{
-			echo("Could not save settings");
+			echo(" ". CONF_FILE_PATH. ": Could not save settings");
 		}
 	}
-	
-	
+
+
 	public function loadSubnets()
 	{
 		$subnetnodes = $this->xmlDoc->getElementsByTagName("netbootsubnet");
@@ -240,7 +255,88 @@ class WebadminConfig
 			$this->subnets["$subnet $netmask"] = array("subnet" => $subnet, "netmask" => $netmask);
 		}
 	}
-	
+
+	public function getSubnets()
+	{
+		return $this->subnets;
+	}
+
+	public function addSubnet($subnet, $netmask)
+	{
+		if (isset($this->subnets["$subnet $netmask"]))
+		{
+			return false; // False means duplicate
+		}
+		else
+		{
+			$this->subnets["$subnet $netmask"] = array("subnet" => $subnet, "netmask" => $netmask);
+			$this->saveSettings();
+			return true; // True means added
+		}
+	}
+
+	public function deleteSubnet($subnet, $netmask)
+	{
+		reset($this->subnets);
+		if (array_key_exists("$subnet $netmask", $this->subnets))
+		{
+			unset($this->subnets["$subnet $netmask"]);
+			$this->saveSettings();
+		}
+	}
+
+	public function loadAdmins()
+	{
+		$adminnodes = $this->xmlDoc->getElementsByTagName("ldapadmin");
+		$numadmins = $adminnodes->length;
+		for ($admini = 0; $admini < $numadmins; $admini++)
+		{
+			$node = $adminnodes->item($admini)->childNodes;
+			if ($node->length != 1)
+				continue;
+			if ($node->item(0)->nodeName == "cn")
+				$cn = $node->item(0)->nodeValue;
+			else
+				continue;
+
+			$this->admins["$cn"] = array("cn" => $cn);
+		}
+	}
+
+	public function printAdmins()
+	{
+		print_r($this->admins);
+	}
+
+	public function getAdmins()
+	{
+		return $this->admins;
+	}
+
+	public function addAdmin($cn)
+	{
+		if (isset($this->admins["$cn"]))
+		{
+			return false; // False means duplicate
+		}
+		else
+		{
+			$this->admins["$cn"] = array("cn" => $cn);
+			$this->saveSettings();
+			return true; // True means added
+		}
+	}
+
+	public function deleteAdmin($cn)
+	{
+		reset($this->admins);
+		if (array_key_exists("$cn", $this->admins))
+		{
+			unset($this->admins["$cn"]);
+			$this->saveSettings();
+		}
+	}
+
 	public function loadProxies()
 	{
 		$proxynodes = $this->xmlDoc->getElementsByTagName("ldapproxy");
@@ -278,30 +374,11 @@ class WebadminConfig
 		}
 	}
 
-	public function getSubnets()
-	{
-		return $this->subnets;
-	}
-	
 	public function getProxies()
 	{
 		return $this->proxies;
 	}
 
-	public function addSubnet($subnet, $netmask)
-	{
-		if (isset($this->subnets["$subnet $netmask"]))
-		{
-			return false; // False means duplicate
-		}
-		else
-		{
-			$this->subnets["$subnet $netmask"] = array("subnet" => $subnet, "netmask" => $netmask);
-			$this->saveSettings();
-			return true; // True means added
-		}
-	}
-	
 	public function addProxy($outLDAP, $inLDAP, $inURL)
 	{
 		if (isset($this->proxies["$outLDAP $inLDAP $inURL"]))
@@ -316,16 +393,6 @@ class WebadminConfig
 		}
 	}
 
-	public function deleteSubnet($subnet, $netmask)
-	{
-		reset($this->subnets);
-		if (array_key_exists("$subnet $netmask", $this->subnets))
-		{
-			unset($this->subnets["$subnet $netmask"]);
-			$this->saveSettings();
-		}
-	}
-	
 	public function deleteProxy($outLDAP, $inLDAP, $inURL)
 	{
 		reset($this->proxies);
@@ -335,7 +402,7 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
 	public function loadAutosyncBranches()
 	{
 		$branchnodes = $this->xmlDoc->getElementsByTagName("branch");
@@ -375,7 +442,7 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
 
 	public function containsAutosyncBranch($branch)
 
@@ -384,7 +451,7 @@ class WebadminConfig
 		return array_key_exists($branch, $this->autosyncbranches);
 	}
 
-	
+
 	public function loadDefaultPasses()
 	{
 		$defaultpassnodes = $this->xmlDoc->getElementsByTagName("defaultpass");
@@ -403,7 +470,7 @@ class WebadminConfig
 			}
 		}
 	}
-	
+
 	public function createDefaultPasses()
 	{
 		$this->defaultpasses["webaccount"] = "webaccount";
@@ -447,7 +514,7 @@ class WebadminConfig
 			$this->saveSettings();
 		}
 	}
-	
+
 	public function printDebug()
 	{
 		echo "Settings: ";

@@ -8,13 +8,19 @@ $title = "LDAP Proxy";
 
 include "inc/header.php";
 
+$proxies = $conf->getProxies();
+
+if (isset($_POST['enableproxy']) && empty($proxies))
+{
+	echo "<div class=\"alert alert-danger\">ERROR: Ensure you have added a LDAP Proxy specification</div>";
+}
 
 if (isset($_POST['disableproxy']))
 {
 	suExec("disableproxy");
 }
 
-if (isset($_POST['enableproxy']))
+if (isset($_POST['enableproxy']) && !empty($proxies))
 {
 	suExec("enableproxy");
 }
@@ -33,7 +39,7 @@ if (isset($_POST['addProxy']) && isset($_POST['inLDAP']) && isset($_POST['outLDA
 	suExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE)
 	{
-		echo "<div class=\"errorMessage\">ERROR: Unable to update slapd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
 	}
 	$wasrunning = getLDAPProxyStatus();
 	if ($wasrunning)
@@ -61,7 +67,7 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 	suExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE)
 	{
-		echo "<div class=\"errorMessage\">ERROR: Unable to update slapd.conf</div>";
+		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
 	}
 	$wasrunning = getLDAPProxyStatus();
 	if ($wasrunning)
@@ -80,101 +86,115 @@ if (isset($_GET['deleteoutLDAP']) && isset($_GET['deleteinLDAP']) && isset($_GET
 // ####################################################################
 ?>
 
+<script>
+	//Ensure all inputs have values before enabling the add button
 
-<style>         
-  <!--       
-	@media (max-width: 600px) {
+	$(document).ready(function () {
+		validate();
+		$('#inLDAP, #outLDAP, #inURL').keyup(validate);
+		$('#inLDAP, #outLDAP, #inURL').change(validate);
+	});
 
-		tr:first-child { display: none; }
-	
-	  td:nth-of-type(1):before { content: "Exposed Distinguished Name";}
-   
-	  td:nth-of-type(2):before { content: "Real Distinguished Name";}
-	  
-	  td:nth-of-type(3):before { content: "LDAP URL";}
-   
+	function validate() {
+		if ($('#inLDAP').val().length > 0 &&
+			$('#outLDAP').val().length > 0 &&
+			$('#inURL').val().length > 0) {
+			$("#addProxy").prop("disabled", false);
+		} else {
+			$("#addProxy").prop("disabled", true);
+		}
 	}
- -->	
-</style> 
+</script>
 
 <h2>LDAP Proxy</h2>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
+		<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-		<div id="form-inside">
+			<hr>
 
-			<div class="labelDescriptionWrapper">
-				<span class="label">Proxies</span>
-				<span class="description">Proxies that will be available for use.  You can connect to several directories or to several specific OU's in one directory.</span>
+			<br>
+
+			<?php
+			if (getLDAPProxyStatus())
+			{
+				echo "<div class=\"alert alert-success alert-with-button\">
+						<span>Enabled</span>
+						<input type=\"submit\" class=\"btn btn-sm btn-success pull-right\" value=\"Disable LDAP Proxy\" name=\"disableproxy\" />
+					</div>";
+			}
+			else
+			{
+				echo "<div class=\"alert alert-danger alert-with-button\">
+						<span>Disabled</span>
+						<input type=\"submit\" class=\"btn btn-sm btn-danger pull-right\" value=\"Enable LDAP Proxy\" name=\"enableproxy\" onClick=\"javascript:return toggle_creating('enabling')\" />
+					</div>";
+			}
+			?>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<strong>Add LDAP Proxy</strong>
+				</div>
+
+				<div class="panel-body">
+
+					<div class="input-group">
+						<div class="input-group-addon no-background proxy-min-width">Exposed Distinguished Name</div>
+						<span class="description">Example: DC=jss,DC=corp</span>
+						<input type="text" name="outLDAP" id="outLDAP" class="form-control input-sm" value="" />
+					</div>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background proxy-min-width">Real Distinguished Name</div>
+						<span class="description">Example: DC=myorg,DC=corp</span>
+						<input type="text" name="inLDAP" id="inLDAP" class="form-control input-sm" value="" />
+					</div>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background proxy-min-width">LDAP URL</div>
+						<span class="description">Example: ldaps://ldap.myorg.com:636/</span>
+						<input type="text" name="inURL" id="inURL" class="form-control input-sm" value="" />
+					</div>
+
+				</div>
+
+				<div class="panel-footer">
+					<input type="submit" name="addProxy" id="addProxy" class="btn btn-primary btn-sm" value="Add" />
+				</div>
 			</div>
 
+			<div class="table-responsive panel panel-default">
+				<table class="table table-striped table-bordered table-condensed">
+					<thead>
+						<tr>
+							<th>Exposed Distinguished Name</th>
+							<th>Real Distinguished Name</th>
+							<th>LDAP URL</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach($conf->getProxies() as $key => $value) { ?>
+						<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
+							<td><?php echo $value['outLDAP']?></td>
+							<td><?php echo $value['inLDAP']?></td>
+							<td><?php echo $value['inURL']?></td>
+							<td><a href="LDAPProxy.php?service=LDAPProxy&deleteoutLDAP=<?php echo urlencode($value['outLDAP'])?>&deleteinLDAP=<?php echo urlencode($value['inLDAP'])?>&deleteinURL=<?php echo urlencode($value['inURL'])?>">Delete</a>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+			</div>
 
-			<span class="label">Exposed Distinguished Name</span>
-			<span class="description">Example: DC=jss,DC=corp</span>
-			<input type="text" name="outLDAP" id="outLDAP" value="" />
 			<br>
 
-			<span class="label">Real Distinguished Name</span>
-			<span class="description">Example: DC=myorg,DC=corp</span>
-			<input type="text" name="inLDAP" id="inLDAP" value="" />
-			<br>
+		</form> <!-- end form NetBoot -->
 
-			<span class="label">LDAP URL</span>
-			<span class="description">Example: ldaps://ldap.myorg.com:636/</span>
-			<input type="text" name="inURL" id="inURL" value="" />
-			<input type="submit" name="addProxy" id="addProxy" class="insideActionButton" value="Add" />
-			<br>
-			<table class="branchesTable">
-				<tr>
-					<th>Exposed Distinguished Name</th>
-					<th>Real Distinguished Name</th>
-					<th>LDAP URL</th>
-					<th></th>
-				</tr>
-				<?php foreach($conf->getProxies() as $key => $value) { ?>
-				<tr class="<?php echo ($key % 2 == 0 ? "object0" : "object1")?>">
-					<td><?php echo $value['outLDAP']?></td>
-					<td><?php echo $value['inLDAP']?></td>
-					<td><?php echo $value['inURL']?></td>
-					<td><a href="LDAPProxy.php?service=LDAPProxy&deleteoutLDAP=<?php echo urlencode($value['outLDAP'])?>&deleteinLDAP=<?php echo urlencode($value['inLDAP'])?>&deleteinURL=<?php echo urlencode($value['inURL'])?>">Delete</a>
-				</tr>
-				<?php } ?>
-			</table>
-
-			<span>LDAP Proxy Status: </span>
-			<?php
-			if (getLDAPProxyStatus())
-			{
-				echo "<img style=\"margin-right:10px;\" src=\"images/active.gif\" alt=\"LDAP Proxy Active\"/>";
-			}
-			else
-			{
-				echo "<img style=\"margin-right:10px;\" src=\"images/inactive.gif\" alt=\"LDAP Proxy Inactive\"/>";
-			}
-			?>
-
-			<?php
-			if (getLDAPProxyStatus())
-			{
-				?>
-				<input type="submit" class="insideActionButton" value="Disable LDAP Proxy" name="disableproxy" />
-			<?php
-			}
-			else
-			{
-				?>
-				<input type="submit" class="insideActionButton" value="Enable LDAP Proxy" name="enableproxy" onClick="javascript:return toggle_creating('enabling')" />
-				<?php
-			}
-			?>
-		</div> <!-- end #form-inside -->
-
-	</form> <!-- end form NetBoot -->
-
-
-</div><!--  end #form-wrapper -->
+	</div><!-- /.col -->
+</div><!-- /.row -->
 
 <?php include "inc/footer.php"; ?>
 

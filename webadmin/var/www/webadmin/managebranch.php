@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 include "inc/config.php";
 include "inc/auth.php";
@@ -183,13 +183,13 @@ function filterPackages()
 			var deprecated = "";
 			if (search == "" || pattern.test(value))
 			{
-				pieces = pkgList[key].split("%");
+				var pieces = pkgList[key].split("%");
 				checked = (pkgCheckedList[key] ? "checked=\"checked\"" : "");
 				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
 				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
-				tableContents += "<td nowrap><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
-				tableContents += "<td>"+pieces[0]+"</td>";
-				tableContents += "<td nowrap><a id=\""+num+"\" onmouseover=\"javascript:CustomOver(getPackageDetails('"+key+"'), '1', '1');\" onmouseout=\"return nd();\"><img src=\"images/objectInfo.png\" alt=\"Package Details\"/></a></td>";
+				tableContents += "<td nowrap class=\"table-center\"><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
+				tableContents += "<td id= \"titletd_"+key+"\" >"+pieces[0]+"</td>";
+				tableContents += "<td class=\"table-center\"><a class=\"s-info\" id=\""+num+"\" type=\"button\" onMouseOver=\"javascript:CustomOver(getPackageInfo('"+key+"'), document.getElementById('titletd_"+key+"').innerText, '1', '1');\"><span class=\"glyphicon glyphicon-info-sign\"></span></a></td>";
 				tableContents += "<td nowrap>"+pieces[1]+"</td>";
 				tableContents += "<td nowrap>"+pieces[2]+"</td>";
 				tableContents += "</tr>";
@@ -231,28 +231,28 @@ function filterPackages()
 <?php 
 if ($errorMessage != "")
 {
-?>
-<div class="errorMessage"><?php echo $errorMessage?></div>
-<?php
+	echo "<div class=\"alert alert-warning\">$errorMessage</div>";
 }
 else if ($statusMessage != "")
 {
-?>
-<div class="successMessage"><?php echo $statusMessage?></div>
-<?php
+	echo "<div class=\"alert alert-success\">$statusMessage</div>";
 }
 ?>
 
-<div id="form-wrapper">
+<div class="row">
+	<div class="col-xs-12 col-sm-10 col-lg-8">
 
-	<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
+		<h2><?php echo $currentBranch; ?> Branch</h2>
 
-		<div id="form-inside">
+		<hr>
+
+		<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
 
 			<input type="hidden" name="userAction" value="branchPackages">
 
-			<span class="label">Branch Displayed: 
-			<select name="chooseBranch" id="chooseBranch" onChange="javascript:location.href='managebranch.php?branch='+this.value">
+			<span class="label label-default">Choose Branch</span>
+
+			<select name="chooseBranch" id="chooseBranch" class="form-control input-sm" onChange="javascript:location.href='managebranch.php?branch='+this.value">
 				<?php
 				$branchstr = trim(suExec("getBranchlist"));
 				$branches = explode(" ",$branchstr);
@@ -270,62 +270,64 @@ else if ($statusMessage != "")
 				}
 				?>
 			</select>
-			</span>
 
-
-			<label for="autosync" class="label">
-			<input type="checkbox" name="autosync" value="autosync"
-	      <?php if ($conf->containsAutosyncBranch($currentBranch))
-	      {
-	      	echo "checked=\"checked\"";
-	      }?> />
-      Automatically Enable New Updates</label>
-
-      <label for="rootbranch" class="label">
-		  <input type="checkbox" name="rootbranch" value="rootbranch"
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="autosync" value="autosync"
+						<?php if ($conf->containsAutosyncBranch($currentBranch))
+						{
+							echo "checked=\"checked\"";
+						}?> />
+					 Automatically Enable New Updates
+				</label>
+			</div>
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="rootbranch" value="rootbranch"
 						<?php if ($conf->getSetting("rootbranch") == $currentBranch)
 						{
 							echo "checked=\"checked\"";
 						}?> />
-			Use as Root Branch</label>
-			<br>
+					 Use as Root Branch
+				</label>
+			</div>
 
-			<span class="label">Filter updates by:
-				<input type="text" name="filterBy" id="filterBy" style="min-width:20%; margin-top:-3px;" onKeyUp="javascript:filterPackages();"/>
-			</span>
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
 
-			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
-			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
-			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
+			<br><br>
 
-
-			<table id="packageTable" style="width:90%;">
-				<?php /* Auto-filled by JavaScript */ ?>
-			</table>
-
-			<input type="button" name="selectAll" id="selectAll" class="insideActionButton" value="Select All" onClick="javascript:selectAllVisible();"/>
-			<input type="button" name="clearAll" id="clearAll" class="insideActionButton" value="Clear All" onClick="javascript:clearAllVisible();"/>
-			<input type="button" name="clearDeprecated" id="clearDeprecated" class="insideActionButton" value="Clear All Deprecated" onClick="javascript:clearAllDeprecated();"/>
+			<div class="input-group input-group-sm">
+				<span class="input-group-addon">Filter Updates <span class="glyphicon glyphicon-search"></span></span>
+				<input type="text" name="filterBy" id="filterBy" class="form-control input-sm" onKeyUp="javascript:filterPackages();"/>
+			</div>
 
 			<br>
+
+			<div class="btn-group">
+				<button type="button" name="selectAll" id="selectAll" class="btn btn-default btn-sm" onClick="javascript:selectAllVisible();">Select All</button>
+				<button type="button" name="clearAll" id="clearAll" class="btn btn-default btn-sm" onClick="javascript:clearAllVisible();">Clear All</button>
+				<button type="button" name="clearDeprecated" id="clearDeprecated" class="btn btn-default btn-sm" onClick="javascript:clearAllDeprecated();">Clear All Deprecated</button>
+			</div>
+			<br><br>
+
+			<div class="table-responsive panel panel-default">
+				<table id="packageTable" class="table table-striped table-bordered table-condensed">
+					<?php /* Auto-filled by JavaScript */ ?>
+				</table>
+			</div>
+
 			<br>
 
-			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="insideActionButton" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+		</form>
 
-		</div> <!-- end #form-inside -->
-	</form>
-
-	<div id="form-buttons">
-
-		<div id="read-buttons">
-
-			<input type="button" id="back-button" name="action" class="alternativeButton" value="Back" onclick="document.location.href='SUS.php'">
-
-		</div>
+		<br>
+		<hr>
+		<br>
+		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='SUS.php'">
 
 	</div>
-
-</div> <!-- end #form-wrapper -->
+</div>
 
 <script>
 filterPackages();

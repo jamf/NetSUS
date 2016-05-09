@@ -10,74 +10,77 @@ include "inc/header.php";
 
 ?>
 
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>NetBoot/SUS/LDAP Proxy Server</strong>
+	</div>
+	<div class="panel-body">
 
-<ul id="settings-box">
-
-	<li class="settings-row">
-
-		<h5 class="green">NetBoot/SUS/LDAP Proxy Server</h5>
-
-		<ul>
-
-			<li class="settings-item">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="accounts.php">
-					<img src="images/settings/accounts.png" alt="SMB">
-					<span>Accounts</span>
+					<p><img src="images/settings/accounts.png" alt="SMB"></p>
+					<p>Accounts</p>
 				</a>
-			</li>
-
-			<li class="settings-item">
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="networkSettings.php">
-					<img src="images/settings/networkSegments.png" alt="Network Settings">
-					<span>Network</span>
+					<p><img src="images/settings/networkSegments.png" alt="Network Settings"></p>
+					<p>Network</p>
 				</a>
-			</li>
-
-			<li class="settings-item">
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="dateTime.php">
-					<img src="images/settings/computerCheckIn.png" alt="Date/Time Settings">
-					<span>Date/Time</span>
+					<p><img src="images/settings/computerCheckIn.png" alt="Date/Time Settings"></p>
+					<p>Date/Time</p>
 				</a>
-			</li>
-			
-			<li class="settings-item">
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="certificates.php">
-					<img src="images/settings/PKI.png" alt="Certificates">
-					<span>Certificates</span>
+					<p><img src="images/settings/PKI.png" alt="Certificates"></p>
+					<p>Certificates</p>
 				</a>
-			</li>
+			</div>
+			<!-- /Column -->
+		</div>
+		<!-- /Row -->
+	</div>
+</div>
 
-		</ul>
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>Shares</strong>
+	</div>
+	<div class="panel-body">
 
-	</li>
-
-	<li class="settings-row">
-
-		<h5 class="green">Shares</h5>
-
-		<ul>
-
-			<li class="settings-item">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="AFP.php">
-					<img src="images/settings/categories.png" alt="AFP">
-					<span>AFP</span>
+					<p><img src="images/settings/categories.png" alt="AFP"></p>
+					<p>AFP</p>
 				</a>
-			</li>
-
-			<li class="settings-item">
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="SMB.php">
-					<img src="images/settings/categories.png" alt="SMB">
-					<span>SMB</span>
+					<p><img src="images/settings/categories.png" alt="SMB"></p>
+					<p>SMB</p>
 				</a>
-			</li>
-
-		</ul>
-
-	</li>
-
-
-</ul>
-
+			</div>
+			<!-- /Column -->
+		</div>
+		<!-- /Row -->
+	</div>
+</div>
 
 <?php include "inc/footer.php"; ?>
 

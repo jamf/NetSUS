@@ -1,5 +1,11 @@
 # NetSUS Changelog
 
+## 4.1
+
+* New and improved User Interface and minor changes to the User Experience
+* Added LDAP administration group login support
+* Added ability to rename the advertised NetBoot name
+* Documentation updated, improved, and converted to markdown format
 
 ## 4.0
 

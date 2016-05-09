@@ -9,7 +9,7 @@ You may need to restart the AFP or SMB share for troubleshooting purposes.
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
 3. In the "Shares" section, click **AFP** or **SMB** <img height="20" src="images/thumbnails/categories_icon.png">.
 
@@ -21,7 +21,7 @@ The User Menu now adds additional functionality to be able to Disable GUI.
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. In the top-right corner of the page, click the username drop down.
+2. In the side navigation menu or in the mobile dropdown menu, click the username drop down.
 
 3. In the drop down list select Disable GUI.
 
@@ -62,7 +62,7 @@ The Network settings allow you to configure the following:
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
 3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
 
@@ -80,7 +80,7 @@ The Date/Time settings allow you to do the following:
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
 3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .
 
@@ -94,13 +94,13 @@ Certificates Settings allows you to modify the server settings with either a Tom
 
 1. Log in to the NetBoot/SUS/LP server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
 3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
 
 4. Enter the "Private Key", "Certificate", and "Chain" fields with the appropriate unencrypted certificate information.
 	
-<p align="center"><img src="images/attachments/certificates.png" width="500"></p>
+    <img src="images/attachments/certificates.png" width="500">
 
 5. Click **Save**.
 
