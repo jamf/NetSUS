@@ -6,3 +6,6 @@ NetSUSLPInstaller.run
 profiles_settings.xml
 .sudo_as_admin_successful
 motd.legal-displayed
+packer_cache
+output-virtualbox-iso
+
