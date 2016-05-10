@@ -2,14 +2,7 @@
 .svn
 
 NetSUSLPInstaller.run
-.name
-compiler.xml
-misc.xml
-modules.xml
-NetSUS.iml
-vcs.xml
-workspace.xml
+.idea
 profiles_settings.xml
-cgolds.xml
 .sudo_as_admin_successful
 motd.legal-displayed
