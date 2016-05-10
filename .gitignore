@@ -11,3 +11,5 @@ vcs.xml
 workspace.xml
 profiles_settings.xml
 cgolds.xml
+.sudo_as_admin_successful
+motd.legal-displayed
