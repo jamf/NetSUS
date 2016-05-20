@@ -2,10 +2,10 @@
 # NetSUS Downloads
 
 Installer:
-http://content.jamfcloud.com/NetSUSLP_4.0.0.run
+https://github.com/jamf/NetSUS/releases/download/4.1.0/NetSUSLPInstaller_4.1.0.run.zip
 
 OVA:
-http://content.jamfcloud.com/NetSUSLP_4.0.0.ova
+https://github.com/jamf/NetSUS/releases/download/4.1.0/NetSUSLP_4.1.0.ova.zip
 
 
 # What is NetSUS?
