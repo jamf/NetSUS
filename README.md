@@ -48,7 +48,7 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 * The OVA file for the NetBoot/SUS/LP server, available at:
 <https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
 * Virtualization software that supports Open Virtualization Format 
-* 300 GB of disk space available
+* 500 GB of disk space available
 * 2 GB of RAM
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
