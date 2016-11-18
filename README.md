@@ -40,7 +40,7 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 * The NetBoot/SUS/LP Server Installer (.run), available at:  
 <https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
-* 300 GB of disk space available 
+* 500 GB of disk space available 
 * 1 GB of RAM
 
 #### To set up the NetBoot/SUS/LP server as an appliance, you need:
