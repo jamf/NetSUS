@@ -2,7 +2,7 @@
 session_start();
 
 $noAuthURL="index.php";
-if (!($_SESSION['isAuthUser'])) {
+if ( !isset($_SESSION['isAuthUser']) || !($_SESSION['isAuthUser']) ) {
 	header('Location: '. $noAuthURL);
 }
 
