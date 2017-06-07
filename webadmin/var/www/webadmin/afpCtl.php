@@ -8,6 +8,14 @@ if ($_GET['restart']) {
         echo suExec("restartafp");
 }
 
+if ($_GET['disable']) {
+        echo suExec("stopafp");
+}
+
+if ($_GET['enable']) {
+        echo suExec("startafp");
+}
+
 $sURL="AFP.php";
         header('Location: '. $sURL);
 

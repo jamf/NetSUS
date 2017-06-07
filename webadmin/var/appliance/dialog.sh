@@ -26,7 +26,7 @@ message="\n
 |--|--|\n
  || ||\n
 ooO Ooo\n\n\n
-For more information visit https://jamfnation.jamfsoftware.com/\n"
+For more information visit https://www.jamf.com/jamf-nation/\n"
 okpressed=0
 while [ "$okpressed" != "1" ]
 do

@@ -8,6 +8,8 @@ $title = "AFP";
 
 include "inc/header.php";
 
+$afp_running = (trim(suExec("getafpstatus")) === "true");
+
 $accounterror = "";
 $accountsuccess = "";
 
@@ -38,6 +40,7 @@ if (isset($_POST['afppass']))
   	$accounterror = "All fields required.";
   }
 }
+
 ?>
 
 <div id="restarting" class="alert alert-warning" style="display:none">
@@ -59,11 +62,32 @@ if (isset($_POST['afppass']))
 
 		<hr>
 
+		<br>
+
+		<?php
+		if ($afp_running)
+		{
+			echo "<div class=\"alert alert-success alert-with-button\">
+					<span>Enabled</span>
+					<input type=\"button\" class=\"btn btn-sm btn-success pull-right\" value=\"Disable AFP\" onClick=\"javascript: return goTo(true, 'afpCtl.php?disable=true');\" />
+				</div>";
+		}
+		else
+		{
+			echo "<div class=\"alert alert-danger alert-with-button\">
+					<span>Disabled</span>
+					<input type=\"button\" class=\"btn btn-sm btn-danger pull-right\" value=\"Enable AFP\" onClick=\"javascript: return goTo(true, 'afpCtl.php?enable=true');\" />
+				</div>";
+		}
+		?>
+
 		<form action="AFP.php" method="post" name="AFP" id="AFP">
 
+			<!--
 			<span class="label label-default">AFP Service</span>
-			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');"/>
+			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'AFP'), 'afpCtl.php?restart=true');" <?php if (!$afp_running) { echo "disabled=\"disabled\""; } ?>/>
 			<br><br>
+			-->
 
 			<label class="control-label">New Password</label>
 			<input type="password" placeholder="Required" name="afppass1" id="afppass1" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />

@@ -4,6 +4,9 @@ include "inc/auth.php";
 include "inc/functions.php";
 $title = "About";
 include "inc/header.php";
+$os_name = trim(suExec("getName"));
+$home_url = trim(suExec("getHomeUrl"));
+$install_type = trim(suExec("getInstallType"));
 ?>
 	<style>
 		.about {
@@ -32,68 +35,70 @@ include "inc/header.php";
 		<p class="bold">ISC's DHCP</p>
 		<p><a href="http://www.isc.org/software/dhcp/" target="_blank">http://www.isc.org/software/dhcp/</a></p>
 
-		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Ubuntu') !== FALSE) { ?>
-			<p class="bold">Ubuntu</p>
-			<p><a href="http://www.ubuntu.com/" target="_blank">http://www.ubuntu.com/</a></p>
+		<p class="bold"><?php echo $os_name; ?></p>
+		<?php if ($home_url != '') { ?>
+			<p><a href="<?php echo $home_url; ?>" target="_blank"><?php echo $home_url; ?></a></p>
+		<?php } ?>
 
-
+		<?php if ($install_type == 'apt-get') { ?>
 			<p>The following apt-get repository installations, including any dependencies:</p>
 			<ul>
-				<li>php5</li>
-				<li>samba</li>
-				<li>avahi-daemon</li>
-				<li>nfs-kernel-server</li>
-				<li>tftpd-hpa</li>
-				<li>openbsd-inetd</li>
-				<li>dialog</li>
-				<li>netatalk</li>
+				<li>apache2-utils</li>
 				<li>curl</li>
-				<li>slapd</li>
+				<li>dialog</li>
 				<li>gawk</li>
+				<?php
+				if (version_compare(phpversion(), "7.0") < 0) {
+					echo "<li>libapache2-mod-php5</li>";
+				} else {
+					echo "<li>libapache2-mod-php</li>"; }
+				?>
+				<li>netatalk</li>
+				<li>nfs-kernel-server</li>
+				<li>openbsd-inetd</li>
+				<li>parted</li>
+				<?php if (version_compare(phpversion(), "7.0") < 0) {
+					echo "<li>php5-ldap</li>";
+				} else {
+					echo "<li>php-ldap</li>";
+					echo "<li>php-xml</li>";
+				} ?>
+				<li>policycoreutils</li>
+				<li>python-configparser</li>
+				<li>python-m2crypto</li>
+				<li>python-pycurl</li>
+				<li>samba</li>
+				<li>slapd</li>
+				<li>tftpd-hpa</li>
+				<li>ufw</li>
+				<li>whois</li>
 			</ul>
 
 		<?php } ?>
-		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'CentOS') !== FALSE) { ?>
-			<p class="bold">CentOS</p>
-			<p><a href="http://www.centos.org" target="_blank">http://www.centos.org/</a></p>
-
-
+		<?php if ($install_type == 'yum') { ?>
 			<p>The following installations, including any dependencies:</p>
 			<ul>
-				<li>php</li>
-				<li>php-xml</li>
-				<li>mod_ssl</li>
-				<li>ntpdate</li>
-				<li>dialog</li>
 				<li>avahi</li>
+				<li>dialog</li>
+				<li>dmidecode</li>
+				<li>expect</li>
+				<li>m2crypto</li>
+				<li>mod_ssl</li>
 				<li>netatalk</li>
+				<li>nfs-utils</li>
+				<li>ntpdate</li>
+				<li>openldap-servers</li>
+				<li>parted</li>
+				<li>php</li>
+				<li>php-ldap</li>
+				<li>php-xml</li>
+				<li>psmisc</li>
+				<li>python-pycurl</li>
 				<li>samba</li>
+				<li>samba-client</li>
 				<li>tftp-server</li>
 				<li>vim-common</li>
-				<li>slapd</li>
 			</ul>
-
-		<?php } ?>
-		<?php if (strpos($_SERVER['SERVER_SOFTWARE'], 'Red Hat') !== FALSE) { ?>
-			<p class="bold">Red Hat</p>
-			<p><a href="https://www.redhat.com" target="_blank">https://www.redhat.com/</a></p>
-
-
-			<p>The following installations, including any dependencies:</p>
-			<ul>
-				<li>php</li>
-				<li>php-xml</li>
-				<li>mod_ssl</li>
-				<li>ntpdate</li>
-				<li>dialog</li>
-				<li>avahi</li>
-				<li>netatalk</li>
-				<li>samba</li>
-				<li>tftp-server</li>
-				<li>vim-common</li>
-				<li>slapd</li>
-			</ul>
-
 		<?php } ?>
 	</div>
 
@@ -103,7 +108,7 @@ include "inc/header.php";
 	<div class="about">
 		<p>
 			The NetBoot/SUS/LDAP Proxy server is distributed "as is" by JAMF Software, LLC.  For support, please use the following resource:<br/><br/>
-			<a href="https://jamfnation.jamfsoftware.com" target="_blank">https://jamfnation.jamfsoftware.com/</a><br/><br/>
+			<a href="https://www.jamf.com/jamf-nation/" target="_blank">https://www.jamf.com/jamf-nation/</a><br/><br/>
 		</p>
 
 	</div>

@@ -244,7 +244,7 @@ include "inc/header.php";
 									<td><?php echo $value['cn']?></td>
 									<td><a href="accounts.php?service=LDAP&deleteAdmin=<?php echo urlencode($value['cn'])?>">Delete</a>
 								</tr>
-							<? } ?>
+							<?php } ?>
 						</table>
 					</div>
 

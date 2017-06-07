@@ -63,13 +63,37 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 ?>
 
 <script>
-	function validateField(fieldid, buttonid)
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
 	{
-		if (document.getElementById(fieldid).value != "")
-			document.getElementById(buttonid).disabled = false;
-		else
-			document.getElementById(buttonid).disabled = true;
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
 	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+
+function validateBaseURL()
+{
+	var validBaseURL = /^(http|https):\/\/[^ "]+$/.test(document.getElementById("baseurl").value);
+	showErr("baseurl", validBaseURL);
+	enableButton("setbaseurl", validBaseURL);
+}
+
+function validateBranch()
+{
+	var validBranch = /^[A-Za-z0-9._+\-]{1,256}$/.test(document.getElementById("branchname").value);
+	showErr("branchname", validBranch);
+	enableButton("addbranch", validBranch);
+}
 </script>
 
 <h2>Software Update Server</h2>
@@ -89,7 +113,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
 			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
+				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateBaseURL();" onChange="validateBaseURL();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
 				</span>
@@ -131,7 +155,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class="label label-default">New Branch</span>
 
 			<div class="input-group">
-				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onKeyUp="validateBranch();" onChange="validateBranch();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" value="Add Branch" disabled="disabled"/>
 				</span>
@@ -173,6 +197,8 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 				<option value="0"<?php echo ($syncschedule == "0" ? " selected=\"selected\"" : "")?>>12 a.m.</option>
 				<option value="3"<?php echo ($syncschedule == "3" ? " selected=\"selected\"" : "")?>>3 a.m.</option>
 				<option value="6"<?php echo ($syncschedule == "6" ? " selected=\"selected\"" : "")?>>6 a.m.</option>
+				<!-- 2017-04-27: NetSUS Update added (missing) 9am option -->
+				<option value="9"<?php echo ($syncschedule == "9" ? " selected=\"selected\"" : "")?>>9 a.m.</option>
 				<option value="12"<?php echo ($syncschedule == "12" ? " selected=\"selected\"" : "")?>>12 p.m.</option>
 				<option value="15"<?php echo ($syncschedule == "15" ? " selected=\"selected\"" : "")?>>3 p.m.</option>
 				<option value="18"<?php echo ($syncschedule == "18" ? " selected=\"selected\"" : "")?>>6 p.m.</option>

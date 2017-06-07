@@ -1,221 +1,274 @@
 #!/bin/bash
 
-NAMESERVERLIST=""
-
-if [ -f "/usr/bin/lsb_release" ]; then
-
-ubuntuVersion=`lsb_release -s -d`
-
-case $ubuntuVersion in
-	*Ubuntu\ 14.04*)
-	detectedOS="Ubuntu"
-;;
-	*Ubuntu\ 12.04*)
-	detectedOS="Ubuntu"
-;;
-	*Ubuntu\ 10.04*)
-	detectedOS="Ubuntu"
-;;
-esac
-
-elif [ -f "/etc/system-release" ]; then
-
-case "$(readlink /etc/system-release)" in
-"centos-release")
-    detectedOS="CentOS"    
-    ;;
-"redhat-release")
-    detectedOS="RedHat"
-    ;;
-esac
-
-else
-	echo "Error detecting OS"
-fi
-
-
 case $1 in
 
-getnettype) 
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	if [ -n "$(grep -i static /etc/network/interfaces)" ]; then echo "static"; else echo "dhcp"; fi
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if [ -n "$(grep -i BOOTPROTO=none /etc/sysconfig/network-scripts/ifcfg-eth0)" ]; then echo "static"; else echo "dhcp"; fi
-
-fi
-;;
-getip) echo `ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`;;
-getnetmask) 
-if [ -f "/usr/bin/ipcalc" ]; then
-	echo `ipcalc -m $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }') | cut -d = -f 2`
+getnettype)
+interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
+if [ -f /etc/network/interfaces ]; then
+	if [ "$(grep -i static /etc/network/interfaces)" != '' ]; then
+		echo "static"
+	else
+		echo "dhcp"
+	fi
 else
-	echo `ifconfig eth0 | grep 'inet addr' | cut -d ':' -f 4 | cut -d ' ' -f 1`
+	if [ "$(grep -i BOOTPROTO=none /etc/sysconfig/network-scripts/ifcfg-${interface})" != '' ]; then
+		echo "static"
+	else
+		echo "dhcp"
+	fi
 fi
 ;;
-getgateway) echo `ip route show to 0.0.0.0/0 | awk '/default / { print gensub("/.*","","g",$3) }'`;;
-setip) 
-if [ "$detectedOS" = 'Ubuntu' ]; then
+
+getip)
+echo $(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }')
+;;
+
+getnetmask)
+prefix=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub(" ","","g",$2) }' | cut -d / -f 2)
+complete=$((${prefix}/8))
+partial=$((${prefix}%8))
+for i in $(seq 0 3)
+do
+	if [ ${i} -lt ${complete} ]; then
+		netmask=${netmask}255
+	elif [ ${i} -eq ${complete} ]; then
+		set 2 $((8-${partial})) 1
+		while [ ${2} -gt 0 ]; do
+			set ${1} $((${2}-1)) $((${1}*${3}))
+		done
+		netmask=${netmask}$((256-${3}))
+	else
+		netmask=${netmask}0
+	fi
+	if [ ${i} -lt 3 ]; then
+		netmask=${netmask}.
+	fi
+done
+echo ${netmask}
+;;
+
+getgateway)
+echo $(ip route show to 0.0.0.0/0 | awk '/default / { print gensub("/.*","","g",$3) }')
+;;
+
+setip)
+address=$2
+netmask=$3
+gateway=$4
+dns1=$5
+dns2=$6
+interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
+if [ -f /etc/network/interfaces ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
-	echo "auto lo" >> /etc/network/interfaces
-	echo "iface lo inet loopback" >> /etc/network/interfaces
-	echo "auto eth0" >> /etc/network/interfaces
-	echo "iface eth0 inet static" >> /etc/network/interfaces
-	echo "address $2" >> /etc/network/interfaces
-	echo "netmask $3" >> /etc/network/interfaces
-	echo "gateway $4" >> /etc/network/interfaces
-	service networking restart
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
-	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "DEVICE=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "TYPE=Ethernet" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "$UUID" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "NM_CONTROLLED=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "BOOTPROTO=none" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "IPADDR=$2" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "NETMASK=$3" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "GATEWAY=$4" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "DEFROUTE=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "IPV4_FAILURE_FATAL=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "IPV6INIT=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "NAME=\"System eth0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	service network restart
+	echo auto lo >> /etc/network/interfaces
+	echo iface lo inet loopback >> /etc/network/interfaces
+	echo auto $interface >> /etc/network/interfaces
+	echo iface $interface inet static >> /etc/network/interfaces
+	echo address $address >> /etc/network/interfaces
+	echo netmask $netmask >> /etc/network/interfaces
+	echo gateway $gateway >> /etc/network/interfaces
+	echo dns-nameservers $dns1 $dns2 >> /etc/network/interfaces
+	service networking restart 2>&-
+else
+	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo DEVICE=$interface >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo BOOTPROTO=none >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo ONBOOT=yes >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo NM_CONTROLLED=no >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo NETMASK=$netmask >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo IPADDR=$address >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo GATEWAY=$gateway >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo DEFROUTE=yes >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo IPV6INIT=no >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo DNS1=$dns1 >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	if [ "$dns2" != '' ]; then
+		echo DNS2=$dns2 >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	fi
+	service network restart 2>&-
 fi
 ;;
+
 setdhcp)
-if [ "$detectedOS" = 'Ubuntu' ]; then
+interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
+if [ -f /etc/network/interfaces ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
-	echo "auto lo" >> /etc/network/interfaces
-	echo "iface lo inet loopback" >> /etc/network/interfaces
-	echo "auto eth0" >> /etc/network/interfaces
-	echo "iface eth0 inet dhcp" >> /etc/network/interfaces
-	service networking restart
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	UUID=`grep -i UUID= /etc/sysconfig/network-scripts/ifcfg-eth0`
-	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "DEVICE=eth0" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "TYPE=Ethernet" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "$UUID" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "NM_CONTROLLED=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "BOOTPROTO=dhcp" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "DEFROUTE=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "PEERDNS=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "PEERROUTES=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "IPV4_FAILURE_FATAL=yes" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "IPV6INIT=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	echo "NAME=\"System eth0\"" >> /etc/sysconfig/network-scripts/ifcfg-eth0
-	service network restart
+	echo auto lo >> /etc/network/interfaces
+	echo iface lo inet loopback >> /etc/network/interfaces
+	echo auto $interface >> /etc/network/interfaces
+	echo iface $interface inet dhcp >> /etc/network/interfaces
+	service networking restart 2>&-
+else
+	echo "# Created by JSS Appliance Admin" > /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo DEVICE=$interface >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo BOOTPROTO=dhcp >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo ONBOOT=yes >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo NM_CONTROLLED=no >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo DEFROUTE=yes >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo IPV6INIT=no >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	echo PEERDNS=yes >> /etc/sysconfig/network-scripts/ifcfg-$interface
+	service network restart 2>&-
 fi
 ;;
+
 getdns)
-	for line in $(cat /etc/resolv.conf | grep nameserver | cut -d ' ' -f 2);
-		do
-			if [ -n "$NAMESERVERLIST" ]; then
-				NAMESERVERLIST="$NAMESERVERLIST $line";
-			else
-				NAMESERVERLIST="$line"
-		fi
-	done
-	echo $NAMESERVERLIST
-	;;
-setdns) echo "# Created by JSS Appliance Admin" > /etc/resolv.conf
-echo "nameserver $2" >> /etc/resolv.conf
-echo "nameserver $3" >> /etc/resolv.conf
+unset nameservers
+for i in $(cat /etc/resolv.conf | grep nameserver | cut -d ' ' -f 2); do
+	if [ "$nameservers" = '' ]; then
+		nameservers="$i"
+	else
+		nameservers="$nameservers $i";
+	fi
+done
+echo $nameservers
+;;
+
+setdns)
+dns1=$2
+dns2=$3
+echo "# Created by JSS Appliance Admin" > /etc/resolv.conf
+echo nameserver $dns1 >> /etc/resolv.conf
+if [ "$dns2" != '' ]; then
+	echo nameserver $dns2 >> /etc/resolv.conf
+fi
 ;;
 
 #Get the local time
-getlocaltime) echo $(/bin/date);;
+getlocaltime)
+echo $(date)
+;;
 
 #Get the time server that is set
 gettimeserver)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	if [ -f /etc/cron.daily/ntpdate ]; then
-		echo $(cat /etc/cron.daily/ntpdate | awk '{print $2}')
-	fi
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if [ -f /etc/ntp/step-tickers ]; then
-		echo $(cat /etc/ntp/step-tickers | grep -m 1 -v '#')
-	fi
+if [ -f /etc/ntp/step-tickers ]; then
+	echo $(cat /etc/ntp/step-tickers 2>/dev/null | grep -v "^$" | grep -m 1 -v '#')
+else
+	echo $(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
 fi
 ;;
 
 #Set the time server
 settimeserver)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	if [ -f /etc/cron.daily/ntpdate ]; then
-		currentTimeServer=`cat /etc/cron.daily/ntpdate | awk '{print $2}'`
+newTimeServer=$2
+if [ -f /etc/ntp/step-tickers ]; then
+	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
+	if [ "$currentTimeServer" != "$newTimeServer" ]; then
+		echo "# List of NTP servers used by the ntpdate service." > /etc/ntp/step-tickers
+		echo $newTimeServer >> /etc/ntp/step-tickers
 	fi
-	if [ "$currentTimeServer" != $2 ]; then
-		echo "server $2" > /etc/cron.daily/ntpdate
-		/usr/sbin/ntpdate $2
-	fi
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if [ -f /etc/ntp/step-tickers ]; then
-		currentTimeServer=`cat /etc/ntp/step-tickers | grep -m 1 -v '#'`
-	fi
-	if [ "$currentTimeServer" != $2 ]; then
-		echo "$2" > /etc/ntp/step-tickers
-		/usr/sbin/ntpdate $2
+else
+	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
+	if [ "$currentTimeServer" != "$newTimeServer" ]]; then
+		echo "server $newTimeServer" > /etc/cron.daily/ntpdate
 	fi
 fi
+ntpdate $newTimeServer
 ;;
 
 # *** Timezone retrieval done through PHP
 # Set time zone
 settz)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	echo `echo $2 > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata`
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	echo ZONE=\"$2\" > /etc/sysconfig/clock && ln -sf /usr/share/zoneinfo/$2 /etc/localtime
-fi
-;;
-sethostname)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	oldname=`hostname`
-	sed -i "s/$oldname/$2/g" /etc/hosts
-	/bin/hostname $2 && echo $2 > /etc/hostname && service avahi-daemon restart
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	oldname=`hostname`
-	sed -i "s/$oldname/$2/g" /etc/sysconfig/network
-	/bin/hostname $2 && service avahi-daemon restart
+timezone=$2
+if [ "$(which timedatectl 2>&-)" != '' ] && [ "$(which dpkg-reconfigure 2>&-)" != '' ]; then
+	echo $(timedatectl set-timezone $timezone && dpkg-reconfigure --frontend noninteractive tzdata)
+else
+	echo ZONE=\"$timezone\" > /etc/sysconfig/clock && ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
 fi
 ;;
 
+sethostname)
+newname=$2
+oldname=$(hostname)
+sed -i "s/$oldname/$newname/g" /etc/hosts
+if [ -f /etc/hostname ]; then
+	echo $newname > /etc/hostname
+fi
+if [ -f /etc/sysconfig/network ]; then
+	sed -i "s/$oldname/$newname/g" /etc/sysconfig/network
+fi
+hostname $newname
+service avahi-daemon restart 2>&-
+;;
 
 # Admin services commands
-restartsmb)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	service smbd restart
+getsmbstatus)
+SERVICE=smbd
+if [ -e "/etc/system-release" ]; then
+	SERVICE=smb
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	service smb restart
+if service $SERVICE status 2>&- | grep -q running ; then
+	echo "true"
+else
+	echo "false"
 fi
 ;;
 
 startsmb)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	service smbd start
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=smbd
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE enable > /dev/null 2>&1
+	else
+		rm -f /etc/init/$SERVICE.override
+	fi
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	service smb start
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=smb
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+stopsmb)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=smbd
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE disable > /dev/null 2>&1
+	else
+		echo manual > /etc/init/$SERVICE.override
+	fi
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=smb
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+;;
+
+getafpstatus)
+SERVICE=afpd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
+else
+	echo "false"
 fi
 ;;
-restartafp)
-service netatalk restart
+
+startafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE enable > /dev/null 2>&1
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+stopafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE disable > /dev/null 2>&1
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
 rm -rf /srv/NetBootClients/*
 ;;
+
 getnbimages)
 IFS=$'\n'
-nbis=`ls /srv/NetBoot/NetBootSP0 2>/dev/null`
+nbis=$(ls /srv/NetBoot/NetBootSP0 2>/dev/null)
 unset IFS
 if [ ${#nbis[@]} -gt 0 ]; then
 	i=0
@@ -238,273 +291,209 @@ fi
 
 #Needs updating if we do multiple NetBoot images
 setnbimages)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	#AFP
-	ufw allow 548/tcp
-	#DHCP
-	ufw allow 67/udp
-	#TFTP
-	ufw allow 69/udp
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if [ -f "/usr/bin/firewall-cmd" ]; then
-		firewall-cmd --zone=public --add-port=548/tcp
-		firewall-cmd --zone=public --add-port=548/tcp --permanent
-		firewall-cmd --zone=public --add-port=67/udp
-		firewall-cmd --zone=public --add-port=67/udp --permanent
-		firewall-cmd --zone=public --add-port=69/udp
-		firewall-cmd --zone=public --add-port=69/udp --permanent
-	else
-		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
-			iptables -I INPUT -p tcp --dport 548 -j ACCEPT
-			iptables -D INPUT -p tcp --dport 548 -j DROP
-		fi
-		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:bootps' ; then
-			iptables -I INPUT -p udp --dport 67 -j ACCEPT
-			iptables -D INPUT -p udp --dport 67 -j DROP
-		fi
-		if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:tftp' ; then
-			iptables -I INPUT -p udp --dport 69 -j ACCEPT
-			iptables -D INPUT -p udp --dport 69 -j DROP
-		fi
-    	service iptables save
-    fi
-fi
-dmgfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.dmg 2>/dev/null`
+nbi=$2
+dmgfile=$(ls "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg 2>/dev/null)
 if [ -n "${dmgfile}" ]; then
-	finaldmg=`echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
+	finaldmg=$(echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${nbi}/::g")
 else
 	exit 1
 fi
-plistfile=`ls "/srv/NetBoot/NetBootSP0/${2}/"*.plist 2>/dev/null`
+plistfile=$(ls "/srv/NetBoot/NetBootSP0/${nbi}/"*.plist 2>/dev/null)
 if [ -n "${plistfile}" ]; then
-	finalplist=`echo ${plistfile} | sed "s:/srv/NetBoot/NetBootSP0/${2}/::g"`
+	finalplist=$(echo ${plistfile} | sed "s:/srv/NetBoot/NetBootSP0/${nbi}/::g")
 fi
-if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')" &>/dev/null; then
-	if [ $(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['IsInstall']") = "True" ]; then
+if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')" &>/dev/null; then
+	if [ $(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['IsInstall']") = "True" ]; then
 		isinstall=8
 	else
 		isinstall=0
 	fi
-	chmod +w "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
+	chmod +w "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
 	if [ "$3" != "" ]; then
-        python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
-    else
-        defaultname=$(basename "$2" .nbi)
-        python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${2}/${finalplist}"
-    fi
-	kind=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Kind']"`
-	index=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Index']"`
-	indexhex=`printf "%x" ${index} | tr "[:lower:]" "[:upper:]"`
+		python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
+	else
+		defaultname=$(basename "${nbi}" .nbi)
+		python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
+	fi
+	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Kind']")
+	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Index']")
+	indexhex=$(printf "%x" ${index} | tr "[:lower:]" "[:upper:]")
 	while [ ${#indexhex} -lt 4 ]; do
 		indexhex=0${indexhex}
 	done
 	imageid="${isinstall}${kind}:00:$(echo ${indexhex} | cut -c 1,2):$(echo ${indexhex} | cut -c 3,4)"
-	name=`python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${2}/${finalplist}')['Name']"`
-	listlenhex=`printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]"`
+	name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Name']")
+	listlenhex=$(printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]")
 	while [ ${#listlenhex} -lt 2 ]; do
 		listlenhex=0${listlenhex}
 	done
-	namelenhex=`printf "%x" ${#name} | tr "[:lower:]" "[:upper:]"`
+	namelenhex=$(printf "%x" ${#name} | tr "[:lower:]" "[:upper:]")
 	while [ ${#namelenhex} -lt 2 ]; do
 		namelenhex=0${namelenhex}
 	done
-	namehex=`echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g'`
+	namehex=$(echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g')
 else
 	imageid="01:00:02:0E"
 	listlenhex="11"
 	namelenhex="0C"
 	namehex="46:61:75:78:20:4E:65:74:42:6F:6F:74"
 fi
-curimageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+curimageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
 sed -i "s/${curimageid}/${imageid}/g" /etc/dhcpd.conf
 sed -i "s/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:.*/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:${listlenhex}:${imageid}:${namelenhex}:${namehex};/" /etc/dhcpd.conf
-sed -i "s:/NetBoot/NetBootSP0/.*\";:/NetBoot/NetBootSP0/${2}/${finaldmg}\";:g" /etc/dhcpd.conf
-sed -i "s:filename \".*\";:filename \"${2}/i386/booter\";:g" /etc/dhcpd.conf
-if [ "$detectedOS" = 'Ubuntu' ]; then
+sed -i "s:/NetBoot/NetBootSP0/.*\";:/NetBoot/NetBootSP0/${nbi}/${finaldmg}\";:g" /etc/dhcpd.conf
+sed -i "s:filename \".*\";:filename \"${nbi}/i386/booter\";:g" /etc/dhcpd.conf
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d smbd enable > /dev/null 2>&1
+		update-rc.d tftpd-hpa enable > /dev/null 2>&1
+		# systemctl enable openbsd-inetd > /dev/null 2>&1
+	else
+		rm -f /etc/init/smbd.override
+		rm -f /etc/init/tftpd-hpa.override
+		# update-rc.d openbsd-inetd enable > /dev/null 2>&1
+	fi
+	update-rc.d netatalk enable > /dev/null 2>&1
+	service smbd start 2>&-
+	service tftpd-hpa start 2>&-
+	# service openbsd-inetd start 2>&-
 	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
-	service tftpd-hpa start
-	service smbd start
-	service netatalk start
-	service openbsd-inetd start
-	rm -f /etc/init/netatalk.override
-	rm -f /etc/init/smbd.override
-	rm -f /etc/init/tftpd-hpa.override
-	rm -f /etc/init/openbsd-inetd.override
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig smb on > /dev/null 2>&1
+	chkconfig tftp on > /dev/null 2>&1
+	chkconfig netatalk on > /dev/null 2>&1
+	service smb start 2>&-
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		service tftp start 2>&-
+	else
+		service xinetd restart 2>&-
+	fi
 	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
-	chkconfig tftp on
-	service xinetd restart
-	service netatalk start
-	service smb start
-    chkconfig smb on
-    chkconfig netatalk on
 fi
+service netatalk start 2>&-
 /var/appliance/configurefornetboot
 ;;
 
 disableproxy)
-service slapd stop
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	#LDAP
-	ufw deny 389/tcp
-	echo manual > /etc/init/slapd.override
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d slapd disable > /dev/null 2>&1
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chkconfig slapd off
-	if [ -f "/usr/bin/firewall-cmd" ]; then
-		firewall-cmd --zone=public --remove-port=389/tcp
-		firewall-cmd --zone=public --remove-port=389/tcp --permanent
-	else
-		if ! iptables -L | grep DROP | grep -q 'tcp dpt:ldaps' ; then
-			iptables -I INPUT -p tcp --dport 389 -j DROP
-			iptables -D INPUT -p tcp --dport 389 -j ACCEPT
-		fi
-    	service iptables save
-    fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig slapd off > /dev/null 2>&1
+fi
+service slapd stop 2>&-
+;;
 
+installslapdconf)
+if [ -d "/etc/ldap" ]; then
+	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+fi
+if [ -d "/etc/openldap" ]; then
+	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
 fi
 ;;
 
 enableproxy)
-service slapd start
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	#LDAP
-	rm -f /etc/init/slapd.override
-	ufw allow 389/tcp
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d slapd enable > /dev/null 2>&1
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chkconfig slapd on
-	if [ -f "/usr/bin/firewall-cmd" ]; then
-		firewall-cmd --zone=public --add-port=389/tcp
-		firewall-cmd --zone=public --add-port=389/tcp --permanent
-	else
-		if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:ldaps' ; then
-			iptables -I INPUT -p tcp --dport 389 -j ACCEPT
-			iptables -D INPUT -p tcp --dport 389 -j DROP
-		fi
-    	service iptables save
-	fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig slapd on > /dev/null 2>&1
 fi
+service slapd start 2>&-
 ;;
 
 disablenetboot)
-service netatalk stop
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	#AFP
-	ufw deny 548/tcp
-	#DHCP
-	ufw deny 67/udp
-	#TFTP
-	ufw deny 69/udp
-	rm /etc/network/if-up.d/configurefornetboot
-	service tftpd-hpa stop
-	service smbd stop
-	service netatalk stop
-	service openbsd-inetd stop
-	echo manual > /etc/init/netatalk.override
-	echo manual > /etc/init/smbd.override
-	echo manual > /etc/init/tftpd-hpa.override
-	echo manual > /etc/init/openbsd-inetd.override
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d smbd disable > /dev/null 2>&1
+		update-rc.d tftpd-hpa disable > /dev/null 2>&1
+		# systemctl disable openbsd-inetd > /dev/null 2>&1
+	else
+		echo manual > /etc/init/smbd.override
+		echo manual > /etc/init/tftpd-hpa.override
+		# update-rc.d openbsd-inetd disable > /dev/null 2>&1
+	fi
+	update-rc.d netatalk disable > /dev/null 2>&1
+	service smbd stop 2>&-
+	service tftpd-hpa stop 2>&-
+	# service openbsd-inetd stop 2>&-
 	rm -f /etc/network/if-up.d/configurefornetboot
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if [ -f "/usr/bin/firewall-cmd" ]; then
-		firewall-cmd --zone=public --remove-port=548/tcp
-		firewall-cmd --zone=public --remove-port=548/tcp --permanent
-		firewall-cmd --zone=public --remove-port=67/udp
-		firewall-cmd --zone=public --remove-port=67/udp --permanent
-		firewall-cmd --zone=public --remove-port=69/udp
-		firewall-cmd --zone=public --remove-port=69/udp --permanent
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig netatalk off > /dev/null 2>&1
+	chkconfig smb off > /dev/null 2>&1
+	chkconfig tftp off > /dev/null 2>&1
+	service smb stop 2>&-
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		service tftp stop 2>&-
 	else
-		if ! iptables -L | grep DROP | grep -q 'tcp dpt:afpovertcp' ; then
-			iptables -I INPUT -p tcp --dport 548 -j DROP
-			iptables -D INPUT -p tcp --dport 548 -j ACCEPT
-		fi
-		if ! iptables -L | grep DROP | grep -q 'udp dpt:bootps' ; then
-			iptables -I INPUT -p udp --dport 67 -j DROP
-			iptables -D INPUT -p udp --dport 67 -j ACCEPT
-		fi
-		if ! iptables -L | grep DROP | grep -q 'udp dpt:tftp' ; then
-			iptables -I INPUT -p udp --dport 69 -j DROP
-			iptables -D INPUT -p udp --dport 67 -j ACCEPT
-		fi
-    	service iptables save
+		service xinetd restart 2>&-
 	fi
-	service smb stop
-    chkconfig tftp off
-    service xinetd restart
-    service netatalk stop
-    chkconfig smb off
-    chkconfig netatalk off
 	rm -f /sbin/ifup-local
 fi
-killall dhcpd
+service netatalk stop 2>&-
+killall dhcpd > /dev/null 2>&1
 ;;
 
 getnetbootstatus)
-SERVICE='dhcpd'
-
-if ps ax | grep -v grep | grep $SERVICE > /dev/null
-then
-    echo "true"
+SERVICE=dhcpd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
 else
-    echo "false"
+	echo "false"
 fi
 ;;
 
 getldapproxystatus)
-SERVICE='slapd'
-
-if ps ax | grep -v grep | grep $SERVICE > /dev/null
-then
-    echo "true"
+SERVICE=slapd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
 else
-    echo "false"
+	echo "false"
 fi
 ;;
 
 touchconf)
-touch "$2"
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	chown www-data "$2"
+conf="$2"
+if [ "$(getent passwd www-data)" != '' ]; then
+	www_user=www-data
+elif [ "$(getent passwd apache)" != '' ]; then
+	www_user=apache
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chown apache "$2"
-fi
-chmod u+w "$2"
+touch "$conf"
+chown $www_user "$conf"
+chmod u+w "$conf"
 ;;
 
 resetsmbpw)
-echo smbuser:$2 | chpasswd
-(echo $2; echo $2) | smbpasswd -s -a smbuser
+password=$2
+echo smbuser:$password | chpasswd
+(echo $password; echo $password) | smbpasswd -s -a smbuser
 ;;
-
 
 #Needs updating if we host more than one Netboot Image
 resetafppw)
-echo afpuser:$2 | chpasswd
-
-ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
-afppw=`echo ${2} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
-afppwlen=`echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c`
-afppwlen=`expr ${afppwlen} / 2`
-
-iphex=`echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/'`
-num=`echo ${iphex} | sed 's/://g' | wc -c`
-num=`expr ${num} / 2`
-num=`expr ${num} + 23`
-num=`expr ${num} + ${afppwlen}`
-lengthhex=`awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }'`
-
+password=$2
+echo afpuser:$password | chpasswd
+ip=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }')
+afppw=$(echo ${password} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
+afppwlen=$(echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c)
+afppwlen=$(expr ${afppwlen} / 2)
+iphex=$(echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
+num=$(echo ${iphex} | sed 's/://g' | wc -c)
+num=$(expr ${num} / 2)
+num=$(expr ${num} + 23)
+num=$(expr ${num} + ${afppwlen})
+lengthhex=$(awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }')
 newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:${afppw}
-
-imageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
-
+imageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
 sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
 if [ -f "/etc/dhcpd.conf" ]; then
-	imageid=`grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11`
+	imageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
 	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
 fi
 killall dhcpd > /dev/null 2>&1
@@ -512,19 +501,23 @@ killall dhcpd > /dev/null 2>&1
 ;;
 
 changeshelluser)
-usermod -l $2 $3
+username=$2
+password=$3
+usermod -l $username $password
 ;;
 
 changeshellpass)
-echo $2:$3 | chpasswd
+username=$2
+password=$3
+echo $username:$password | chpasswd
 ;;
 
 installslapdconf)
-if [ "$detectedOS" = 'Ubuntu' ]; then
+if [ -d "/etc/ldap" ]; then
 	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
 	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+if [ -d "/etc/openldap" ]; then
 	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
 	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
 fi
@@ -540,211 +533,303 @@ getSUSlist)
 /var/lib/reposado/repoutil --products
 /var/lib/reposado/repoutil --updates
 ;;
+
 getBranchlist)
-branches=`/var/lib/reposado/repoutil --branches`
+branches=$(/var/lib/reposado/repoutil --branches)
 echo $branches
 ;;
+
 createBranch)
-cbranch=`/var/lib/reposado/repoutil --new-branch $2`
+branch=$2
+cbranch=$(/var/lib/reposado/repoutil --new-branch $branch)
 echo $cbranch
 ;;
+
 deleteBranch)
-dbranch=`echo y | /var/lib/reposado/repoutil --delete-branch $2`
+branch=$2
+dbranch=$(echo y | /var/lib/reposado/repoutil --delete-branch $branch)
 echo $dbranch
 ;;
-listBranch)
-/var/lib/reposado/repoutil --list-branch $2
-;;
+
+#listBranch)
+#branch=$2
+#/var/lib/reposado/repoutil --list-branch $branch
+#;;
+
 prodinfo)
-/var/lib/reposado/repoutil --info $2
+id=$2
+/var/lib/reposado/repoutil --info $id
 ;;
+
 addtobranch)
-abranch=`/var/lib/reposado/repoutil --add=$2 $3`
+product=$2
+branch=$3
+abranch=$(/var/lib/reposado/repoutil --add=$product $branch)
 echo $abranch
 ;;
+
 reposync)
 /var/appliance/sus_sync.py > /dev/null 2>&1 &
 ;;
+
 repopurge)
 /var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
 ;;
+
 removefrombranch)
-rbranch=`/var/lib/reposado/repoutil --remove-product=$2 $3`
+product=$2
+branch=$3
+rbranch=$(/var/lib/reposado/repoutil --remove-product=$product $branch)
 echo $rbranch
 ;;
+
 setbaseurl)
+baseurl=$2
 sed -i '/LocalCatalogURLBase/{n;d}' /var/lib/reposado/preferences.plist
 sed -i "/LocalCatalogURLBase/ a\
-    <string>$2<\/string>" /var/lib/reposado/preferences.plist
+    <string>$baseurl<\/string>" /var/lib/reposado/preferences.plist
 ;;
-diskusage)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	echo `df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n"`
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	echo `df -H / | awk '{print $3}' | sed 's/Used//g' | tr -d "\n"`
-fi 
-;;
+
+#diskusage)
+#if [ -e "/etc/system-release" ]; then
+#	echo $(df -H / | awk '{print $3}' | sed 's/Used//g' | tr -d "\n")
+#else
+#	echo $(df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n")
+#fi 
+#;;
+
 netbootusage)
-echo `du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}'`
+echo $(du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}')
 ;;
+
 shadowusage)
-echo `du -h /srv/NetBootClients/ | tail -1 | awk '{print $1}'`
+echo $(du -h /srv/NetBootClients/ | tail -1 | awk '{print $1}')
 ;;
-freemem)
-echo `free -m | grep Mem | awk '{print $4}'`
-;;
-sususage)
-du -h /srv/SUS | tail -1 | awk '{print $1}'
-;;
+
+#freemem)
+#echo $(free -m | grep Mem | awk '{print $4}')
+#;;
+
+#sususage)
+#du -h /srv/SUS | tail -1 | awk '{print $1}'
+#;;
+
 lastsussync)
-echo `ls -al /srv/SUS/html/content/catalogs/ | grep index.sucatalog | head -1 | awk '{print $6" "$7}'`
+echo $(ls -alt /srv/SUS/html/content/catalogs/*.sucatalog* 2>/dev/null | head -1 | awk '{print $6" "$7}')
 ;;
+
 afpconns)
-echo `ss | grep afpovertcp | wc | awk '{print $1}'`
+echo $(ss | grep afpovertcp | wc | awk '{print $1}')
 ;;
+
 smbconns)
-echo `ss | grep microsoft-ds | wc | awk '{print $1}'`
+echo $(ss | grep microsoft-ds | wc | awk '{print $1}')
 ;;
+
 getsyncstatus)
-SERVICE='repo_sync'
-if ps ax | grep -v grep | grep $SERVICE > /dev/null
-then
-echo "true"
+SERVICE=repo_sync
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
 else
-echo "false"
+	echo "false"
 fi
 ;;
+
 getsussize)
-echo `du -h /srv/SUS/ | tail -1 | awk '{print $1}'`
+echo $(du -h /srv/SUS/ | tail -1 | awk '{print $1}')
 ;;
+
 numofbranches)
-echo `/var/lib/reposado/repoutil --branches | wc | awk '{print $1}'`
+echo $(/var/lib/reposado/repoutil --branches | wc | awk '{print $1}')
 ;;
+
 rootBranch)
-catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
+branch=$2
+catalogArray="/srv/SUS/html/content/catalogs/others/index*_${branch}.sucatalog"
 for i in ${catalogArray}; do
-catalogName="$(basename "${i}" "_${2}.sucatalog")"
-cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
+	catalogName="$(basename "${i}" "_${branch}.sucatalog")"
+	cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${branch}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
 done
-cp "/srv/SUS/html/content/catalogs/index_$2.sucatalog" "/srv/SUS/html/index.sucatalog"
+cp "/srv/SUS/html/content/catalogs/index_${branch}.sucatalog" "/srv/SUS/html/index.sucatalog"
 ;;
+
 addsch)
+hour=$2
 crontab -l > /tmp/mycron
 sed -i '/sus_sync.py/d' /tmp/mycron
-echo "00 $2 * * * /var/appliance/sus_sync.py > /dev/null 2>&1" >> /tmp/mycron
+echo "00 $hour * * * /var/appliance/sus_sync.py > /dev/null 2>&1" >> /tmp/mycron
 crontab /tmp/mycron
 rm /tmp/mycron
 ;;
+
 delsch)
 crontab -l > /tmp/mycron
 sed -i '/sus_sync.py/d' /tmp/mycron
 crontab /tmp/mycron
 rm /tmp/mycron
 ;;
+
 JSScreateConf)
-if [ ! -d "/usr/local/sbin/" ]; then
-mkdir /usr/local/sbin/ > /dev/null
-fi
-cd /usr/local/sbin/
-curl -s $3 --connect-timeout 15 -L -o /usr/local/sbin/jamfds $2/bin/jamfds
-echo $?
-if [ -f "/usr/local/sbin/jamfds" ]; then
-chmod +x /usr/local/sbin/jamfds
-conf=`/usr/local/sbin/jamfds createConf $3 -url $2`
-fi
-;;
-JSSenroll)
-if [ -f "/usr/local/sbin/jamfds" ]; then
-enroll=`/usr/local/sbin/jamfds enroll -username $2 -password $3 -uri $4`
-echo $enroll
+# $2: JSS URL
+# $3: Allow untrusted SSL certificate
+logFile="/usr/local/jds/logs/jdsinstaller.log"
+if [ "$3" = 'True' ]; then
+	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
 else
-echo "jamf Binary not found"
+	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
 fi
-;;
-checkin)
-if [ -f "/usr/local/sbin/jamfds" ]; then
-checkin=`/usr/local/sbin/jamfds policy`
-echo $checkin
+if [ $? -ne 0 ]; then
+	echo "$result" | sed -e 's/^error: //' 
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
 else
-echo "jamf Binary not found"
-fi
-;;
-JSSinventory)
-inventory=`/usr/local/sbin/jamfds inventory`
-echo $inventory
-;;
-enableAvahi)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	apt-get update
-	apt-get -qq -y install avahi-daemon
-fi
-;;
-getSSHstatus)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	if service ssh status 2>/dev/null | grep -q running ; then
-		echo "true"
-	else
-		echo "false"
-	fi
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if service sshd status 2>/dev/null | grep -q running ; then
-		echo "true"
-	else
-		echo "false"
-	fi
-fi
-;;
-enableSSH)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	if ! dpkg --list | grep -q 'openssh-server'; then
-		apt-get update
-		apt-get -qq -y install openssh-server
-	fi
-	if [ -e /etc/init/ssh.override ];then
-		rm -f /etc/init/ssh.override
-	fi
-	service ssh start
-	ufw allow 22/tcp
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if ! rpm -qa "openssh-server" | grep -q "openssh-server" ; then
-		yum -y install openssh-server
-	fi
-	chkconfig sshd on
-	service sshd start
-fi
-;;
-disableSSH)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-	echo manual > /etc/init/ssh.override
-	service ssh stop
-fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chkconfig sshd off
-	service sshd stop
+	echo "Created configuration file for $2"
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
 fi
 ;;
 
-getFirewallstatus)
-if [ "$detectedOS" = 'Ubuntu' ]; then
-        if ufw status | grep inactive ; then
-                echo "false"
-        else
-                echo "true"
-        fi
+JSSenroll)
+logFile="/usr/local/jds/logs/jdsinstaller.log"
+if [ -d "/etc/apache2/sites-enabled" ]; then
+	conf="/etc/apache2/sites-enabled/jds.conf"
+	www_service=apache2
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	if service iptables status 2>/dev/null | grep -q running ; then
+if [ -d "/etc/httpd/conf.d" ]; then
+	conf="/etc/httpd/conf.d/jds.conf"
+	www_service=httpd
+fi
+echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
+echo "<VirtualHost *:443>" > $conf
+echo "	SSLEngine on" >> $conf
+echo "</VirtualHost>" >> $conf
+echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
+sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf 
+if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+fi
+if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+fi
+result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
+if [ $? -ne 0 ]; then
+	echo "$result" | sed -e 's/^error: //'
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+	rm -f $conf
+	exit
+else
+	echo "Enrolment complete"
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
+	/usr/local/sbin/jamfds policy > /dev/null 2>&1
+fi
+service $www_service reload 2>&-
+;;
+
+checkin)
+/usr/local/sbin/jamfds policy > /dev/null 2>&1
+;;
+
+JSSinventory)
+/usr/local/sbin/jamfds inventory > /dev/null 2>&1
+;;
+
+#enableAvahi)
+#if [ "$(which apt-get 2>&-)" != '' ]; then
+#	if [ "$(dpkg -s avahi-daemon 2>&- | awk '/Status: / {print $NF}')" != 'installed' ]; then
+#		apt-get -q update
+#		apt-get -qq -y install avahi-daemon
+#	fi
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		systemctl enable avahi-daemon > /dev/null 2>&1
+#	else
+#		rm -f /etc/init/avahi-daemon.override
+#	fi
+#fi
+#if [ "$(which yum 2>&-)" != '' ]]; then
+#	chkconfig messagebus on > /dev/null 2>&1
+#	service messagebus start 2>&-
+#	chkconfig avahi-daemon on > /dev/null 2>&1
+#fi
+#service avahi-daemon start 2>&-
+#;;
+
+getSSHstatus)
+SERVICE=ssh
+if [ -e "/etc/system-release" ]; then
+	SERVICE=sshd
+fi
+if service $SERVICE status 2>&- | grep -q running ; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+enableSSH)
+if [ "$(which apt-get 2>&-)" != '' ]; then
+	SERVICE=ssh
+	if [ "$(dpkg -s openssh-server 2>&- | awk '/Status: / {print $NF}')" != 'installed' ]; then
+		apt-get -q update
+		apt-get -qq -y install openssh-server
+	fi
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE enable > /dev/null 2>&1
+	else
+		rm -f /etc/init/$SERVICE.override
+	fi
+fi
+if [ "$(which yum 2>&-)" != '' ]]; then
+	SERVICE=sshd
+	if [ "$(rpm -qa openssh-server)" == '' ]; then
+		yum install openssh-server -y -q
+	fi
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+disableSSH)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=ssh
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE disable > /dev/null 2>&1
+	else
+		echo manual > /etc/init/$SERVICE.override
+	fi
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=sshd
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+;;
+
+getFirewallstatus)
+if [ "$(which ufw 2>&-)" != '' ]; then
+	if ufw status | grep -q inactive ; then
+		echo "false"
+	else
+		echo "true"
+	fi
+elif [ "$(which firewalld 2>&-)" != '' ]; then
+	if service firewalld status 2>&- | grep -q running ; then
 		echo "true"
 	else
 		echo "false"
 	fi
-fi
+else
+	if service iptables status 2>&- | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+fi	
 ;;
+
 updateCert)
-if [ "$detectedOS" = 'Ubuntu' ]; then
+if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/ssl/certs/ssl-cert-snakeoil.pem
 	cp /var/appliance/conf/appliance.private.key /etc/ssl/private/ssl-cert-snakeoil.key
 	mkdir -p /etc/apache2/ssl.crt/	
@@ -752,45 +837,247 @@ if [ "$detectedOS" = 'Ubuntu' ]; then
 	chown openldap /var/appliance/conf/appliance.private.key
 	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
+if [ -f "/etc/pki/tls/certs/localhost.crt" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
 	cp /var/appliance/conf/appliance.private.key /etc/pki/tls/private/localhost.key	
 	cp /var/appliance/conf/appliance.chain.pem /etc/pki/tls/certs/server-chain.crt
-	chown ldap /var/appliance/conf/appliance.private.key
 	sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/g" /etc/httpd/conf.d/ssl.conf
+	chown ldap /var/appliance/conf/appliance.private.key
 	rm -rf /etc/openldap/certs/
 	mkdir /etc/openldap/certs
 	modutil -create -dbdir /etc/openldap/certs -force
 	openssl pkcs12 -inkey /var/appliance/conf/appliance.private.key -in /var/appliance/conf/appliance.certificate.pem -export -out /tmp/openldap.p12 -nodes -name 'LDAP-Certificate' -password pass:
 	certutil -A -d /etc/openldap/certs -n "CA Chain" -t CT,, -a -i /var/appliance/conf/appliance.chain.pem
-	pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""
-	rm /tmp/openldap.p12
+	expect -c 'log_user 0; spawn pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""; expect "Enter new password: "; send "netsuslp\r"; expect "Re-enter password: "; send "netsuslp\r"'
+	rm -f /tmp/openldap.p12
 	chown -R ldap:ldap /etc/openldap/certs/
-	service slapd restart
+	service slapd restart 2>&-
 fi
 ;;
+
 enableFirewall)
-if [ "$detectedOS" = 'Ubuntu' ]; then
+if [ "$(which ufw 2>&-)" != '' ]; then
 	ufw --force enable
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chkconfig iptables on
-	service iptables start
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	if [ "$(which firewalld 2>&-)" != '' ]; then
+		chkconfig firewalld on > /dev/null 2>&1
+		service firewalld start 2>&-
+	else
+		chkconfig iptables on > /dev/null 2>&1
+		service iptables start 2>&-
+	fi
 fi
 ;;
+
 disableFirewall)
-if [ "$detectedOS" = 'Ubuntu' ]; then
+if [ "$(which ufw 2>&-)" != '' ]; then
 	ufw disable
 fi
-if [ "$detectedOS" = 'CentOS' ] || [ "$detectedOS" = 'RedHat' ]; then
-	chkconfig iptables off
-	service iptables stop
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	if [ "$(which firewalld 2>&-)" != '' ]; then
+		chkconfig firewalld off > /dev/null 2>&1
+		service firewalld stop 2>&-
+	else
+		chkconfig iptables off > /dev/null 2>&1
+		service iptables stop 2>&-
+	fi
 fi
 ;;
+
 restart)
 reboot
 ;;
+
 shutdown)
 poweroff
 ;;
+
+# New functions
+
+enablegui)
+sed -i 's:<webadmingui>.*</webadmingui>::' /var/appliance/conf/appliance.conf.xml
+;;
+
+createCsr)
+common_name=$2
+openssl genrsa -out /tmp/private.key 2048 > /dev/null 2>&1
+(echo .; echo .; echo .; echo .; echo .; echo "$common_name"; echo .; echo .; echo .;) | openssl req -new -key /tmp/private.key -out /tmp/certreq.csr > /dev/null 2>&1
+if [ "$(getent passwd www-data)" != '' ]; then
+	www_user=www-data
+elif [ "$(getent passwd apache)" != '' ]; then
+	www_user=apache
+fi
+chown $www_user /tmp/private.key /tmp/certreq.csr
+;;
+
+# Storage
+allowResize)
+pvname=$(pvdisplay | grep 'PV Name' | awk '{print $NF}')
+if ! file $pvname | grep -q "block special"; then
+	echo "ERROR: $pvname is not a block device"
+	exit
+fi
+lvname=$(lvdisplay | grep 'LV Path' | head -n 1 | grep -v swap | awk '{print $NF}')
+lvdisplay $lvname > /dev/null
+if [ $? -ne 0 ]; then
+	echo "ERROR: $lvname is not a logical volume"
+	exit
+fi
+device=$(echo $pvname | sed -e 's/[0-9]//g')
+if ! fdisk -u -l $device | grep $device | tail -1 | grep $pvname | grep -q "Linux LVM"; then
+	echo "ERROR: $pvname is not the last volume on $device"
+	exit
+fi
+partition=$(echo $pvname | sed -e 's/[^0-9]//g')
+if ! parted $device --script unit s print | grep -Pq "^\s$partition\s+.+?[^,]+?lvm\s*$"; then
+	echo "ERROR: $pvname has additional flags set"
+	exit
+fi
+total=$(parted $device --script unit B print | grep $device | awk '{print $NF}' | tr -d 'B')
+end=$(parted $device --script unit B print | grep -P "^\s$partition\s+.+?[^,]+?lvm\s*$" | awk '{print $3}' | tr -d 'B')
+free=$(($total-$end))
+echo $(($free/1024/1024))
+;;
+
+resizeDisk)
+pvname=$(pvdisplay | grep 'PV Name' | awk '{print $NF}')
+echo "Resizing $pvname"
+echo
+if ! file $pvname | grep -q "block special"; then
+	echo "$pvname is not a block device"
+	exit 1
+fi
+lvname=$(lvdisplay | grep 'LV Path' | head -n 1 | grep -v swap | awk '{print $NF}')
+lvdisplay $lvname > /dev/null
+if [ $? -ne 0 ]; then
+	echo "$lvname is not a logical volume"
+	exit 1
+fi
+device=$(echo $pvname | sed -e 's/[0-9]//g')
+if ! fdisk -u -l $device | grep $device | tail -1 | grep $pvname | grep -q "Linux LVM"; then
+	echo "$pvname is not the last volume on $device"
+	exit 1
+fi
+partition=$(echo $pvname | sed -e 's/[^0-9]//g')
+if ! parted $device --script unit s print | grep -Pq "^\s$partition\s+.+?[^,]+?lvm\s*$"; then
+	echo "$pvname has additional flags set"
+	exit 1
+fi
+echo "Current partition layout of $device:"
+echo
+parted $device --script unit GB print
+start=$(fdisk -u -l $device | grep $pvname | awk '{print $2}')
+if parted $device --script unit s print | grep -qP "^\s$partition\s+.+?logical.+$"; then
+	echo "Detected LVM residing on a logical partition"
+	echo
+	ext_partition=$(parted $device --script unit s print | grep extended | grep -Po '^\s\d\s' | tr -d ' ')
+	ext_start=$(parted $device --script unit s print | grep extended | awk '{print $2}' | tr -d 's')
+	parted $device --script rm $ext_partition >/dev/null 2>&1
+	parted $device --script "mkpart extended ${ext_start}s -1s" >/dev/null 2>&1
+	parted $device --script "set $ext_partition lba off" >/dev/null 2>&1
+	parted $device --script "mkpart logical ext2 ${start}s -1s" >/dev/null 2>&1
+else
+	parted $device --script rm $partition >/dev/null 2>&1
+	parted $device --script "mkpart primary ext2 ${start}s -1s" >/dev/null 2>&1
+fi
+parted $device --script set $partition lvm on
+echo "New partition layout of $device:"
+echo
+parted $device --script unit GB print
+echo "Creating script to resize the filesystem at next boot"
+echo
+echo '#!/bin/bash' > /root/resizefs.sh
+if [ -f "/etc/rc.d/rc.local" ]; then
+	rc_local=/etc/rc.d/rc.local
+else
+	rc_local=/etc/rc.local
+fi
+echo "
+pvresize $pvname
+lvextend --extents +100%FREE $lvname --resizefs
+sed -ri 's/^#(exit 0)$/\1/' $rc_local
+sed -i '/\/root\/resizefs.sh/d' $rc_local
+rm -f \$0" >> /root/resizefs.sh
+chmod +x /root/resizefs.sh
+echo '/root/resizefs.sh' >> $rc_local
+sed -ri 's/^(exit 0)$/#\1/' $rc_local
+echo "A restart is required for changes to take effect"
+;;
+
+# Logs
+displayLogList)
+jdsLogList=$(find /usr/local/jds/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+jssLogList=$(find /usr/local/jss/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+tomcatLogList=$(find /usr/local/jss/tomcat/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+applianceLogList=$(find /var/appliance/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+varLogList=$(find /var/log \( \! -path /var/log/sudo-io/* \) -a -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+echo $jdsLogList $jssLogList $tomcatLogList $applianceLogList $varLogList
+;;
+
+displayLog)
+log_path=$2
+lines=$3
+if [ "$3" != '' ]; then
+	tail -n $lines $log_path
+else
+	cat $log_path
+fi
+;;
+
+flushLogList)
+jssLogList=$(find /usr/local/jss/logs -type f 2>/dev/null | sort)
+tomcatLogList=$(find /usr/local/jss/tomcat/logs -type f 2>/dev/null | sort)
+applianceLogList=$(find /var/appliance/logs -type f 2>/dev/null | sort)
+varLogList=$(find /var/log \( \! -path /var/log/sudo-io/* \) -a -type f 2>/dev/null | sort)
+echo $jssLogList $tomcatLogList $applianceLogList $varLogList
+;;
+
+flushLog)
+log_path=$2
+if [ "$log_path" != '' ]; then
+	logFile=$(echo $2 | sed -e 's/.gz$//' | sed -e 's/[.0-9$]//g')
+	if [ "$log_path" = "$logFile" ]; then
+		cat /dev/null > $log_path
+	else
+		rm -f $log_path
+	fi
+fi
+;;
+
+# System Information
+getName)
+if [ -e "/etc/os-release" ]; then
+	. /etc/os-release
+elif [ -e "/etc/system-release" ]; then
+	NAME=$(sed -e 's/ release.*//' /etc/system-release)
+fi
+echo "$NAME"
+;;
+
+getHomeUrl)
+if [ -e "/etc/os-release" ]; then
+	. /etc/os-release
+	if [ "$NAME" = 'Ubuntu' ] && [ "$HOME_URL" = '' ]; then
+		HOME_URL="http://www.ubuntu.com/"
+	fi
+elif [ -e "/etc/system-release" ]; then
+	if [ "$(readlink /etc/system-release)" = 'redhat-release' ]; then
+		HOME_URL="https://www.redhat.com/"
+	fi
+	if [ "$(readlink /etc/system-release)" = 'centos-release' ]; then
+		HOME_URL="https://www.centos.org/"
+	fi
+fi
+echo "$HOME_URL"
+;;
+
+getInstallType)
+if [ "$(which apt-get 2>&-)" != '' ]; then
+	echo "apt-get"
+elif [ "$(which yum 2>&-)" != '' ]; then
+	echo "yum"
+fi
+;;
+
 esac

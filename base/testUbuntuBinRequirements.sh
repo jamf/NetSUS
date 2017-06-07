@@ -1,15 +1,29 @@
-#!/bin/sh
+#!/bin/bash
 
-source logger.sh
+if [[ $(which apt-get 2>&-) != "" ]]; then
 
-logEventNoNewLine "Checking for required Ubuntu binaries"
+	logNoNewLine "Checking for required Ubuntu binaries..."
 
-# checking for policycoreutils
-pcucheck=`dpkg -s policycoreutils | awk '/Package: / {print $2}'`
-[[ "${pcucheck}" != "policycoreutils" ]] && { sudo apt-get install policycoreutils; }
+	# Ensure that the package lists are re-created to avoid installation failure
+	rm -rf /var/lib/apt/lists/*
+	# Update package lists
+	apt-get -q update >> $logFile
+	if [[ $? -ne 0 ]]; then
+		log "Error: Failed to update package index files."
+		exit 1
+	fi
 
-# checking for gawk
-pcucheck=`dpkg -s gawk | awk '/Package: / {print $2}'`
-[[ "${pcucheck}" != "gawk" ]] && { sudo apt-get install gawk; }
+	# Checking for policycoreutils
+	if [[ $(dpkg -s policycoreutils 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
+		apt-get -qq -y install policycoreutils >> $logFile
+		if [[ $? -ne 0 ]]; then
+			log "Error: Failed to install policycoreutils."
+			exit 1
+		fi
+	fi
+
+	log "OK"
+
+fi
 
 exit 0

@@ -35,8 +35,10 @@ if (isset($_POST['SaveNetwork']))
 			 && $_POST['gateway'] != $_POST['ip'] && isValidIPAddress($_POST['dns1'])
 			 && (isValidIPAddress($_POST['dns2']) || $_POST['dns2'] == ""))
 			{
-				//address netmask gateway
-				suExec("setip ".$_POST['ip']." ".$_POST['netmask']." ".$_POST['gateway']);
+				// 2017-03-07: NetSUS Bug Fix
+				// Updated to correctly set static DNS
+				//address netmask gateway dns1 dns2
+				suExec("setip ".$_POST['ip']." ".$_POST['netmask']." ".$_POST['gateway']." ".$_POST['dns1']." ".$_POST['dns2']);
 				suExec("setdns ".$_POST['dns1']." ".$_POST['dns2']);
 			}
 		}

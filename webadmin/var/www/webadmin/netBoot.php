@@ -133,14 +133,39 @@ if (isset($_GET['deleteSubnet']) && isset($_GET['deleteNetmask'])
 ?>
 
 <script>
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
+	{
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
+	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+// netbootName
+function validateName()
+{
+	var validName = /^[A-Za-z0-9._+\-]{1,256}$/.test(document.getElementById("netbootName").value) || document.getElementById("netbootName").value == "";
+	showErr("netbootName", validName);
+	enableButton("changenetboot", validName);
+}
+
 function validateSubnet()
 {
-	if (document.getElementById("subnet").value != "" && document.getElementById("netmask").value != "")
-		document.getElementById("addsubnet").disabled = false;
-	else
-		document.getElementById("addsubnet").disabled = true;
+	var validSubnet = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(document.getElementById("subnet").value);
+	var validNetmask = /^((255|254|252|248|240|224|192|128|0?)\.){3}(255|254|252|248|240|224|192|128|0)$/.test(document.getElementById("netmask").value);
+	showErr("subnet", validSubnet);
+	showErr("netmask", validNetmask);
+	enableButton("addsubnet", validSubnet && validNetmask);
 }
-window.onload = validateSubnet;
 </script>
 
 <h2>NetBoot Server</h2>
@@ -217,12 +242,12 @@ window.onload = validateSubnet;
 					<div class="input-group">
 						<div class="input-group-addon no-background">Name</div>
 						<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name. Cannot contain spaces</span>
-						<input type="text" name="netbootName" id="netbootName" class="form-control input-sm" value="<?php echo $conf->getSetting("netbootname")?>" />
+						<input type="text" name="netbootName" id="netbootName" class="form-control input-sm" value="<?php echo $conf->getSetting("netbootname")?>" onKeyUp="validateName();" onChange="validateName();" />
 					</div>
 				</div>
 
 				<div class="panel-footer">
-					<input type="submit" name="changenetboot" id="changenetboot" class="btn btn-primary btn-sm" value="Change"/>
+					<input type="submit" name="changenetboot" id="changenetboot" class="btn btn-primary btn-sm" value="Change" disabled="disabled" />
 				</div>
 
 			</div>

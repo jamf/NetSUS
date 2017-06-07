@@ -8,6 +8,8 @@ $title = "SMB";
 
 include "inc/header.php";
 
+$smb_running = (trim(suExec("getsmbstatus")) === "true");
+
 $accounterror = "";
 $accountsuccess = "";
 
@@ -52,13 +54,35 @@ if (isset($_POST['smbpass']))
 	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
 		<h2>SMB</h2>
+
 		<hr>
+
+		<br>
+
+		<?php
+		if ($smb_running)
+		{
+			echo "<div class=\"alert alert-success alert-with-button\">
+					<span>Enabled</span>
+					<input type=\"button\" class=\"btn btn-sm btn-success pull-right\" value=\"Disable SMB\" onClick=\"javascript: return goTo(true, 'smbCtl.php?disable=true');\" />
+				</div>";
+		}
+		else
+		{
+			echo "<div class=\"alert alert-danger alert-with-button\">
+					<span>Disabled</span>
+					<input type=\"button\" class=\"btn btn-sm btn-danger pull-right\" value=\"Enable SMB\" onClick=\"javascript: return goTo(true, 'smbCtl.php?enable=true');\" />
+				</div>";
+		}
+		?>
 
 		<form action="SMB.php" method="post" name="SMB" id="SMB">
 
+			<!--
 			<span class="label label-default">SMB Service</span>
-			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');"/>
+			<input type="button" value="Restart" class="btn btn-sm btn-primary" onClick="javascript: return goTo(toggle_visibility('restarting', 'SMB'), 'smbCtl.php?restart=true');" <?php if (!$smb_running) { echo "disabled=\"disabled\""; } ?>/>
 			<br><br>
+			-->
 
 			<label class="control-label">New Password</label>
 			<input type="password" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
