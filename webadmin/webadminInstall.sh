@@ -217,7 +217,7 @@ sed -i 's/^session.gc_probability =.*/session.gc_probability = 1/' $php_ini
 if [ ! -f "/var/appliance/conf/appliance.conf.xml" ]; then
 	shelluser=$(env | grep SUDO_USER | sed 's/SUDO_USER=//g')
 	# If SUDO_USER is empty this is probably being installed in the root account and we will need to create the shelluser if it doesn't exist
-	if [[ $shelluser == "" ]]; then
+	if [[ $shelluser == "" ]] || [[ $shelluser == "root" ]]; then
 		shelluser=shelluser
 		if [[ $(getent passwd shelluser) == "" ]]; then
 			useradd -c 'shelluser' -d /home/shelluser -G wheel -m -s /bin/bash shelluser

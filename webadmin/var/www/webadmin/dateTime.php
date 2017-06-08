@@ -24,6 +24,33 @@ if (isset($_POST['SaveDateTime'])) {
 
 ?>
 
+<script>
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
+	{
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
+	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+
+function validateTimeserver()
+{
+	var validTimeserver = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("timeserver").value);
+	showErr("timeserver", validTimeserver);
+	enableButton("SaveDateTime", validTimeserver);
+}
+</script>
+
 <h2>Date/Time</h2>
 
 <div class="row">
@@ -45,11 +72,11 @@ if (isset($_POST['SaveDateTime'])) {
 
 			<span class="label label-default">Network Time Server</span>
 			<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" />
+			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onKeyUp="validateTimeserver();" onChange="validateTimeserver();" />
 
 			<br>
 
-			<input type="submit" class="btn btn-primary" value="Save" name="SaveDateTime"/>
+			<input type="submit" class="btn btn-primary" value="Save" name="SaveDateTime" id="SaveDateTime" disabled="disabled" />
 
 		</form>
 

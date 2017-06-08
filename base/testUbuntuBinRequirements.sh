@@ -5,7 +5,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	logNoNewLine "Checking for required Ubuntu binaries..."
 
 	# Ensure that the package lists are re-created to avoid installation failure
-	rm -rf /var/lib/apt/lists/*
+	# rm -rf /var/lib/apt/lists/*
 	# Update package lists
 	apt-get -q update >> $logFile
 	if [[ $? -ne 0 ]]; then

@@ -150,7 +150,7 @@ function enableButton(id, enable)
 {
 	document.getElementById(id).disabled = !enable;
 }
-// netbootName
+
 function validateName()
 {
 	var validName = /^[A-Za-z0-9._+\-]{1,256}$/.test(document.getElementById("netbootName").value) || document.getElementById("netbootName").value == "";
