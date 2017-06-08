@@ -98,10 +98,48 @@ Certificates Settings allows you to modify the server settings with either a Tom
 
 3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
 
-4. Enter the "Private Key", "Certificate", and "Chain" fields with the appropriate unencrypted certificate information.
+4. If you wish to create a CSR, update the Common Name field and click "Create". A zip archive will download containing a new private key and related signing request.
+
+5. Enter the "Private Key", "Certificate", and "Chain" fields with the appropriate unencrypted certificate information.
 	
     <img src="images/attachments/certificates.png" width="500">
 
-5. Click **Save**.
+6. Click **Save**.
 
-6. Restart NetBoot/SUS/LP Server.
+7. Restart NetBoot/SUS/LP Server.
+
+
+## Logs Settings
+The Logs settings allows you to select and view the system log files on the NetBoot/SUS/LP Server.
+
+1. Log in to the NetBoot/SUS/LP server web application.
+
+2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+
+3. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Logs** <img height="20" src="images/thumbnails/logs_icon.png">.
+
+4. Select the log file you wish to view.
+
+5. Enter the number of lines (from the end) of the log file you wish to see. If this is left blank, the entire log is displayed.
+
+5. Click **Display**.
+
+
+## Storage Settings
+The Storage settings allows you to expand the logical disk volume on NetBoot/SUS/LP Server, if the VMDK has been expanded.
+
+1. Shut down the NetBoot/SUS/LP Server.
+
+2. Expand the VMDK of the NetBoot/SUS/LP Server from within the hypervisor.
+
+3. Start up the NetBoot/SUS/LP Server.
+
+4. Log in to the NetBoot/SUS/LP server web application.
+
+5. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+
+6. In the "NetBoot/SUS/LDAP Proxy Server" section, click **Storage** <img height="20" src="images/thumbnails/storage_icon.png">.
+
+7. If there is sufficient space available, the Resize button will be enabled, click **Resize**.
+
+8. Restart the NetBoot/SUS/LP Server for the additional storage to become available.

@@ -125,6 +125,10 @@ Branch URLs vary depending on the operating system of enrolled computers. Exampl
 
 	http://sus.mycompany.corp/content/catalogs/others/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
 	
+**macOS v10.12**
+
+	http://sus.mycompany.corp/content/catalogs/others/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
+	
 ### Running Software Update on Computers
 
 For instructions on using the Casper Suite to run Software Update on computers that are managed by the JSS, see the “Running Software Update” section in the Casper Suite Administrator’s Guide.
