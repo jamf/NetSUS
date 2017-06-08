@@ -3,7 +3,7 @@
 To install the NetBoot/SUS/LP server using an installer, you need:
 
 * The NetBoot/SUS/LP Server Installer (.run), available at:
-<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * One of the following operating systems:
 	* Ubuntu 14.04 LTS Server
 	* Ubuntu 16.04 LTS Server
@@ -15,14 +15,14 @@ To install the NetBoot/SUS/LP server using an installer, you need:
 To set up the NetBoot/SUS/LP server as an appliance, you need:
 
 * The OVA file for the NetBoot/SUS/LP server, available at:
-<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * Virtualization software that supports Open Virtualization Format 
-* 300 GB of disk space available
+* 500 GB of disk space available
 * 2 GB of RAM
 
 To host a NetBoot server using the NetBoot/SUS/LP server, you need a NetBoot image (.nbi folder). For more information, see the following Knowledge Base article:
 
-[Creating a NetBoot Image and Setting Up a NetBoot Server](https://jamfnation.jamfsoftware.com/article.html?id=307)
+[Creating a NetBoot Image and Setting Up a NetBoot Server](https://www.jamf.com/jamf-nation/articles/307/creating-a-netboot-image-and-setting-up-a-netboot-server)
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
 
@@ -33,7 +33,7 @@ To host a NetBoot server using the NetBoot/SUS/LP server, you need a NetBoot ima
 
 3. Initiate the installer by executing a command similar to the following:
 
-		sudo /path/to/NetSUSLP_4.0.0.run
+		sudo /path/to/NetSUSLPInstaller.run
 	
 4. Type "y" to proceed.
 

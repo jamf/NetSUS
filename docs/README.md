@@ -12,4 +12,4 @@
 
 * GitHub issues are the primary way for communicating about specific proposed changes to this project.
 
-* There is a discussion board located on [JAMF Nation](https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=discussions). You are welcome to create an account and contribute to the discussion by asking questions, discussing bugs, or answering questions you may have knowledge about.
+* There is a discussion board located on [JAMF Nation](https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=discussions). You are welcome to create an account and contribute to the discussion by asking questions, discussing bugs, or answering questions you may have knowledge about.

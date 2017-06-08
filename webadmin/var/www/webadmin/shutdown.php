@@ -10,7 +10,7 @@ include "inc/header.php";
 
 if (isset($_POST['confirm']))
 {
-	echo '<meta http-equiv="refresh" content="15;url=https://www.jamf.com/jamf-nation/third-party-products/180">';
+	echo '<meta http-equiv="refresh" content="15;url=https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info">';
 	echo '<div class="alert alert-danger">NOTICE: Shutting down the NetBoot/SUS/LDAP Proxy Server.</div>';
 }
 
