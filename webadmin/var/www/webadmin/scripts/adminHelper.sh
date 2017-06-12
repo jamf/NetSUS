@@ -190,17 +190,15 @@ service avahi-daemon restart 2>&-
 ;;
 
 # Admin services commands
-getsmbstatus)
-SERVICE=smbd
-if [ -e "/etc/system-release" ]; then
-	SERVICE=smb
-fi
-if service $SERVICE status 2>&- | grep -q running ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#restartsmb)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	SERVICE=smbd
+#fi
+#if [ "$(which chkconfig 2>&-)" != '' ]; then
+#	SERVICE=smb
+#fi
+#service $SERVICE restart 2>&-
+#;;
 
 startsmb)
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
@@ -218,53 +216,11 @@ fi
 service $SERVICE start 2>&-
 ;;
 
-stopsmb)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	SERVICE=smbd
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		update-rc.d $SERVICE disable > /dev/null 2>&1
-	else
-		echo manual > /etc/init/$SERVICE.override
-	fi
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
-	SERVICE=smb
-	chkconfig $SERVICE off > /dev/null 2>&1
-fi
-service $SERVICE stop 2>&-
-;;
-
-getafpstatus)
-SERVICE=afpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
-
-startafp)
-SERVICE=netatalk
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d $SERVICE enable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig $SERVICE on > /dev/null 2>&1
-fi
-service $SERVICE start 2>&-
-;;
-
-stopafp)
-SERVICE=netatalk
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d $SERVICE disable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig $SERVICE off > /dev/null 2>&1
-fi
-service $SERVICE stop 2>&-
-rm -rf /srv/NetBootClients/*
-;;
+#restartafp)
+#SERVICE=netatalk
+#service $SERVICE restart 2>&-
+#rm -rf /srv/NetBootClients/*
+#;;
 
 getnbimages)
 IFS=$'\n'
@@ -383,17 +339,6 @@ if [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig slapd off > /dev/null 2>&1
 fi
 service slapd stop 2>&-
-;;
-
-installslapdconf)
-if [ -d "/etc/ldap" ]; then
-	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
-	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
-fi
-if [ -d "/etc/openldap" ]; then
-	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
-	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
-fi
 ;;
 
 enableproxy)
@@ -1043,6 +988,67 @@ if [ "$log_path" != '' ]; then
 		rm -f $log_path
 	fi
 fi
+;;
+
+# Services commands
+getsmbstatus)
+SERVICE=smbd
+if [ -e "/etc/system-release" ]; then
+	SERVICE=smb
+fi
+if service $SERVICE status 2>&- | grep -q running ; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+stopsmb)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=smbd
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE disable > /dev/null 2>&1
+	else
+		echo manual > /etc/init/$SERVICE.override
+	fi
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=smb
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+;;
+
+getafpstatus)
+SERVICE=afpd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+startafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE enable > /dev/null 2>&1
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+stopafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE disable > /dev/null 2>&1
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+rm -rf /srv/NetBootClients/*
 ;;
 
 # System Information
