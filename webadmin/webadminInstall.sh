@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # This script controls the flow of the webadmin installation
 
 log "Starting Web Application Installation"

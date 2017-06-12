@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 # This script controls the flow of the NetBoot installation
 
 log "Starting NetBoot Installation"
