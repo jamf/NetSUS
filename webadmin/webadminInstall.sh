@@ -195,11 +195,11 @@ exit 0' >> $rc_local
 chmod +x $rc_local
 
 # Configure php
-if [ -e /etc/php/7.0/apache2/php.ini ]; then
+if [ -f "/etc/php/7.0/apache2/php.ini" ]; then
 	php_ini=/etc/php/7.0/apache2/php.ini
-elif [ -e /etc/php5/apache2/php.ini ]; then
+elif [ -f "/etc/php5/apache2/php.ini" ]; then
 	php_ini=/etc/php5/apache2/php.ini
-elif [ -e /etc/php.ini ]; then
+elif [ -f "/etc/php.ini" ]; then
 	php_ini=/etc/php.ini
 else
 	log "Error: Failed to locate php.ini"

@@ -96,9 +96,9 @@ if [[ $INTERACTIVE = true ]]; then
   echo "
 The following will be installed
 * Appliance Web Interface
+* Software Update Server
 * NetBoot Server
-* Software Updates Server
-* LDAP Proxy Server
+* LDAP Proxy
 "
 
   # shellcheck disable=SC2162,SC2034

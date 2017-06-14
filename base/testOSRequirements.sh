@@ -2,7 +2,7 @@
 
 logNoNewLine "Checking for a supported OS..."
 
-if [ -e "/etc/os-release" ]; then
+if [ -f "/etc/os-release" ]; then
 	source /etc/os-release
 elif [ -e "/etc/system-release" ]; then
 	NAME=$(sed -e 's/ release.*//' /etc/system-release)

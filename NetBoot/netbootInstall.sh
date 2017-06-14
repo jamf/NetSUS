@@ -30,7 +30,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install tftpd-hpa
 	# apt_install openbsd-inetd
 	apt_install netatalk
-	apt_install nfs-kernel-server
+	# apt_install nfs-kernel-server
 	apt_install python-configparser
 fi
 if [[ $(which yum 2>&-) != "" ]]; then
@@ -56,7 +56,7 @@ if [[ $(which yum 2>&-) != "" ]]; then
 		fi
 		sed -i 's/.*- -tcp -noddp -uamlist uams_dhx.so.*/- -tcp -noddp -uamlist uams_dhx.so,uams_dhx2_passwd.so/' /etc/netatalk/afpd.conf
 	fi
-	yum_install nfs-utils
+	# yum_install nfs-utils
 	yum_install vim-common
 	chkconfig messagebus on >> $logFile 2>&1
 	chkconfig avahi-daemon on >> $logFile 2>&1
@@ -102,7 +102,7 @@ touch /var/db/dhcpd.leases
 cp ./resources/dhcp/* /usr/local/sbin/ >> $logFile
 
 # Update netatalk configuration
-if [ -e /etc/default/netatalk ]; then
+if [ -f "/etc/default/netatalk" ]; then
 	sed -i 's:.*ATALK_NAME=.*:ATALK_NAME=`/bin/hostname --short`:' /etc/default/netatalk
 	sed -i 's:.*AFPD_MAX_CLIENTS=.*:AFPD_MAX_CLIENTS=200:' /etc/default/netatalk
 	sed -i 's:.*AFPD_GUEST=.*:AFPD_GUEST=nobody:' /etc/default/netatalk
@@ -117,7 +117,7 @@ if [ -e /etc/default/netatalk ]; then
 	sed -i '/End of File/ i\
 /srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' /etc/netatalk/AppleVolumes.default
 fi
-if [ -e /etc/netatalk/netatalk.conf ]; then
+if [ -f "/etc/netatalk/netatalk.conf" ]; then
 	if ! grep -q '\- \-setuplog "default log_info /var/log/afpd.log"' /etc/netatalk/afpd.conf; then
 		echo '- -setuplog "default log_info /var/log/afpd.log"' >> /etc/netatalk/afpd.conf
 	fi
@@ -189,9 +189,9 @@ if [ ! -d "/home/afpuser" ]; then
 fi
 
 # Configure nfs
-sed -i "/NetBootSP0/d" /etc/exports
-echo "/srv/NetBoot/NetBootSP0 *(ro,no_subtree_check,no_root_squash,insecure)" >> "/etc/exports"
-exportfs -a
+# sed -i "/NetBootSP0/d" /etc/exports
+# echo "/srv/NetBoot/NetBootSP0 *(ro,no_subtree_check,no_root_squash,insecure)" >> "/etc/exports"
+# exportfs -a
 
 # Configure samba
 # Change SMB setting for guest access

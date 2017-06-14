@@ -4,7 +4,7 @@ case $1 in
 
 getnettype)
 interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
-if [ -f /etc/network/interfaces ]; then
+if [ -f "/etc/network/interfaces" ]; then
 	if [ "$(grep -i static /etc/network/interfaces)" != '' ]; then
 		echo "static"
 	else
@@ -58,7 +58,7 @@ gateway=$4
 dns1=$5
 dns2=$6
 interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
-if [ -f /etc/network/interfaces ]; then
+if [ -f "/etc/network/interfaces" ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
 	echo auto lo >> /etc/network/interfaces
 	echo iface lo inet loopback >> /etc/network/interfaces
@@ -90,7 +90,7 @@ fi
 
 setdhcp)
 interface=$(ip addr show to 0.0.0.0/0 scope global | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | awk -F ': ' '{print $2}')
-if [ -f /etc/network/interfaces ]; then
+if [ -f "/etc/network/interfaces" ]; then
 	echo "# Created by JSS Appliance Admin" > /etc/network/interfaces
 	echo auto lo >> /etc/network/interfaces
 	echo iface lo inet loopback >> /etc/network/interfaces
@@ -139,7 +139,7 @@ echo $(date)
 
 #Get the time server that is set
 gettimeserver)
-if [ -f /etc/ntp/step-tickers ]; then
+if [ -f "/etc/ntp/step-tickers" ]; then
 	echo $(cat /etc/ntp/step-tickers 2>/dev/null | grep -v "^$" | grep -m 1 -v '#')
 else
 	echo $(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
@@ -149,7 +149,7 @@ fi
 #Set the time server
 settimeserver)
 newTimeServer=$2
-if [ -f /etc/ntp/step-tickers ]; then
+if [ -f "/etc/ntp/step-tickers" ]; then
 	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
 	if [ "$currentTimeServer" != "$newTimeServer" ]; then
 		echo "# List of NTP servers used by the ntpdate service." > /etc/ntp/step-tickers
@@ -179,10 +179,10 @@ sethostname)
 newname=$2
 oldname=$(hostname)
 sed -i "s/$oldname/$newname/g" /etc/hosts
-if [ -f /etc/hostname ]; then
+if [ -f "/etc/hostname" ]; then
 	echo $newname > /etc/hostname
 fi
-if [ -f /etc/sysconfig/network ]; then
+if [ -f "/etc/sysconfig/network" ]; then
 	sed -i "s/$oldname/$newname/g" /etc/sysconfig/network
 fi
 hostname $newname
@@ -540,7 +540,7 @@ sed -i "/LocalCatalogURLBase/ a\
 #	echo $(df -H / | awk '{print $3}' | sed 's/Used//g' | tr -d "\n")
 #else
 #	echo $(df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n")
-#fi 
+#fi
 #;;
 
 netbootusage)
@@ -624,7 +624,7 @@ else
 	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
 fi
 if [ $? -ne 0 ]; then
-	echo "$result" | sed -e 's/^error: //' 
+	echo "$result" | sed -e 's/^error: //'
 	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
 	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
 else
@@ -648,7 +648,7 @@ echo "<VirtualHost *:443>" > $conf
 echo "	SSLEngine on" >> $conf
 echo "</VirtualHost>" >> $conf
 echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
-sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf 
+sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
 if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
 	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
 	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
@@ -770,21 +770,21 @@ else
 	else
 		echo "false"
 	fi
-fi	
+fi
 ;;
 
 updateCert)
 if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/ssl/certs/ssl-cert-snakeoil.pem
 	cp /var/appliance/conf/appliance.private.key /etc/ssl/private/ssl-cert-snakeoil.key
-	mkdir -p /etc/apache2/ssl.crt/	
+	mkdir -p /etc/apache2/ssl.crt/
 	cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
 	chown openldap /var/appliance/conf/appliance.private.key
 	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
 fi
 if [ -f "/etc/pki/tls/certs/localhost.crt" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
-	cp /var/appliance/conf/appliance.private.key /etc/pki/tls/private/localhost.key	
+	cp /var/appliance/conf/appliance.private.key /etc/pki/tls/private/localhost.key
 	cp /var/appliance/conf/appliance.chain.pem /etc/pki/tls/certs/server-chain.crt
 	sed -i "s/#SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/SSLCertificateChainFile \/etc\/pki\/tls\/certs\/server-chain.crt/g" /etc/httpd/conf.d/ssl.conf
 	chown ldap /var/appliance/conf/appliance.private.key
@@ -1053,7 +1053,7 @@ rm -rf /srv/NetBootClients/*
 
 # System Information
 getName)
-if [ -e "/etc/os-release" ]; then
+if [ -f "/etc/os-release" ]; then
 	. /etc/os-release
 elif [ -e "/etc/system-release" ]; then
 	NAME=$(sed -e 's/ release.*//' /etc/system-release)
@@ -1062,7 +1062,7 @@ echo "$NAME"
 ;;
 
 getHomeUrl)
-if [ -e "/etc/os-release" ]; then
+if [ -f "/etc/os-release" ]; then
 	. /etc/os-release
 	if [ "$NAME" = 'Ubuntu' ] && [ "$HOME_URL" = '' ]; then
 		HOME_URL="http://www.ubuntu.com/"

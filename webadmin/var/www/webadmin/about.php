@@ -54,7 +54,7 @@ $install_type = trim(suExec("getInstallType"));
 					echo "<li>libapache2-mod-php</li>"; }
 				?>
 				<li>netatalk</li>
-				<li>nfs-kernel-server</li>
+				<!-- <li>nfs-kernel-server</li> -->
 				<li>openbsd-inetd</li>
 				<li>parted</li>
 				<?php if (version_compare(phpversion(), "7.0") < 0) {
@@ -85,7 +85,7 @@ $install_type = trim(suExec("getInstallType"));
 				<li>m2crypto</li>
 				<li>mod_ssl</li>
 				<li>netatalk</li>
-				<li>nfs-utils</li>
+				<!-- <li>nfs-utils</li> -->
 				<li>ntpdate</li>
 				<li>openldap-servers</li>
 				<li>parted</li>

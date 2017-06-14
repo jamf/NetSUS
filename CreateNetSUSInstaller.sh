@@ -49,7 +49,7 @@ cp -R SUS/var/lib/reposado temp/installer/resources/reposado
 cp -R webadmin/webadminInstall.sh temp/installer/install-webadmin.sh
 cp -R webadmin/var/appliance/dialog.sh temp/installer/resources/dialog.sh
 cp -R webadmin/var/www temp/installer/resources/html
-if [ -x /usr/bin/xattr ]; then find temp -exec xattr -c {} \; ;fi # Remove OS X extended attributes
+if [ -x "/usr/bin/xattr" ]; then find temp -exec xattr -c {} \; ;fi # Remove OS X extended attributes
 find temp -name .DS_Store -delete # Clean out .DS_Store files
 find temp -name .svn | xargs rm -Rf # Clean out SVN garbage
 
