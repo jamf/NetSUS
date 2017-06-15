@@ -248,6 +248,7 @@ fi
 #Needs updating if we do multiple NetBoot images
 setnbimages)
 nbi=$2
+nbiname=$3
 dmgfile=$(ls "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg 2>/dev/null)
 if [ -n "${dmgfile}" ]; then
 	finaldmg=$(echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${nbi}/::g")
@@ -265,8 +266,8 @@ if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0
 		isinstall=0
 	fi
 	chmod +w "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
-	if [ "$3" != "" ]; then
-		python /var/www/html/webadmin/scripts/netbootname.py "$3" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
+	if [ "$nbiname" != "" ]; then
+		python /var/www/html/webadmin/scripts/netbootname.py "$nbiname" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
 	else
 		defaultname=$(basename "${nbi}" .nbi)
 		python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
@@ -727,7 +728,7 @@ if [ "$(which apt-get 2>&-)" != '' ]; then
 fi
 if [ "$(which yum 2>&-)" != '' ]]; then
 	SERVICE=sshd
-	if [ "$(rpm -qa openssh-server)" == '' ]; then
+	if [ "$(rpm -qa openssh-server)" = '' ]; then
 		yum install openssh-server -y -q
 	fi
 	chkconfig $SERVICE on > /dev/null 2>&1
