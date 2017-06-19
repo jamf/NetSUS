@@ -57,6 +57,27 @@ if [[ $(which yum 2>&-) != "" ]]; then
 	www_service=httpd
 fi
 
+# Prepare the firewall in case it is enabled later
+if [[ $(which ufw 2>&-) != "" ]]; then
+	# HTTPS
+	ufw allow 443/tcp >> $logFile
+	# SSH
+	ufw allow 22/tcp >> $logFile
+elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
+	# HTTP(S)
+	firewall-cmd --zone=public --add-port=443/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=443/tcp --permanent >> $logFile 2>&1
+else
+	# HTTP(S)
+	if iptables -L | grep DROP | grep -q 'tcp dpt:https' ; then
+		iptables -D INPUT -p tcp --dport 443 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:https' ; then
+		iptables -I INPUT -p tcp --dport 443 -j ACCEPT
+	fi
+	service iptables save >> $logFile 2>&1
+fi
+
 # Initial configuration of the network time server
 if [ -f "/etc/ntp/step-tickers" ]; then
 	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
@@ -76,105 +97,6 @@ else
 fi
 if [[ $currentTimeServer != "" ]]; then
 	ntpdate $currentTimeServer >> $logFile 2>&1
-fi
-
-# Prepare the firewall in case it is enabled later
-if [[ $(which ufw 2>&-) != "" ]]; then
-	# HTTP(S)
-	ufw allow 443/tcp >> $logFile
-	ufw allow 80/tcp >> $logFile
-	# SMB
-	ufw allow 139/tcp >> $logFile
-	ufw allow 445/tcp >> $logFile
-	# AFP
-	ufw allow 548/tcp >> $logFile
-	# DHCP
-	ufw allow 67/udp >> $logFile
-	# TFTP
-	ufw allow 69/udp >> $logFile
-	# LDAP
-	ufw allow 389/tcp >> $logFile
-	# SSH
-	ufw allow 22/tcp >> $logFile
-elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
-	# HTTP(S)
-	firewall-cmd --zone=public --add-port=443/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=443/tcp --permanent >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=80/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=80/tcp --permanent >> $logFile 2>&1
-	# SMB
-	firewall-cmd --zone=public --add-port=139/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=139/tcp --permanent >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=445/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=445/tcp --permanent >> $logFile 2>&1
-	# AFP
-	firewall-cmd --zone=public --add-port=548/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=548/tcp --permanent >> $logFile 2>&1
-	# DHCP
-	firewall-cmd --zone=public --add-port=67/udp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=67/udp --permanent >> $logFile 2>&1
-	# TFTP
-	firewall-cmd --zone=public --add-port=69/udp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=69/udp --permanent >> $logFile 2>&1
-	# LDAP
-	firewall-cmd --zone=public --add-port=389/tcp >> $logFile 2>&1
-	firewall-cmd --zone=public --add-port=389/tcp --permanent >> $logFile 2>&1
-else
-	# HTTP(S)
-	if iptables -L | grep DROP | grep -q 'tcp dpt:https' ; then
-		iptables -D INPUT -p tcp --dport 443 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:https' ; then
-		iptables -I INPUT -p tcp --dport 443 -j ACCEPT
-	fi
-	if iptables -L | grep DROP | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
-		iptables -D INPUT -p tcp --dport 80 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
-		iptables -I INPUT -p tcp --dport 80 -j ACCEPT
-	fi
-	# SMB
-	if iptables -L | grep DROP | grep -q 'tcp dpt:netbios-ssn' ; then
-		iptables -D INPUT -p tcp --dport 139 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:netbios-ssn' ; then
-		iptables -I INPUT -p tcp --dport 139 -j ACCEPT
-	fi
-	if iptables -L | grep DROP | grep -q 'tcp dpt:microsoft-ds' ; then
-		iptables -D INPUT -p tcp --dport 445 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:microsoft-ds' ; then
-		iptables -I INPUT -p tcp --dport 445 -j ACCEPT
-	fi
-	# AFP
-	if iptables -L | grep DROP | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -D INPUT -p tcp --dport 548 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:afpovertcp' ; then
-		iptables -I INPUT -p tcp --dport 548 -j ACCEPT
-	fi
-	# DHCP
-	if iptables -L | grep DROP | grep -q 'tcp dpt:bootps' ; then
-		iptables -D INPUT -p tcp --dport 67 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:bootps' ; then
-		iptables -I INPUT -p tcp --dport 67 -j ACCEPT
-	fi
-	# TFTP
-	if iptables -L | grep DROP | grep -q 'tcp dpt:tftp' ; then
-		iptables -D INPUT -p tcp --dport 69 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:tftp' ; then
-		iptables -I INPUT -p tcp --dport 69 -j ACCEPT
-	fi
-	# LDAP
-	if iptables -L | grep DROP | grep -q 'tcp dpt:ldap' ; then
-		iptables -D INPUT -p tcp --dport 389 -j DROP
-	fi
-	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:ldap' ; then
-		iptables -I INPUT -p tcp --dport 389 -j ACCEPT
-	fi
-	service iptables save >> $logFile 2>&1
 fi
 
 # Enable console dialog

@@ -34,6 +34,25 @@ if [[ $(which yum 2>&-) != "" ]]; then
 	yum_install php-xml
 fi
 
+# Prepare the firewall in case it is enabled later
+if [[ $(which ufw 2>&-) != "" ]]; then
+	# HTTP
+	ufw allow 80/tcp >> $logFile
+elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
+	# HTTP
+	firewall-cmd --zone=public --add-port=80/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=80/tcp --permanent >> $logFile 2>&1
+else
+	# HTTP
+	if iptables -L | grep DROP | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
+		iptables -D INPUT -p tcp --dport 80 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
+		iptables -I INPUT -p tcp --dport 80 -j ACCEPT
+	fi
+	service iptables save >> $logFile 2>&1
+fi
+
 # Create SUS directories
 if [ ! -d "/var/appliance" ]; then
 	mkdir /var/appliance

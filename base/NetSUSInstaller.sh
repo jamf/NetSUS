@@ -175,17 +175,22 @@ if [[ $(which update-rc.d 2>&-) != "" ]]; then
   if [[ $(which systemctl 2>&-) != "" ]]; then
     update-rc.d smbd disable >> $logFile 2>&1
     update-rc.d tftpd-hpa disable >> $logFile 2>&1
+    #systemctl disable nfs-server >> $logFile 2>&1
     # systemctl disable openbsd-inetd >> $logFile 2>&1
+    #service nfs-server stop >> $logFile 2>&1
   else
     echo manual > /etc/init/smbd.override
     echo manual > /etc/init/tftpd-hpa.override
+    #update-rc.d nfs-kernel-server disable >> $logFile 2>&1
     # update-rc.d openbsd-inetd disable >> $logFile 2>&1
+    #service nfs-kernel-server stop >> $logFile 2>&1
   fi
   log "If you are installing NetSUSLP for the first time, please follow the documentation for setup instructions."
 fi
 if [[ $(which chkconfig 2>&-) != "" ]]; then
   service httpd restart >> $logFile 2>&1
   chkconfig tftp off >> $logFile 2>&1
+  #chkconfig nfs off > /dev/null 2>&1
   #if [ -f "/etc/sysconfig/xinetd" ]; then
   #  service xinetd restart >> $logFile 2>&1
   #fi

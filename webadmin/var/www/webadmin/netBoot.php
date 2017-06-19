@@ -127,6 +127,25 @@ if (isset($_GET['deleteSubnet']) && isset($_GET['deleteNetmask'])
 	}
 }
 
+if (!isset($_POST['disablenetboot']) && getNetBootStatus())
+{
+	$tftp_running = (trim(suExec("gettftpstatus")) === "true");
+	// $nfs_running = (trim(suExec("getnfsstatus")) === "true");
+	$afp_running = (trim(suExec("getafpstatus")) === "true");
+	if (!$tftp_running)
+	{
+		echo "<div class=\"alert alert-danger\">ERROR: TFTP is not running, restart NetBoot</div>";
+	}
+	/* if (!$nfs_running)
+	{
+		echo "<div class=\"alert alert-danger\">ERROR: NFS is not running, restart NetBoot</div>";
+	} */
+	if (!$afp_running)
+	{
+		echo "<div class=\"alert alert-warning\">WARNING: AFP is not running, diskless will be unavailable</div>";
+	}
+}
+
 // ####################################################################
 // End of GET/POST parsing
 // ####################################################################
@@ -153,7 +172,7 @@ function enableButton(id, enable)
 
 function validateName()
 {
-	var validName = /^[A-Za-z0-9._+\-]{1,256}$/.test(document.getElementById("netbootName").value) || document.getElementById("netbootName").value == "";
+	var validName = /^[A-Za-z0-9._ +\-]{1,256}$/.test(document.getElementById("netbootName").value) || document.getElementById("netbootName").value == "";
 	showErr("netbootName", validName);
 	enableButton("changenetboot", validName);
 }
@@ -219,7 +238,7 @@ function validateSubnet()
 							$i = 0;
 							foreach($nbidircontents as $item)
 							{
-								if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item))
+								if ($item != "." && $item != ".." && is_dir($netbootimgdir.$item) && file_exists($netbootimgdir.$item."/i386/booter"))
 								{
 									?>
 									<option value="<?php echo $item?>" <?php echo ($curimg == $item ? "selected=\"selected\"" : "")?>><?php echo $item?></option>
@@ -241,7 +260,7 @@ function validateSubnet()
 
 					<div class="input-group">
 						<div class="input-group-addon no-background">Name</div>
-						<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name. Cannot contain spaces</span>
+						<span class="description">(Optional) NetBoot name to appear on receiving boot devices. Defaults to the .nbi folder name</span>
 						<input type="text" name="netbootName" id="netbootName" class="form-control input-sm" value="<?php echo $conf->getSetting("netbootname")?>" onKeyUp="validateName();" onChange="validateName();" />
 					</div>
 				</div>

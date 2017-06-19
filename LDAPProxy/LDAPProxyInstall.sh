@@ -38,6 +38,25 @@ if [[ $(which yum 2>&-) != "" ]]; then
 	yum_install expect
 fi
 
+# Prepare the firewall in case it is enabled later
+if [[ $(which ufw 2>&-) != "" ]]; then
+	# LDAP
+	ufw allow 389/tcp >> $logFile
+elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
+	# LDAP
+	firewall-cmd --zone=public --add-port=389/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=389/tcp --permanent >> $logFile 2>&1
+else
+	# LDAP
+	if iptables -L | grep DROP | grep -q 'tcp dpt:ldap' ; then
+		iptables -D INPUT -p tcp --dport 389 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:ldap' ; then
+		iptables -I INPUT -p tcp --dport 389 -j ACCEPT
+	fi
+	service iptables save >> $logFile 2>&1
+fi
+
 # Create appliance configuration directory
 if [ ! -d "/var/appliance/conf" ]; then
 	mkdir /var/appliance/conf

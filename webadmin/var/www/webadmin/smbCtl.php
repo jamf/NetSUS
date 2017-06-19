@@ -6,9 +6,9 @@ include "inc/functions.php";
 $currentIP = trim(getCurrentIP());
 $sURL="SMB.php";
 
-if ($_GET['restart']) {
-        echo suExec("restartsmb");
-}
+#if ($_GET['restart']) {
+#        echo suExec("restartsmb");
+#}
 
 if ($_GET['start']) {
         echo suExec("startsmb");

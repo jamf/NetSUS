@@ -222,110 +222,120 @@ service $SERVICE start 2>&-
 #rm -rf /srv/NetBootClients/*
 #;;
 
-getnbimages)
-IFS=$'\n'
-nbis=$(ls /srv/NetBoot/NetBootSP0 2>/dev/null)
-unset IFS
-if [ ${#nbis[@]} -gt 0 ]; then
-	i=0
-	for item in ${nbis[@]}; do
-		if [ ! -d "/srv/NetBoot/NetBootSP0/${item}" ]
-		then
-			unset nbis[i]
-		fi
-		let i++
-	done
-fi
-if [ ${#nbis[@]} -gt 0 ]; then
-	for image in ${nbis[@]}; do
-		echo '<option value="'${image}'">'${image}'</option>'
-	done
-else
-	echo '<option value="">Nothing to Enable</option>'
-fi
-;;
+#getnbimages)
+#result='<option value="">Nothing to Enable</option>'
+#for item in $(ls /srv/NetBoot/NetBootSP0 2>/dev/null); do
+#	if [ -f "/srv/NetBoot/NetBootSP0/$item/"*.dmg ] || [ -f "/srv/NetBoot/NetBootSP0/$item/"*.sparseimage ]; then
+#		if [ -f "/srv/NetBoot/NetBootSP0/$item/i386/booter" ]; then
+#			echo '<option value="'$item'">'$item'</option>'
+#			unset result
+#		fi
+#	fi
+#done
+#if [ -n "$result" ]; then
+#	echo "$result"
+#fi
+#;;
 
 #Needs updating if we do multiple NetBoot images
 setnbimages)
 nbi=$2
-nbiname=$3
-dmgfile=$(ls "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg 2>/dev/null)
-if [ -n "${dmgfile}" ]; then
-	finaldmg=$(echo ${dmgfile} | sed "s:/srv/NetBoot/NetBootSP0/${nbi}/::g")
-else
-	exit 1
-fi
-plistfile=$(ls "/srv/NetBoot/NetBootSP0/${nbi}/"*.plist 2>/dev/null)
-if [ -n "${plistfile}" ]; then
-	finalplist=$(echo ${plistfile} | sed "s:/srv/NetBoot/NetBootSP0/${nbi}/::g")
-fi
-if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')" &>/dev/null; then
-	if [ $(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['IsInstall']") = "True" ]; then
-		isinstall=8
+name=$3
+if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')" >/dev/null 2>&1; then
+	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Index']" 2>&-)
+	isinstall=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['IsInstall']" 2>&-)
+	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Kind']" 2>&-)
+	if [ "$name" = '' ]; then
+		name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Name']" 2>&-)
 	else
-		isinstall=0
+		python /var/www/html/webadmin/scripts/netbootname.py "$name" "/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist"
 	fi
-	chmod +w "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
-	if [ "$nbiname" != "" ]; then
-		python /var/www/html/webadmin/scripts/netbootname.py "$nbiname" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
-	else
-		defaultname=$(basename "${nbi}" .nbi)
-		python /var/www/html/webadmin/scripts/netbootname.py "$defaultname" "/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}"
-	fi
-	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Kind']")
-	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Index']")
-	indexhex=$(printf "%x" ${index} | tr "[:lower:]" "[:upper:]")
-	while [ ${#indexhex} -lt 4 ]; do
-		indexhex=0${indexhex}
-	done
-	imageid="${isinstall}${kind}:00:$(echo ${indexhex} | cut -c 1,2):$(echo ${indexhex} | cut -c 3,4)"
-	name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/${finalplist}')['Name']")
-	listlenhex=$(printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]")
-	while [ ${#listlenhex} -lt 2 ]; do
-		listlenhex=0${listlenhex}
-	done
-	namelenhex=$(printf "%x" ${#name} | tr "[:lower:]" "[:upper:]")
-	while [ ${#namelenhex} -lt 2 ]; do
-		namelenhex=0${namelenhex}
-	done
-	namehex=$(echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g')
-else
-	imageid="01:00:02:0E"
-	listlenhex="11"
-	namelenhex="0C"
-	namehex="46:61:75:78:20:4E:65:74:42:6F:6F:74"
+	rootpath=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['RootPath']" 2>&-)
+	#type=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Type']" 2>&-)
 fi
-curimageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
-sed -i "s/${curimageid}/${imageid}/g" /etc/dhcpd.conf
-sed -i "s/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:.*/01:01:01:04:02:FF:FF:07:04:${imageid}:08:04:${imageid}:09:${listlenhex}:${imageid}:${namelenhex}:${namehex};/" /etc/dhcpd.conf
-sed -i "s:/NetBoot/NetBootSP0/.*\";:/NetBoot/NetBootSP0/${nbi}/${finaldmg}\";:g" /etc/dhcpd.conf
-sed -i "s:filename \".*\";:filename \"${nbi}/i386/booter\";:g" /etc/dhcpd.conf
+if [ "$index" = '' ]; then
+	index=526
+fi
+if [ "$isinstall" = 'True' ]; then
+	isinstall=8
+else
+	isinstall=0
+fi
+if [ "$kind" = '' ]; then
+	kind=1
+fi
+if [ "$name" = '' ]; then
+	name=$(basename $nbi .nbi)
+	if [ "$name" = '' ]; then
+		name='Faux NetBoot'
+	fi
+fi
+if [ "$rootpath" = '' ]; then
+	if [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg ]; then
+		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg)
+	elif [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage ]; then
+		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage)
+	else
+		exit 1
+	fi
+fi
+index_hex=$(printf "%x" ${index} | tr "[:lower:]" "[:upper:]")
+while [ ${#index_hex} -lt 4 ]; do
+	index_hex=0${index_hex}
+done
+boot_image_id="${isinstall}${kind}:00:$(echo ${index_hex} | cut -c 1,2):$(echo ${index_hex} | cut -c 3,4)"
+length_hex=$(printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]")
+while [ ${#length_hex} -lt 2 ]; do
+	length_hex=0${length_hex}
+done
+count_hex=$(printf "%x" ${#name} | tr "[:lower:]" "[:upper:]")
+while [ ${#count_hex} -lt 2 ]; do
+	count_hex=0${count_hex}
+done
+name_hex=$(echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g')
+boot_image_list=${length_hex}:${boot_image_id}:${count_hex}:${name_hex}
+cur_image_id=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
+root_path_ip=$(grep 'root-path' /etc/dhcpd.conf | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
+sed -i "s/${cur_image_id}/${boot_image_id}/g" /etc/dhcpd.conf
+sed -i "s/04:02:FF:FF:07:04:.*/04:02:FF:FF:07:04:${boot_image_id}:08:04:${boot_image_id}:09:${boot_image_list};/" /etc/dhcpd.conf
+sed -i 's|filename ".*";|filename "'${nbi}'/i386/booter";|' /etc/dhcpd.conf
+if [ "$type" = 'NFS' ]; then
+	sed -i 's|option root-path.*|option root-path "nfs:'${root_path_ip}':/srv/NetBoot/NetBootSP0:'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
+else
+	sed -i 's|option root-path.*|option root-path "http://'${root_path_ip}'/NetBoot/NetBootSP0/'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
+fi
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	if [ "$(which systemctl 2>&-)" != '' ]; then
-		update-rc.d smbd enable > /dev/null 2>&1
+		# update-rc.d smbd enable > /dev/null 2>&1
 		update-rc.d tftpd-hpa enable > /dev/null 2>&1
 		# systemctl enable openbsd-inetd > /dev/null 2>&1
+		#systemctl enable nfs-server > /dev/null 2>&1
+		#service nfs-server start 2>&-
 	else
-		rm -f /etc/init/smbd.override
+		# rm -f /etc/init/smbd.override
 		rm -f /etc/init/tftpd-hpa.override
 		# update-rc.d openbsd-inetd enable > /dev/null 2>&1
+		#update-rc.d nfs-kernel-server enable > /dev/null 2>&1
+		#service nfs-kernel-server start 2>&-
 	fi
 	update-rc.d netatalk enable > /dev/null 2>&1
-	service smbd start 2>&-
+	# service smbd start 2>&-
 	service tftpd-hpa start 2>&-
 	# service openbsd-inetd start 2>&-
 	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig smb on > /dev/null 2>&1
+	# chkconfig smb on > /dev/null 2>&1
 	chkconfig tftp on > /dev/null 2>&1
+	#chkconfig nfs on > /dev/null 2>&1
 	chkconfig netatalk on > /dev/null 2>&1
-	service smb start 2>&-
+	# service smb start 2>&-
 	if [ "$(which systemctl 2>&-)" != '' ]; then
 		service tftp start 2>&-
 	else
 		service xinetd restart 2>&-
 	fi
+	#service nfs start 2>&-
 	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
 fi
 service netatalk start 2>&-
@@ -355,30 +365,36 @@ service slapd start 2>&-
 disablenetboot)
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	if [ "$(which systemctl 2>&-)" != '' ]; then
-		update-rc.d smbd disable > /dev/null 2>&1
+		# update-rc.d smbd disable > /dev/null 2>&1
 		update-rc.d tftpd-hpa disable > /dev/null 2>&1
 		# systemctl disable openbsd-inetd > /dev/null 2>&1
+		#systemctl disable nfs-server > /dev/null 2>&1
+		#service nfs-server stop 2>&-
 	else
-		echo manual > /etc/init/smbd.override
+		# echo manual > /etc/init/smbd.override
 		echo manual > /etc/init/tftpd-hpa.override
 		# update-rc.d openbsd-inetd disable > /dev/null 2>&1
+		#update-rc.d nfs-kernel-server disable > /dev/null 2>&1
+		#service nfs-kernel-server stop 2>&-
 	fi
 	update-rc.d netatalk disable > /dev/null 2>&1
-	service smbd stop 2>&-
+	# service smbd stop 2>&-
 	service tftpd-hpa stop 2>&-
 	# service openbsd-inetd stop 2>&-
 	rm -f /etc/network/if-up.d/configurefornetboot
 fi
 if [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig netatalk off > /dev/null 2>&1
-	chkconfig smb off > /dev/null 2>&1
+	# chkconfig smb off > /dev/null 2>&1
 	chkconfig tftp off > /dev/null 2>&1
-	service smb stop 2>&-
+	#chkconfig nfs off > /dev/null 2>&1
+	# service smb stop 2>&-
 	if [ "$(which systemctl 2>&-)" != '' ]; then
 		service tftp stop 2>&-
 	else
 		service xinetd restart 2>&-
 	fi
+	#service nfs stop 2>&-
 	rm -f /sbin/ifup-local
 fi
 service netatalk stop 2>&-
@@ -436,10 +452,10 @@ num=$(expr ${num} + 23)
 num=$(expr ${num} + ${afppwlen})
 lengthhex=$(awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }')
 newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:${afppw}
-imageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
+imageid=$(grep '04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
 sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
 if [ -f "/etc/dhcpd.conf" ]; then
-	imageid=$(grep 'option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:01:04:02:FF:FF:07:04://g' | sed 's/ //g' | sed 's/\t//g' | cut -c1-11)
+	imageid=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
 	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
 fi
 killall dhcpd > /dev/null 2>&1
@@ -574,7 +590,7 @@ echo $(ss | grep microsoft-ds | wc | awk '{print $1}')
 
 getsyncstatus)
 SERVICE=repo_sync
-if ps acx | grep -v grep | grep -q $SERVICE ; then
+if ps ax | grep -v grep | grep -q $SERVICE ; then
 	echo "true"
 else
 	echo "false"
@@ -615,71 +631,71 @@ crontab /tmp/mycron
 rm /tmp/mycron
 ;;
 
-JSScreateConf)
+#JSScreateConf)
 # $2: JSS URL
 # $3: Allow untrusted SSL certificate
-logFile="/usr/local/jds/logs/jdsinstaller.log"
-if [ "$3" = 'True' ]; then
-	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
-else
-	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
-fi
-if [ $? -ne 0 ]; then
-	echo "$result" | sed -e 's/^error: //'
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-else
-	echo "Created configuration file for $2"
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
-fi
-;;
+#logFile="/usr/local/jds/logs/jdsinstaller.log"
+#if [ "$3" = 'True' ]; then
+#	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
+#else
+#	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
+#fi
+#if [ $? -ne 0 ]; then
+#	echo "$result" | sed -e 's/^error: //'
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+#else
+#	echo "Created configuration file for $2"
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
+#fi
+#;;
 
-JSSenroll)
-logFile="/usr/local/jds/logs/jdsinstaller.log"
-if [ -d "/etc/apache2/sites-enabled" ]; then
-	conf="/etc/apache2/sites-enabled/jds.conf"
-	www_service=apache2
-fi
-if [ -d "/etc/httpd/conf.d" ]; then
-	conf="/etc/httpd/conf.d/jds.conf"
-	www_service=httpd
-fi
-echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
-echo "<VirtualHost *:443>" > $conf
-echo "	SSLEngine on" >> $conf
-echo "</VirtualHost>" >> $conf
-echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
-sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
-if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-fi
-if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-fi
-result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
-if [ $? -ne 0 ]; then
-	echo "$result" | sed -e 's/^error: //'
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-	rm -f $conf
-	exit
-else
-	echo "Enrolment complete"
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
-	/usr/local/sbin/jamfds policy > /dev/null 2>&1
-fi
-service $www_service reload 2>&-
-;;
+#JSSenroll)
+#logFile="/usr/local/jds/logs/jdsinstaller.log"
+#if [ -d "/etc/apache2/sites-enabled" ]; then
+#	conf="/etc/apache2/sites-enabled/jds.conf"
+#	www_service=apache2
+#fi
+#if [ -d "/etc/httpd/conf.d" ]; then
+#	conf="/etc/httpd/conf.d/jds.conf"
+#	www_service=httpd
+#fi
+#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
+#echo "<VirtualHost *:443>" > $conf
+#echo "	SSLEngine on" >> $conf
+#echo "</VirtualHost>" >> $conf
+#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
+#sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
+#if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+#fi
+#if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+#fi
+#result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
+#if [ $? -ne 0 ]; then
+#	echo "$result" | sed -e 's/^error: //'
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+#	rm -f $conf
+#	exit
+#else
+#	echo "Enrolment complete"
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
+#	/usr/local/sbin/jamfds policy > /dev/null 2>&1
+#fi
+#service $www_service reload 2>&-
+#;;
 
-checkin)
-/usr/local/sbin/jamfds policy > /dev/null 2>&1
-;;
+#checkin)
+#/usr/local/sbin/jamfds policy > /dev/null 2>&1
+#;;
 
-JSSinventory)
-/usr/local/sbin/jamfds inventory > /dev/null 2>&1
-;;
+#JSSinventory)
+#/usr/local/sbin/jamfds inventory > /dev/null 2>&1
+#;;
 
 #enableAvahi)
 #if [ "$(which apt-get 2>&-)" != '' ]; then
@@ -845,6 +861,42 @@ enablegui)
 sed -i 's:<webadmingui>.*</webadmingui>::' /var/appliance/conf/appliance.conf.xml
 ;;
 
+# SUS
+getsusproxyhost)
+echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
+;;
+
+getsusproxyport)
+echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
+;;
+
+getsusproxyuser)
+echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
+;;
+
+getsusproxypass)
+echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
+;;
+
+setsusproxy)
+# $2: proxyhost
+# $3: proxyport
+# $4: proxyuser
+# $5: proxypass
+sed -i '/proxy =/d' /var/lib/reposado/preferences.plist
+sed -i '/proxy-user =/d' /var/lib/reposado/preferences.plist
+if [ "$(python -c "import plistlib; print plistlib.readPlist('/var/lib/reposado/preferences.plist')['AdditionalCurlOptions']" 2>/dev/null)" = '[]' ]; then
+	python -c "import plistlib; p = plistlib.readPlist('/var/lib/reposado/preferences.plist'); del p['AdditionalCurlOptions']; plistlib.writePlist(p, '/var/lib/reposado/preferences.plist')"
+fi
+if [ "$3" != '' ]; then
+	python /var/www/html/webadmin/scripts/susproxy.py "proxy = \"$2:$3\"" "/var/lib/reposado/preferences.plist"
+fi
+if [ "$5" != '' ]; then
+	python /var/www/html/webadmin/scripts/susproxy.py "proxy-user = \"$4:$5\"" "/var/lib/reposado/preferences.plist"
+fi
+;;
+
+# Certificates
 createCsr)
 common_name=$2
 openssl genrsa -out /tmp/private.key 2048 > /dev/null 2>&1
@@ -1086,5 +1138,39 @@ elif [ "$(which yum 2>&-)" != '' ]; then
 	echo "yum"
 fi
 ;;
+
+gettftpstatus)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	if service tftpd-hpa status 2>/dev/null | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+fi
+if [ "$(which chkconfig 2>&-)" != '' ]; then
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		if systemctl status tftp | grep -q running ; then
+			echo "true"
+		else
+			echo "false"
+		fi
+	else
+		if service xinetd status | grep -q running && chkconfig | sed 's/[ \t]//g' | grep tftp | grep -q ':on' ; then
+			echo "true"
+		else
+			echo "false"
+		fi
+	fi
+fi
+;;
+
+#getnfsstatus)
+#SERVICE=nfsd
+#if ps acx | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
 esac

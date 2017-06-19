@@ -271,10 +271,10 @@ function formatPackage($package)
 	return array($id, $name, $version, $date, $branches);
 }
 
-function checkIn()
-{
-	return suExecFromAPIBackground("checkin");
-}
+#function checkIn()
+#{
+#	return suExecFromAPIBackground("checkin");
+#}
 
 function isValidIPAddress($string)
 {
