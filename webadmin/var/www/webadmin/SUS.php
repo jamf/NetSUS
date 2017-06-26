@@ -105,14 +105,14 @@ function enableButton(id, enable)
 
 function validateBaseURL()
 {
-	var validBaseURL = /^(http|https):\/\/[^ "]+$/.test(document.getElementById("baseurl").value);
+	var validBaseURL = /^http:\/\/(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][\/]|[1-9][0-9]|[1-9][0-9][\/]|1[0-9]{2}|1[0-9]{2}[\/]|2[0-4][0-9]|2[0-4][0-9][\/]|25[0-5]|25[0-5][\/])$|^http:\/\/(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][\/]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9][\/])$/.test(document.getElementById("baseurl").value);
 	showErr("baseurl", validBaseURL);
 	enableButton("setbaseurl", validBaseURL);
 }
 
 function validateBranch()
 {
-	var validBranch = /^[A-Za-z0-9._+\-]{1,256}$/.test(document.getElementById("branchname").value);
+	var validBranch = /^[A-Za-z0-9._+\-]{1,128}$/.test(document.getElementById("branchname").value);
 	showErr("branchname", validBranch);
 	enableButton("addbranch", validBranch);
 }
@@ -131,7 +131,7 @@ function toggleProxyAuth()
 function validateProxy()
 {
 	var validHttpProxy = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("proxy_host").value) || !document.getElementById('http_proxy').checked;
-	var validHttpPort = document.getElementById("proxy_port").value != "" && !(parseInt(document.getElementById("proxy_port").value) < 0) && !(parseInt(document.getElementById("proxy_port").value) > 65535) || !document.getElementById('http_proxy').checked;
+	var validHttpPort = /^\d+$/.test(document.getElementById("proxy_port").value) && document.getElementById("proxy_port").value != "" && !(parseInt(document.getElementById("proxy_port").value) < 0) && !(parseInt(document.getElementById("proxy_port").value) > 65535) || !document.getElementById('http_proxy').checked;
 	var validProxyUser = document.getElementById('http_proxy').checked && document.getElementById("proxy_user").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
 	var validProxyPass = document.getElementById("proxy_user").value != "" && document.getElementById("proxy_pass").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
 	showErr("proxy_host", validHttpProxy);
@@ -165,7 +165,7 @@ window.onload = function()
 			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
 			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateBaseURL();" onChange="validateBaseURL();"/>
+				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onClick="validateBaseURL();" onKeyUp="validateBaseURL();" onChange="validateBaseURL();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
 				</span>
@@ -284,7 +284,7 @@ window.onload = function()
 
 					<div class="input-group">
 						<div class="input-group-addon no-background">Port</div>
-						<input type="text" name="proxy_port" id="proxy_port" class="form-control input-sm" value="<?php echo $susProxyPort; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" onKeyPress="return event.charCode >= 48 && event.charCode <= 57" />
+						<input type="text" name="proxy_port" id="proxy_port" class="form-control input-sm" value="<?php echo $susProxyPort; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
 					</div>
 
 					<br>

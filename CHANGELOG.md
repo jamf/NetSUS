@@ -7,7 +7,10 @@
 * Added validation for SUS Base URL and Branch name(s) with live feedback
 * Added (missing) option for SUS sync at 9:00 AM
 * Improved detection of the last SUS sync date and time
+* Added proxy configuration to SUS
 * Added validation for NetBoot Image Name, Subnet and Netmask with live feedback
+* Added checks for NetBoot supporting services
+* Provisioned for NFS support for NetBoot Images
 * Updated service controls for TFTP on RHEL/CentOS
 * Added validation for Hostname, IP Address, Netmask, Gateway and DNS Servers with live feedback
 * Added functionality to dynamically determine primary network interface, to allow for variations

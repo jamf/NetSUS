@@ -193,8 +193,7 @@ service avahi-daemon restart 2>&-
 #restartsmb)
 #if [ "$(which update-rc.d 2>&-)" != '' ]; then
 #	SERVICE=smbd
-#fi
-#if [ "$(which chkconfig 2>&-)" != '' ]; then
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
 #	SERVICE=smb
 #fi
 #service $SERVICE restart 2>&-
@@ -208,8 +207,7 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	else
 		rm -f /etc/init/$SERVICE.override
 	fi
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	SERVICE=smb
 	chkconfig $SERVICE on > /dev/null 2>&1
 fi
@@ -240,18 +238,13 @@ service $SERVICE start 2>&-
 #Needs updating if we do multiple NetBoot images
 setnbimages)
 nbi=$2
-name=$3
 if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')" >/dev/null 2>&1; then
 	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Index']" 2>&-)
 	isinstall=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['IsInstall']" 2>&-)
 	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Kind']" 2>&-)
-	if [ "$name" = '' ]; then
-		name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Name']" 2>&-)
-	else
-		python /var/www/html/webadmin/scripts/netbootname.py "$name" "/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist"
-	fi
+	name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Name']" 2>&-)
 	rootpath=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['RootPath']" 2>&-)
-	#type=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Type']" 2>&-)
+	type=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Type']" 2>&-)
 fi
 if [ "$index" = '' ]; then
 	index=526
@@ -309,25 +302,24 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 		# update-rc.d smbd enable > /dev/null 2>&1
 		update-rc.d tftpd-hpa enable > /dev/null 2>&1
 		# systemctl enable openbsd-inetd > /dev/null 2>&1
-		#systemctl enable nfs-server > /dev/null 2>&1
-		#service nfs-server start 2>&-
+		systemctl enable nfs-server > /dev/null 2>&1
+		service nfs-server start 2>&-
 	else
 		# rm -f /etc/init/smbd.override
 		rm -f /etc/init/tftpd-hpa.override
 		# update-rc.d openbsd-inetd enable > /dev/null 2>&1
-		#update-rc.d nfs-kernel-server enable > /dev/null 2>&1
-		#service nfs-kernel-server start 2>&-
+		update-rc.d nfs-kernel-server enable > /dev/null 2>&1
+		service nfs-kernel-server start 2>&-
 	fi
 	update-rc.d netatalk enable > /dev/null 2>&1
 	# service smbd start 2>&-
 	service tftpd-hpa start 2>&-
 	# service openbsd-inetd start 2>&-
 	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	# chkconfig smb on > /dev/null 2>&1
 	chkconfig tftp on > /dev/null 2>&1
-	#chkconfig nfs on > /dev/null 2>&1
+	chkconfig nfs on > /dev/null 2>&1
 	chkconfig netatalk on > /dev/null 2>&1
 	# service smb start 2>&-
 	if [ "$(which systemctl 2>&-)" != '' ]; then
@@ -335,7 +327,7 @@ if [ "$(which chkconfig 2>&-)" != '' ]; then
 	else
 		service xinetd restart 2>&-
 	fi
-	#service nfs start 2>&-
+	service nfs start 2>&-
 	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
 fi
 service netatalk start 2>&-
@@ -345,8 +337,7 @@ service netatalk start 2>&-
 disableproxy)
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	update-rc.d slapd disable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig slapd off > /dev/null 2>&1
 fi
 service slapd stop 2>&-
@@ -355,8 +346,7 @@ service slapd stop 2>&-
 enableproxy)
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	update-rc.d slapd enable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig slapd on > /dev/null 2>&1
 fi
 service slapd start 2>&-
@@ -368,33 +358,32 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 		# update-rc.d smbd disable > /dev/null 2>&1
 		update-rc.d tftpd-hpa disable > /dev/null 2>&1
 		# systemctl disable openbsd-inetd > /dev/null 2>&1
-		#systemctl disable nfs-server > /dev/null 2>&1
-		#service nfs-server stop 2>&-
+		systemctl disable nfs-server > /dev/null 2>&1
+		service nfs-server stop 2>&-
 	else
 		# echo manual > /etc/init/smbd.override
 		echo manual > /etc/init/tftpd-hpa.override
 		# update-rc.d openbsd-inetd disable > /dev/null 2>&1
-		#update-rc.d nfs-kernel-server disable > /dev/null 2>&1
-		#service nfs-kernel-server stop 2>&-
+		update-rc.d nfs-kernel-server disable > /dev/null 2>&1
+		service nfs-kernel-server stop 2>&-
 	fi
 	update-rc.d netatalk disable > /dev/null 2>&1
 	# service smbd stop 2>&-
 	service tftpd-hpa stop 2>&-
 	# service openbsd-inetd stop 2>&-
 	rm -f /etc/network/if-up.d/configurefornetboot
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig netatalk off > /dev/null 2>&1
 	# chkconfig smb off > /dev/null 2>&1
 	chkconfig tftp off > /dev/null 2>&1
-	#chkconfig nfs off > /dev/null 2>&1
+	chkconfig nfs off > /dev/null 2>&1
 	# service smb stop 2>&-
 	if [ "$(which systemctl 2>&-)" != '' ]; then
 		service tftp stop 2>&-
 	else
 		service xinetd restart 2>&-
 	fi
-	#service nfs stop 2>&-
+	service nfs stop 2>&-
 	rm -f /sbin/ifup-local
 fi
 service netatalk stop 2>&-
@@ -631,71 +620,71 @@ crontab /tmp/mycron
 rm /tmp/mycron
 ;;
 
-#JSScreateConf)
+JSScreateConf)
 # $2: JSS URL
 # $3: Allow untrusted SSL certificate
-#logFile="/usr/local/jds/logs/jdsinstaller.log"
-#if [ "$3" = 'True' ]; then
-#	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
-#else
-#	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
-#fi
-#if [ $? -ne 0 ]; then
-#	echo "$result" | sed -e 's/^error: //'
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-#else
-#	echo "Created configuration file for $2"
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
-#fi
-#;;
+logFile="/usr/local/jds/logs/jdsinstaller.log"
+if [ "$3" = 'True' ]; then
+	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
+else
+	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
+fi
+if [ $? -ne 0 ]; then
+	echo "$result" | sed -e 's/^error: //'
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+else
+	echo "Created configuration file for $2"
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
+fi
+;;
 
-#JSSenroll)
-#logFile="/usr/local/jds/logs/jdsinstaller.log"
-#if [ -d "/etc/apache2/sites-enabled" ]; then
-#	conf="/etc/apache2/sites-enabled/jds.conf"
-#	www_service=apache2
-#fi
-#if [ -d "/etc/httpd/conf.d" ]; then
-#	conf="/etc/httpd/conf.d/jds.conf"
-#	www_service=httpd
-#fi
-#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
-#echo "<VirtualHost *:443>" > $conf
-#echo "	SSLEngine on" >> $conf
-#echo "</VirtualHost>" >> $conf
-#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
-#sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
-#if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-#fi
-#if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-#fi
-#result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
-#if [ $? -ne 0 ]; then
-#	echo "$result" | sed -e 's/^error: //'
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-#	rm -f $conf
-#	exit
-#else
-#	echo "Enrolment complete"
-#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
-#	/usr/local/sbin/jamfds policy > /dev/null 2>&1
-#fi
-#service $www_service reload 2>&-
-#;;
+JSSenroll)
+logFile="/usr/local/jds/logs/jdsinstaller.log"
+if [ -d "/etc/apache2/sites-enabled" ]; then
+	conf="/etc/apache2/sites-enabled/jds.conf"
+	www_service=apache2
+fi
+if [ -d "/etc/httpd/conf.d" ]; then
+	conf="/etc/httpd/conf.d/jds.conf"
+	www_service=httpd
+fi
+echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
+echo "<VirtualHost *:443>" > $conf
+echo "	SSLEngine on" >> $conf
+echo "</VirtualHost>" >> $conf
+echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
+sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
+if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+fi
+if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+fi
+result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
+if [ $? -ne 0 ]; then
+	echo "$result" | sed -e 's/^error: //'
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+	rm -f $conf
+	exit
+else
+	echo "Enrolment complete"
+	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
+	/usr/local/sbin/jamfds policy > /dev/null 2>&1
+fi
+service $www_service reload 2>&-
+;;
 
-#checkin)
-#/usr/local/sbin/jamfds policy > /dev/null 2>&1
-#;;
+checkin)
+/usr/local/sbin/jamfds policy > /dev/null 2>&1
+;;
 
-#JSSinventory)
-#/usr/local/sbin/jamfds inventory > /dev/null 2>&1
-#;;
+JSSinventory)
+/usr/local/sbin/jamfds inventory > /dev/null 2>&1
+;;
 
 #enableAvahi)
 #if [ "$(which apt-get 2>&-)" != '' ]; then
@@ -708,8 +697,7 @@ rm /tmp/mycron
 #	else
 #		rm -f /etc/init/avahi-daemon.override
 #	fi
-#fi
-#if [ "$(which yum 2>&-)" != '' ]]; then
+#elif [ "$(which yum 2>&-)" != '' ]]; then
 #	chkconfig messagebus on > /dev/null 2>&1
 #	service messagebus start 2>&-
 #	chkconfig avahi-daemon on > /dev/null 2>&1
@@ -741,8 +729,7 @@ if [ "$(which apt-get 2>&-)" != '' ]; then
 	else
 		rm -f /etc/init/$SERVICE.override
 	fi
-fi
-if [ "$(which yum 2>&-)" != '' ]]; then
+elif [ "$(which yum 2>&-)" != '' ]]; then
 	SERVICE=sshd
 	if [ "$(rpm -qa openssh-server)" = '' ]; then
 		yum install openssh-server -y -q
@@ -760,8 +747,7 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	else
 		echo manual > /etc/init/$SERVICE.override
 	fi
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	SERVICE=sshd
 	chkconfig $SERVICE off > /dev/null 2>&1
 fi
@@ -820,8 +806,7 @@ fi
 enableFirewall)
 if [ "$(which ufw 2>&-)" != '' ]; then
 	ufw --force enable
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	if [ "$(which firewalld 2>&-)" != '' ]; then
 		chkconfig firewalld on > /dev/null 2>&1
 		service firewalld start 2>&-
@@ -835,8 +820,7 @@ fi
 disableFirewall)
 if [ "$(which ufw 2>&-)" != '' ]; then
 	ufw disable
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	if [ "$(which firewalld 2>&-)" != '' ]; then
 		chkconfig firewalld off > /dev/null 2>&1
 		service firewalld stop 2>&-
@@ -893,6 +877,67 @@ if [ "$3" != '' ]; then
 fi
 if [ "$5" != '' ]; then
 	python /var/www/html/webadmin/scripts/susproxy.py "proxy-user = \"$4:$5\"" "/var/lib/reposado/preferences.plist"
+fi
+;;
+
+# NetBoot
+getNBIproperty)
+# $2: NBI
+# $3: Property
+plistfile=$(ls "/srv/NetBoot/NetBootSP0/${2}/"*.plist 2>/dev/null)
+if [ "$plistfile" != '' ]; then
+	value=$(python -c "import plistlib; print plistlib.readPlist('${plistfile}')['${3}']" 2>/dev/null)
+fi
+echo "${value}"
+;;
+
+setNBIproperties)
+Image=$2
+Name="$(echo $3 | sed -e 's/\\//g')"
+Description="$(echo $4 | sed -e 's/\\//g')"
+Type=$5
+Index=$6
+SupportsDiskless=$7
+if [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg ]; then
+	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg)
+elif [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage ]; then
+	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage)
+else
+	exit 1
+fi
+python /var/www/html/webadmin/scripts/nbiproperties.py "/srv/NetBoot/NetBootSP0/${Image}/NBImageInfo.plist" "$RootPath" "$Name" "$Description" $Type $Index $SupportsDiskless
+;;
+
+gettftpstatus)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	if service tftpd-hpa status 2>/dev/null | grep -q running ; then
+		echo "true"
+	else
+		echo "false"
+	fi
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		if systemctl status tftp | grep -q running ; then
+			echo "true"
+		else
+			echo "false"
+		fi
+	else
+		if service xinetd status | grep -q running && chkconfig | sed 's/[ \t]//g' | grep tftp | grep -q ':on' ; then
+			echo "true"
+		else
+			echo "false"
+		fi
+	fi
+fi
+;;
+
+getnfsstatus)
+SERVICE=nfsd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
+else
+	echo "false"
 fi
 ;;
 
@@ -1005,11 +1050,11 @@ echo "A restart is required for changes to take effect"
 
 # Logs
 displayLogList)
-jdsLogList=$(find /usr/local/jds/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
-jssLogList=$(find /usr/local/jss/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
-tomcatLogList=$(find /usr/local/jss/tomcat/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
-applianceLogList=$(find /var/appliance/logs -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
-varLogList=$(find /var/log \( \! -path /var/log/sudo-io/* \) -a -type f -exec file {} \; 2>/dev/null | grep 'ASCII text' | awk -F : '{print $1}' | sort)
+jdsLogList=$(find /usr/local/jds/logs -type f -exec file {} \; 2>/dev/null | grep '\(ASCII\|Unicode\) text' | awk -F : '{print $1}' | sort)
+jssLogList=$(find /usr/local/jss/logs -type f -exec file {} \; 2>/dev/null | grep '\(ASCII\|Unicode\) text' | awk -F : '{print $1}' | sort)
+tomcatLogList=$(find /usr/local/jss/tomcat/logs -type f -exec file {} \; 2>/dev/null | grep '\(ASCII\|Unicode\) text' | awk -F : '{print $1}' | sort)
+applianceLogList=$(find /var/appliance/logs -type f -exec file {} \; 2>/dev/null | grep '\(ASCII\|Unicode\) text' | awk -F : '{print $1}' | sort)
+varLogList=$(find /var/log \( \! -path /var/log/sudo-io/* \) -a -type f -exec file {} \; 2>/dev/null | grep '\(ASCII\|Unicode\) text' | awk -F : '{print $1}' | sort)
 echo $jdsLogList $jssLogList $tomcatLogList $applianceLogList $varLogList
 ;;
 
@@ -1064,8 +1109,7 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	else
 		echo manual > /etc/init/$SERVICE.override
 	fi
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	SERVICE=smb
 	chkconfig $SERVICE off > /dev/null 2>&1
 fi
@@ -1085,8 +1129,7 @@ startafp)
 SERVICE=netatalk
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	update-rc.d $SERVICE enable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig $SERVICE on > /dev/null 2>&1
 fi
 service $SERVICE start 2>&-
@@ -1096,8 +1139,7 @@ stopafp)
 SERVICE=netatalk
 if [ "$(which update-rc.d 2>&-)" != '' ]; then
 	update-rc.d $SERVICE disable > /dev/null 2>&1
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig $SERVICE off > /dev/null 2>&1
 fi
 service $SERVICE stop 2>&-
@@ -1138,39 +1180,5 @@ elif [ "$(which yum 2>&-)" != '' ]; then
 	echo "yum"
 fi
 ;;
-
-gettftpstatus)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	if service tftpd-hpa status 2>/dev/null | grep -q running ; then
-		echo "true"
-	else
-		echo "false"
-	fi
-fi
-if [ "$(which chkconfig 2>&-)" != '' ]; then
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		if systemctl status tftp | grep -q running ; then
-			echo "true"
-		else
-			echo "false"
-		fi
-	else
-		if service xinetd status | grep -q running && chkconfig | sed 's/[ \t]//g' | grep tftp | grep -q ':on' ; then
-			echo "true"
-		else
-			echo "false"
-		fi
-	fi
-fi
-;;
-
-#getnfsstatus)
-#SERVICE=nfsd
-#if ps acx | grep -v grep | grep -q $SERVICE ; then
-#	echo "true"
-#else
-#	echo "false"
-#fi
-#;;
 
 esac

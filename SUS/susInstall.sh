@@ -27,8 +27,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install libapache2-mod-php
 	apt_install php-xml
 	apt_install curl
-fi
-if [[ $(which yum 2>&-) != "" ]]; then
+elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install mod_ssl
 	yum_install php
 	yum_install php-xml

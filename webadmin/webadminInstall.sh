@@ -38,8 +38,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install php-xml
 	www_user=www-data
 	www_service=apache2
-fi
-if [[ $(which yum 2>&-) != "" ]]; then
+elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install python-pycurl
 	yum_install parted
 	yum_install dmidecode

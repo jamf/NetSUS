@@ -30,10 +30,9 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install tftpd-hpa
 	# apt_install openbsd-inetd
 	apt_install netatalk
-	#apt_install nfs-kernel-server
+	apt_install nfs-kernel-server
 	apt_install python-configparser
-fi
-if [[ $(which yum 2>&-) != "" ]]; then
+elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install avahi
 	yum_install samba
 	yum_install samba-client
@@ -56,12 +55,14 @@ if [[ $(which yum 2>&-) != "" ]]; then
 		fi
 		sed -i 's/.*- -tcp -noddp -uamlist uams_dhx.so.*/- -tcp -noddp -uamlist uams_dhx.so,uams_dhx2_passwd.so/' /etc/netatalk/afpd.conf
 	fi
-	#yum_install nfs-utils
+	yum_install nfs-utils
 	yum_install vim-common
 	chkconfig messagebus on >> $logFile 2>&1
 	chkconfig avahi-daemon on >> $logFile 2>&1
+	chkconfig rpcbind on >> $logFile 2>&1
     service messagebus start >> $logFile 2>&1
     service avahi-daemon start >> $logFile 2>&1
+    service rpcbind start >> $logFile 2>&1
 fi
 
 # Prepare the firewall in case it is enabled later
@@ -78,14 +79,14 @@ if [[ $(which ufw 2>&-) != "" ]]; then
 	# TFTP
 	ufw allow 69/udp >> $logFile
 	# NFS
-	#ufw allow 111/tcp >> $logFile
-	#ufw allow 111/udp >> $logFile
-	#ufw allow 892/tcp >> $logFile
-	#ufw allow 892/udp >> $logFile
-	#ufw allow 2049/tcp >> $logFile
-	#ufw allow 2049/udp >> $logFile
-	#ufw allow 32769/udp >> $logFile
-	#ufw allow 32803/tcp >> $logFile
+	ufw allow 111/tcp >> $logFile
+	ufw allow 111/udp >> $logFile
+	ufw allow 892/tcp >> $logFile
+	ufw allow 892/udp >> $logFile
+	ufw allow 2049/tcp >> $logFile
+	ufw allow 2049/udp >> $logFile
+	ufw allow 32769/udp >> $logFile
+	ufw allow 32803/tcp >> $logFile
 elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
 	# HTTP
 	firewall-cmd --zone=public --add-port=80/tcp >> $logFile 2>&1
@@ -105,22 +106,22 @@ elif [[ $(which firewall-cmd 2>&-) != "" ]]; then
 	firewall-cmd --zone=public --add-port=69/udp >> $logFile 2>&1
 	firewall-cmd --zone=public --add-port=69/udp --permanent >> $logFile 2>&1
 	# NFS
-	#firewall-cmd --zone=public --add-port=111/tcp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=111/tcp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=111/udp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=111/udp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=892/tcp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=892/tcp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=892/udp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=892/udp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=2049/tcp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=2049/tcp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=2049/udp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=2049/udp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=32769/udp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=32769/udp --permanent >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=32803/tcp >> $logFile 2>&1
-	#firewall-cmd --zone=public --add-port=32803/tcp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=111/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=111/tcp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=111/udp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=111/udp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=892/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=892/tcp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=892/udp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=892/udp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=2049/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=2049/tcp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=2049/udp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=2049/udp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=32769/udp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=32769/udp --permanent >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=32803/tcp >> $logFile 2>&1
+	firewall-cmd --zone=public --add-port=32803/tcp --permanent >> $logFile 2>&1
 else
 	# HTTP
 	if iptables -L | grep DROP | grep -v 'tcp dpt:https' | grep -q 'tcp dpt:http' ; then
@@ -164,54 +165,54 @@ else
 		iptables -I INPUT -p udp --dport 69 -j ACCEPT
 	fi
 	# NFS
-	#if iptables -L | grep DROP | grep -q 'tcp dpt:sunrpc' ; then
-	#	iptables -D INPUT -p tcp --dport 111 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:sunrpc' ; then
-	#	iptables -I INPUT -p tcp --dport 111 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'udp dpt:sunrpc' ; then
-	#	iptables -D INPUT -p udp --dport 111 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:sunrpc' ; then
-	#	iptables -I INPUT -p udp --dport 111 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'tcp dpt:892' ; then
-	#	iptables -D INPUT -p tcp --dport 892 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:892' ; then
-	#	iptables -I INPUT -p tcp --dport 892 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'udp dpt:892' ; then
-	#	iptables -D INPUT -p udp --dport 892 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:892' ; then
-	#	iptables -I INPUT -p udp --dport 892 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'tcp dpt:nfs' ; then
-	#	iptables -D INPUT -p tcp --dport 2049 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:nfs' ; then
-	#	iptables -I INPUT -p tcp --dport 2049 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'udp dpt:nfs' ; then
-	#	iptables -D INPUT -p udp --dport 2049 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:nfs' ; then
-	#	iptables -I INPUT -p udp --dport 2049 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'udp dpt:filenet-rpc' ; then
-	#	iptables -D INPUT -p udp --dport 32769 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:filenet-rpc' ; then
-	#	iptables -I INPUT -p udp --dport 32769 -j ACCEPT
-	#fi
-	#if iptables -L | grep DROP | grep -q 'tcp dpt:32803' ; then
-	#	iptables -D INPUT -p tcp --dport 32803 -j DROP
-	#fi
-	#if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:32803' ; then
-	#	iptables -I INPUT -p tcp --dport 32803 -j ACCEPT
-	#fi
+	if iptables -L | grep DROP | grep -q 'tcp dpt:sunrpc' ; then
+		iptables -D INPUT -p tcp --dport 111 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:sunrpc' ; then
+		iptables -I INPUT -p tcp --dport 111 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'udp dpt:sunrpc' ; then
+		iptables -D INPUT -p udp --dport 111 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:sunrpc' ; then
+		iptables -I INPUT -p udp --dport 111 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'tcp dpt:892' ; then
+		iptables -D INPUT -p tcp --dport 892 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:892' ; then
+		iptables -I INPUT -p tcp --dport 892 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'udp dpt:892' ; then
+		iptables -D INPUT -p udp --dport 892 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:892' ; then
+		iptables -I INPUT -p udp --dport 892 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'tcp dpt:nfs' ; then
+		iptables -D INPUT -p tcp --dport 2049 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:nfs' ; then
+		iptables -I INPUT -p tcp --dport 2049 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'udp dpt:nfs' ; then
+		iptables -D INPUT -p udp --dport 2049 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:nfs' ; then
+		iptables -I INPUT -p udp --dport 2049 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'udp dpt:filenet-rpc' ; then
+		iptables -D INPUT -p udp --dport 32769 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'udp dpt:filenet-rpc' ; then
+		iptables -I INPUT -p udp --dport 32769 -j ACCEPT
+	fi
+	if iptables -L | grep DROP | grep -q 'tcp dpt:32803' ; then
+		iptables -D INPUT -p tcp --dport 32803 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -q 'tcp dpt:32803' ; then
+		iptables -I INPUT -p tcp --dport 32803 -j ACCEPT
+	fi
 	service iptables save >> $logFile 2>&1
 fi
 
@@ -340,34 +341,34 @@ if [ ! -d "/home/afpuser" ]; then
 fi
 
 # Configure nfs
-#if [ -f "/etc/default/nfs-kernel-server" ]; then
-#	sed -i 's/.*RPCMOUNTDOPTS.*/RPCMOUNTDOPTS="--port 892"/' /etc/default/nfs-kernel-server
-#	touch /etc/modprobe.d/lockd.conf
-#	sed -i '/^lockd/d' /etc/modules
-#	echo "lockd" >> /etc/modules
-#fi
-#if [ -f "/etc/sysconfig/nfs" ]; then
-#	if grep -q LOCKD_TCPPORT /etc/sysconfig/nfs; then
-#		sed -i 's/.*LOCKD_TCPPORT.*/LOCKD_TCPPORT=32803/' /etc/sysconfig/nfs
-#		sed -i 's/.*LOCKD_UDPPORT.*/LOCKD_UDPPORT=32769/' /etc/sysconfig/nfs
-#		sed -i 's/.*MOUNTD_PORT.*/MOUNTD_PORT=892/' /etc/sysconfig/nfs
-#	else
-#		sed -i 's/.*RPCMOUNTDOPTS.*/RPCMOUNTDOPTS="-p 892"/' /etc/sysconfig/nfs
-#	fi
-#fi
-#if [ -f "/etc/modprobe.d/lockd.conf" ]; then
-#	if ! grep -q nlm_tcpport /etc/modprobe.d/lockd.conf; then
-#		echo "options lockd nlm_tcpport=32803" >> /etc/modprobe.d/lockd.conf
-#	fi
-#	sed -i 's/.*nlm_tcpport.*/options lockd nlm_tcpport=32803/' /etc/modprobe.d/lockd.conf
-#	if ! grep -q nlm_udpport /etc/modprobe.d/lockd.conf; then
-#		echo "options lockd nlm_udpport=32769" >> /etc/modprobe.d/lockd.conf
-#	fi 
-#	sed -i 's/.*nlm_udpport.*/options lockd nlm_udpport=32769/' /etc/modprobe.d/lockd.conf
-#fi
-#sed -i "/NetBootSP0/d" /etc/exports
-#echo "/srv/NetBoot/NetBootSP0 *(ro,no_subtree_check,no_root_squash,insecure)" >> "/etc/exports"
-#exportfs -a
+if [ -f "/etc/default/nfs-kernel-server" ]; then
+	sed -i 's/.*RPCMOUNTDOPTS.*/RPCMOUNTDOPTS="--port 892"/' /etc/default/nfs-kernel-server
+	touch /etc/modprobe.d/lockd.conf
+	sed -i '/^lockd/d' /etc/modules
+	echo "lockd" >> /etc/modules
+fi
+if [ -f "/etc/sysconfig/nfs" ]; then
+	if grep -q LOCKD_TCPPORT /etc/sysconfig/nfs; then
+		sed -i 's/.*LOCKD_TCPPORT.*/LOCKD_TCPPORT=32803/' /etc/sysconfig/nfs
+		sed -i 's/.*LOCKD_UDPPORT.*/LOCKD_UDPPORT=32769/' /etc/sysconfig/nfs
+		sed -i 's/.*MOUNTD_PORT.*/MOUNTD_PORT=892/' /etc/sysconfig/nfs
+	else
+		sed -i 's/.*RPCMOUNTDOPTS.*/RPCMOUNTDOPTS="-p 892"/' /etc/sysconfig/nfs
+	fi
+fi
+if [ -f "/etc/modprobe.d/lockd.conf" ]; then
+	if ! grep -q nlm_tcpport /etc/modprobe.d/lockd.conf; then
+		echo "options lockd nlm_tcpport=32803" >> /etc/modprobe.d/lockd.conf
+	fi
+	sed -i 's/.*nlm_tcpport.*/options lockd nlm_tcpport=32803/' /etc/modprobe.d/lockd.conf
+	if ! grep -q nlm_udpport /etc/modprobe.d/lockd.conf; then
+		echo "options lockd nlm_udpport=32769" >> /etc/modprobe.d/lockd.conf
+	fi 
+	sed -i 's/.*nlm_udpport.*/options lockd nlm_udpport=32769/' /etc/modprobe.d/lockd.conf
+fi
+sed -i "/NetBootSP0/d" /etc/exports
+echo "/srv/NetBoot/NetBootSP0 *(ro,no_subtree_check,no_root_squash,insecure)" >> "/etc/exports"
+exportfs -a
 
 # Configure samba
 # Change SMB setting for guest access

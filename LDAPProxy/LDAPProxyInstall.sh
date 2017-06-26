@@ -32,8 +32,7 @@ slapd    slapd/password1    password    netsuslp
 " | sudo debconf-set-selections
 	apt_install slapd
 	unset DEBIAN_FRONTEND
-fi
-if [[ $(which yum 2>&-) != "" ]]; then
+elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install openldap-servers
 	yum_install expect
 fi
