@@ -68,11 +68,15 @@ function validateTimeserver()
 
 			<span class="label label-default">Current Time Zone</span>
 			<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
-			<span><?php echo getSystemTimeZoneMenu();?></span>
+			<span>
+				<select class="form-control input-sm" id="timezone" name="timezone" onClick="validateTimeserver();" onChange="validateTimeserver();">
+					<?php echo getSystemTimeZoneMenu();?>
+				</select>
+			</span>
 
 			<span class="label label-default">Network Time Server</span>
 			<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onKeyUp="validateTimeserver();" onChange="validateTimeserver();" />
+			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onClick="validateTimeserver();" onKeyUp="validateTimeserver();" onChange="validateTimeserver();" />
 
 			<br>
 

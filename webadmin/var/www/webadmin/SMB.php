@@ -50,6 +50,35 @@ if (isset($_POST['smbpass']))
 	<?php echo "<div class=\"alert alert-success\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
+<script type="text/javascript">
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
+	{
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
+	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+
+function validatePW()
+{
+	var validPassword = (document.getElementById("smbpass1").value != "");
+	var validConfirm = (document.getElementById("smbpass1").value == document.getElementById("smbpass2").value);
+	showErr("smbpass2", validConfirm);
+	enableButton("smbpass", validPassword && validConfirm);
+}
+</script>
+
 <div class="row">
 	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
@@ -85,10 +114,10 @@ if (isset($_POST['smbpass']))
 			-->
 
 			<label class="control-label">New Password</label>
-			<input type="password" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
+			<input type="password" placeholder="Required" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" onClick="validatePW();" onKeyUp="validatePW();" onChange="validatePW();" />
 
 			<label class="control-label">Confirm New Password</label>
-			<input type="password" name="smbpass2" id="smbpass2" class="form-control input-sm" value="" placeholder="Required" onKeyUp="validatePW();" onChange="validatePW();" />
+			<input type="password" placeholder="Required" name="smbpass2" id="smbpass2" class="form-control input-sm" value="" onClick="validatePW();" onKeyUp="validatePW();" onChange="validatePW();" />
 			<br>
 
 			<input type="submit" name="smbpass" id="smbpass" class="btn btn-primary" value="Save" />

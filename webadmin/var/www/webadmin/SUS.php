@@ -207,7 +207,7 @@ window.onload = function()
 			<span class="label label-default">New Branch</span>
 
 			<div class="input-group">
-				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onKeyUp="validateBranch();" onChange="validateBranch();"/>
+				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onClick="validateBranch();" onKeyUp="validateBranch();" onChange="validateBranch();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" value="Add Branch" disabled="disabled"/>
 				</span>

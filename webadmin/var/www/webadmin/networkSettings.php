@@ -141,7 +141,7 @@ window.onload = function()
 			<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 
 				<label class="control-label">Hostname</label>
-				<input type="text" name="hostname" id="hostname" class="form-control input-sm" value="<?php echo getCurrentHostname(); ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="hostname" id="hostname" class="form-control input-sm" value="<?php echo getCurrentHostname(); ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 
 				<label class="control-label">Type</label>
 				<!-- <select onchange="disableStaticOptions(this.value);" name="selectedNetType">
@@ -160,25 +160,25 @@ window.onload = function()
 				</div>
 
 				<label class="control-label">IP Address</label>
-				<input type="text" name="ip" id="ip"  class="form-control input-sm" value="<?php echo getCurrentIP(); ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="ip" id="ip"  class="form-control input-sm" value="<?php echo getCurrentIP(); ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 
 				<label class="control-label">Netmask</label>
-				<input type="text" name="netmask" id="netmask" class="form-control input-sm" value="<?php echo getCurrentNetmask(); ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="netmask" id="netmask" class="form-control input-sm" value="<?php echo getCurrentNetmask(); ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 
 			</div>
 
 			<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 
 				<label class="control-label">Gateway</label>
-				<input type="text" name="gateway" id="gateway" class="form-control input-sm" value="<?php echo getCurrentGateway(); ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="gateway" id="gateway" class="form-control input-sm" value="<?php echo getCurrentGateway(); ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 
 
 				<label class="control-label">DNS Server 1</label>
-				<input type="text" name="dns1" id="dns1" class="form-control input-sm" value="<?php if (isset($dns[0])) { echo $dns[0]; } ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="dns1" id="dns1" class="form-control input-sm" value="<?php if (isset($dns[0])) { echo $dns[0]; } ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 
 
 				<label class="control-label">DNS Server 2</label>
-				<input type="text" name="dns2" id="dns2" class="form-control input-sm" value="<?php if (isset($dns[1])) { echo $dns[1]; } ?>" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
+				<input type="text" name="dns2" id="dns2" class="form-control input-sm" value="<?php if (isset($dns[1])) { echo $dns[1]; } ?>" onClick="validateNetwork();" onKeyUp="validateNetwork();" onChange="validateNetwork();" />
 				<br>
 
 				<input type="submit" class="btn btn-sm <?php if (getSSHstatus()) { echo 'btn-success" value="Disable'; } else { echo'btn-danger" value="Enable'; } ?> SSH" name="SSH"/>

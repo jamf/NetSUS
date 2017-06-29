@@ -55,6 +55,35 @@ if (isset($_POST['afppass']))
 	<?php echo "<div class=\"alert alert-success\">" . $accountsuccess . "</div>" ?></span>
 <?php } ?>
 
+<script type="text/javascript">
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
+	{
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
+	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+
+function validateafpPW()
+{
+	var validPassword = (document.getElementById("afppass1").value != "");
+	var validConfirm = (document.getElementById("afppass1").value == document.getElementById("afppass2").value);
+	showErr("afppass2", validConfirm);
+	enableButton("afppass", validPassword && validConfirm);
+}
+</script>
+
 <div class="row">
 	<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
 
@@ -90,13 +119,13 @@ if (isset($_POST['afppass']))
 			-->
 
 			<label class="control-label">New Password</label>
-			<input type="password" placeholder="Required" name="afppass1" id="afppass1" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+			<input type="password" placeholder="Required" name="afppass1" id="afppass1" class="form-control input-sm" value="" onClick="validateafpPW();" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 
 			<label class="control-label">Confirm New Password</label>
-			<input type="password" placeholder="Required" name="afppass2" id="afppass2" class="form-control input-sm" value="" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
+			<input type="password" placeholder="Required" name="afppass2" id="afppass2" class="form-control input-sm" value="" onClick="validateafpPW();" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 			<br>
 
-			<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" />
+			<input type="submit" name="afppass" id="afppass" value="Save" class="btn btn-primary" disabled="disabled" />
 			<br>
 			<br>
 
