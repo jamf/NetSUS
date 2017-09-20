@@ -113,6 +113,8 @@ function validatePW()
 			<br><br>
 			-->
 
+			<span class="label label-default">SMB Password</span>
+
 			<label class="control-label">New Password</label>
 			<input type="password" placeholder="Required" name="smbpass1" id="smbpass1" class="form-control input-sm" value="" onClick="validatePW();" onKeyUp="validatePW();" onChange="validatePW();" />
 

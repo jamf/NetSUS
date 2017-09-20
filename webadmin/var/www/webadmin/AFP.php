@@ -118,6 +118,8 @@ function validateafpPW()
 			<br><br>
 			-->
 
+			<span class="label label-default">AFP Password</span>
+
 			<label class="control-label">New Password</label>
 			<input type="password" placeholder="Required" name="afppass1" id="afppass1" class="form-control input-sm" value="" onClick="validateafpPW();" onKeyUp="validateafpPW();" onChange="validateafpPW();" />
 

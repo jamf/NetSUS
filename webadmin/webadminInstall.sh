@@ -89,7 +89,7 @@ if [ -f "/etc/ntp/step-tickers" ]; then
 		echo $currentTimeServer >> /etc/ntp/step-tickers
 	fi
 else
-	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
+	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $NF}')
 	if [[ $currentTimeServer == "" ]]; then
 		echo "server 0.ubuntu.pool.ntp.org" > /etc/cron.daily/ntpdate
 	fi
@@ -141,8 +141,13 @@ if [ ! -f "/var/appliance/conf/appliance.conf.xml" ]; then
 	if [[ $shelluser == "" ]] || [[ $shelluser == "root" ]]; then
 		shelluser=shelluser
 		if [[ $(getent passwd shelluser) == "" ]]; then
-			useradd -c 'shelluser' -d /home/shelluser -G wheel -m -s /bin/bash shelluser
-			sed -i '/NOPASSWD/!s/.*%wheel/%wheel/' /etc/sudoers
+			if [[ $(getent group wheel) == "" ]]; then
+				groupadd shelluser
+				useradd -d /home/shelluser -g shelluser -G adm,cdrom,sudo,dip,plugdev,lpadmin,sambashare -m -s /bin/bash shelluser
+			else
+				useradd -c 'shelluser' -d /home/shelluser -G wheel -m -s /bin/bash shelluser
+				sed -i '/NOPASSWD/!s/.*%wheel/%wheel/' /etc/sudoers
+			fi
 		fi
 	fi
 	mkdir -p /var/appliance/conf/

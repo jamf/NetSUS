@@ -219,16 +219,21 @@ fi
 # Configure tftp
 if [ -f "/etc/default/tftpd-hpa" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/default/tftpd-hpa
+	sed -i 's:TFTP_OPTIONS=.*:TFTP_OPTIONS="--secure --blocksize 1460":' /etc/default/tftpd-hpa
 fi
 if [ -f "/etc/xinetd.d/tftp" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/xinetd.d/tftp
+	sed -i '/server_args/ s/= -s/= --blocksize 1460 -s/' /etc/xinetd.d/tftp
 	sed -i '/disable/ s/yes/no/' /etc/xinetd.d/tftp
 fi
 if [ -f "/usr/lib/systemd/system/tftp.service" ]; then
-	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /usr/lib/systemd/system/tftp.service
+	sed -i 's:ExecStart=.*:ExecStart=/usr/sbin/in.tftpd --blocksize 1460 -s /srv/NetBoot/NetBootSP0:' /usr/lib/systemd/system/tftp.service
 fi
 if [ -f "/lib/systemd/system/tftp.service" ]; then
-	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /lib/systemd/system/tftp.service
+	sed -i 's:ExecStart=.*:ExecStart=/usr/sbin/in.tftpd --blocksize 1460 -s /srv/NetBoot/NetBootSP0:' /lib/systemd/system/tftp.service
+fi
+if [ -f "/usr/lib/systemd/system/tftp.service" ] || [ -f "/lib/systemd/system/tftp.service" ]; then
+	systemctl daemon-reload
 fi
 
 # Create netboot directories

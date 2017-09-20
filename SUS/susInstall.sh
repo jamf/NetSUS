@@ -108,6 +108,8 @@ if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 		RewriteCond %{HTTP_USER_AGENT} Darwin/16
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+		RewriteCond %{HTTP_USER_AGENT} Darwin/17
+		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 	</IfModule>
 
 </VirtualHost>
@@ -140,6 +142,8 @@ if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 		RewriteCond %{HTTP_USER_AGENT} Darwin/16
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+		RewriteCond %{HTTP_USER_AGENT} Darwin/17
+		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 	</IfModule>
 ZHEREDOC
 	# Remove empty <IfModule mod_rewrite.c> sections
