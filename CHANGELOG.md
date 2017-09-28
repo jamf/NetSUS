@@ -1,5 +1,11 @@
 # NetSUS Changelog
 
+## 4.2.1
+
+* Added High Sierra support for SUS
+* Updated reposado to latest version
+* Fixed an issue where certain Sierra build would NetBoot extremely slowly
+
 ## 4.2
 
 * Added Sierra support for SUS
