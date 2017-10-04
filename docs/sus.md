@@ -127,11 +127,11 @@ Branch URLs vary depending on the operating system of enrolled computers. Exampl
 	
 **OS X v10.12**
 
-    https://sus.mycompany.corp/content/catalogs/others/index-10.12seed-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog.gz
+    https://sus.mycompany.corp/content/catalogs/others/index-10.12seed-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog.gz
 
 **OS X v10.13**
 
-    https://sus.mycompany.corp/content/catalogs/others/index-10.13beta-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog.gz
+    https://sus.mycompany.corp/content/catalogs/others/index-10.13beta-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog.gz
 
 ### Running Software Update on Computers
 
