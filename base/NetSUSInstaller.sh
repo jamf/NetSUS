@@ -1,240 +1,199 @@
 #!/bin/bash
 # This script controls the flow of the Linux NetSUS installation
 
-######### Requirements Checking - Root #########
+export PATH="/bin:$PATH"
+
+netsusdir=/var/appliance
+
+#==== Check Requirements - Root User ======================#
 
 if [[ "$(id -u)" != "0" ]]; then
-	echo "The NetSUS Installer needs to be run as root or using sudo."
-	exit 1
+  echo "The NetSUS Installer needs to be run as root or using sudo."
+  exit 1
 fi
 
 # Needed for systems with secure umask settings
-OLD_UMASK=`umask`
+OLD_UMASK=$(umask)
 umask 022
+
+clean-exit() {
+  umask "$OLD_UMASK"
+  exit 0
+}
+
+clean-fail() {
+  umask "$OLD_UMASK"
+  exit 1
+}
 
 # Check for an existing installation
 if [ -d "/var/appliance" ]; then
-	upgrade=true
+  upgrade=true
 else
-	upgrade=false
+  upgrade=false
 fi
 
 # Create NetSUS directory (needed immediately for logging)
-if [ ! -d "/var/appliance/logs" ]; then
-	mkdir -p /var/appliance/logs
-fi
+mkdir -p $netsusdir/logs
 
-# Logger
-source logger.sh
+source utils/logger.sh
 
-######### Requirements Checking #########
+#==== Parse Arguments =====================================#
 
-logEvent "Starting the NetSUS Installation"
-logEvent "Checking installation requirements..."
+export INTERACTIVE=true
+
+while getopts "hny" ARG
+do
+  case $ARG in
+    h)
+    echo "Usage: $0 [-y]"
+    echo "-y    Activates non-interactive mode, which will silently install the NetSUS without any prompts"
+    echo "-h    Shows this message"
+    exit 0
+    ;;
+    n)
+    logCritical "The -n flag is deprecated and will be removed in a future version.
+                 Please use -y instead."
+    export INTERACTIVE=false
+    ;;
+    y)
+    export INTERACTIVE=false
+    ;;
+  esac
+done
+
+#==== Check Requirements ==================================#
+
+log "Starting the NetSUS Installation"
+log "Checking installation requirements..."
+
+# Check for a 64-bit OS
+bash checks/test64bitRequirements.sh || clean-fail
 
 failedAnyChecks=0
 # Check for Valid OS
-. testOSRequirements.sh
+bash checks/testOSRequirements.sh || failedAnyChecks=1
 
-logEvent $detectedOS
-
-[[ $detectedOS == "Ubuntu" ]] && { bash testUbuntuBinRequirements.sh; }
-
-# Check for a 64-bit OS
-bash test64bitRequirements.sh 
-if [[ $? -ne 0 ]]; then
-	failedAnyChecks=1
-fi
-
+# Check for required binaries
+bash checks/testBinRequirements.sh || failedAnyChecks=1
 
 # Abort if we failed any checks
 if [[ $failedAnyChecks -ne 0 ]]; then
-	logEvent "Aborting installation due to unsatisfied requirements."
-	if [[ $FLAGS = "-n" ]]; then
-		echo "Installation failed.  See $logFile for more details."
-	fi
-	echo "Installation failed.  See $logFile for more details."
-	umask $OLD_UMASK
-	exit 1
+  log "Aborting installation due to unsatisfied requirements."
+  if [[ $INTERACTIVE = true ]]; then
+    # shellcheck disable=SC2154
+    echo "Installation failed.  See $logFile for more details."
+  fi
+  clean-fail
 fi
 
-logEvent "Passed all requirements checking!"
+log "Passed all requirements"
 
-######### Verification #########
-# Prompt user for type of installation
-	echo "
-Is this a standalone installation?
-Answer yes unless you are creating an image of the appliance to deploy in multiple locations
-"
+#==== Prompt for Confirmation =============================#
 
-	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
-	
-	while [[ $REPLY != [yYnN] ]]; do
-		read -n1 -p "Standalone?  (y/n): "
-		echo ""
-	done
-    standalone=$REPLY
-
-
+if [[ $INTERACTIVE = true ]]; then
 # Prompt user for permission to continue with the installation
-	echo "
+  echo "
 The following will be installed
 * Appliance Web Interface
+* Software Update Server
 * NetBoot Server
-* Software Updates Server
-* LDAP Proxy Server
+* LDAP Proxy
 "
 
+  # shellcheck disable=SC2162,SC2034
+  read -t 1 -n 100000 devnull # This clears any accidental input from stdin
 
-	
-	read -t 1 -n 100000 devnull # This clears any accidental input from stdin
-	REPLY=""
-	while [[ $REPLY != [yYnN] ]]; do
-		read -n1 -p "Proceed?  (y/n): "
-		echo ""
-	done
-	if [[ $REPLY = [nN] ]]; then
-		logEvent "Aborting..."
-		umask $OLD_UMASK
-		exit 0
-	else
-		logEvent "Installing..."
-	fi
+  while [[ $REPLY != [yYnN] ]]; do
+    # shellcheck disable=SC2162
+    read -n1 -p "Proceed?  (y/n): "
+    echo ""
+  done
+  if [[ $REPLY = [nN] ]]; then
+    log "Aborting..."
+    clean-exit
+  else
+    log "Installing..."
+  fi
+else
+  log "Installing..."
+fi
 
-
-
-######### Sub-installers #########
-
-#Initial Cleanup tasks
+#==== Initial Cleanup tasks ===============================#
 
 # Set SELinux policy
 if sestatus | grep -q enforcing ; then
-	logEvent "Setting SELINUX mode to permissive"
-	echo "A restart of the system will be required before using the NetSUS"
-	sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
-fi
-if [ -f "/selinux/enforce" ]; then
-	echo 0 > /selinux/enforce
-	echo
+  log "Setting SELINUX mode to permissive"
+  sed -i "s/SELINUX=enforcing/SELINUX=permissive/" /etc/selinux/config
+  setenforce permissive
 fi
 
-if [[ $detectedOS == 'Ubuntu' ]]; then
-	apt-get update
+#==== Install Components ==================================#
+
+bash install-webadmin.sh || clean-fail
+bash install-netboot.sh || clean-fail
+bash install-sus.sh || clean-fail
+bash install-proxy.sh || clean-fail
+
+#==== Post Cleanup tasks ==================================#
+
+# Disable IPv6
+if grep -q 'net.ipv6.conf.lo.disable_ipv6' /etc/sysctl.conf; then
+  sed -i '/Disable IPv6/d' /etc/sysctl.conf
+  sed -i '/net.ipv6.conf.all.disable_ipv6/d' /etc/sysctl.conf
+  sed -i '/net.ipv6.conf.default.disable_ipv6/d' /etc/sysctl.conf
+  sed -i '/net.ipv6.conf.lo.disable_ipv6/d' /etc/sysctl.conf
 fi
+#echo "
+## Disable IPv6
+#net.ipv6.conf.all.disable_ipv6 = 1
+#net.ipv6.conf.default.disable_ipv6 = 1
+#" >> /etc/sysctl.conf
 
-
-# Install Web Interface
-bash webadminInstall.run -- $detectedOS
-if [[ $? -ne 0 ]]; then
-	umask $OLD_UMASK
-	exit 1
-fi
-
-# Install NetBoot
-bash netbootInstall.run -- $detectedOS
-if [[ $? -ne 0 ]]; then
-	umask $OLD_UMASK
-	exit 1
-fi
-
-# Install SUS
-bash susInstall.run -- $detectedOS
-if [[ $? -ne 0 ]]; then
-	umask $OLD_UMASK
-	exit 1
-fi
-
-# Install LDAP Proxy
-bash LDAPProxyInstall.run -- $detectedOS
-if [[ $? -ne 0 ]]; then
-	umask $OLD_UMASK
-	exit 1
-fi
-
-#Post Cleanup Tasks
-#Disables IPv6
-
-echo "# Disable IPv6
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1" >> /etc/sysctl.conf
-
-
-logEvent ""
-logEvent "The NetSUSLP has been installed."
+log ""
+log "The NetSUSLP has been installed."
 if [ ! $upgrade = true ]; then
-	logEvent "Verify that port 443 and 80 are not blocked by a firewall."
-	logEvent ""
-	logEvent "Note: IP Helpers are required if using NetBoot across subnets."
-	logEvent "The NetBoot folder name can not contain any spaces"
-	logEvent ""
+  log "Verify that port 443 and 80 are not blocked by a firewall."
+  log ""
+  log "Note: IP Helpers are required if using NetBoot across subnets."
+  log "The NetBoot folder name can not contain any spaces"
+  log ""
 fi
 
+log "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
 
-
-if [ $upgrade = true ]; then
-	logEvent "If you are upgrading NetSUSLP, you can simply start using it."
-else
-    logEvent "To complete the installation, open a web browser and navigate to https://${HOSTNAME}:443/."
+if [[ $(which update-rc.d 2>&-) != "" ]]; then
+  service apparmor restart >> $logFile 2>&1
+  service apache2 restart >> $logFile 2>&1
+  service slapd stop >> $logFile 2>&1
+  service netatalk stop >> $logFile 2>&1
+  service smbd stop >> $logFile 2>&1
+  service tftpd-hpa stop >> $logFile 2>&1
+  # service openbsd-inetd stop >> $logFile 2>&1
+  update-rc.d slapd disable >> $logFile 2>&1
+  update-rc.d netatalk disable >> $logFile 2>&1
+  if [[ $(which systemctl 2>&-) != "" ]]; then
+    update-rc.d smbd disable >> $logFile 2>&1
+    update-rc.d tftpd-hpa disable >> $logFile 2>&1
+    systemctl disable nfs-server >> $logFile 2>&1
+    # systemctl disable openbsd-inetd >> $logFile 2>&1
+    service nfs-server stop >> $logFile 2>&1
+  else
+    echo manual > /etc/init/smbd.override
+    echo manual > /etc/init/tftpd-hpa.override
+    update-rc.d nfs-kernel-server disable >> $logFile 2>&1
+    # update-rc.d openbsd-inetd disable >> $logFile 2>&1
+    service nfs-kernel-server stop >> $logFile 2>&1
+  fi
+  log "If you are installing NetSUSLP for the first time, please follow the documentation for setup instructions."
+elif [[ $(which chkconfig 2>&-) != "" ]]; then
+  service httpd restart >> $logFile 2>&1
+  chkconfig tftp off >> $logFile 2>&1
+  chkconfig nfs off > /dev/null 2>&1
+  #if [ -f "/etc/sysconfig/xinetd" ]; then
+  #  service xinetd restart >> $logFile 2>&1
+  #fi
+  log "If you are installing NetSUSLP for the first time, please follow the documentation for setup instructions."
 fi
 
-# Need to check service names for RedHat
-case $standalone in
-[yY])
-if [[ $detectedOS == 'Ubuntu' ]]; then
-	echo "Updating Services..."
-	service apparmor restart
-	service slapd stop > /dev/null 2>&1
-	service networking restart > /dev/null 2>&1
-	service apache2 restart > /dev/null 2>&1
-	service netatalk stop > /dev/null 2>&1
-	service smbd stop > /dev/null 2>&1
-	service tftpd-hpa stop > /dev/null 2>&1
-	service openbsd-inetd stop > /dev/null 2>&1
-	echo manual > /etc/init/slapd.override
-	echo manual > /etc/init/netatalk.override
-	echo manual > /etc/init/smbd.override
-	echo manual > /etc/init/tftpd-hpa.override
-	echo manual > /etc/init/openbsd-inetd.override
-
-	logEvent "If you are installing NetSUSLP for the first time, please follow the documentation for setup instructions."
-fi
-if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    service httpd restart
-    service smb stop
-    chkconfig tftp off
-    service xinetd restart
-    service netatalk stop
-    chkconfig smb off
-    chkconfig netatalk off
-    chkconfig slapd off
-    service slapd stop
-fi
-
-	;;
-[nN])
-if [[ $detectedOS == 'Ubuntu' ]]; then
-	chmod +x /etc/init.d/applianceFirstRun
-    #Need to update for RedHat
-	update-rc.d applianceFirstRun defaults
-	cp -R ./etc/* /etc/
-	rm /etc/udev/rules.d/70-*
-	rm /etc/resolv.conf
-	echo "NetSUSLP installation complete."
-	echo "Type: \"shutdown -P now\" to Shut Down."
-fi
-if [[ $detectedOS == 'CentOS' ]] || [[ $detectedOS == 'RedHat' ]]; then
-    rm -rf /etc/ssh/ssh_host_*
-    rm -rf /etc/udev/rules.d/70-*
-    sed -i '/HWADDR=/d' /etc/sysconfig/network-scripts/ifcfg-eth0
-    find /var/log -type f -delete
-    rm -f install.log*
-	echo "NetSUSLP installation complete."
-	echo "Type: \"poweroff\" to Shut Down."
-fi
-	;;
-esac
-
-rm -f "$0"
-umask $OLD_UMASK
-exit 0
+clean-exit

@@ -20,7 +20,7 @@ include "inc/header.php";
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="accounts.php">
-					<p><img src="images/settings/accounts.png" alt="SMB"></p>
+					<p><img src="images/settings/Account.png" alt="User Accounts"></p>
 					<p>Accounts</p>
 				</a>
 			</div>
@@ -28,7 +28,7 @@ include "inc/header.php";
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="networkSettings.php">
-					<p><img src="images/settings/networkSegments.png" alt="Network Settings"></p>
+					<p><img src="images/settings/NetworkSegment.png" alt="Network Settings"></p>
 					<p>Network</p>
 				</a>
 			</div>
@@ -36,7 +36,7 @@ include "inc/header.php";
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="dateTime.php">
-					<p><img src="images/settings/computerCheckIn.png" alt="Date/Time Settings"></p>
+					<p><img src="images/settings/ClientCheckIn.png" alt="Date/Time Settings"></p>
 					<p>Date/Time</p>
 				</a>
 			</div>
@@ -46,6 +46,22 @@ include "inc/header.php";
 				<a href="certificates.php">
 					<p><img src="images/settings/PKI.png" alt="Certificates"></p>
 					<p>Certificates</p>
+				</a>
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="logs.php">
+					<p><img src="images/settings/ChangeManagement.png" alt="Logs"></p>
+					<p>Logs</p>
+				</a>
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="storage.php">
+					<p><img src="images/settings/Storage.png" alt="Storage"></p>
+					<p>Storage</p>
 				</a>
 			</div>
 			<!-- /Column -->
@@ -64,7 +80,7 @@ include "inc/header.php";
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="AFP.php">
-					<p><img src="images/settings/categories.png" alt="AFP"></p>
+					<p><img src="images/settings/Category.png" alt="AFP"></p>
 					<p>AFP</p>
 				</a>
 			</div>
@@ -72,7 +88,7 @@ include "inc/header.php";
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="SMB.php">
-					<p><img src="images/settings/categories.png" alt="SMB"></p>
+					<p><img src="images/settings/Category.png" alt="SMB"></p>
 					<p>SMB</p>
 				</a>
 			</div>

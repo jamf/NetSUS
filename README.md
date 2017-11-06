@@ -2,10 +2,10 @@
 # NetSUS Downloads
 
 Installer:
-https://github.com/jamf/NetSUS/releases/download/4.1.0/NetSUSLPInstaller_4.1.0.run.zip
+[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLPInstaller_4.2.1.run.zip](https://www.dropbox.com/s/c3aeii38qh6c05y/NetSUSLPInstaller_4.2.1.run?dl=0)
 
 OVA:
-https://github.com/jamf/NetSUS/releases/download/4.1.0/NetSUSLP_4.1.0.ova.zip
+[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLP_4.2.1.ova.zip](https://www.dropbox.com/s/zfkmsqx1cuope79/NetSUSLP_4.2.1.ova?dl=0)
 
 
 # What is NetSUS?
@@ -30,23 +30,22 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 #### Supported Linux distributions:
 
-* Ubuntu 10.04 LTS Server
-* Ubuntu 12.04 LTS Server
 * Ubuntu 14.04 LTS Server
+* Ubuntu 16.04 LTS Server
 * Red Hat Enterprise Linux (RHEL) 6.4 or later
 * CentOS 6.4 or later
 
 #### To install the NetBoot/SUS/LP server using an installer, you need:
 
 * The NetBoot/SUS/LP Server Installer (.run), available at:  
-<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * 500 GB of disk space available 
 * 1 GB of RAM
 
 #### To set up the NetBoot/SUS/LP server as an appliance, you need:
 
 * The OVA file for the NetBoot/SUS/LP server, available at:
-<https://jamfnation.jamfsoftware.com/viewProduct.html?id=180&view=info>
+<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * Virtualization software that supports Open Virtualization Format 
 * 500 GB of disk space available
 * 2 GB of RAM

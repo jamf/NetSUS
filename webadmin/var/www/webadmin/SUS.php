@@ -57,19 +57,95 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 		suExec("setbaseurl ".$conf->getSetting("susbaseurl"));
 	}
 }
+
+if (isset($_POST['apply_proxy']))
+{
+	if (empty($_POST['proxy_host']) && empty($_POST['proxy_user']))
+	{
+		suExec("setsusproxy");
+	}
+	if (!empty($_POST['proxy_host']) && empty($_POST['proxy_user']))
+	{
+		suExec("setsusproxy ".$_POST['proxy_host']." ".$_POST['proxy_port']);
+	}
+	if (!empty($_POST['proxy_host']) && !empty($_POST['proxy_user']))
+	{
+		suExec("setsusproxy ".$_POST['proxy_host']." ".$_POST['proxy_port']." ".$_POST['proxy_user']." ".$_POST['proxy_pass']);
+	}
+}
+
+$susProxyHost = trim(suExec("getsusproxyhost"));
+$susProxyPort = trim(suExec("getsusproxyport"));
+$susProxyUser = trim(suExec("getsusproxyuser"));
+$susProxyPassword = trim(suExec("getsusproxypass"));
+
 // ####################################################################
 // End of GET/POST parsing
 // ####################################################################
 ?>
 
 <script>
-	function validateField(fieldid, buttonid)
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
 	{
-		if (document.getElementById(fieldid).value != "")
-			document.getElementById(buttonid).disabled = false;
-		else
-			document.getElementById(buttonid).disabled = true;
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
 	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
+function enableButton(id, enable)
+{
+	document.getElementById(id).disabled = !enable;
+}
+
+function validateBaseURL()
+{
+	var validBaseURL = /^http:\/\/(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][\/]|[1-9][0-9]|[1-9][0-9][\/]|1[0-9]{2}|1[0-9]{2}[\/]|2[0-4][0-9]|2[0-4][0-9][\/]|25[0-5]|25[0-5][\/])$|^http:\/\/(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][\/]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9][\/])$/.test(document.getElementById("baseurl").value);
+	showErr("baseurl", validBaseURL);
+	enableButton("setbaseurl", validBaseURL);
+}
+
+function validateBranch()
+{
+	var validBranch = /^[A-Za-z0-9._+\-]{1,128}$/.test(document.getElementById("branchname").value);
+	showErr("branchname", validBranch);
+	enableButton("addbranch", validBranch);
+}
+
+function toggleHttpProxy()
+{
+	document.getElementById('proxy_host').disabled = !document.getElementById('http_proxy').checked;
+	document.getElementById('proxy_port').disabled = !document.getElementById('http_proxy').checked;
+}
+function toggleProxyAuth()
+{
+	document.getElementById('proxy_auth').disabled = !document.getElementById('http_proxy').checked;
+	document.getElementById('proxy_user').disabled = !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
+	document.getElementById('proxy_pass').disabled = !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
+}
+function validateProxy()
+{
+	var validHttpProxy = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("proxy_host").value) || !document.getElementById('http_proxy').checked;
+	var validHttpPort = /^\d+$/.test(document.getElementById("proxy_port").value) && document.getElementById("proxy_port").value != "" && !(parseInt(document.getElementById("proxy_port").value) < 0) && !(parseInt(document.getElementById("proxy_port").value) > 65535) || !document.getElementById('http_proxy').checked;
+	var validProxyUser = document.getElementById('http_proxy').checked && document.getElementById("proxy_user").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
+	var validProxyPass = document.getElementById("proxy_user").value != "" && document.getElementById("proxy_pass").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
+	showErr("proxy_host", validHttpProxy);
+	showErr("proxy_port", validHttpPort);
+	enableButton("apply_proxy", validHttpProxy && validHttpPort && validProxyUser && validProxyPass);
+}
+window.onload = function()
+{
+	document.getElementById('proxy_host').disabled = !document.getElementById('http_proxy').checked;
+	document.getElementById('proxy_port').disabled = !document.getElementById('http_proxy').checked;
+	document.getElementById('proxy_auth').disabled = !document.getElementById('http_proxy').checked;
+	document.getElementById('proxy_user').disabled = !document.getElementById('proxy_auth').checked;
+	document.getElementById('proxy_pass').disabled = !document.getElementById('proxy_auth').checked;
+}
 </script>
 
 <h2>Software Update Server</h2>
@@ -89,7 +165,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
 
 			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onKeyUp="validateField('baseurl', 'setbaseurl');" onChange="validateField('baseurl', 'setbaseurl');"/>
+				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onClick="validateBaseURL();" onKeyUp="validateBaseURL();" onChange="validateBaseURL();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
 				</span>
@@ -131,7 +207,7 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<span class="label label-default">New Branch</span>
 
 			<div class="input-group">
-				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onKeyUp="validateField('branchname', 'addbranch');" onChange="validateField('branchname', 'addbranch');"/>
+				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onClick="validateBranch();" onKeyUp="validateBranch();" onChange="validateBranch();"/>
 				<span class="input-group-btn">
 					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" value="Add Branch" disabled="disabled"/>
 				</span>
@@ -173,6 +249,8 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 				<option value="0"<?php echo ($syncschedule == "0" ? " selected=\"selected\"" : "")?>>12 a.m.</option>
 				<option value="3"<?php echo ($syncschedule == "3" ? " selected=\"selected\"" : "")?>>3 a.m.</option>
 				<option value="6"<?php echo ($syncschedule == "6" ? " selected=\"selected\"" : "")?>>6 a.m.</option>
+				<!-- 2017-04-27: NetSUS Update added (missing) 9am option -->
+				<option value="9"<?php echo ($syncschedule == "9" ? " selected=\"selected\"" : "")?>>9 a.m.</option>
 				<option value="12"<?php echo ($syncschedule == "12" ? " selected=\"selected\"" : "")?>>12 p.m.</option>
 				<option value="15"<?php echo ($syncschedule == "15" ? " selected=\"selected\"" : "")?>>3 p.m.</option>
 				<option value="18"<?php echo ($syncschedule == "18" ? " selected=\"selected\"" : "")?>>6 p.m.</option>
@@ -182,6 +260,57 @@ if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
 			<br>
 
 			<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
+
+			<br>
+			<br>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<strong>Proxy Configuration</strong>
+				</div>
+
+				<div class="panel-body">
+
+					<div class="checkbox">
+						<label><input class="checkbox" type="checkbox" name="http_proxy" id="http_proxy" value="http_proxy" <?php if ($susProxyHost != "") { echo "checked=\"checked\""; } ?> onChange="toggleHttpProxy(); toggleProxyAuth(); validateProxy();" />Proxy Server</label>
+					</div>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background">Host</div>
+						<input type="text" name="proxy_host" id="proxy_host" class="form-control input-sm" value="<?php echo $susProxyHost; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
+					</div>
+
+					<br>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background">Port</div>
+						<input type="text" name="proxy_port" id="proxy_port" class="form-control input-sm" value="<?php echo $susProxyPort; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
+					</div>
+
+					<br>
+
+					<div class="checkbox">
+						<label><input class="checkbox" type="checkbox" name="proxy_auth" id="proxy_auth" value="proxy_auth" <?php if ($susProxyUser != "") { echo "checked=\"checked\""; } ?> onChange="toggleProxyAuth(); validateProxy();" />Proxy Requires Authentication</label>
+					</div>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background">Username</div>
+						<input type="text" name="proxy_user" id="proxy_user" class="form-control input-sm" value="<?php echo $susProxyUser; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
+					</div>
+
+					<br>
+
+					<div class="input-group">
+						<div class="input-group-addon no-background">Password</div>
+						<input type="password" name="proxy_pass" id="proxy_pass" class="form-control input-sm" value="<?php echo $susProxyPassword; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
+					</div>
+
+				</div>
+
+				<div class="panel-footer">
+					<input type="submit" name="apply_proxy" id="apply_proxy" class="btn btn-primary btn-sm" value="Apply" disabled="disabled" />
+				</div>
+			</div>
 
 
 		</form> <!-- end form SUS -->

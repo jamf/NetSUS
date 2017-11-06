@@ -2,27 +2,38 @@
 
 export logFile="/var/appliance/logs/applianceinstaller.log"
 
-# Logger function
-logEvent(){
-	if [ ! -f "$logFile" ]; then
-		mkdir -p "$(dirname $logFile)"
-	fi
-	echo $1
-	echo $(date "+[%Y-%m-%d %H:%M:%S]: ") $1 >> $logFile
+mkLogDir() {
+    if [ ! -f "$logFile" ]
+    then
+        mkdir -p "$(dirname $logFile)"
+    fi
 }
 
-logEventCritical(){
-	if [ ! -f "$logFile" ]; then
-		mkdir -p "$(dirname $logFile)"
-	fi
-	echo $1
-	echo $(date "+[%Y-%m-%d %H:%M:%S]: ") $1 >> $logFile
+timestamp() {
+    date "+[%Y-%m-%d %H:%M:%S]: "
 }
 
-logEventNoNewLine(){
-	if [ ! -f "$logFile" ]; then
-		mkdir -p "$(dirname $logFile)"
-	fi
-    	echo -n $1
-	echo $(date "+[%Y-%m-%d %H:%M:%S]: ") $1 >> $logFile
+logToFile() {
+    echo "$(timestamp)" "$1" >> $logFile
 }
+
+log(){
+    mkLogDir
+
+    if [[ $INTERACTIVE = true ]]
+    then
+        echo "$@"
+    fi
+
+    logToFile "${@: -1}"
+}
+
+logCritical(){
+    INTERACTIVE=true log "$1"
+}
+
+logNoNewLine(){
+    log -n "$1"
+}
+
+export -f log logCritical logNoNewLine logToFile timestamp mkLogDir
