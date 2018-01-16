@@ -26,6 +26,36 @@ To host a NetBoot server using the NetBoot/SUS/LP server, you need a NetBoot ima
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetBoot/SUS/LP server.**
 
+## Service Ports (TCP/UDP) Used by the NetBoot/SUS/LP Server
+
+Depending on how your network infrastructure is setup, you may need to configure your firewalls/switches to allow your Mac clients access to various service ports on the NetBoot/SUS/LP server.
+
+**For NetBoot:**
+
+* DHCP/BOOTP (for discovery of NetBoot server and images) listens on UDP ports 67 and 68
+* TFTP (used to download the initial booter/kernel of the selected NetBoot set) listens on UDP port 69
+* HTTP (alternative to NFS - used to serve the NetBoot disk image itself once the client has booted) listens on TCP port 80
+* NFS (alternative to HTTP - used to serve the NetBoot disk image itself once the client has booted) listens on ports 111 and 2049 over TCP and UDP for both
+* AFP (used as shadow storage for diskless NetBoot sets) listens on TCP port 548
+
+Note that to NetBoot across different subnets on your network, you'll need to set up IP Helpers on your managed switches to pass the required DHCP traffic over the client and server's subnets.
+
+**For Software Update Server:**
+
+* HTTP listens on TCP port 80
+
+The Software Update Server uses Reposado to sync content from Apple, so it must connect to Apple's software update services - Apple provide some guidance here: https://support.apple.com/en-us/HT202943.
+
+**For LDAP Proxy**
+
+* TCP ports 389 (unencrypted LDAP) and possibly 636 (secure LDAP over TLS)
+
+**For Administrative Access**
+
+* HTTPS (web based administration interface) listens on TCP port 443
+* SSH (secure shell console login) listens on TCP port 22
+* SMB (used to provide a network share for you to upload your NetBoot sets) listens on TCP ports 139 and 445
+
 ## Installing the NetBoot/SUS/LP Server Using an Installer
 1. Copy the NetBoot/SUS/LP Installer (.run) to the server on which you plan to install the NetBoot/SUS /LP server.
 
