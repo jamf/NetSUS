@@ -44,6 +44,7 @@ elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install dmidecode
 	yum_install psmisc
 	yum_install dialog
+	yum_install lsof
 	yum_install m2crypto
 	yum_install ntpdate
 	yum_install mod_ssl

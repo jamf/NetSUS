@@ -33,6 +33,19 @@ $flushlogs = explode(" ", $flushlogs_str);
 ?>
 
 <script type="text/javascript">
+function showErr(id, valid)
+{
+	if (valid || document.getElementById(id).value == "")
+	{
+		document.getElementById(id).style.borderColor = "";
+		document.getElementById(id).style.backgroundColor = "";
+	}
+	else
+	{
+		document.getElementById(id).style.borderColor = "#a94442";
+		document.getElementById(id).style.backgroundColor = "#f2dede";
+	}
+}
 function enableButton(id, enable)
 {
 	document.getElementById(id).disabled = !enable;
@@ -41,7 +54,9 @@ function enableButton(id, enable)
 function validateDisplayLog()
 {
 	var validLog = !(document.getElementById("display_file").value == "");
-	enableButton("display_log", validLog);
+	var validLines = document.getElementById("display_lines").value == "" || document.getElementById("display_lines").value == parseInt(document.getElementById("display_lines").value);
+	showErr("display_lines", validLines);
+	enableButton("display_log", validLog && validLines);
 }
 function validateFlushLog()
 {
@@ -86,7 +101,7 @@ function validateFlushLog()
 
 					<div class="input-group">
 						<div class="input-group-addon no-background proxy-min-width">Number of Lines</div>
-						<input type="text" name="display_lines" id="display_lines" class="form-control input-sm" onKeyPress="return event.charCode >= 48 && event.charCode <= 57" placeholder="[Optional]" />
+						<input type="text" name="display_lines" id="display_lines" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" placeholder="[Optional]" />
 					</div>
 
 				</div>

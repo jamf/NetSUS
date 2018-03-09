@@ -46,33 +46,33 @@ The NetBoot/SUS/LP server web application allows you to do the following for eac
     
 5. Click **Apply** below the list of software updates or at the top of the page.
 
-# Using the SUS with the Casper Suite
+# Using the SUS with Jamf Pro
 
-Like a standard SUS, you can use the SUS hosted by the NetBoot/SUS/LP server to run Software Update on computers that are enrolled with the JSS. This involves pointing computers at a branch, and then using a policy or Casper Remote to run Software Update on the computers.
+Like a standard SUS, you can use the SUS hosted by the NetBoot/SUS/LP server to run Software Update on computers that are enrolled with Jamf Pro. This involves pointing computers at a branch, and then using a policy or Jamf Remote to run Software Update on the computers.
 
 ## Pointing Computers at a SUS Branch
-**Note:** The instructions in this section are for the Casper Suite v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
+**Note:** The instructions in this section are for Jamf Pro v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
 
 There are several ways to point computers at a SUS branch:
 
 * Use network segments (root branch only) 
 * Use a configuration profile
 * Use Managed Preferences
-* Use a policy or Casper Remote
+* Use a policy or Jamf Remote
 
 ### Pointing Computers at a SUS Branch Using Network Segments
 
-This method is available for the root branch only. It involves adding the root branch to the JSS as a software update server, and then using network segments to set a default software update server for computers.
+This method is available for the root branch only. It involves adding the root branch to Jamf Pro as a software update server, and then using network segments to set a default software update server for computers.
 
-For more information, see the “Software Update Servers” and “Network Segments” sections in the Casper Suite Administrator’s Guide.
+For more information, see the “Software Update Servers” and “Network Segments” sections in the Jamf Pro Administrator’s Guide.
 
-When adding the root branch to the JSS as a software update server, be sure to enter “80” for the port.
+When adding the root branch to Jamf Pro as a software update server, be sure to enter “80” for the port.
     
 ### Pointing Computers at a SUS Branch Using a Configuration Profile
 
 Create a configuration profile with the branch URL entered in the **Software Update Server** field in the Software Update payload.
 
-For more information on creating configuration profiles, see the “OS X Configuration Profiles” section in the Casper Suite Administrator’s Guide.
+For more information on creating configuration profiles, see the “OS X Configuration Profiles” section in the Jamf Pro Administrator’s Guide.
 
 For more information on branch URLs, see the “Branch URLs” section below.
 
@@ -80,19 +80,19 @@ For more information on branch URLs, see the “Branch URLs” section below.
 
 Create a Managed Preference profile with the branch URL entered in the **Software Update Server** field in the Software Update payload.
 
-For more information on creating Managed Preference profiles, see the “Managed Preferences” section in the Casper Suite Administrator’s Guide.
+For more information on creating Managed Preference profiles, see the “Managed Preferences” section in the Jamf Pro Administrator’s Guide.
 
 For more information on branch URLs, see the “Branch URLs” section below.
 
 ### Pointing Computers at a SUS Branch by Executing a Command
 
-Use a policy or Casper Remote to execute the following command on managed computers:
+Use a policy or Jamf Remote to execute the following command on managed computers:
 	
 	defaults write /Library/Preferences com.apple.SoftwareUpdate CatalogURL <Branch URL>
 
 Substitute `<Branch URL>` with the branch URL. For more information, see the “Branch URLs” section below.
 
-You can execute a command from the Advanced pane in Casper Remote, or from the Files and Processes payload in a policy.
+You can execute a command from the Advanced pane in Jamf Remote, or from the Files and Processes payload in a policy.
 
 ### Branch URLs
 Branch URLs vary depending on the operating system of enrolled computers. Example branch URLs are listed below.
@@ -135,6 +135,6 @@ Branch URLs vary depending on the operating system of enrolled computers. Exampl
 	
 ### Running Software Update on Computers
 
-For instructions on using the Casper Suite to run Software Update on computers that are managed by the JSS, see the “Running Software Update” section in the Casper Suite Administrator’s Guide.
+For instructions on using Jamf Pro to run Software Update on computers that are managed by the Jamf Pro Server, see the “Running Software Update” section in the Jamf Pro Administrator’s Guide.
 
 

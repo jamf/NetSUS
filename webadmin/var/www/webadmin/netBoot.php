@@ -275,7 +275,7 @@ function validateSubnet()
 
 					<div class="input-group">
 						<div class="input-group-addon no-background">Netmask</div>
-						<input class="form-control round-corners input-sm" type="text" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onClick="validateSubnet();" onKeyUp="validateSubnet();" onChange="validateSubnet();" />
+						<input type="text" class="form-control input-sm" name="netmask" id="netmask" value="<?php if (!array_key_exists($currentSubnet." ".$currentNetmask, $conf->getSubnets())) { echo $currentNetmask; } ?>" onClick="validateSubnet();" onKeyUp="validateSubnet();" />
 					</div>
 
 				</div>
@@ -310,7 +310,7 @@ function validateSubnet()
 		<?php
 		}
 		else { ?>
-		<tr><td><h3>Managed by the JSS</h3></td></tr>
+		<tr><td><h3>Managed by Jamf Pro</h3></td></tr>
 		<?php }?>
 
 	</div><!-- /.col -->

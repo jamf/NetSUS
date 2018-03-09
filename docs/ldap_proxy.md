@@ -1,6 +1,6 @@
 # LDAP Proxy Server
 
-> JAMF customers, please note that the JSS now has an LDAP Proxy Service integrated with the Infrastructure Manager that is distinct from this appliance's version.
+> JAMF customers, please note that Jamf Pro now has an LDAP Proxy Service integrated with the Infrastructure Manager that is distinct from this appliance's version.
 
 The LDAP Proxy Server is a proxy server that allows you to expose an access point to an LDAP Server. In doing so it allows you to adjust the distinguished name to whatever you choose. You may find the following diagram helpful when filling out your proxy information.
 

@@ -76,7 +76,7 @@ function validateTimeserver()
 
 			<span class="label label-default">Network Time Server</span>
 			<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onClick="validateTimeserver();" onKeyUp="validateTimeserver();" onChange="validateTimeserver();" />
+			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onClick="validateTimeserver();" onKeyUp="validateTimeserver();" />
 
 			<br>
 

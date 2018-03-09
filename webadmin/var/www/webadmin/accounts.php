@@ -225,7 +225,7 @@ include "inc/header.php";
 					<label class="control-label">Administration Groups</label>
 					<span class="description">Example: Domain Admins</span>
 					<div class="input-group">
-						<input type="text" name="cn" id="cn" value="" class="form-control input-sm" onKeyUp="validateLDAPAdmin();" onChange="validateLDAPAdmin();" />
+						<input type="text" name="cn" id="cn" value="" class="form-control input-sm" onClick="validateLDAPAdmin();" onKeyUp="validateLDAPAdmin();" />
 						<span class="input-group-btn">
 							<input type="submit" name="addadmin" id="addadmin" class="btn btn-primary btn-sm" value="Add" disabled="disabled" />
 						</span>

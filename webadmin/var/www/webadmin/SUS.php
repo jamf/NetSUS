@@ -216,7 +216,7 @@ window.onload = function()
 			<?php
 			}
 			else { ?>
-				<h3>Managed by the JSS</h3>
+				<h3>Managed by Jamf Pro</h3>
 			<?php }?>
 
 			<span class="label label-default">Store Updates on the NetBoot/SUS/LDAP Proxy Server</span>

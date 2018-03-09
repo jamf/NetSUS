@@ -48,7 +48,7 @@ $pageURI = $parts[count($parts) -1];
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a id="version-number-text" class="navbar-brand text-muted">NetSUS 4.2.1</a>
+                <a id="version-number-text" class="navbar-brand text-muted">NetSUS 4.2.3</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">

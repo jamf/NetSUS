@@ -157,7 +157,7 @@ if [ -f "/etc/ntp/step-tickers" ]; then
 	fi
 else
 	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
-	if [ "$currentTimeServer" != "$newTimeServer" ]]; then
+	if [ "$currentTimeServer" != "$newTimeServer" ]; then
 		echo "server $newTimeServer" > /etc/cron.daily/ntpdate
 	fi
 fi
@@ -675,7 +675,7 @@ else
 	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
 	/usr/local/sbin/jamfds policy > /dev/null 2>&1
 fi
-service $www_service reload 2>&-
+service $www_service reload > /dev/null 2>&1
 ;;
 
 checkin)
@@ -697,7 +697,7 @@ JSSinventory)
 #	else
 #		rm -f /etc/init/avahi-daemon.override
 #	fi
-#elif [ "$(which yum 2>&-)" != '' ]]; then
+#elif [ "$(which yum 2>&-)" != '' ]; then
 #	chkconfig messagebus on > /dev/null 2>&1
 #	service messagebus start 2>&-
 #	chkconfig avahi-daemon on > /dev/null 2>&1
@@ -729,7 +729,7 @@ if [ "$(which apt-get 2>&-)" != '' ]; then
 	else
 		rm -f /etc/init/$SERVICE.override
 	fi
-elif [ "$(which yum 2>&-)" != '' ]]; then
+elif [ "$(which yum 2>&-)" != '' ]; then
 	SERVICE=sshd
 	if [ "$(rpm -qa openssh-server)" = '' ]; then
 		yum install openssh-server -y -q
@@ -783,7 +783,7 @@ if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
 	mkdir -p /etc/apache2/ssl.crt/
 	cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
 	chown openldap /var/appliance/conf/appliance.private.key
-	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
+	sed -i --follow-symlinks "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
 fi
 if [ -f "/etc/pki/tls/certs/localhost.crt" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
@@ -942,10 +942,39 @@ fi
 ;;
 
 # Certificates
+getSSLCertificate)
+openssl x509 -text -noout -in /var/appliance/conf/appliance.certificate.pem | grep '\(Issuer:\|Subject:\|Not After\)' | sed -e 's/.*Subject:/Owner:/' | sed -e 's/.*Issuer:/Issuer:/' | sed -e 's/.*Not After :/Expires:/'
+;;
+
 createCsr)
-common_name=$2
+cn="$2"
+if [ "$3" != '' ]; then
+	ou="$3"
+else
+	ou="."
+fi
+if [ "$4" != '' ]; then
+	o="$4"
+else
+	o="."
+fi
+if [ "$5" != '' ]; then
+	l="$5"
+else
+	l="."
+fi
+if [ "$6" != '' ]; then
+	st="$6"
+else
+	st="."
+fi
+if [ "$7" != '' ]; then
+	c="$7"
+else
+	c="."
+fi
 openssl genrsa -out /tmp/private.key 2048 > /dev/null 2>&1
-(echo .; echo .; echo .; echo .; echo .; echo "$common_name"; echo .; echo .; echo .;) | openssl req -new -key /tmp/private.key -out /tmp/certreq.csr > /dev/null 2>&1
+(echo "$c"; echo "$st"; echo "$l"; echo "$o"; echo "$ou"; echo "$cn"; echo; echo; echo;) | openssl req -new -key /tmp/private.key -out /tmp/certreq.csr > /dev/null 2>&1
 if [ "$(getent passwd www-data)" != '' ]; then
 	www_user=www-data
 elif [ "$(getent passwd apache)" != '' ]; then
@@ -1179,6 +1208,50 @@ if [ "$(which apt-get 2>&-)" != '' ]; then
 elif [ "$(which yum 2>&-)" != '' ]; then
 	echo "yum"
 fi
+;;
+
+getHttpsPort)
+if [ -d "/etc/apache2/sites-enabled" ]; then
+	PORT=$(grep _default_ /etc/apache2/sites-available/default-ssl.conf | cut -d : -f 2 | sed -e 's/[^0-9]//g')
+fi
+if [ -d "/etc/httpd/conf.d" ]; then
+	PORT=$(grep _default_ /etc/httpd/conf.d/ssl.conf | cut -d : -f 2 | sed -e 's/[^0-9]//g')
+fi
+echo $PORT
+;;
+
+setHttpsPort)
+# $2: PORT
+if [ -d "/etc/apache2/sites-enabled" ]; then
+	sed -i "/Listen 80$/! s/Listen.*/Listen $2/g" /etc/apache2/ports.conf
+	sed -i --follow-symlinks "s/<VirtualHost _default_:.*>/<VirtualHost _default_:$2>/" /etc/apache2/sites-available/default-ssl.conf
+fi
+if [ -d "/etc/httpd/conf.d" ]; then
+	sed -i "s/Listen.*https/Listen $2 https/" /etc/httpd/conf.d/ssl.conf
+	sed -i "s/<VirtualHost _default_:.*>/<VirtualHost _default_:$2>/" /etc/httpd/conf.d/ssl.conf
+fi
+if [ "$(which ufw 2>&-)" != '' ]; then
+	ufw allow $2/tcp
+elif [ "$(which firewall-cmd 2>&-)" != '' ]; then
+	firewall-cmd --zone=public --add-port=$2/tcp
+	firewall-cmd --zone=public --add-port=$2/tcp --permanent
+else
+	service=$(grep -w $2/tcp /etc/services | awk '{print $1}')
+	if [ "$service" = '' ]; then
+		service=$2
+	fi
+	if iptables -L | grep DROP | grep -wq "tcp dpt:$service" ; then
+		iptables -D INPUT -p tcp --dport $2 -j DROP
+	fi
+	if ! iptables -L | grep ACCEPT | grep -wq "tcp dpt:$service" ; then
+		iptables -I INPUT -p tcp --dport $2 -j ACCEPT
+	fi
+	service iptables save
+fi
+;;
+
+getPortsInUse)
+echo $(lsof -i -P -n | grep LISTEN | awk -F : '{print $NF}' | awk '{print $1}' | sort -n -u)
 ;;
 
 esac

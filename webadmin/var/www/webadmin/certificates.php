@@ -9,7 +9,7 @@ $title = "Certificates";
 if (isset($_POST['create_csr']) && isset($_POST['common_name'])
 && $_POST['common_name'] != "")
 {
-	suExec("createCsr '".$_POST['common_name']."'");
+	suExec("createCsr \"".$_POST['common_name']."\" \"".$_POST['organizational_unit']."\" \"".$_POST['organization']."\" \"".$_POST['locality']."\" \"".$_POST['state']."\" \"".$_POST['country']."\"");
 	$tmp_file = "/tmp/certreq.zip";
 	$zip = new ZipArchive();
 	$zip->open($tmp_file, ZipArchive::CREATE);
@@ -44,20 +44,20 @@ if (isset($_POST['privatekey']) && isset($_POST['certificate']) && isset($_POST[
 	{
 	echo "<div class=\"alert alert-danger\">ERROR: Unable to read the private key, aborting</div>";
 	return;
-	}	
+	}
 	if(openssl_x509_read($_POST['certificate']) === FALSE)
 	{
 	echo "<div class=\"alert alert-danger\">ERROR: Unable to read the certificate, aborting</div>";
 	return;
 	}
-	
+
 	if(openssl_x509_read($_POST['chain']) === FALSE)
 	{
 	echo "<div class=\"alert alert-danger\">ERROR: Unable to read the chain, aborting</div>";
 	return;
 	}
-	
-suExec("touchconf \"/var/appliance/conf/appliance.private.key\"");	
+
+suExec("touchconf \"/var/appliance/conf/appliance.private.key\"");
 	if(file_put_contents("/var/appliance/conf/appliance.private.key", $_POST['privatekey']) === FALSE)
 	{
 		echo "<div class=\"alert alert-danger\">ERROR: Unable to update appliance.private.key</div>";
@@ -79,6 +79,16 @@ suExec("updateCert");
 echo "<div class=\"alert alert-success\">Configuration saved.  Restart required.</div>";
 }
 
+$ssl_certificate_str = trim(suExec("getSSLCertificate"));
+$ssl_certificate = array();
+if ($ssl_certificate_str != "")
+{
+	foreach(explode("\n", $ssl_certificate_str) as $key => $value)
+	{
+		$tmp = explode(": ", $value);
+		$ssl_certificate[$tmp[0]] = $tmp[1];
+	}
+}
 
 ?>
 
@@ -107,6 +117,24 @@ function validateCSR()
 	showErr("common_name", validCommonName);
 	enableButton("create_csr", validCommonName);
 }
+function validateCerts()
+{
+	var validPrivateKey = !(document.getElementById("privatekey").value == "");
+	var validCertificate = !(document.getElementById("certificate").value == "");
+	var validChain = !(document.getElementById("chain").value == "");
+	enableButton("certs", validPrivateKey && validCertificate && validChain);
+}
+
+//function to save the current tab on refresh
+$(document).ready(function(){
+	$('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+		localStorage.setItem('activeTab', $(e.target).attr('href'));
+	});
+	var activeTab = localStorage.getItem('activeTab');
+	if(activeTab){
+		$('#top-tabs a[href="' + activeTab + '"]').tab('show');
+	}
+});
 </script>
 
 <h2>Certificates</h2>
@@ -116,36 +144,84 @@ function validateCSR()
 		<div class="row">
 			<div class="col-xs-12 col-sm-8 col-md-6">
 
-				<hr>
+				<!--<hr>-->
 
-				<span class="label label-default">Certificate Signing Request</span>
-				<span class="description">Common Name for the certificate (e.g. "netsus.mycompany.corp")</span>
+				<ul class="nav nav-tabs nav-justified" id="top-tabs">
+					<li class="active"><a class="tab-font" href="#cert-tab" role="tab" data-toggle="tab">SSL Certificate</a></li>
+					<li><a class="tab-font" href="#csr-tab" role="tab" data-toggle="tab">Certificate Signing Request</a></li>
+					<li><a class="tab-font" href="#modify-tab" role="tab" data-toggle="tab">Modify Certificates</a></li>
+				</ul>
 
-				<div class="input-group">
-					<input type="text" name="common_name" id="common_name" class="form-control input-sm" value="<?php echo getCurrentHostname(); ?>" onClick="validateCSR();" onKeyUp="validateCSR();" onChange="validateCSR();" />
-					<span class="input-group-btn">
+				<div class="tab-content">
+
+					<div class="tab-pane active fade in" id="cert-tab">
+
+						<label class="control-label">Subject Name</label>
+						<span class="description"><?php echo $ssl_certificate['Owner']; ?></span>
+
+						<label class="control-label">Issuer</label>
+						<span class="description"><?php echo $ssl_certificate['Issuer']; ?></span>
+
+						<label class="control-label">Expiration Date</label>
+						<span class="description"><?php echo $ssl_certificate['Expires']; ?></span>
+
+					</div><!-- /.tab-pane -->
+
+					<div class="tab-pane fade in" id="csr-tab">
+
+						<label class="control-label">Common Name</label>
+						<span class="description">Common Name for the certificate (e.g. "netsus.mycompany.corp")</span>
+						<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onClick="validateCSR();" onKeyUp="validateCSR();" />
+
+						<label class="control-label">Organizational Unit</label>
+						<span class="description">Name of the organizational unit (e.g. "JAMFSW")</span>
+						<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+
+						<label class="control-label">Organization</label>
+						<span class="description">Name of the organization (e.g. "JAMF Software")</span>
+						<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+
+						<label class="control-label">City or Locality</label>
+						<span class="description">Name of the City or Locality (e.g. "Minneapolis")</span>
+						<input type="text" name="locality" id="locality" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+
+						<label class="control-label">State or Province</label>
+						<span class="description">Name of the State or Province (e.g. "MN")</span>
+						<input type="text" name="state" id="state" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+
+						<label class="control-label">Country Code</label>
+						<span class="description">Two-letter country code for this unit (e.g. "US")</span>
+						<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+
+						<br>
+
 						<input type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm" value="Create" disabled="disabled" />
-					</span>
-				</div>
-				<br>
+						<br>
 
-				<span class="label label-default">Modify Certificates</span>
+					</div><!-- /.tab-pane -->
 
-				<label class="control-label">Private Key</label>
-				<span class="description">Paste the content of RSA private key file, including the BEGIN and END tags</span>
-				<textarea class="form-control input-sm" name="privatekey" rows="3"></textarea>
+					<div class="tab-pane fade in" id="modify-tab">
 
-				<label class="control-label">Certificate</label>
-				<span class="description">Paste the content of the certificate file, including the BEGIN and END tags</span>
-				<textarea class="form-control input-sm" name="certificate" rows="3"></textarea>
+						<label class="control-label">Private Key</label>
+						<span class="description">Paste the content of RSA private key file, including the BEGIN and END tags</span>
+						<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
 
-				<label class="control-label">Chain</label>
-				<span class="description">Paste the content of the CA bundle, including the BEGIN and END tags</span>
-				<textarea class="form-control input-sm" name="chain" rows="3"></textarea>
-				<br>
+						<label class="control-label">Certificate</label>
+						<span class="description">Paste the content of the certificate file, including the BEGIN and END tags</span>
+						<textarea class="form-control input-sm" name="certificate" id="certificate" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
 
-				<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Save" />
-				<br>
+						<label class="control-label">Chain</label>
+						<span class="description">Paste the content of the CA bundle, including the BEGIN and END tags</span>
+						<textarea class="form-control input-sm" name="chain" id="chain" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+						<br>
+
+						<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Save" disabled="disabled" />
+						<br>
+
+					</div><!-- /.tab-pane -->
+
+				</div> <!-- end .tab-content -->
+
 				<br>
 				<hr>
 				<br>
@@ -154,6 +230,6 @@ function validateCSR()
 
 			</div>
 		</div>
-	</form> <!-- end SMB form -->
+	</form> <!-- end Certificates form -->
 
 <?php include "inc/footer.php"; ?>
