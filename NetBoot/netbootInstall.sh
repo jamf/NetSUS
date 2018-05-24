@@ -219,7 +219,7 @@ fi
 # Configure tftp
 if [ -f "/etc/default/tftpd-hpa" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/default/tftpd-hpa
-	sed -i 's:TFTP_OPTIONS=.*:TFTP_OPTIONS="--secure --blocksize 1460":' /etc/default/tftpd-hpa
+	sed -i 's:TFTP_OPTIONS=.*:TFTP_OPTIONS="-4 --secure --blocksize 1460":' /etc/default/tftpd-hpa
 fi
 if [ -f "/etc/xinetd.d/tftp" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/xinetd.d/tftp
