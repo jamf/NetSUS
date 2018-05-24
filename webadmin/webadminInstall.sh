@@ -36,6 +36,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install php5-ldap
 	apt_install php-ldap
 	apt_install php-xml
+	apt_install php-zip
 	www_user=www-data
 	www_service=apache2
 elif [[ $(which yum 2>&-) != "" ]]; then
