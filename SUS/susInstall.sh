@@ -67,10 +67,16 @@ if [ ! -d "/srv/SUS/html/content/catalogs" ]; then
 fi
 
 # Install reposado
-cp ./resources/sus_sync.py /var/appliance/ >> $logFile 2>&1
 cp -R ./resources/reposado/* /var/lib/reposado/ >> $logFile 2>&1
 
-# Set perms on SUS sync
+# Install scripts
+cp ./resources/sus_info.py /var/appliance/ >> $logFile 2>&1
+cp ./resources/sus_prefs.py /var/appliance/ >> $logFile 2>&1
+cp ./resources/sus_sync.py /var/appliance/ >> $logFile 2>&1
+
+# Set perms on scripts
+chmod +x /var/appliance/sus_info.py
+chmod +x /var/appliance/sus_prefs.py
 chmod +x /var/appliance/sus_sync.py
 
 # Enable apache rewrite rules
@@ -110,6 +116,8 @@ if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 		RewriteCond %{HTTP_USER_AGENT} Darwin/17
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+		RewriteCond %{HTTP_USER_AGENT} Darwin/18
+		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 	</IfModule>
 
 </VirtualHost>
@@ -144,6 +152,8 @@ if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 		RewriteCond %{HTTP_USER_AGENT} Darwin/17
 		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
+		RewriteCond %{HTTP_USER_AGENT} Darwin/18
+		RewriteRule ^/index\.sucatalog$ http://%{HTTP_HOST}/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog
 	</IfModule>
 ZHEREDOC
 	# Remove empty <IfModule mod_rewrite.c> sections

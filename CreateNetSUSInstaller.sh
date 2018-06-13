@@ -44,7 +44,7 @@ cp -R NetBoot/var/appliance/libdb4-4.8.30-21.fc26.x86_64.rpm temp/installer/reso
 cp -R NetBoot/var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm temp/installer/resources/netatalk-2.2.0-2.el6.x86_64.rpm
 cp -R NetBoot/var/appliance/netatalk-2.2.3-9.fc20.x86_64.rpm temp/installer/resources/netatalk-2.2.3-9.fc20.x86_64.rpm
 cp -R SUS/susInstall.sh temp/installer/install-sus.sh
-cp -R SUS/var/appliance/sus_sync.py temp/installer/resources/sus_sync.py
+cp -R SUS/var/appliance/* temp/installer/resources
 cp -R SUS/var/lib/reposado temp/installer/resources/reposado
 cp -R webadmin/webadminInstall.sh temp/installer/install-webadmin.sh
 cp -R webadmin/var/appliance/dialog.sh temp/installer/resources/dialog.sh

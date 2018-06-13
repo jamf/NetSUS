@@ -20,6 +20,7 @@
 
 import xml.dom.minidom
 import os, sys, glob
+import time
 
 if os.access("/var/run/lockfile.sus_sync.lock", os.F_OK):
     #if the lockfile is already there then check the PID number
@@ -100,6 +101,16 @@ def enable_all_sus():
 
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
+def sync_time(XML):
+	for node in XML.getElementsByTagName("lastsussync"):
+		node.parentNode.removeChild(node)
+	lastsussync = XML.createElement("lastsussync")
+	time_int = int(time.time())
+	timestamp = XML.createTextNode(str(time_int))
+	lastsussync.appendChild(timestamp)
+	XML.childNodes[0].appendChild(lastsussync)
+	XML.writexml(open('/var/appliance/conf/appliance.conf.xml', 'w'))
+
 try:
     dom = xml.dom.minidom.parse('/var/appliance/conf/appliance.conf.xml')
     handleXML(dom)
@@ -111,6 +122,7 @@ except Exception:
 
 try:
     sync_sus()
+    sync_time(dom)
     print "Finished SUS Sync"
 except Exception:
     print "Unable to sync, what did you do!"

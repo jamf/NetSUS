@@ -174,8 +174,26 @@ sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
 if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
 	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
 fi
-echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" > /etc/sudoers.d/webadmin
-chmod 0440 /etc/sudoers.d/webadmin
+if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's sus helper script
+chown root:root /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the sus helper script
+sed -i '/scripts\/susHelper.sh/d' /etc/sudoers
+sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
+if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
+	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
+fi
+if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/susHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
 
 # Enable apache on SSL, dav and dav_fs, only needed on Ubuntu
 if [[ $(which a2enmod 2>&-) != "" ]]; then
