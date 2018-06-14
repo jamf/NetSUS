@@ -232,7 +232,9 @@ function setCatalogURLs(element) {
 			elements[i].disabled = false;
 		}
 	}
-	document.getElementById("delete_other").disabled = checkedCatalogURLs.length == 0 && otherCatalogURLs.length == 1;
+	if (document.getElementById("delete_other")) {
+		document.getElementById("delete_other").disabled = checkedCatalogURLs.length == 0 && otherCatalogURLs.length == 1;
+	}
 	appleCatalogURLs = checkedCatalogURLs.concat(otherCatalogURLs);
 	ajaxPost("susCtl.php", "catalogurls="+appleCatalogURLs);
 }
