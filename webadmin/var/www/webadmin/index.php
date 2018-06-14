@@ -120,7 +120,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 			<div class="panel panel-default panel-login">
 
 				<div class="panel-heading">
-					<div class="panel-title text-center"><img src="images/NSUS-logo.svg" height="55"></div>
+					<div class="panel-title text-center"><img src="images/NSUS-logo.svg" height="42"></div>
 				</div>
 
 				<div class="panel-body">

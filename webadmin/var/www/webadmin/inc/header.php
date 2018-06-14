@@ -48,7 +48,7 @@ $pageURI = $parts[count($parts) -1];
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a id="version-number-text" class="navbar-brand text-muted">version 4.5</a>
+                <a id="version-number-text" class="navbar-brand text-muted">NetSUS 4.5</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -81,7 +81,7 @@ $pageURI = $parts[count($parts) -1];
     <!-- Sidebar -->
     <div id="sidebar-wrapper" class="nav navbar-default">
         <div id="logo-wrapper">
-            <a href="dashboard.php"><img src="images/NSUS-logo.svg"></a>
+            <a href="dashboard.php"><img src="images/NSUS-logo.svg" height="34"></a>
         </div>
         <div id="navbar">
             <ul class="nav sidebar-nav">
