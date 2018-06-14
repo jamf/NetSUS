@@ -226,7 +226,7 @@ $(document).ready(function(){
 							</thead>
 							<tfoot>
 								<tr>
-									<td align="right" colspan="5"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createBranch"><span class="glyphicon glyphicon-plus"></span> Add</button></td>
+									<td align="right" colspan="5"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($sync_status || $util_status || $last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button></td>
 								<tr>
 							</tfoot>
 							<tbody>
@@ -265,7 +265,7 @@ $(document).ready(function(){
 					<br>
 
 					<h5><strong>Purge Deprecated</strong> <small>Removes all deprecated products that are not in any branch catalogs.</small></h5>
-					<button type="button" id="purge_dep" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#purge_deprecated" <?php echo ($sync_status || $util_status ? "disabled " : ""); ?>>Purge</button>
+					<button type="button" id="purge_dep" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#purge_deprecated" <?php echo ($sync_status || $util_status || $last_sync == "Never" ? "disabled " : ""); ?>>Purge</button>
 
 					<div class="modal fade" id="createBranch" tabindex="-1" role="dialog">
 						<div class="modal-dialog" role="document">
