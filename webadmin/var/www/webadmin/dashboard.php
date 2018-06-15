@@ -45,6 +45,23 @@ if ($conf->needsToChangeAnyPasses())
 	<div class="panel-heading">
 		<strong>Software Update Server</strong>
 	</div>
+	<?php
+	function susExec($cmd) {
+		return shell_exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	}
+
+	$sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
+
+	$last_sync = $conf->getSetting("lastsussync");
+	if (empty($last_sync)) {
+		$last_sync = trim(susExec("getLastSync"));
+	}
+	if (empty($last_sync)) {
+		$last_sync = "Never";
+	} else {
+		$last_sync = date("Y-m-d H:i:s", $last_sync);
+	}
+	?>
 
 	<div class="panel-body">
 		<div class="row">
@@ -52,7 +69,7 @@ if ($conf->needsToChangeAnyPasses())
 			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Last Sync</h4>
-					<span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
+					<span><?php echo $last_sync; ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
@@ -61,7 +78,7 @@ if ($conf->needsToChangeAnyPasses())
 			<div class="col-xs-6 col-md-2">
 				<div class="bs-callout bs-callout-default">
 					<h4>Sync Status</h4>
-					<span><?php if (getSyncStatus()) { echo "Running"; } else { echo "Not Running"; } ?></span>
+					<span><?php echo ($sync_status ? "Running" : "Not Running"); ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
