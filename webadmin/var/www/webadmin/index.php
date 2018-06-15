@@ -21,7 +21,7 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 			if ($username == $admin_username && $password == $admin_password) {
 				$isAuth = TRUE;
 			} else {
-				$loginerror = "NetSUS: Invalid Credentials";
+				$loginerror = "Invalid Credentials";
 			}
 		}
 	}
@@ -46,12 +46,12 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 				}
 				ldap_unbind($ldapconn);
 			} else if (ldap_get_option($ldapconn, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
-				$loginerror = "LDAP: Error on Bind - ".$extended_error;
+				$loginerror = "Error on LDAP Bind - ".$extended_error;
 			} else {
-				$loginerror = "LDAP: Invalid Credentials";
+				$loginerror = "Invalid Credentials";
 			}
 		} else {
-			$loginerror = "LDAP: Unable to Connect to URL";
+			$loginerror = "Unable to Connect to LDAP Server";
 		}
 	}
 }
@@ -80,16 +80,36 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	    <meta http-equiv="pragma" content="no-cache">
 		<link href="theme/bootstrap.css" rel="stylesheet" media="all">
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
-	</head> 
+		<style>
+			body {
+				background-color: #292929;
+			}
+			.login-wrapper {
+				float: right;
+				position: relative;
+				left: -50%;
+				text-align: left;
+			}
+			.login-wrapper > .login-panel {
+				position: relative;
+				left: 50%;
+				width: 300px;
+				margin-top: 70px;
+				-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+				-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+				box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+			}
+		</style>
+	</head>
 
 	<body>
-		<div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 col-centered">
-			<div class="panel panel-default panel-login">
-				<div class="panel-heading">
-					<div class="panel-title text-center"><img src="images/NSUS-logo.svg" height="65"></div>
+		<div class="login-wrapper">
+			<div class="login-panel panel panel-default">
+				<div class="panel-heading" style="background: #ffffff;">
+					<div class="panel-title text-center"><img src="images/NSUS-color.svg" height="42"></div>
 				</div>
 				<div class="panel-body">
-					<div class="alert alert-danger">WebAdmin GUI is disabled</div>
+					<div class="text-center text-muted" style="padding: 4px 0px;">WebAdmin GUI is disabled.</div>
 				</div>
 			</div>
 		</div>
@@ -110,42 +130,69 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<meta http-equiv="pragma" content="no-cache">
 		<link href="theme/bootstrap.css" rel="stylesheet" media="all">
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
+		<style>
+			body {
+				background-color: #292929;
+			}
+			.login-wrapper {
+				float: right;
+				position: relative;
+				left: -50%;
+				text-align: left;
+			}
+			.login-wrapper > .login-panel {
+				position: relative;
+				left: 50%;
+				width: 300px;
+				margin-top: 70px;
+				-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+				-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+				box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+			}
+		</style>
 		<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 	</head> 
 
 	<body>
-<!--	<div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 col-lg-5 col-lg-offset-3">-->
-		<div class="col-xs-12 col-sm-8 col-md-6 col-lg-5 col-centered">
-			<div class="panel panel-default panel-login">
 
-				<div class="panel-heading">
-					<div class="panel-title text-center"><img src="images/NSUS-logo.svg" height="42"></div>
+		<div class="login-wrapper">
+			<div class="login-panel panel panel-default">
+
+				<div class="panel-heading" style="background: #ffffff;">
+					<div class="panel-title text-center"><img src="images/NSUS-color.svg" height="42"></div>
 				</div>
 
 				<div class="panel-body">
-
 					<?php if(isset($loginerror)) {
-						echo "<div class=\"alert alert-danger\">".$loginerror."</div>";
+						echo "<div class=\"text-danger text-center\" style=\"padding-bottom: 8px\"><span class=\"glyphicon glyphicon-exclamation-sign\"></span> ".$loginerror.".</div>";
 					} ?>
-
-					<form name="loginForm" class="form-horizontal" id="login-form" method="post" action="">
-						<legend>Login with</legend>
-						<div class="radio radio-inline radio-primary">
-							<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type=="suslogin"?" checked=\"checked\"":"") ?>>
-							<label for="suslogin">Local Account</label>
+					<form name="loginForm" class="form-horizontal" id="login-form" method="post">
+						<div class="text-center">
+							<div class="radio radio-inline radio-primary">
+								<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type=="suslogin"?" checked=\"checked\"":"") ?>>
+								<label for="suslogin">Local Account</label>
+							</div>
+							<div class="radio radio-inline radio-primary">
+								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type=="adlogin"?" checked=\"checked\"":"") ?>>
+								<label for="adlogin">LDAP Account</label>
+							</div>
 						</div>
-						<div class="radio radio-inline radio-primary">
-							<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type=="adlogin"?" checked=\"checked\"":"") ?>>
-							<label for="adlogin">Active Directory</label>
+						<div class="username">
+							<input type="text" name="username" id="username" class="form-control input-sm" placeholder="[Username]" />
 						</div>
-						<div class="username"><input id="username" type="text" class="form-control input-sm" name="username" value="" placeholder="Username"></div>
-						<div class="password"><input id="password" type="password" class="form-control input-sm" name="password" placeholder="Password"></div>
-						<div><input type="submit" class="btn btn-primary pull-right" name="submit" value="Log In"></div>
+						<div class="password">
+							<input type="password" name="password" id="password" class="form-control input-sm" placeholder="[Password]" />
+						</div>
+						<div>
+							<button type="submit" name="submit" id="submit" class="btn btn-primary btn-sm pull-right">Log In</button>
+						</div>
 					</form>
 				</div>
+
 			</div>
 		</div>
+
 	</body>
 </html>
 <?php
