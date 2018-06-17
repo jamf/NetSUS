@@ -3,6 +3,7 @@ Miscellaneous
 ------------------------------------------------*/
 
 body {
+    overflow-x: hidden;
     font-family: 'Roboto', sans-serif;
 }
 .table {
@@ -79,20 +80,77 @@ bs-callout for Dashboard
 Upper Navigation
 ------------------------------------------------*/
 .navbar {
-    -webkit-transition: all 0.5s ease;
+    /* -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
     -moz-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
     -webkit-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
-    z-index: 100;
+    z-index: 100; */
+    border: 0px;
+}
+.navbar-toggle.navbar-left {
+    float: left;
+    margin-left: 10px;
+}
+.navbar-user {
+    position: absolute;
+    top: 0px;
+    right: 15px;
+    height: 50px;
+}
+.navbar-btn-user {
+    height: 50px;
+    padding: 10px;
+    margin-bottom: -2px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+.navbar-btn-user:focus {
+    outline: 0;
+}
+.navbar-default .navbar-btn-user {
+    color: #777;
+}
+.navbar-default .navbar-btn-user:hover,
+.navbar-default .navbar-btn-user:focus {
+    color: #333;
+}
+.navbar-default .navbar-btn-user:focus {
+    color: #555;
+    background-color: #e7e7e7;
+}
+.navbar-inverse .navbar-btn-user {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-btn-user:hover,
+.navbar-inverse .navbar-btn-user:focus {
+    color: #fff;
+}
+.navbar-inverse .navbar-btn-user:focus {
+    background-color: #080808;
+}
+.dropdown-menu.dropdown-menu-user {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    font-size: 12px;
 }
 /*----------------------------------------------
 Side Navigation
 ------------------------------------------------*/
 .navbar-inverse {
     background-color: #212121;
+}
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+#wrapper.toggled {
+    padding-left: 220px;
 }
 #sidebar-wrapper {
     z-index: 1000;
@@ -110,7 +168,10 @@ Side Navigation
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-#logo-wrapper {
+#wrapper.toggled #sidebar-wrapper {
+    width: 220px;
+}
+/* #logo-wrapper {
     background-color: #1c1c1c;
     margin-top: 0;
     padding-bottom: 15px;
@@ -126,6 +187,15 @@ Side Navigation
 #logo-wrapper > a > img {
     max-width: 80%;
     max-height: 100%;
+} */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 220px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .sidebar-nav li {
@@ -172,6 +242,10 @@ Page Content Wrapper
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     padding-bottom: 50px;
+}
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -220px;
 }
 
 /*----------------------------------------------
@@ -383,17 +457,29 @@ Login Page
 Responsive Design
 ------------------------------------------------*/
 @media(min-width:768px) {
+    #wrapper {
+        padding-left: 220px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 220px;
+    }
 
     #sidebar-wrapper {
         width: 220px;
     }
 
-    #page-content-wrapper {
-        padding-left: 240px;
+    #wrapper.toggled #sidebar-wrapper {
+        width: 220px;
     }
 
-    .navbar {
-        left: 220px;
+    #page-content-wrapper {
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
     }
 }
 
