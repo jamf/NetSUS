@@ -10,6 +10,7 @@ if (isset($_SESSION['isAdmin'])) {
 $currentFile = $_SERVER["PHP_SELF"];
 $parts = Explode('/',$currentFile);
 $pageURI = $parts[count($parts) -1];
+$currentUser = getCurrentWebUser();
 
 ?>
 <!DOCTYPE html>
@@ -31,8 +32,8 @@ $pageURI = $parts[count($parts) -1];
 	<!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
 	<script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
 	<script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
-	<script type="text/javascript" src="scripts/overlibmws.js"></script>
-	<script type="text/javascript" src="scripts/infoPanel.js"></script>
+	<!-- <script type="text/javascript" src="scripts/overlibmws.js"></script> -->
+	<!-- <script type="text/javascript" src="scripts/infoPanel.js"></script> -->
 	<script type="text/javascript" src="scripts/ajax.js"></script>
 	<?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
 </head>
@@ -55,7 +56,11 @@ $pageURI = $parts[count($parts) -1];
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
-                            <li><a href="logout.php">Log Out <?php echo getCurrentWebUser(); ?></a></li>
+                            <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
+                            <li><a href="accounts.php" onClick="localStorage.setItem('activeTab', 'webadmin-tab');">Change Password</a></li>
+                            <li role="separator" class="divider"></li>
+                            <?php } ?>
+                            <li><a href="logout.php">Logout <?php echo $currentUser ?></a></li>
                         </ul>
                     </div>
                 </div>
