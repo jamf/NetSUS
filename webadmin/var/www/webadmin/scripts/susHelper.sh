@@ -61,7 +61,11 @@ repoPurge)
 
 setBaseUrl)
 # $2: URL
-/var/appliance/sus_prefs.py write LocalCatalogURLBase ${2}
+if [ "${2}" != '' ]; then
+	/var/appliance/sus_prefs.py write LocalCatalogURLBase ${2}
+else
+	/var/appliance/sus_prefs.py delete LocalCatalogURLBase
+fi
 ;;
 
 setSchedule)
