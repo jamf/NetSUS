@@ -53,14 +53,25 @@ $pageURI = $parts[count($parts) -1];
                 <div id="version-number-text" class="navbar-text">v4.5</div>
                 <div class="navbar-user">
                     <div class="btn-group">
-                        <button type="button" class="navbar-btn-user" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><?php echo getCurrentWebUser(); ?> <span class="caret"></span></button>
+                        <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
+                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
+                            <li><a href="logout.php">Log Out <?php echo getCurrentWebUser(); ?></a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="navbar-info">
+                    <button type="button" class="navbar-btn-icon" onClick="document.location.href='about.php'"><span class="glyphicon glyphicon-info-sign"></span></button>
+                </div>
+                <div class="navbar-gear">
+                    <div class="btn-group">
+                        <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
                             <li><a href="restart.php">Restart</a></li>
                             <li><a href="shutdown.php">Shut Down</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="disablegui.php">Disable GUI</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="logout.php">Log Out</a></li>
+                            <li><a href="settings.php">Settings</a></li>
                         </ul>
                     </div>
                 </div>
@@ -74,12 +85,11 @@ $pageURI = $parts[count($parts) -1];
         <div id="sidebar-wrapper" class="nav navbar-default">
             <ul class="nav sidebar-nav">
                 <li class=""><a href="#"><span class="glyphicon"></span></a></li>
-                <li class="<?php if ($pageURI == "dashboard.php") { echo "active"; } ?>"><a href="dashboard.php"><span class="glyphicon glyphicon-dashboard marg-right"></span>Dashboard</a></li>
+                <!-- begin Sidebar Menu Items -->
                 <li class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="glyphicon glyphicon-hdd marg-right"></span>Software Update Server</a></li>
                 <li class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="glyphicon glyphicon-import marg-right"></span>NetBoot Server</a></li>
                 <li class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-transfer marg-right"></span>LDAP Proxy</a></li>
-                <li class="<?php if ($pageURI == "settings.php") { echo "active"; } ?>"><a href="settings.php"><span class="glyphicon glyphicon-cog marg-right"></span>Settings</a></li>
-                <li class="<?php if ($pageURI == "about.php") { echo "active"; } ?>"><a href="about.php"><span class="glyphicon glyphicon-info-sign marg-right"></span>About</a></li>
+                <!-- end Sidebar Menu Items -->
             </ul>
         </div>
         <!-- /#sidebar-wrapper -->

@@ -93,42 +93,56 @@ Upper Navigation
 .navbar-toggle.navbar-left {
     float: left;
     margin-left: 10px;
+    margin-right: 0px;
 }
 .navbar-user {
     position: absolute;
     top: 0px;
-    right: 15px;
+    right: 110px;
     height: 50px;
 }
-.navbar-btn-user {
+.navbar-info {
+    position: absolute;
+    top: 0px;
+    right: 60px;
     height: 50px;
+}
+.navbar-gear {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    height: 50px;
+}
+.navbar-btn-icon {
+    height: 50px;
+    width: 50px;
     padding: 10px;
     margin-bottom: -2px;
     background-color: transparent;
     border: 1px solid transparent;
 }
-.navbar-btn-user:focus {
+.navbar-btn-icon:focus {
     outline: 0;
 }
-.navbar-default .navbar-btn-user {
+.navbar-default .navbar-btn-icon {
     color: #777;
 }
-.navbar-default .navbar-btn-user:hover,
-.navbar-default .navbar-btn-user:focus {
+.navbar-default .navbar-btn-icon:hover,
+.navbar-default .navbar-btn-icon:focus {
     color: #333;
 }
-.navbar-default .navbar-btn-user:focus {
+.navbar-default .navbar-btn-icon:focus {
     color: #555;
     background-color: #e7e7e7;
 }
-.navbar-inverse .navbar-btn-user {
+.navbar-inverse .navbar-btn-icon {
     color: #9d9d9d;
 }
-.navbar-inverse .navbar-btn-user:hover,
-.navbar-inverse .navbar-btn-user:focus {
+.navbar-inverse .navbar-btn-icon:hover,
+.navbar-inverse .navbar-btn-icon:focus {
     color: #fff;
 }
-.navbar-inverse .navbar-btn-user:focus {
+.navbar-inverse .navbar-btn-icon:focus {
     background-color: #080808;
 }
 .dropdown-menu.dropdown-menu-user {
