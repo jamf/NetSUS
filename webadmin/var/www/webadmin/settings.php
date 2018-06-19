@@ -10,12 +10,17 @@ include "inc/header.php";
 
 ?>
 
-<div class="panel panel-default panel-main">
-	<div class="panel-heading">
-		<strong>System</strong>
-	</div>
-	<div class="panel-body">
+<div class="description">&nbsp;</div>
 
+<h2>Settings</h2>
+
+<div class="row">
+	<div class="col-xs-12 col-sm-12 col-lg-12">
+
+		<hr>
+		<br>
+
+		<h5><strong>System</strong></h5>
 		<div class="row">
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
@@ -59,15 +64,11 @@ include "inc/header.php";
 			<!-- /Column -->
 		</div>
 		<!-- /Row -->
-	</div>
-</div>
 
-<div class="panel panel-default panel-main">
-	<div class="panel-heading">
-		<strong>Services</strong>
-	</div>
-	<div class="panel-body">
+		<hr>
+		<br>
 
+		<h5><strong>Services</strong></h5>
 		<div class="row">
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
@@ -87,15 +88,11 @@ include "inc/header.php";
 			<!-- /Column -->
 		</div>
 		<!-- /Row -->
-	</div>
-</div>
 
-<div class="panel panel-default panel-main">
-	<div class="panel-heading">
-		<strong>Information</strong>
-	</div>
-	<div class="panel-body">
+		<hr>
+		<br>
 
+		<h5><strong>Information</strong></h5>
 		<div class="row">
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
@@ -119,6 +116,3 @@ include "inc/header.php";
 </div>
 
 <?php include "inc/footer.php"; ?>
-
-
-
