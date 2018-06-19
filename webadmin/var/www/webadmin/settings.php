@@ -12,7 +12,7 @@ include "inc/header.php";
 
 <div class="panel panel-default panel-main">
 	<div class="panel-heading">
-		<strong>NetBoot/SUS/LDAP Proxy Server</strong>
+		<strong>System</strong>
 	</div>
 	<div class="panel-body">
 
@@ -51,14 +51,6 @@ include "inc/header.php";
 			<!-- /Column -->
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
-				<a href="logs.php">
-					<p><img src="images/settings/ChangeManagement.png" alt="Logs"></p>
-					<p>Logs</p>
-				</a>
-			</div>
-			<!-- /Column -->
-			<!-- Column -->
-			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="storage.php">
 					<p><img src="images/settings/Storage.png" alt="Storage"></p>
 					<p>Storage</p>
@@ -72,7 +64,7 @@ include "inc/header.php";
 
 <div class="panel panel-default panel-main">
 	<div class="panel-heading">
-		<strong>Shares</strong>
+		<strong>Services</strong>
 	</div>
 	<div class="panel-body">
 
@@ -90,6 +82,34 @@ include "inc/header.php";
 				<a href="SMB.php">
 					<p><img src="images/settings/Category.png" alt="SMB"></p>
 					<p>SMB</p>
+				</a>
+			</div>
+			<!-- /Column -->
+		</div>
+		<!-- /Row -->
+	</div>
+</div>
+
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
+		<strong>Information</strong>
+	</div>
+	<div class="panel-body">
+
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="logs.php">
+					<p><img src="images/settings/ChangeManagement.png" alt="Logs"></p>
+					<p>Logs</p>
+				</a>
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="about.php">
+					<p><img src="images/settings/Acknowledgements.png" alt="About"></p>
+					<p>Acknowledgments</p>
 				</a>
 			</div>
 			<!-- /Column -->

@@ -98,12 +98,6 @@ Upper Navigation
 .navbar-user {
     position: absolute;
     top: 0px;
-    right: 110px;
-    height: 50px;
-}
-.navbar-info {
-    position: absolute;
-    top: 0px;
     right: 60px;
     height: 50px;
 }

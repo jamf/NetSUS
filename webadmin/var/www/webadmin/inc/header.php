@@ -118,9 +118,6 @@ $currentUser = getCurrentWebUser();
                         </ul>
                     </div>
                 </div>
-                <div class="navbar-info">
-                    <button type="button" class="navbar-btn-icon" onClick="document.location.href='about.php'"><span class="glyphicon glyphicon-info-sign"></span></button>
-                </div>
                 <div class="navbar-gear">
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
