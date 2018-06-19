@@ -78,7 +78,11 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	    <meta http-equiv="expires" content="0">
 	    <meta http-equiv="pragma" content="no-cache">
+		<!-- Roboto Font CSS -->
+		<link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
+		<!-- Bootstrap CSS -->
 		<link href="theme/bootstrap.css" rel="stylesheet" media="all">
+		<!-- Project CSS -->
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
 		<style>
 			body {
@@ -128,7 +132,11 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<meta http-equiv="expires" content="0">
 		<meta http-equiv="pragma" content="no-cache">
+		<!-- Roboto Font CSS -->
+		<link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
+		<!-- Bootstrap CSS -->
 		<link href="theme/bootstrap.css" rel="stylesheet" media="all">
+		<!-- Project CSS -->
 		<link rel="stylesheet" href="theme/styles.css" type="text/css">
 		<style>
 			body {
