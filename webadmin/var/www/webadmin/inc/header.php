@@ -29,17 +29,71 @@ $currentUser = getCurrentWebUser();
 	<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
 	<!-- Bootstrap JavaScript -->
 	<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-	<!-- <script type="text/javascript" src="scripts/jquery.tablesorter.min.js"></script> -->
 	<script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
 	<script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
-	<!-- <script type="text/javascript" src="scripts/overlibmws.js"></script> -->
-	<!-- <script type="text/javascript" src="scripts/infoPanel.js"></script> -->
 	<script type="text/javascript" src="scripts/ajax.js"></script>
 	<?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
 </head>
 
 <?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
 <body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?>>
+    <!-- Restart Modal -->
+    <div class="modal fade" id="restart-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="restart-title" class="modal-title">Restart</h3>
+                </div>
+                <div class="modal-body" id="restart-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button id="restart-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="restart-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="restartServer();">Restart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- /#modal -->
+
+    <!-- Shut Down Modal -->
+    <div class="modal fade" id="shutdown-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="shutdown-title" class="modal-title">Shut Down</h3>
+                </div>
+                <div class="modal-body" id="shutdown-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button id="shutdown-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="shutdown-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="shutdownServer();">Shut Down</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- /#modal -->
+
+    <!-- Disable GUI Modal -->
+    <div class="modal fade" id="disablegui-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="disablegui-title" class="modal-title">Disable GUI</h3>
+                </div>
+                <div class="modal-body" id="disablegui-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button id="disablegui-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="disablegui-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="disableGUI();">Disable</button>
+                </div>
+            </div>
+        </div>
+    </div>
+	<!-- /#modal -->
+
     <!-- Fixed Top Navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
@@ -71,10 +125,10 @@ $currentUser = getCurrentWebUser();
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
-                            <li><a href="restart.php">Restart</a></li>
-                            <li><a href="shutdown.php">Shut Down</a></li>
+                            <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
+                            <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="disablegui.php">Disable GUI</a></li>
+                            <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static" onClick="disableGUIModal();">Disable GUI</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="settings.php">Settings</a></li>
                         </ul>

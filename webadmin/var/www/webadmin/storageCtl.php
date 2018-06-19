@@ -39,7 +39,7 @@ if (isset($_GET['resize']))
 				<br>
 				<hr>
 				<br>
-				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Restart" onclick="document.location.href='restart.php'">
+				<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
 			</div>
 		</div>
 <?php
