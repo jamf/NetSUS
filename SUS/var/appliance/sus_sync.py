@@ -101,7 +101,8 @@ def enable_all_sus():
 
     os.system("cp /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /srv/SUS/html/index.sucatalog")
 
-def sync_time(XML):
+def sync_time():
+	XML = xml.dom.minidom.parse('/var/appliance/conf/appliance.conf.xml')
 	for node in XML.getElementsByTagName("lastsussync"):
 		node.parentNode.removeChild(node)
 	lastsussync = XML.createElement("lastsussync")
@@ -122,7 +123,7 @@ except Exception:
 
 try:
     sync_sus()
-    sync_time(dom)
+    sync_time()
     print "Finished SUS Sync"
 except Exception:
     print "Unable to sync, what did you do!"
