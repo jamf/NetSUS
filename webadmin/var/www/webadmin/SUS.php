@@ -181,6 +181,9 @@ function purgeDep() {
 </script>
 
 <script type="text/javascript">
+<?php if ($last_sync == "Never") { ?>
+	localStorage.setItem('activeSusTab', 'preferences-tab');
+<?php } ?>
 $(document).ready(function(){
 	$('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
 		localStorage.setItem('activeSusTab', $(e.target).attr('href'));
@@ -204,6 +207,8 @@ $(document).ready(function(){
 			<ul class="nav nav-tabs nav-justified" id="top-tabs">
 				<li class="active"><a class="tab-font" href="#operations-tab" role="tab" data-toggle="tab">Operations</a></li>
 				<li><a class="tab-font" href="#preferences-tab" role="tab" data-toggle="tab">Preferences</a></li>
+				<li><a class="tab-font" href="#schedule-tab" role="tab" data-toggle="tab">Schedule</a></li>
+				<li><a class="tab-font" href="#proxy-tab" role="tab" data-toggle="tab">Proxy</a></li>
 			</ul>
 
 			<div class="tab-content">
@@ -389,8 +394,44 @@ $(document).ready(function(){
 					<hr>
 					<br>
 
-					<h5><strong>Daily Sync Time</strong> <small>Time at which to sync the list of available updates with Apple's Software Update server each day.</small></h5>
-					<!-- <div class="description" style="padding-bottom: 4px;">Time at which to sync the list of available updates with Apple's Software Update server each day.</div> -->
+					<h5><strong>Apple Catalog URLs</strong> <small>Specify the Apple SUS catalog URLs to replicate.</small></h5>
+					<?php foreach ($default_catalog_map as $array) {
+						if ($array["default"]) { ?>
+					<div class="checkbox checkbox-primary checkbox-inline">
+						<input name="catalogurl" class="styled" type="checkbox" onChange="setCatalogURLs(this);" value="<?php echo $array["url"]; ?>" <?php echo (in_array($array["url"], $apple_catalog_urls) ? (sizeof($apple_catalog_urls) == 1 ? "checked disabled" : "checked") : ""); ?> />
+						<label> <?php echo $array["name"]; ?> </label>
+					</div>
+					<?php }
+					} ?>
+
+					<br>
+					<br>
+
+					<h5><strong>Additional Catalog URLs</strong></a> <small>Additional SUS catalog URLs to replicate.</small></h5>
+					<table class="table table-striped">
+						<tfoot>
+							<tr>
+								<td colspan="2" align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button></td>
+							</tr>
+						</tfoot>
+						<tbody>
+							<?php foreach ($other_catalog_urls as $catalog_url) { ?>
+							<tr>
+								<td><?php echo $catalog_url; ?></td>
+								<td align="right"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
+							</tr>
+							<?php } ?>
+						</tbody>
+					</table>
+
+				</div><!-- /.tab-pane -->
+
+				<div class="tab-pane fade in" id="schedule-tab">
+
+					<div style="padding-top: 12px;" class="description">SCHEDULE DESCRIPTION</div>
+					<br>
+
+					<h5><strong>Schedule</strong> <small>Time at which to sync the list of available updates with Apple's Software Update server each day.</small></h5>
 					<div class="checkbox checkbox-primary checkbox-inline">
 						<input name="syncsch" id="syncsch[0]" class="styled" type="checkbox" onChange="setSyncSchedule(this);" value="0" <?php echo ($syncschedule == "0" ? "checked" : ""); ?>>
 						<label> 12 am </label>
@@ -424,9 +465,11 @@ $(document).ready(function(){
 						<label> 9 pm </label>
 					</div>
 
-					<br>
-					<br>
-					<hr>
+				</div><!-- /.tab-pane -->
+
+				<div class="tab-pane fade in" id="proxy-tab">
+
+					<div style="padding-top: 12px;" class="description">PROXY DESCRIPTION</div>
 					<br>
 
 					<h5 id="proxyhost_label"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
@@ -455,40 +498,6 @@ $(document).ready(function(){
 					<div class="form-group has-feedback">
 						<input type="password" name="proxyverify" id="proxyverify" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[3]) ? $proxy[3] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); hideSuccess(document.getElementById('proxypass')); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
 					</div>
-
-					<br>
-					<hr>
-					<br>
-
-					<h5><strong>Apple Catalog URLs</strong> <small>Specify the Apple SUS catalog URLs to replicate.</small></h5>
-					<?php foreach ($default_catalog_map as $array) {
-						if ($array["default"]) { ?>
-					<div class="checkbox checkbox-primary checkbox-inline">
-						<input name="catalogurl" class="styled" type="checkbox" onChange="setCatalogURLs(this);" value="<?php echo $array["url"]; ?>" <?php echo (in_array($array["url"], $apple_catalog_urls) ? (sizeof($apple_catalog_urls) == 1 ? "checked disabled" : "checked") : ""); ?> />
-						<label> <?php echo $array["name"]; ?> </label>
-					</div>
-					<?php }
-					} ?>
-
-					<br>
-					<br>
-
-					<h5><strong>Additional Catalog URLs</strong></a> <small>Additional SUS catalog URLs to replicate.</small></h5>
-					<table class="table table-striped">
-						<tfoot>
-							<tr>
-								<td colspan="2" align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button></td>
-							</tr>
-						</tfoot>
-						<tbody>
-							<?php foreach ($other_catalog_urls as $catalog_url) { ?>
-							<tr>
-								<td><?php echo $catalog_url; ?></td>
-								<td align="right"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
-							</tr>
-							<?php } ?>
-						</tbody>
-					</table>
 
 					<div class="modal fade" id="createCatalog" tabindex="-1" role="dialog">
 						<div class="modal-dialog" role="document">
