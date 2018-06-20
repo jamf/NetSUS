@@ -44,8 +44,11 @@ $currentUser = getCurrentWebUser();
                 <div class="modal-header">
                     <h3 id="restart-title" class="modal-title">Restart</h3>
                 </div>
-                <div class="modal-body" id="restart-body">
-
+                <div class="modal-body" id="restart-message">
+					<div style="padding: 8px 0px;">Are you sure you want to restart the Server?</div>
+                </div>
+                <div class="modal-body hidden" id="restart-progress">
+					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
                     <button id="restart-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
@@ -63,8 +66,11 @@ $currentUser = getCurrentWebUser();
                 <div class="modal-header">
                     <h3 id="shutdown-title" class="modal-title">Shut Down</h3>
                 </div>
-                <div class="modal-body" id="shutdown-body">
-
+                <div class="modal-body" id="shutdown-message">
+					<div style="padding: 8px 0px;">Are you sure you want to shut down the Server?<br>The Server will need to be restarted manually.</div>
+                </div>
+                <div class="modal-body hidden" id="shutdown-progress">
+					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
                     <button id="shutdown-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
@@ -82,8 +88,11 @@ $currentUser = getCurrentWebUser();
                 <div class="modal-header">
                     <h3 id="disablegui-title" class="modal-title">Disable GUI</h3>
                 </div>
-                <div class="modal-body" id="disablegui-body">
-
+                <div class="modal-body" id="disablegui-message">
+					<div style="padding: 8px 0px;">Are you sure you want to disable the web interface for the Server?<br>Command line access is required to re-enable the web interface.</div>
+                </div>
+                <div class="modal-body hidden" id="disablegui-progress">
+					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
                     <button id="disablegui-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
@@ -125,7 +134,7 @@ $currentUser = getCurrentWebUser();
                             <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
                             <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static" onClick="disableGUIModal();">Disable GUI</a></li>
+                            <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static">Disable GUI</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="settings.php">Settings</a></li>
                         </ul>
