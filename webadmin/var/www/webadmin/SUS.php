@@ -125,21 +125,19 @@ foreach ($apple_catalog_urls as $url) {
 	}
 }
 
-// Sync Status
+// SUS Status
 $sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
 $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
-if ($sync_status) {
-	$last_sync = "Running";
+
+// Last Sync
+$last_sync = $conf->getSetting("lastsussync");
+if (empty($last_sync)) {
+	$last_sync = trim(susExec("getLastSync"));
+}
+if (empty($last_sync)) {
+	$last_sync = "Never";
 } else {
-	$last_sync = $conf->getSetting("lastsussync");
-	if (empty($last_sync)) {
-		$last_sync = trim(susExec("getLastSync"));
-	}
-	if (empty($last_sync)) {
-		$last_sync = "Never";
-	} else {
-		$last_sync = date("Y-m-d H:i:s", $last_sync);
-	}
+	$last_sync = date("Y-m-d H:i:s", $last_sync);
 }
 
 // ####################################################################
@@ -160,14 +158,24 @@ if ($sync_status) {
 
 <script type="text/javascript">
 function manSync() {
-	document.getElementById("manual_sync").disabled = true;
-	document.getElementById("purge_dep").disabled = true;
-	document.getElementById("last_sync").innerHTML = "Running";
+	$("#sync-modal").addClass('fade');
+	$('#sync-modal').modal('show');
+	setTimeout('window.location.reload()', 5000);
 	ajaxPost('susCtl.php', 'sync=true');
 }
+function purgeModal() {
+	$("#purge-modal").addClass('fade');
+	$("#purge-progress").addClass('hidden');
+	$("#purge-refresh").addClass('hidden');
+	$("#purge-warning").removeClass('hidden');
+	$("#purge-confirm").removeClass('hidden');
+}
 function purgeDep() {
-	document.getElementById("manual_sync").disabled = true;
-	document.getElementById("purge_dep").disabled = true;
+	$("#purge-warning").addClass('hidden');
+	$("#purge-confirm").addClass('hidden');
+	$("#purge-progress").removeClass('hidden');
+	$("#purge-refresh").removeClass('hidden');
+	setTimeout('window.location.reload()', 5000);
 	ajaxPost('susCtl.php', 'purge=true');
 }
 </script>
@@ -206,7 +214,7 @@ $(document).ready(function(){
 					<?php echo (isset($status_msg) ? $status_msg : "<br>"); ?>
 
 					<h5><strong>Manual Sync</strong> <small>Manual method for syncing the list of available updates with Apple's Software Update server.</small></h5>
-					<button type="button" id="manual_sync" class="btn btn-primary btn-sm" onClick="manSync();" <?php echo ($sync_status || $util_status ? "disabled " : ""); ?>>Sync</button>
+					<button type="button" id="manual_sync" class="btn btn-primary btn-sm" onClick="manSync();">Sync</button>
 					<div style="padding: 12px 0px;"><strong>Last Sync:</strong> <span id="last_sync" class="text-muted"><?php echo $last_sync; ?></span></div>
 
 					<hr>
@@ -226,7 +234,7 @@ $(document).ready(function(){
 							</thead>
 							<tfoot>
 								<tr>
-									<td align="right" colspan="5"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($sync_status || $util_status || $last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button></td>
+									<td align="right" colspan="5"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button></td>
 								<tr>
 							</tfoot>
 							<tbody>
@@ -265,7 +273,23 @@ $(document).ready(function(){
 					<br>
 
 					<h5><strong>Purge Deprecated</strong> <small>Removes all deprecated products that are not in any branch catalogs.</small></h5>
-					<button type="button" id="purge_dep" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#purge_deprecated" <?php echo ($sync_status || $util_status || $last_sync == "Never" ? "disabled " : ""); ?>>Purge</button>
+					<button type="button" id="purge_dep" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#purge-modal" onClick="purgeModal();"; "<?php echo ($last_sync == "Never" ? "disabled " : ""); ?>>Purge</button>
+
+					<div class="modal" id="sync-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h3 class="modal-title">Sync Running</h3>
+								</div>
+								<div class="modal-body">
+									<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+								</div>
+								<div class="modal-footer">
+				                    <button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
+								</div>
+							</div>
+						</div>
+					</div>
 
 					<div class="modal fade" id="createBranch" tabindex="-1" role="dialog">
 						<div class="modal-dialog" role="document">
@@ -320,18 +344,24 @@ $(document).ready(function(){
 						</div>
 					</div>
 
-					<div class="modal fade" id="purge_deprecated" tabindex="-1" role="dialog">
+					<div class="modal" id="purge-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
-								<div class="modal-header">
-									<h3 class="modal-title" id="delete_title">Purge Deprecated Updates</h3>
+								<div class="modal-header" id="purge-title">
+									<h3 class="modal-title">Purge Deprecated</h3>
 								</div>
-								<div class="modal-body">
+								<div class="modal-body hidden" id="purge-warning">
 									<div class="text-muted">This action is permanent and cannot be undone.</div>
 								</div>
-								<div class="modal-footer">
+								<div class="modal-body" id="purge-progress">
+									<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+								</div>
+								<div class="modal-footer hidden" id="purge-confirm">
 									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
-									<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm" onClick="purgeDep();">Purge</button>
+									<button type="button" class="btn btn-danger btn-sm" onClick="purgeDep();">Purge</button>
+								</div>
+								<div class="modal-footer" id="purge-refresh">
+				                    <button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
 								</div>
 							</div>
 						</div>
@@ -507,4 +537,20 @@ $(document).ready(function(){
 	</div><!-- /.col -->
 </div><!-- /.row -->
 
+<?php if ($sync_status) { ?>
+<script>
+	$(window).load(function() {
+		setTimeout('window.location.reload()', 5000);
+		$('#sync-modal').modal('show');
+	}); 
+</script>
+<?php }
+if ($util_status) { ?>
+<script>
+	$(window).load(function() {        
+		setTimeout('window.location.reload()', 5000);
+		$('#purge-modal').modal('show');
+	}); 
+</script>
+<?php } ?>
 <?php include "inc/footer.php"; ?>
