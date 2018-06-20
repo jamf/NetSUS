@@ -174,7 +174,7 @@ sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
 if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
 	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
 fi
-if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin; then
+if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers.d/webadmin
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
@@ -190,7 +190,7 @@ sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
 if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
 	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
 fi
-if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin; then
+if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/susHelper.sh *" >> /etc/sudoers.d/webadmin
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
