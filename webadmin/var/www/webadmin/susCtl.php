@@ -31,6 +31,7 @@ if (!($_SESSION["isAuthUser"])) {
 	}
 
 	if (isset($_POST["mirrorpkgs"])) {
+		$conf->setSetting("mirrorpkgs", $_POST['mirrorpkgs']);
 		if ($_POST["mirrorpkgs"] == "true") {
 			susExec("setBaseUrl ".$conf->getSetting("susbaseurl"));
 		} else {
