@@ -424,6 +424,45 @@ $(document).ready(function(){
 						</tbody>
 					</table>
 
+					<div class="modal fade" id="createCatalog" tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h3 class="modal-title" id="new_title">Add Catalog URL</h3>
+								</div>
+								<div class="modal-body">
+
+									<h5 id="addcatalogurl_label"><strong>URL</strong> <small>Additional SUS catalog URL to replicate.</small></h5>
+									<div class="form-group">
+										<input type="text" name="newcatalogurl" id="newcatalogurl" class="form-control input-sm" onKeyUp="validCatalogURL(this, 'addcatalogurl_label');" onBlur="validCatalogURL(this, 'addcatalogurl_label');" placeholder="[Required]" />
+									</div>
+
+								</div>
+								<div class="modal-footer">
+									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+									<button type="submit" name="addcatalogurl" id="addcatalogurl" class="btn btn-primary btn-sm" disabled >Save</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="modal fade" id="delete_catalog" tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h3 class="modal-title" id="delete_title">Delete Catalog URL?</h3>
+								</div>
+								<div class="modal-body">
+									<div class="text-muted">This action is permanent and cannot be undone.</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+									<button type="submit" name="deletecatalogurl" id="deletecatalogurl" class="btn btn-danger btn-sm" value="">Delete</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
 				</div><!-- /.tab-pane -->
 
 				<div class="tab-pane fade in" id="schedule-tab">
@@ -497,45 +536,6 @@ $(document).ready(function(){
 					<h5 id="proxyverify_label"><strong>Verify Password</strong></h5>
 					<div class="form-group has-feedback">
 						<input type="password" name="proxyverify" id="proxyverify" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[3]) ? $proxy[3] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); hideSuccess(document.getElementById('proxypass')); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
-					</div>
-
-					<div class="modal fade" id="createCatalog" tabindex="-1" role="dialog">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h3 class="modal-title" id="new_title">Add Catalog URL</h3>
-								</div>
-								<div class="modal-body">
-
-									<h5 id="addcatalogurl_label"><strong>URL</strong> <small>Additional SUS catalog URL to replicate.</small></h5>
-									<div class="form-group">
-										<input type="text" name="newcatalogurl" id="newcatalogurl" class="form-control input-sm" onKeyUp="validCatalogURL(this, 'addcatalogurl_label');" onBlur="validCatalogURL(this, 'addcatalogurl_label');" placeholder="[Required]" />
-									</div>
-
-								</div>
-								<div class="modal-footer">
-									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
-									<button type="submit" name="addcatalogurl" id="addcatalogurl" class="btn btn-primary btn-sm" disabled >Save</button>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="modal fade" id="delete_catalog" tabindex="-1" role="dialog">
-						<div class="modal-dialog" role="document">
-							<div class="modal-content">
-								<div class="modal-header">
-									<h3 class="modal-title" id="delete_title">Delete Catalog URL?</h3>
-								</div>
-								<div class="modal-body">
-									<div class="text-muted">This action is permanent and cannot be undone.</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
-									<button type="submit" name="deletecatalogurl" id="deletecatalogurl" class="btn btn-danger btn-sm" value="">Delete</button>
-								</div>
-							</div>
-						</div>
 					</div>
 
 				</div><!-- /.tab-pane -->
