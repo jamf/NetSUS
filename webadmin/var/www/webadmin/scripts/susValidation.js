@@ -134,10 +134,10 @@ function validProxy(hostId, portId, userId, passId, verifyId) {
 		user.disabled = false;
 		pass.disabled = false;
 		verify.disabled = false;
-		if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value)) {
+		if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value)) {
 			hideError(host, hostLabelId);
 		} else {
-			showError(host, portLabelId);
+			showError(host, hostLabelId);
 		}
 		if (port.value != "" && port.value == parseInt(port.value) && port.value >= 0 && port.value <= 65535) {
 			hideError(port, portLabelId);
@@ -183,7 +183,7 @@ function updateProxy(hostId, portId, userId, passId, verifyId) {
 	if (host.value == "" && port.value == "") {
 		ajaxPost("susCtl.php", "proxy=");
 	}
-	if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value) && port.value != "" && port.value == parseInt(port.value) && port.value >= 0 && port.value <= 65535) {
+	if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value) && port.value != "" && port.value == parseInt(port.value) && port.value >= 0 && port.value <= 65535) {
 		if (user.value == "" && pass.value == "" && verify.value == "") {
 			hideSuccess(host);
 			hideSuccess(port);
