@@ -218,6 +218,16 @@ if [ -f "/etc/httpd/conf.d/ssl.conf" ]; then
           "%h %l %u %t \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\""' /etc/httpd/conf.d/ssl.conf
 fi
 
+# Enable SSL for LDAP
+if [ -f "/etc/ldap/ldap.conf" ]; then
+	sed -i '/^TLS_REQCERT/d' /etc/ldap/ldap.conf
+	sed -i '/TLS_CACERT/a TLS_REQCERT	allow' /etc/ldap/ldap.conf
+fi
+if [ -f "/etc/openldap/ldap.conf" ]; then
+	sed -i '/^TLS_REQCERT/d' /etc/openldap/ldap.conf
+	sed -i '/TLS_CACERTDIR/a TLS_REQCERT	allow' /etc/openldap/ldap.conf
+fi
+
 # Restart apache
 log "Restarting apache..."
 service $www_service restart >> $logFile 2>&1
