@@ -13,15 +13,18 @@ $type="suslogin";
 
 if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username = $_POST['username'];
-	$password = hash("sha256", $_POST['password']);
 	$_SESSION['username'] = $username;
 
 	if ($_POST['loginwith'] == 'suslogin') {
+
+		// encrypted password
+		$password = hash("sha256", $_POST['password']);
+
 		if (($username != "") && ($password != "")) {
 			if ($username == $admin_username && $password == $admin_password) {
 				$isAuth = TRUE;
 			} else {
-				$loginerror = "Invalid Credentials";
+				$loginerror = "Invalid Username or Password.";
 			}
 		}
 	}
@@ -31,27 +34,59 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 		define(LDAP_OPT_DIAGNOSTIC_MESSAGE, 0x0032);
 		$type="adlogin";
 
-		$ldapconn = ldap_connect($conf->getSetting("ldapserver"));
-		if ($ldapconn) {
-			ldap_set_option($ldapconn, LDAP_OPT_PROTOCOL_VERSION, 3);
-			ldap_set_option($ldapconn, LDAP_OPT_REFERRALS, 0);
-			if (ldap_bind($ldapconn, $username . "@" . $conf->getSetting("ldapdomain"), $_POST['password'])) {
-				$basedn = "DC=" . implode(",DC=", explode(".", $conf->getSetting("ldapdomain")));
-				$userdn = getDN($ldapconn, $username, $basedn);
-				foreach ($conf->getAdmins() as $key => $value) {
-					$groupdn = getDN($ldapconn, $value['cn'], $basedn);
-					if (checkLDAPGroupEx($ldapconn, $userdn, $groupdn)) {
-						$isAuth = TRUE;
-					}
+		// password
+		$password = $_POST['password'];
+	
+		// ldap server url
+		$ldap_url = $conf->getSetting("ldapserver");
+
+		// active directory DN (base location of ldap search)
+		$ldap_dn = $conf->getSetting("ldapbase");
+ 
+		// active directory admin group names
+		$admin_grps = $conf->getAdmins();
+ 
+		// domain, for purposes of constructing $username
+		$domain = '@'.$conf->getSetting("ldapdomain");
+ 
+		// connect to active directory
+		$ldap = ldap_connect($ldap_url);
+ 
+		// configure ldap params
+		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+
+		// verify user and password
+		if($bind = @ldap_bind($ldap, $username.$domain, $password)) {
+			// valid
+			// check presence in groups
+			$filter = "(sAMAccountName=".$username.")";
+			$attr = array("memberof");
+			$result = ldap_search($ldap, $ldap_dn, $filter, $attr);
+	
+			$entries = ldap_get_entries($ldap, $result);
+			ldap_unbind($ldap);
+
+			// check groups
+			$access = 0;
+			foreach ($entries[0]['memberof'] as $grps) {
+				// check group membership
+				foreach ($admin_grps as $key => $value) {
+					// is admin, break loop
+					if(strpos($grps, $value['cn'])) { $isAuth = TRUE; break 2; }
 				}
-				ldap_unbind($ldapconn);
-			} else if (ldap_get_option($ldapconn, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
-				$loginerror = "Error on LDAP Bind - ".$extended_error;
-			} else {
-				$loginerror = "Invalid Credentials";
+			}
+			if (!$isAuth) {
+				$loginerror = "Access Denied for ".$username;
 			}
 		} else {
-			$loginerror = "Unable to Connect to LDAP Server";
+			if (ldap_get_option($handle, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
+				// get error msg
+				$loginerror = $extended_error;
+			} else {
+				// invalid user or password
+				$loginerror = "Invalid Username or Password";
+			}
 		}
 	}
 }
@@ -74,7 +109,7 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 
 <html>
 	<head> 
-	    <title>NetBoot/SUS/LDAP Proxy Server</title>
+	    <title>NetSUS Server</title>
 	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 	    <meta http-equiv="expires" content="0">
 	    <meta http-equiv="pragma" content="no-cache">
@@ -87,21 +122,6 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<style>
 			body {
 				background-color: #292929;
-			}
-			.login-wrapper {
-				float: right;
-				position: relative;
-				left: -50%;
-				text-align: left;
-			}
-			.login-wrapper > .login-panel {
-				position: relative;
-				left: 50%;
-				width: 300px;
-				margin-top: 70px;
-				-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-				-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-				box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
 			}
 		</style>
 	</head>
@@ -122,13 +142,19 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 
 <?php
 } else {
+
+$ldap_url = $conf->getSetting("ldapserver");
+$ldap_domain = $conf->getSetting("ldapdomain");
+$ldap_base = $conf->getSetting("ldapbase");
+$ldap_groups = $conf->getAdmins();
+$ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && sizeof($ldap_groups) > 0;
 ?>
 
 <!DOCTYPE html>
 
 <html>
 	<head>
-		<title>NetBoot/SUS/LDAP Proxy Server Login</title>
+		<title>NetSUS Server Login</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 		<meta http-equiv="expires" content="0">
 		<meta http-equiv="pragma" content="no-cache">
@@ -141,21 +167,6 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		<style>
 			body {
 				background-color: #292929;
-			}
-			.login-wrapper {
-				float: right;
-				position: relative;
-				left: -50%;
-				text-align: left;
-			}
-			.login-wrapper > .login-panel {
-				position: relative;
-				left: 50%;
-				width: 300px;
-				margin-top: 70px;
-				-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-				-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-				box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
 			}
 		</style>
 		<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
@@ -178,12 +189,12 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 					<form name="loginForm" class="form-horizontal" id="login-form" method="post">
 						<div class="text-center">
 							<div class="radio radio-inline radio-primary">
-								<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type=="suslogin"?" checked=\"checked\"":"") ?>>
-								<label for="suslogin">Local Account</label>
+								<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type == "suslogin" ? "checked" : ""); ?>>
+								<label for="suslogin">Built-In Account</label>
 							</div>
 							<div class="radio radio-inline radio-primary">
-								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type=="adlogin"?" checked=\"checked\"":"") ?>>
-								<label for="adlogin">LDAP Account</label>
+								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type == "adlogin" && $ldap_enabled ? "checked" : ""); ?> <?php echo ($ldap_enabled ? "" : "disabled"); ?>>
+								<label for="adlogin">Active Directory</label>
 							</div>
 						</div>
 						<div class="username">
