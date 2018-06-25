@@ -215,8 +215,7 @@ $(document).ready(function(){
 
 				<div class="tab-pane active fade in" id="operations-tab">
 
-					<div style="padding-top: 12px;" class="description">OPERATIONS DESCRIPTION</div>
-					<?php echo (isset($status_msg) ? $status_msg : "<br>"); ?>
+					<div style="padding: 8px 0px;" class="description">OPERATIONS DESCRIPTION</div>
 
 					<h5><strong>Manual Sync</strong> <small>Manual method for syncing the list of available updates with Apple's Software Update server.</small></h5>
 					<button type="button" id="manual_sync" class="btn btn-primary btn-sm" onClick="manSync();">Sync</button>
@@ -376,8 +375,7 @@ $(document).ready(function(){
 
 				<div class="tab-pane fade in" id="preferences-tab">
 
-					<div style="padding-top: 12px;" class="description">PREFERENCES DESCRIPTION</div>
-					<br>
+					<div style="padding: 8px 0px;" class="description">PREFERENCES DESCRIPTION</div>
 
 					<h5 id="baseurl_label"><strong>Base URL</strong> <small>Base URL for the software update server (e.g. "http://sus.mycompany.corp").</small></h5>
 					<div class="form-group has-feedback">
@@ -467,8 +465,7 @@ $(document).ready(function(){
 
 				<div class="tab-pane fade in" id="schedule-tab">
 
-					<div style="padding-top: 12px;" class="description">SCHEDULE DESCRIPTION</div>
-					<br>
+					<div style="padding: 8px 0px;" class="description">SCHEDULE DESCRIPTION</div>
 
 					<h5><strong>Schedule</strong> <small>Time at which to sync the list of available updates with Apple's Software Update server each day.</small></h5>
 					<div class="checkbox checkbox-primary checkbox-inline">
@@ -508,8 +505,7 @@ $(document).ready(function(){
 
 				<div class="tab-pane fade in" id="proxy-tab">
 
-					<div style="padding-top: 12px;" class="description">PROXY DESCRIPTION</div>
-					<br>
+					<div style="padding: 8px 0px;" class="description">PROXY DESCRIPTION</div>
 
 					<h5 id="proxyhost_label"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
 					<div class="row">
