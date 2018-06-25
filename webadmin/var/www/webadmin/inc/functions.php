@@ -148,6 +148,7 @@ function setWebAdminUser($username, $password)
 // 	// TODO
 // }
 
+/*
 function getDN($ldapconn, $samaccountname, $basedn)
 {
     $attributes = array("dn");
@@ -186,7 +187,7 @@ function checkLDAPGroupEx($ldapconn, $userdn, $groupdn)
     }
     return FALSE;
 };
-
+*/
 
 function getNetBootStatus()
 {
