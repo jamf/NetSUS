@@ -12,6 +12,10 @@ include "inc/header.php";
 ?>
 <?php
 
+if ($conf->getSetting("shelluser") != "shelluser") {
+	$conf->changedPass("shellaccount");
+}
+
 if ($conf->needsToChangeAnyPasses())
 {
 ?>
