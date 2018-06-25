@@ -117,7 +117,7 @@ function validateNetwork()
 {
 	var invalidPorts = [<?php echo "\"".implode('", "', array_unique(array_merge($reserved, $in_use)))."\""; ?>];
 	var validPort = invalidPorts.indexOf(document.getElementById("https_port").value) == -1 && document.getElementById("https_port").value != "" && !(parseInt(document.getElementById("https_port").value) < 0) && !(parseInt(document.getElementById("https_port").value) > 65535)
-	var validHostname = /^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("hostname").value);
+	var validHostname = /^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("hostname").value);
 	var validIP = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(document.getElementById("ip").value);
 	var validNetmask = /^((255|254|252|248|240|224|192|128|0?)\.){3}(255|254|252|248|240|224|192|128|0)$/.test(document.getElementById("netmask").value);
 	var validGateway = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(document.getElementById("gateway").value);
