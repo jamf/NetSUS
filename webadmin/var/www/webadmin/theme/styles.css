@@ -436,6 +436,21 @@ Settings Page
 /*----------------------------------------------
 Login Page
 ------------------------------------------------*/
+.login-wrapper {
+	float: right;
+	position: relative;
+	left: -50%;
+	text-align: left;
+}
+.login-wrapper > .login-panel {
+	position: relative;
+	left: 50%;
+	width: 300px;
+	margin-top: 70px;
+	-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+	-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+	box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
 .panel-login {
     background-image: none;
     background-color: #f5f5f5;
