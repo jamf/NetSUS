@@ -89,15 +89,15 @@ $(document).ready(function(){
 	<div class="col-xs-12"> 
 
 		<ul class="nav nav-tabs nav-justified" id="top-tabs">
-			<li class="active"><a class="tab-font" href="#services-tab" role="tab" data-toggle="tab">Services</a></li>
+			<li class="active"><a class="tab-font" href="#protocols-tab" role="tab" data-toggle="tab">Protocols</a></li>
 			<li><a class="tab-font" href="#shares-tab" role="tab" data-toggle="tab">Shares</a></li>
 		</ul>
 
 		<div class="tab-content">
 
-			<div class="tab-pane active fade in" id="services-tab">
+			<div class="tab-pane active fade in" id="protocols-tab">
 
-				<div style="padding: 8px 0px;" class="description">SERVICES DESCRIPTION</div>
+				<div style="padding: 8px 0px;" class="description">PROTOCOLS DESCRIPTION</div>
 
 				<div class="checkbox checkbox-primary">
 					<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?>>
