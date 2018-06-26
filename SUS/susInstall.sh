@@ -68,6 +68,9 @@ fi
 
 # Install reposado
 cp -R ./resources/reposado/* /var/lib/reposado/ >> $logFile 2>&1
+if [ ! -f "/var/lib/reposado/preferences.plist" ]; then
+	cp ./resources/preferences.plist /var/lib/reposado/
+fi
 
 # Install scripts
 cp ./resources/sus_info.py /var/appliance/ >> $logFile 2>&1

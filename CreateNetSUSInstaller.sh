@@ -46,6 +46,7 @@ cp -R NetBoot/var/appliance/netatalk-2.2.3-9.fc20.x86_64.rpm temp/installer/reso
 cp -R SUS/susInstall.sh temp/installer/install-sus.sh
 cp -R SUS/var/appliance/* temp/installer/resources
 cp -R SUS/var/lib/reposado temp/installer/resources/reposado
+mv -f temp/installer/resources/reposado/preferences.plist temp/installer/resources/preferences.plist 
 cp -R webadmin/webadminInstall.sh temp/installer/install-webadmin.sh
 cp -R webadmin/var/appliance/dialog.sh temp/installer/resources/dialog.sh
 cp -R webadmin/var/www temp/installer/resources/html
