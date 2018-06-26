@@ -66,10 +66,11 @@ function validateFlushLog()
 
 </script>
 
+<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 <h2>Logs</h2>
 
 <div class="row">
-	<div class="col-xs-12 col-sm-8 col-md-6">
+	<div class="col-xs-12">
 
 		<form action="logs.php" method="post" name="logs" id="logs">
 
@@ -77,38 +78,26 @@ function validateFlushLog()
 
 			<br>
 
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Display Log</strong>
-				</div>
+			<h5><strong>Select Log</strong> <small>Select log file to view.<br><strong>Note:</strong> Only text-based logs are visible from within this interface.</small></h5>
+			<div class="form-group has-feedback" style="max-width: 449px;">
+				<select id="display_file" name="display_file" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" onChange="validateDisplayLog();">
+					<option value="">Select...</option>
+					<?php
+					foreach($displaylogs as $key => $value)
+					{
+						echo "<option value=\"".$value."\">".$value."</option>";
+					}
+					?>
+				</select>
+			</div>
 
-				<div class="panel-body">
+			<h5><strong>Number of Lines</strong> <small>The number of lines from the end of the log file to display.</small></h5>
+			<div class="form-group has-feedback" style="max-width: 449px;">
+				<input type="text" name="display_lines" id="display_lines" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" placeholder="[Optional]" />
+			</div>
 
-					<div class="input-group">
-						<div class="input-group-addon no-background proxy-min-width">Select Log File</div>
-						<select id="display_file" name="display_file" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" onChange="validateDisplayLog();">
-							<option value="">Select...</option>
-							<?php
-							foreach($displaylogs as $key => $value)
-							{
-								echo "<option value=\"".$value."\">".$value."</option>";
-							}
-							?>
-						</select>
-					</div>
-
-					<br>
-
-					<div class="input-group">
-						<div class="input-group-addon no-background proxy-min-width">Number of Lines</div>
-						<input type="text" name="display_lines" id="display_lines" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" placeholder="[Optional]" />
-					</div>
-
-				</div>
-
-				<div class="panel-footer">
-					<input type="submit" name="display_log" id="display_log" class="btn btn-primary btn-sm" value="Display" disabled="disabled"/>
-				</div>
+			<div class="text-right" style="max-width: 449px;">
+				<input type="submit" name="display_log" id="display_log" class="btn btn-primary btn-sm" value="Display" disabled="disabled"/>
 			</div>
 
 			<!-- To Do: Bug check flush log function -->
@@ -138,11 +127,6 @@ function validateFlushLog()
 					<input type="submit" name="flush_log" id="flush_log" class="btn btn-primary btn-sm" value="Flush" disabled="disabled" onClick="javascript: return yesnoprompt('Are you sure you want to flush \'' + document.getElementById('flush_file').value + '\'?');"/>
 				</div>
 			</div> -->
-
-			<hr>
-			<br>
-
-			<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
 		</form> <!-- end form Logs -->
 

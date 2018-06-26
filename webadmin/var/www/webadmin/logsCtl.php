@@ -12,33 +12,24 @@ if (isset($_GET['log']) && $_GET['log'] != '')
 	$logcontent = suExec("displayLog ".$_GET['log']." ".$_GET['lines']);
 	include "inc/header.php";
 	?>
-	<h2>Display Log</h2>
+	<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="logs.php">Logs</a> <span class="glyphicon glyphicon-chevron-right"></span></div>
+	<h2><?php echo $_GET['log']; ?></h2>
 		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-				<hr>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-	<?php
-	echo "<span class=\"label label-default\">".$_GET['log']."</span>";
-	print "<pre>".$logcontent."</pre>";
-	?>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-				<br>
-				<hr>
-				<br>
-				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='logs.php'">
-			</div>
-		</div>
-<?php
-}
+			<div class="col-xs-12">
 
-if (!isset($_GET['log']))
-{
+				<hr>
+
+				<br>
+
+				<?php
+				print "<pre>".$logcontent."</pre>";
+				?>
+
+			</div>
+		</div>
+<?php }
+
+if (!isset($_GET['log'])) {
 	header('Location: '. $sURL);
 }
 
