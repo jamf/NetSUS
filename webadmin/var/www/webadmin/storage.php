@@ -118,7 +118,9 @@ if (strpos($lv_result, 'ERROR') === false) {
 				<div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $lv_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $lv_percent; ?>%;"></div>
 			</div>
 
-			<input type="submit" name="resize" id="resize" class="btn btn-primary btn-sm" value="Expand" onClick="javascript: return yesnoprompt('Are you sure you want to expand the volume?\nThe system will require a restart.');" <?php echo ($lv_percent < 100 ? "" : "disabled"); ?>/>
+			<div class="text-right">
+				<input type="submit" name="resize" id="resize" class="btn btn-primary btn-sm" value="Expand" onClick="javascript: return yesnoprompt('Are you sure you want to expand the volume?\nThe system will require a restart.');" <?php echo ($lv_percent < 100 ? "" : "disabled"); ?>/>
+			</div>
 			<?php } ?>
 
 		</form> <!-- end form Storage -->

@@ -11,42 +11,34 @@ if (isset($_GET['resize']))
 {
 	include "inc/header.php";
 	?>
-	<h2>Expanding Volume</h2>
+	<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="storage.php">Storage</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Logical Volume</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+	<h2>Expand</h2>
 		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
+			<div class="col-xs-12">
+
 				<hr>
 				<br>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
+
 	<?php
 	$cmd = "sudo /bin/sh scripts/adminHelper.sh resizeDisk";
 	while (@ ob_end_flush());
 	$proc = popen($cmd, "r");
 	echo "<pre>";
-	while (!feof($proc))
-	{
+	while (!feof($proc)) {
 		echo fread($proc, 128);
 		@ flush();
 	}
 	echo "</pre>";
 	?>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-				<br>
-				<hr>
-				<br>
-				<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
-			</div>
-		</div>
-<?php
-}
 
-if (!isset($_GET['resize']))
-{
+				<div class="text-right">
+					<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+				</div>
+
+			</div>
+		</div>
+<?php }
+if (!isset($_GET['resize'])) {
 	header('Location: '. $sURL);
 }
 
