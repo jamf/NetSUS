@@ -541,13 +541,9 @@ sed -i "/LocalCatalogURLBase/ a\
     <string>$baseurl<\/string>" /var/lib/reposado/preferences.plist
 ;;
 
-#diskusage)
-#if [ -e "/etc/system-release" ]; then
-#	echo $(df -H / | awk '{print $3}' | sed 's/Used//g' | tr -d "\n")
-#else
-#	echo $(df -H --type=ext4 | awk '{print $4}' | sed 's/Avail//g' | tr -d "\n")
-#fi
-#;;
+diskusage)
+echo $(df --local --total | grep '^total' | awk '{print $2":"$3":"$4}')
+;;
 
 netbootusage)
 echo $(du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}')
@@ -984,9 +980,9 @@ chown $www_user /tmp/private.key /tmp/certreq.csr
 ;;
 
 # Storage
-allowResize)
+resizeStatus)
 pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
-if [ "$pvname" == '' ]; then
+if [ "$pvname" = '' ]; then
 	echo "ERROR: no physical volumes found"
 	exit
 fi
@@ -995,7 +991,7 @@ if ! file $pvname | grep -q "block special"; then
 	exit
 fi
 lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
-if [ "$lvpath" == '' ]; then
+if [ "$lvpath" = '' ]; then
 	echo "ERROR: no logical volumes found"
 	exit
 fi
@@ -1017,12 +1013,12 @@ fi
 total=$(parted $device --script unit B print | grep $device | awk '{print $NF}' | tr -d 'B')
 end=$(parted $device --script unit B print | grep -P "^\s$partition\s+.+?[^,]+?lvm\s*$" | awk '{print $3}' | tr -d 'B')
 free=$(($total-$end))
-echo $(($free/1024/1024))
+echo $total:$end:$free
 ;;
 
 resizeDisk)
 pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
-if [ "$pvname" == '' ]; then
+if [ "$pvname" = '' ]; then
 	echo "No physical volumes found"
 	exit
 fi
@@ -1033,7 +1029,7 @@ if ! file $pvname | grep -q "block special"; then
 	exit 1
 fi
 lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
-if [ "$lvpath" == '' ]; then
+if [ "$lvpath" = '' ]; then
 	echo "No logical volumes found"
 	exit
 fi
