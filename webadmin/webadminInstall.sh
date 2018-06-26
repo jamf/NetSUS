@@ -32,6 +32,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install python-pycurl
 	apt_install libapache2-mod-php5
 	apt_install libapache2-mod-php
+	apt_install lvm2
 	apt_install apache2-utils
 	apt_install php5-ldap
 	apt_install php-ldap
@@ -46,6 +47,7 @@ elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install psmisc
 	yum_install dialog
 	yum_install lsof
+	yum_install lvm2
 	yum_install m2crypto
 	yum_install ntpdate
 	yum_install mod_ssl

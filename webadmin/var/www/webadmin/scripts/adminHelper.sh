@@ -985,15 +985,23 @@ chown $www_user /tmp/private.key /tmp/certreq.csr
 
 # Storage
 allowResize)
-pvname=$(pvdisplay | grep 'PV Name' | awk '{print $NF}')
+pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
+if [ "$pvname" == '' ]; then
+	echo "ERROR: no physical volumes found"
+	exit
+fi
 if ! file $pvname | grep -q "block special"; then
 	echo "ERROR: $pvname is not a block device"
 	exit
 fi
-lvname=$(lvdisplay | grep 'LV Path' | head -n 1 | grep -v swap | awk '{print $NF}')
-lvdisplay $lvname > /dev/null
+lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
+if [ "$lvpath" == '' ]; then
+	echo "ERROR: no logical volumes found"
+	exit
+fi
+lvdisplay $lvpath > /dev/null
 if [ $? -ne 0 ]; then
-	echo "ERROR: $lvname is not a logical volume"
+	echo "ERROR: $lvpath is not a logical volume"
 	exit
 fi
 device=$(echo $pvname | sed -e 's/[0-9]//g')
@@ -1013,17 +1021,25 @@ echo $(($free/1024/1024))
 ;;
 
 resizeDisk)
-pvname=$(pvdisplay | grep 'PV Name' | awk '{print $NF}')
+pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
+if [ "$pvname" == '' ]; then
+	echo "No physical volumes found"
+	exit
+fi
 echo "Resizing $pvname"
 echo
 if ! file $pvname | grep -q "block special"; then
 	echo "$pvname is not a block device"
 	exit 1
 fi
-lvname=$(lvdisplay | grep 'LV Path' | head -n 1 | grep -v swap | awk '{print $NF}')
-lvdisplay $lvname > /dev/null
+lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
+if [ "$lvpath" == '' ]; then
+	echo "No logical volumes found"
+	exit
+fi
+lvdisplay $lvpath > /dev/null
 if [ $? -ne 0 ]; then
-	echo "$lvname is not a logical volume"
+	echo "$lvpath is not a logical volume"
 	exit 1
 fi
 device=$(echo $pvname | sed -e 's/[0-9]//g')
@@ -1067,7 +1083,7 @@ else
 fi
 echo "
 pvresize $pvname
-lvextend --extents +100%FREE $lvname --resizefs
+lvextend --extents +100%FREE $lvpath --resizefs
 sed -ri 's/^#(exit 0)$/\1/' $rc_local
 sed -i '/\/root\/resizefs.sh/d' $rc_local
 rm -f \$0" >> /root/resizefs.sh
