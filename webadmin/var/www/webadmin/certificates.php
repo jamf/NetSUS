@@ -76,7 +76,7 @@ suExec("touchconf \"/var/appliance/conf/appliance.chain.pem\"");
 		return;
 	}
 suExec("updateCert");
-echo "<div class=\"alert alert-success\">Configuration saved.  Restart required.</div>";
+echo "<div class=\"alert alert-success\">Configuration saved. Restart required.</div>";
 }
 
 $ssl_certificate_str = trim(suExec("getSSLCertificate"));
@@ -137,12 +137,13 @@ $(document).ready(function(){
 });
 </script>
 
+<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 <h2>Certificates</h2>
 
 	<form action="certificates.php" method="post" name="certificates" id="certificates">
 
 		<div class="row">
-			<div class="col-xs-12 col-sm-8 col-md-6">
+			<div class="col-xs-12">
 
 				<!--<hr>-->
 
@@ -156,77 +157,77 @@ $(document).ready(function(){
 
 					<div class="tab-pane active fade in" id="cert-tab">
 
-						<label class="control-label">Subject Name</label>
-						<span class="description"><?php echo $ssl_certificate['Owner']; ?></span>
+						<div style="padding: 8px 0px;" class="description">CERTIFICATE DESCRIPTION</div>
 
-						<label class="control-label">Issuer</label>
-						<span class="description"><?php echo $ssl_certificate['Issuer']; ?></span>
+						<h5><strong>Subject Name</strong></h5>
+						<div class="text-muted"><?php echo $ssl_certificate['Owner']; ?></div>
 
-						<label class="control-label">Expiration Date</label>
-						<span class="description"><?php echo $ssl_certificate['Expires']; ?></span>
+						<h5><strong>Issuer</strong></h5>
+						<div class="text-muted"><?php echo $ssl_certificate['Issuer']; ?></div>
+
+						<h5><strong>Expiration Date</strong></h5>
+						<div class="text-muted"><?php echo $ssl_certificate['Expires']; ?></div>
 
 					</div><!-- /.tab-pane -->
 
 					<div class="tab-pane fade in" id="csr-tab">
 
-						<label class="control-label">Common Name</label>
-						<span class="description">Common Name for the certificate (e.g. "netsus.mycompany.corp")</span>
-						<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onClick="validateCSR();" onKeyUp="validateCSR();" />
+						<div style="padding: 8px 0px;" class="description">CSR DESCRIPTION</div>
 
-						<label class="control-label">Organizational Unit</label>
-						<span class="description">Name of the organizational unit (e.g. "JAMFSW")</span>
-						<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						<h5 id="common_name_label"><strong>Common Name</strong> <small>Common Name for the certificate (e.g. "netsus.mycompany.corp").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onClick="validateCSR();" onKeyUp="validateCSR();" />
+						</div>
 
-						<label class="control-label">Organization</label>
-						<span class="description">Name of the organization (e.g. "JAMF Software")</span>
-						<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						<h5 id="organizational_unit_label"><strong>Organizational Unit</strong> <small>Name of the organizational unit (e.g. "JAMFSW").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						</div>
 
-						<label class="control-label">City or Locality</label>
-						<span class="description">Name of the City or Locality (e.g. "Minneapolis")</span>
-						<input type="text" name="locality" id="locality" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						<h5 id="organization_label"><strong>Organization</strong> <small>Name of the organization (e.g. "JAMF Software").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						</div>
 
-						<label class="control-label">State or Province</label>
-						<span class="description">Name of the State or Province (e.g. "MN")</span>
-						<input type="text" name="state" id="state" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						<h5 id="locality_label"><strong>City or Locality</strong> <small>Name of the City or Locality (e.g. "Minneapolis").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="locality" id="locality" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						</div>
 
-						<label class="control-label">Country Code</label>
-						<span class="description">Two-letter country code for this unit (e.g. "US")</span>
-						<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						<h5 id="state_label"><strong>State or Province</strong> <small>Name of the State or Province (e.g. "MN").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="state" id="state" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						</div>
 
-						<br>
+						<h5 id="country_label"><strong>Country Code</strong> <small>Two-letter country code for this unit (e.g. "US").</small></h5>
+						<div class="form-group has-feedback">
+							<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
+						</div>
 
 						<input type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm" value="Create" disabled="disabled" />
-						<br>
 
 					</div><!-- /.tab-pane -->
 
 					<div class="tab-pane fade in" id="modify-tab">
 
-						<label class="control-label">Private Key</label>
-						<span class="description">Paste the content of RSA private key file, including the BEGIN and END tags</span>
-						<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+						<div style="padding: 8px 0px;" class="description">MODIFY DESCRIPTION</div>
 
-						<label class="control-label">Certificate</label>
-						<span class="description">Paste the content of the certificate file, including the BEGIN and END tags</span>
-						<textarea class="form-control input-sm" name="certificate" id="certificate" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+						<h5 id="state_label"><strong>Private Key</strong> <small>Paste the content of RSA private key file, including the BEGIN and END tags.</small></h5>
+						<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="4" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
 
-						<label class="control-label">Chain</label>
-						<span class="description">Paste the content of the CA bundle, including the BEGIN and END tags</span>
-						<textarea class="form-control input-sm" name="chain" id="chain" rows="3" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+						<h5 id="state_label"><strong>Certificate</strong> <small>Paste the content of the certificate file, including the BEGIN and END tags.</small></h5>
+						<textarea class="form-control input-sm" name="certificate" id="certificate" rows="4" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+
+						<h5 id="state_label"><strong>Chain</strong> <small>Paste the content of the CA bundle, including the BEGIN and END tags.</small></h5>
+						<textarea class="form-control input-sm" name="chain" id="chain" rows="4" onClick="validateCerts();" onKeyUp="validateCerts();"></textarea>
+
 						<br>
 
-						<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Save" disabled="disabled" />
-						<br>
+						<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Apply" disabled="disabled" />
 
 					</div><!-- /.tab-pane -->
 
 				</div> <!-- end .tab-content -->
-
-				<br>
-				<hr>
-				<br>
-
-				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
 
 			</div>
 		</div>
