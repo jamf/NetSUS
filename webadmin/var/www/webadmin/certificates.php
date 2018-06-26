@@ -204,7 +204,9 @@ $(document).ready(function(){
 							<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onClick="validateCSR();" />
 						</div>
 
-						<input type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm" value="Create" disabled="disabled" />
+						<div class="text-right">
+							<input type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm" value="Create" disabled="disabled" />
+						</div>
 
 					</div><!-- /.tab-pane -->
 
@@ -223,7 +225,9 @@ $(document).ready(function(){
 
 						<br>
 
-						<input type="submit" name="certs" id="certs" class="btn btn-primary" value="Apply" disabled="disabled" />
+						<div class="text-right">
+							<input type="submit" name="certs" id="certs" class="btn btn-primary btn-sm" value="Apply" disabled="disabled" />
+						</div>
 
 					</div><!-- /.tab-pane -->
 
