@@ -21,6 +21,7 @@ $install_type = trim(suExec("getInstallType"));
 		}
 	</style>
 
+	<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 	<h2>About</h2>
 
 	<hr>
