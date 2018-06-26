@@ -10,6 +10,7 @@ if (isset($_POST['resize']))
 {
 	header('Location: storageCtl.php?resize=true');
 }
+// To do: implement ajax for expansion
 
 include "inc/header.php";
 
@@ -93,11 +94,11 @@ if (strpos($lv_result, 'ERROR') === false) {
 			<hr>
 			<br>
 
-			<h5><strong>Logical Volume</strong></h5>
+			<h5><strong>Expand Logical Volume</strong></h5>
 			<?php if (strpos($lv_result,'ERROR') !== false) { ?>
-			<span class="description">
-				<?php echo str_replace('ERROR: ', '', $lv_result); ?>
-			</span>
+			<div class="text-muted">
+				<span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo str_replace('ERROR: ', '', $lv_result); ?>
+			</div>
 			<?php } else { ?>
 			<div class="row">
 				<div class="col-xs-4">

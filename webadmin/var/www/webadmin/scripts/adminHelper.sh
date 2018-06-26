@@ -983,31 +983,31 @@ chown $www_user /tmp/private.key /tmp/certreq.csr
 resizeStatus)
 pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
 if [ "$pvname" = '' ]; then
-	echo "ERROR: no physical volumes found"
+	echo "ERROR: No suitable physical volumes found."
 	exit
 fi
 if ! file $pvname | grep -q "block special"; then
-	echo "ERROR: $pvname is not a block device"
+	echo "ERROR: $pvname is not a block device."
 	exit
 fi
 lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
 if [ "$lvpath" = '' ]; then
-	echo "ERROR: no logical volumes found"
+	echo "ERROR: No logical volumes found."
 	exit
 fi
 lvdisplay $lvpath > /dev/null
 if [ $? -ne 0 ]; then
-	echo "ERROR: $lvpath is not a logical volume"
+	echo "ERROR: $lvpath is not a logical volume."
 	exit
 fi
 device=$(echo $pvname | sed -e 's/[0-9]//g')
 if ! fdisk -u -l $device | grep $device | tail -1 | grep $pvname | grep -q "Linux LVM"; then
-	echo "ERROR: $pvname is not the last volume on $device"
+	echo "ERROR: $pvname is not the last volume on $device."
 	exit
 fi
 partition=$(echo $pvname | sed -e 's/[^0-9]//g')
 if ! parted $device --script unit s print | grep -Pq "^\s$partition\s+.+?[^,]+?lvm\s*$"; then
-	echo "ERROR: $pvname has additional flags set"
+	echo "ERROR: $pvname has additional flags set."
 	exit
 fi
 total=$(parted $device --script unit B print | grep $device | awk '{print $NF}' | tr -d 'B')
@@ -1019,33 +1019,33 @@ echo $total:$end:$free
 resizeDisk)
 pvname=$(pvdisplay -c 2>/dev/null | cut -d : -f 1)
 if [ "$pvname" = '' ]; then
-	echo "No physical volumes found"
+	echo "No suitable physical volumes found."
 	exit
 fi
 echo "Resizing $pvname"
 echo
 if ! file $pvname | grep -q "block special"; then
-	echo "$pvname is not a block device"
+	echo "$pvname is not a block device."
 	exit 1
 fi
 lvpath=$(lvdisplay -c 2>/dev/null | grep -v swap | cut -d : -f 1)
 if [ "$lvpath" = '' ]; then
-	echo "No logical volumes found"
+	echo "No logical volumes found."
 	exit
 fi
 lvdisplay $lvpath > /dev/null
 if [ $? -ne 0 ]; then
-	echo "$lvpath is not a logical volume"
+	echo "$lvpath is not a logical volume."
 	exit 1
 fi
 device=$(echo $pvname | sed -e 's/[0-9]//g')
 if ! fdisk -u -l $device | grep $device | tail -1 | grep $pvname | grep -q "Linux LVM"; then
-	echo "$pvname is not the last volume on $device"
+	echo "$pvname is not the last volume on $device."
 	exit 1
 fi
 partition=$(echo $pvname | sed -e 's/[^0-9]//g')
 if ! parted $device --script unit s print | grep -Pq "^\s$partition\s+.+?[^,]+?lvm\s*$"; then
-	echo "$pvname has additional flags set"
+	echo "$pvname has additional flags set."
 	exit 1
 fi
 echo "Current partition layout of $device:"
@@ -1053,7 +1053,7 @@ echo
 parted $device --script unit GB print
 start=$(fdisk -u -l $device | grep $pvname | awk '{print $2}')
 if parted $device --script unit s print | grep -qP "^\s$partition\s+.+?logical.+$"; then
-	echo "Detected LVM residing on a logical partition"
+	echo "Detected LVM residing on a logical partition."
 	echo
 	ext_partition=$(parted $device --script unit s print | grep extended | grep -Po '^\s\d\s' | tr -d ' ')
 	ext_start=$(parted $device --script unit s print | grep extended | awk '{print $2}' | tr -d 's')
@@ -1069,7 +1069,7 @@ parted $device --script set $partition lvm on
 echo "New partition layout of $device:"
 echo
 parted $device --script unit GB print
-echo "Creating script to resize the filesystem at next boot"
+echo "Creating script to resize the filesystem at next boot."
 echo
 echo '#!/bin/bash' > /root/resizefs.sh
 if [ -f "/etc/rc.d/rc.local" ]; then
@@ -1086,7 +1086,7 @@ rm -f \$0" >> /root/resizefs.sh
 chmod +x /root/resizefs.sh
 echo '/root/resizefs.sh' >> $rc_local
 sed -ri 's/^(exit 0)$/#\1/' $rc_local
-echo "A restart is required for changes to take effect"
+echo "A restart is required for changes to take effect."
 ;;
 
 # Logs
