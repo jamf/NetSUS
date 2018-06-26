@@ -150,7 +150,7 @@ $(document).ready(function() {
 <h2>Accounts</h2>
 
 <div class="row">
-	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+	<div class="col-xs-12">
 
 		<ul class="nav nav-tabs nav-justified" id="top-tabs">
 			<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span> Built-In Account</a></li>

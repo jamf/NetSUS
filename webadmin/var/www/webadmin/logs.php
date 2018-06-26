@@ -79,7 +79,7 @@ function validateFlushLog()
 			<br>
 
 			<h5><strong>Select Log</strong> <small>Select log file to view.<br><strong>Note:</strong> Only text-based logs are visible from within this interface.</small></h5>
-			<div class="form-group has-feedback" style="max-width: 449px;">
+			<div class="form-group has-feedback" style="max-width: 464px;">
 				<select id="display_file" name="display_file" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" onChange="validateDisplayLog();">
 					<option value="">Select...</option>
 					<?php
@@ -92,11 +92,11 @@ function validateFlushLog()
 			</div>
 
 			<h5><strong>Number of Lines</strong> <small>The number of lines from the end of the log file to display.</small></h5>
-			<div class="form-group has-feedback" style="max-width: 449px;">
+			<div class="form-group has-feedback" style="max-width: 464px;">
 				<input type="text" name="display_lines" id="display_lines" class="form-control input-sm" onClick="validateDisplayLog();" onKeyUp="validateDisplayLog();" placeholder="[Optional]" />
 			</div>
 
-			<div class="text-right" style="max-width: 449px;">
+			<div class="text-right" style="max-width: 464px;">
 				<input type="submit" name="display_log" id="display_log" class="btn btn-primary btn-sm" value="Display" disabled="disabled"/>
 			</div>
 
