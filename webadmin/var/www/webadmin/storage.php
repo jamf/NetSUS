@@ -94,7 +94,7 @@ if (strpos($lv_result, 'ERROR') === false) {
 			<hr>
 			<br>
 
-			<h5><strong>Expand Logical Volume</strong></h5>
+			<h5><strong>Logical Volume</strong></h5>
 			<?php if (strpos($lv_result,'ERROR') !== false) { ?>
 			<div class="text-muted">
 				<span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo str_replace('ERROR: ', '', $lv_result); ?>
