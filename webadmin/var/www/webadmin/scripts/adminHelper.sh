@@ -1266,4 +1266,22 @@ getPortsInUse)
 echo $(lsof -i -P -n | grep LISTEN | awk -F : '{print $NF}' | awk '{print $1}' | sort -n -u)
 ;;
 
+getSMBshares)
+for i in $(grep include /etc/samba/smb.conf | grep -v '\(#\|;\)' | awk '{print $NF}'); do
+	if [ -e $i ]; then
+		sharepath=$(sed -n -e 's/^.*path.*=//p' $i | sed -e 's/^[ \t]*//;s/[ \t]*$//')
+		sharename=$(grep -o -P '(?<=\[).*(?=\])' $i)
+		echo $sharename:$sharepath
+	fi
+done
+;;
+
+getAFPshares)
+grep -v "\(#\|^~\|^:\|^$\)" /etc/netatalk/AppleVolumes.default | while read i; do
+	sharepath=$(echo "$i" | awk '{print $1}')
+	sharename=$(echo "$i" | awk -F \" '{print $2}')
+	echo $sharename:$sharepath
+done
+;;
+
 esac
