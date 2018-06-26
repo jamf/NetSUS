@@ -72,17 +72,9 @@ include "inc/header.php";
 		<div class="row">
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
-				<a href="AFP.php">
-					<p><img src="images/settings/Category.png" alt="AFP"></p>
-					<p>AFP</p>
-				</a>
-			</div>
-			<!-- /Column -->
-			<!-- Column -->
-			<div class="col-xs-3 col-sm-2 settings-item">
-				<a href="SMB.php">
-					<p><img src="images/settings/Category.png" alt="SMB"></p>
-					<p>SMB</p>
+				<a href="sharing.php">
+					<p><img src="images/settings/Category.png" alt="File Sharing"></p>
+					<p>File Sharing</p>
 				</a>
 			</div>
 			<!-- /Column -->

@@ -109,6 +109,22 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
+	if (isset($_POST["smb"])) {
+		if ($_POST["smb"] == "enable") {
+			suExec("startsmb");
+		} else {
+			suExec("stopsmb");
+		}
+	}
+
+	if (isset($_POST["afp"])) {
+		if ($_POST["afp"] == "enable") {
+			suExec("startafp");
+		} else {
+			suExec("stopafp");
+		}
+	}
+
 	if (isset($_POST['NetBootImage']) && $_GET['service'] = "NetBoot")
 	{
 		$wasrunning = getNetBootStatus();
