@@ -106,7 +106,7 @@ include "inc/header.php";
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="about.php">
 					<p><img src="images/settings/Acknowledgements.png" alt="About"></p>
-					<p>Acknowledgments</p>
+					<p style="margin-left: 20px;">About</p>
 				</a>
 			</div>
 			<!-- /Column -->
