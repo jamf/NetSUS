@@ -206,7 +206,7 @@ function validateSubnet()
 
 			<span class="label label-default">Upload NetBoot Image</span>
 			<span class="description">Refresh this page after uploading a NetBoot image. The NetBoot folder name cannot contain spaces</span>
-			<input type="button" name="uploadnbi" id="uploadnbi" class="btn btn-sm btn-primary" value="Upload NetBoot Image" onClick="javascript: return goTo(true, 'smbCtl.php?start=true');"/>
+			<input type="button" name="uploadnbi" id="uploadnbi" class="btn btn-sm btn-primary" value="Upload NetBoot Image" onClick="javascript:ajaxPost('ajax.php', 'smb=enable'); window.location.assign('smb://smbuser@<?php echo trim(getCurrentIP()); ?>/NetBoot');"/>
 
 			<br><br>
 
