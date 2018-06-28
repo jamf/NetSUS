@@ -13,11 +13,12 @@ if (!($_SESSION['isAuthUser'])) {
 	include "inc/config.php";
 	include "inc/functions.php";
 	
-	if (isset($_POST['getconns'])) {
-		$afpconns = trim(suExec("afpconns"));
-		$smbconns = trim(suExec("smbconns"));
-		$allconns = $afpconns + $smbconns;
-		echo $allconns;
+	if (isset($_POST['smbconns'])) {
+		echo trim(suExec("smbconns"));
+	}
+
+	if (isset($_POST['afpconns'])) {
+		echo trim(suExec("afpconns"));
 	}
 
 	if (isset($_POST['restart'])) {
