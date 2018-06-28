@@ -37,24 +37,6 @@ $currentUser = getCurrentWebUser();
 
 <?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
 <body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?>>
-    <!-- Notification Modal -->
-    <div class="modal fade" id="notify-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Notifications</h3>
-                </div>
-                <div class="modal-body" id="notify-message">
-					<div style="padding: 8px 0px;">Something needs to be done.<br><a href="#">Click here to action.</a></div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right" >OK</button>
-                </div>
-            </div>
-        </div>
-    </div>
-	<!-- /#modal -->
-
     <!-- Restart Modal -->
     <div class="modal fade" id="restart-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -136,7 +118,7 @@ $currentUser = getCurrentWebUser();
                 <div class="navbar-user">
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
-                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
+                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
                             <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
                             <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', 'webadmin-tab');">Change Password</a></li>
                             <li role="separator" class="divider"></li>
@@ -145,13 +127,10 @@ $currentUser = getCurrentWebUser();
                         </ul>
                     </div>
                 </div>
-                <div class="navbar-flash">
-					<button type="button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal"><span class="glyphicon glyphicon-flash"></span></button>
-                </div>
                 <div class="navbar-gear">
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
-                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
+                        <ul class="dropdown-menu dropdown-menu-right dropdown-menu-user">
                             <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
                             <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
                             <li role="separator" class="divider"></li>
