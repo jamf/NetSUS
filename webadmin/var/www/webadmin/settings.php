@@ -72,9 +72,17 @@ include "inc/header.php";
 		<div class="row">
 			<!-- Column -->
 			<div class="col-xs-3 col-sm-2 settings-item">
-				<a href="sharing.php">
+				<a href="sharingSettings.php">
 					<p><img src="images/settings/Category.png" alt="File Sharing"></p>
 					<p>File Sharing</p>
+				</a>
+			</div>
+			<!-- /Column -->
+			<!-- Column -->
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="susSettings.php">
+					<p><img src="images/settings/SoftwareUpdateServer.png" alt="Software Update"></p>
+					<p>Software Update</p>
 				</a>
 			</div>
 			<!-- /Column -->
@@ -98,7 +106,7 @@ include "inc/header.php";
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="about.php">
 					<p><img src="images/settings/Acknowledgements.png" alt="About"></p>
-					<p style="margin-left: 20px;">About</p>
+					<p>About</p>
 				</a>
 			</div>
 			<!-- /Column -->
