@@ -104,7 +104,7 @@ function purgeDep() {
 
 			<hr>
 
-			<div style="padding-top: 12px 0px;" class="description">SUS DESCRIPTION</div>
+			<div style="padding-top: 12px;" class="description">SUS DESCRIPTION</div>
 
 			<h5><strong>Manual Sync</strong> <small>Manual method for syncing the list of available updates with Apple's Software Update server.</small></h5>
 			<button type="button" id="manual_sync" class="btn btn-primary btn-sm" onClick="manSync();">Sync</button>
