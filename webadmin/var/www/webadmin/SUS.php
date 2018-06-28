@@ -12,6 +12,18 @@ function susExec($cmd) {
 	return exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
+// Base URL
+if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") == "") {
+	if ($_SERVER['HTTP_HOST'] != "") {
+		$conf->setSetting("susbaseurl", "http://".$_SERVER['HTTP_HOST']."/");
+	} elseif ($_SERVER['SERVER_NAME'] != "") {
+		$conf->setSetting("susbaseurl", "http://".$_SERVER['SERVER_NAME']."/");
+	} else {
+		$conf->setSetting("susbaseurl", "http://".getCurrentHostname()."/");
+	}
+}
+$susbaseurl = $conf->getSetting("susbaseurl");
+
 // Reposado Log
 if (trim(susExec("getPref RepoSyncLogFile")) == "") {
 	susExec("setLogFile /var/log/reposado_sync.log");
