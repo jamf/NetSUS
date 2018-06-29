@@ -9,39 +9,9 @@ $currentIP = trim(getCurrentIP());
 $title = "Dashboard";
 
 include "inc/header.php";
-?>
-<?php
 
 if ($conf->getSetting("shelluser") != "shelluser") {
 	$conf->changedPass("shellaccount");
-}
-
-if ($conf->needsToChangeAnyPasses())
-{
-?>
-<div class="alert alert-warning" role="alert"><strong>WARNING: </strong> Credentials have not been changed for the following accounts:<br>
-	<ul>
-		<?php
-		if ($conf->needsToChangePass("webaccount"))
-		{
-			echo "<li>Web Application</li>\n";
-		}
-		if ($conf->needsToChangePass("shellaccount"))
-		{
-			echo "<li>Shell</li>\n";
-		}
-		if ($conf->needsToChangePass("afpaccount"))
-		{
-			echo "<li>AFP</li>\n";
-		}
-		if ($conf->needsToChangePass("smbaccount"))
-		{
-			echo "<li>SMB</li>\n";
-		}
-		?>
-	</ul>
-</div>
-<?php
 }
 ?>
 
