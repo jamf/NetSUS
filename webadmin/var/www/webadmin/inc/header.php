@@ -11,6 +11,22 @@ $currentFile = $_SERVER["PHP_SELF"];
 $parts = Explode('/',$currentFile);
 $pageURI = $parts[count($parts) -1];
 $currentUser = getCurrentWebUser();
+$notifications = array();
+// array_push($notifications, "<div style=\"padding: 8px 0px;\">Something needs to be done.<br><a href=\"#\">Click here to action.</a></div>");
+/*
+"Credentials have not been changed for the following accounts:"
+if ($conf->needsToChangePass("webaccount")) {
+	array_push($notifications, "<li>Web Application</li>\n");
+}
+if ($conf->needsToChangePass("shellaccount")) {
+	echo "<li>Shell</li>\n";
+}
+if ($conf->needsToChangePass("afpaccount")) {
+	echo "<li>AFP</li>\n";
+}
+if ($conf->needsToChangePass("smbaccount")) {
+	echo "<li>SMB</li>\n";
+}*/
 
 ?>
 <!DOCTYPE html>
@@ -45,7 +61,9 @@ $currentUser = getCurrentWebUser();
                     <h3 class="modal-title">Notifications</h3>
                 </div>
                 <div class="modal-body" id="notify-message">
-					<div style="padding: 8px 0px;">Something needs to be done.<br><a href="#">Click here to action.</a></div>
+					<?php foreach ($notifications as $notification) {
+						echo $notification;
+					} ?>
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right" >OK</button>
@@ -146,7 +164,7 @@ $currentUser = getCurrentWebUser();
                     </div>
                 </div>
                 <div class="navbar-flash">
-					<button type="button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal"><span class="glyphicon glyphicon-flash"></span></button>
+					<button type="button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal" <?php echo (sizeof($notifications) == 0 ? "disabled" : ""); ?>><span class="glyphicon glyphicon-flash"></span><span class="badge <?php echo (sizeof($notifications) == 0 ? "hidden" : ""); ?>"><?php echo sizeof($notifications); ?></span></button>
                 </div>
                 <div class="navbar-gear">
                     <div class="btn-group">

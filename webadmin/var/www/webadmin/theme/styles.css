@@ -131,8 +131,24 @@ Upper Navigation
 .navbar-inverse .navbar-btn-icon:focus {
     color: #fff;
 }
+.navbar-inverse .navbar-btn-icon.disabled:hover,
+.navbar-inverse .navbar-btn-icon[disabled]:hover,
+.navbar-inverse .navbar-btn-icon.disabled:focus,
+.navbar-inverse .navbar-btn-icon[disabled]:focus {
+    color: #9d9d9d;
+}
 .navbar-inverse .navbar-btn-icon:focus {
     background-color: #080808;
+}
+.navbar-inverse .navbar-btn-icon.disabled:focus,
+.navbar-inverse .navbar-btn-icon[disabled]:focus {
+    background-color: none;
+}
+.navbar-btn-icon .badge {
+	position: absolute;
+	top: 3px;
+	right: 3px;
+	background-color: #d9534f;
 }
 .dropdown-menu.dropdown-menu-navbar {
     border-top-right-radius: 0;
