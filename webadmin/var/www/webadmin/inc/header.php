@@ -10,24 +10,19 @@ if (isset($_SESSION['isAdmin'])) {
 $currentFile = $_SERVER["PHP_SELF"];
 $parts = Explode('/',$currentFile);
 $pageURI = $parts[count($parts) -1];
+// to find current user
 $currentUser = getCurrentWebUser();
+// notifications
 $notifications = array();
-// array_push($notifications, "<div style=\"padding: 8px 0px;\">Something needs to be done.<br><a href=\"#\">Click here to action.</a></div>");
-/*
-"Credentials have not been changed for the following accounts:"
-if ($conf->needsToChangePass("webaccount")) {
-	array_push($notifications, "<li>Web Application</li>\n");
+if ($conf->needsToChangeAnyPasses()) {
+	array_push($notifications, "accounts");
 }
-if ($conf->needsToChangePass("shellaccount")) {
-	echo "<li>Shell</li>\n";
+$df_result_str = trim(suExec("diskusage"));
+$df_result = explode(":", $df_result_str);
+$df_free_percent = ceil(100*$df_result[2]/$df_result[0]);
+if ($df_free_percent < 20) {
+	array_push($notifications, "storage");
 }
-if ($conf->needsToChangePass("afpaccount")) {
-	echo "<li>AFP</li>\n";
-}
-if ($conf->needsToChangePass("smbaccount")) {
-	echo "<li>SMB</li>\n";
-}*/
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -61,12 +56,28 @@ if ($conf->needsToChangePass("smbaccount")) {
                     <h3 class="modal-title">Notifications</h3>
                 </div>
                 <div class="modal-body" id="notify-message">
-					<?php foreach ($notifications as $notification) {
-						echo $notification;
-					} ?>
+					<div class="row <?php echo (in_array("accounts", $notifications) ? "" : "hidden"); ?>">
+						<div class="col-xs-2 text-center">
+							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts" height="54"></a>
+						</div>
+						<div class="col-xs-10">
+							<p style="padding-top: 12px;">Credentials have not been changed for all the default user accounts.</p>
+							<p><a href="accounts.php">Click here to change them.</a></p>
+						</div>
+					</div>
+					<?php echo (sizeof($notifications) > 1 ? "<hr>" : ""); ?>
+					<div class="row <?php echo (in_array("storage", $notifications) ? "" : "hidden"); ?>">
+						<div class="col-xs-2 text-center">
+							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage" height="54"></a>
+						</div>
+						<div class="col-xs-10">
+							<p style="padding-top: 12px;">The file system is running low on disk space.</p>
+							<p><a href="storage.php">Click here to resolve this.</a></p>
+						</div>
+					</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right" >OK</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
                 </div>
             </div>
         </div>
