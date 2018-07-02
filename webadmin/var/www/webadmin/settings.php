@@ -86,6 +86,26 @@ include "inc/header.php";
 				</a>
 			</div>
 			<!-- /Column -->
+			<!-- Column -->
+			<!--
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="netbootSettings.php">
+					<p><img src="images/settings/NetbootServer.png" alt="NetBoot"></p>
+					<p>NetBoot</p>
+				</a>
+			</div>
+			-->
+			<!-- /Column -->
+			<!-- Column -->
+			<!--
+			<div class="col-xs-3 col-sm-2 settings-item">
+				<a href="ldapProxySettings.php">
+					<p><img src="images/settings/LDAPServer.png" alt="LDAP Proxy"></p>
+					<p>Software Update</p>
+				</a>
+			</div>
+			-->
+			<!-- /Column -->
 		</div>
 		<!-- /Row -->
 
