@@ -299,6 +299,7 @@ function validGroup(element, labelId = false) {
 }
 
 function sysUserModal(userValue, gecosValue, loginValue, homeValue) {
+	var current = document.getElementById("currUser");
 	var user = document.getElementById("sysUser");
 	var gecos = document.getElementById("sysGecos");
 	var pass = document.getElementById("sysPass");
@@ -317,18 +318,47 @@ function sysUserModal(userValue, gecosValue, loginValue, homeValue) {
 	hideError(verify, verifyLabelId);
 	hideError(home, homeLabelId);
 	hideError(shell, shellLabelId);
-	hideSuccess(user);
-	hideSuccess(gecos);
-	hideSuccess(pass);
-	hideSuccess(verify);
-	hideSuccess(home);
-	hideSuccess(shell);
+	if (userValue == "smbuser" || userValue == "afpuser") {
+		user.readOnly = true;
+		gecos.readOnly = true;
+	} else {
+		user.readOnly = false;
+		gecos.readOnly = false;
+	}
+	current.value = userValue;
 	user.value = userValue;
 	gecos.value = gecosValue;
 	pass.value = "";
 	verify.value = "";
 	home.value = loginValue;
 	shell.value = homeValue;
+}
+
+function verifySysUser(currId, userId, passId, verifyId) {
+	var curr = document.getElementById(currId);
+	var user = document.getElementById(userId);
+	var pass = document.getElementById(passId);
+	var verify = document.getElementById(verifyId);
+	var userLabelId = userId + "_label";
+	var passLabelId = passId + "_label";
+	var verifyLabelId = verifyId + "_label";
+	if (/^[a-z_][a-z0-9_-]{1,31}$/.test(user.value) && sysUsers.indexOf(user.value) == -1 || curr.value == user.value) {
+		hideError(user, userLabelId);
+	} else {
+		showError(user, userLabelId);
+	}
+	if (/^.{1,128}$/.test(pass.value)) {
+		hideError(pass, passLabelId);
+	} else {
+		showError(pass, passLabelId);
+	}
+	if (/^.{1,128}$/.test(verify.value) && verify.value == pass.value) {
+		hideError(verify, verifyLabelId);
+		enableButton("saveSysUser", true);
+	} else {
+		showError(verify, verifyLabelId);
+		enableButton("saveSysUser", false);
+	}
 }
 
 function verifySysPass(passId, verifyId) {

@@ -52,6 +52,10 @@ if (isset($_POST['saveSysUser'])) {
 		$sysPassStatus = "Password changed for ".$_POST['sysUser'].".";
 		$conf->changedPass("smbaccount");
 	} else {
+		suExec("changeshelluser ".$_POST['currUser']." \"".$_POST['sysGecos']."\" ".$_POST['sysUser']);
+		if ($_POST['currUser'] == $conf->getSetting("shelluser") && $_POST['currUser'] != $_POST['sysUser']) {
+			$conf->setSetting("shelluser", $_POST['sysUser']);
+		}
 		suExec("changeshellpass ".$_POST['sysUser']." ".$_POST['sysPass']);
 		$sysPassStatus = "Password changed for ".$_POST['sysUser'].".";
 		if ($_POST['sysUser'] == $conf->getSetting("shelluser")) {
@@ -80,15 +84,18 @@ foreach(file("/etc/passwd") as $entry) {
 
 <link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 
-<script type="text/javascript" src="scripts/acctsValidation.js"></script>
-
 <script type="text/javascript">
 // Functions to display warnings / errors
 var ldapUrl = "<?php echo $ldap_url; ?>";
 var ldapDom = "<?php echo $ldap_domain; ?>";
 var ldapBase = "<?php echo $ldap_base; ?>";
 var ldapGroups = "<?php echo sizeof($ldap_groups); ?>";
+var sysUsers = [<?php echo "\"".implode('", "', array_map(function($el){ return $el[0]; }, $sys_users))."\""; ?>];
+</script>
 
+<script type="text/javascript" src="scripts/acctsValidation.js"></script>
+
+<script type="text/javascript">
 function showLdapError() {
 	$('#activedir-tab-link').css('color', '#a94442');
 	$('#activedir-tab-icon').removeClass('hidden');
@@ -329,7 +336,7 @@ $(document).ready(function() {
 								<th>Full Name</th>
 								<th>Login Shell</th>
 								<th>Home Directory</th>
-								<!-- <th></th> -->
+								<th></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -343,7 +350,7 @@ $(document).ready(function() {
 								<td><?php echo $value[4]; ?></td>
 								<td><?php echo $value[6]; ?></td>
 								<td><?php echo $value[5]; ?></td>
-								<!-- <td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteUser" onClick="" <?php echo ($value[0] == "afpuser" || $value[0] == "smbuser" ? "disabled" : ""); ?>>Delete</button></td> -->
+								<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteUser" onClick="" <?php echo ($value[0] == $conf->getSetting("shelluser") || $value[0] == "afpuser" || $value[0] == "smbuser" ? "disabled" : ""); ?>>Delete</button></td>
 							</tr>
 						<?php }
 						} ?>
@@ -360,12 +367,13 @@ $(document).ready(function() {
 
 									<h5 id="sysUser_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
 									<div class="form-group">
-										<input type="text" name="sysUser" id="sysUser" class="form-control input-sm" onFocus="" onKeyUp="" onBlur="" placeholder="[Required]" readonly />
+										<input type="hidden" name="currUser" id="currUser" value=""/>
+										<input type="text" name="sysUser" id="sysUser" class="form-control input-sm" onFocus="verifySysUser('currUser', 'sysUser', 'sysPass', 'sysVerify');" onKeyUp="verifySysUser('currUser', 'sysUser', 'sysPass', 'sysVerify');" onBlur="verifySysUser('currUser', 'sysUser', 'sysPass', 'sysVerify');" placeholder="[Required]" value=""/>
 									</div>
 
 									<h5 id="sysGecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
 									<div class="form-group">
-										<input type="text" name="sysGecos" id="sysGecos" class="form-control input-sm" onFocus="" onKeyUp="" onBlur="" placeholder="[Required]" readonly />
+										<input type="text" name="sysGecos" id="sysGecos" class="form-control input-sm" onFocus="" onKeyUp="" onBlur="" placeholder="[Required]" value=""/>
 									</div>
 
 									<h5 id="sysPass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>

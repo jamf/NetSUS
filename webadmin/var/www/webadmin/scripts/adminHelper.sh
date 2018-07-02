@@ -452,9 +452,10 @@ killall dhcpd > /dev/null 2>&1
 ;;
 
 changeshelluser)
-username=$2
-password=$3
-usermod -l $username $password
+login=$2
+comment=$3
+new_login=$4
+usermod -l $new_login -c "$comment" $login
 ;;
 
 changeshellpass)
