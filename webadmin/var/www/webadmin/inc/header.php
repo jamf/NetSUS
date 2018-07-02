@@ -12,20 +12,6 @@ $parts = Explode('/',$currentFile);
 $pageURI = $parts[count($parts) -1];
 // to find current user
 $currentUser = getCurrentWebUser();
-// notifications
-$notifications = array();
-if ($conf->needsToChangeAnyPasses()) {
-	array_push($notifications, "accounts");
-}
-if (suExec("getSSLstatus") != "true") {
-	array_push($notifications, "certificates");
-}
-$df_result_str = trim(suExec("diskusage"));
-$df_result = explode(":", $df_result_str);
-$df_free_percent = ceil(100*$df_result[2]/$df_result[0]);
-if ($df_free_percent < 20) {
-	array_push($notifications, "storage");
-}
 ?>
 <!DOCTYPE html>
 <html>
@@ -51,64 +37,6 @@ if ($df_free_percent < 20) {
 
 <?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
 <body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?>>
-    <!-- Notification Modal -->
-    <div class="modal fade" id="notify-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Notifications</h3>
-                </div>
-                <div class="modal-body" id="notify-message">
-                	<?php
-                	$i = 1;
-                	foreach ($notifications as $notification) {
-                		if ($notification == "accounts") { ?>
-					<div class="row">
-						<div class="col-xs-2 settings-item">
-							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts"></a>
-						</div>
-						<div class="col-xs-10">
-							<p style="padding-top: 12px;">Credentials have not been changed for all the default user accounts.</p>
-							<p><a href="accounts.php">Click here to change them.</a></p>
-						</div>
-					</div>
-					<?php }
-                		if ($notification == "certificates") { ?>
-					<div class="row">
-						<div class="col-xs-2 settings-item">
-							<a href="certificates.php"><img src="images/settings/PKI.png" alt="Certificates"></a>
-						</div>
-						<div class="col-xs-10">
-							<p style="padding-top: 12px;">The system is using a self-signed certificate.</p>
-							<p><a href="certificates.php">Click here to resolve this.</a></p>
-						</div>
-					</div>
-					<?php }
-                		if ($notification == "storage") { ?>
-					<div class="row <?php echo (in_array("storage", $notifications) ? "" : "hidden"); ?>">
-						<div class="col-xs-2 settings-item">
-							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage"></a>
-						</div>
-						<div class="col-xs-10">
-							<p style="padding-top: 12px;">The file system is running low on disk space.</p>
-							<p><a href="storage.php">Click here to resolve this.</a></p>
-						</div>
-					</div>
-					<?php }
-						if ($i < sizeof($notifications)) { ?>
-						<hr>
-					<?php }
-						$i++;
-					} ?>					
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-	<!-- /#modal -->
-
     <!-- Restart Modal -->
     <div class="modal fade" id="restart-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -200,7 +128,7 @@ if ($df_free_percent < 20) {
                     </div>
                 </div>
                 <div class="navbar-flash">
-					<button type="button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal" <?php echo (sizeof($notifications) == 0 ? "disabled" : ""); ?>><span class="glyphicon glyphicon-flash"></span><span class="badge <?php echo (sizeof($notifications) == 0 ? "hidden" : ""); ?>"><?php echo sizeof($notifications); ?></span></button>
+					<button type="button" id="notify-button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal" disabled><span class="glyphicon glyphicon-flash"></span><span id="notify-badge" class="badge hidden"></span></button>
                 </div>
                 <div class="navbar-gear">
                     <div class="btn-group">
