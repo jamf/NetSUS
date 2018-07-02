@@ -1284,4 +1284,18 @@ grep -v "\(#\|^~\|^:\|^$\)" /etc/netatalk/AppleVolumes.default | while read i; d
 done
 ;;
 
+getSSLstatus)
+if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
+	issuer=$(openssl x509 -issuer -noout -in /etc/ssl/certs/ssl-cert-snakeoil.pem | awk '{print $NF}')
+	subject=$(openssl x509 -subject -noout -in /etc/ssl/certs/ssl-cert-snakeoil.pem | awk '{print $NF}')
+fi
+if [ -f "/etc/pki/tls/certs/localhost.crt" ]; then
+	issuer=$(openssl x509 -issuer -noout -in /etc/pki/tls/certs/localhost.crt | awk '{print $NF}')
+	subject=$(openssl x509 -subject -noout -in /etc/pki/tls/certs/localhost.crt | awk '{print $NF}')
+fi
+if [ "${issuer}" != "${subject}" ]; then
+	echo "true"
+fi
+;;
+
 esac

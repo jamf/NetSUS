@@ -17,6 +17,9 @@ $notifications = array();
 if ($conf->needsToChangeAnyPasses()) {
 	array_push($notifications, "accounts");
 }
+if (suExec("getSSLstatus") != "true") {
+	array_push($notifications, "certificates");
+}
 $df_result_str = trim(suExec("diskusage"));
 $df_result = explode(":", $df_result_str);
 $df_free_percent = ceil(100*$df_result[2]/$df_result[0]);
@@ -57,18 +60,28 @@ if ($df_free_percent < 20) {
                 </div>
                 <div class="modal-body" id="notify-message">
 					<div class="row <?php echo (in_array("accounts", $notifications) ? "" : "hidden"); ?>">
-						<div class="col-xs-2 text-center">
-							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts" height="54"></a>
+						<div class="col-xs-2 settings-item">
+							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts"></a>
 						</div>
 						<div class="col-xs-10">
 							<p style="padding-top: 12px;">Credentials have not been changed for all the default user accounts.</p>
 							<p><a href="accounts.php">Click here to change them.</a></p>
 						</div>
 					</div>
-					<?php echo (sizeof($notifications) > 1 ? "<hr>" : ""); ?>
+					<?php echo (in_array("accounts", $notifications) && sizeof($notifications) > 1 ? "<hr>" : ""); ?>
+					<div class="row <?php echo (in_array("certificates", $notifications) ? "" : "hidden"); ?>">
+						<div class="col-xs-2 settings-item">
+							<a href="certificates.php"><img src="images/settings/PKI.png" alt="Certificates"></a>
+						</div>
+						<div class="col-xs-10">
+							<p style="padding-top: 12px;">The system is using a self-signed certificate.</p>
+							<p><a href="certificates.php">Click here to resolve this.</a></p>
+						</div>
+					</div>
+					<?php echo (in_array("certificates", $notifications) && sizeof($notifications) > 2 ? "<hr>" : ""); ?>
 					<div class="row <?php echo (in_array("storage", $notifications) ? "" : "hidden"); ?>">
-						<div class="col-xs-2 text-center">
-							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage" height="54"></a>
+						<div class="col-xs-2 settings-item">
+							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage"></a>
 						</div>
 						<div class="col-xs-10">
 							<p style="padding-top: 12px;">The file system is running low on disk space.</p>
