@@ -2,14 +2,15 @@
 //Read in whether or not the user is an admin - this is populated at the index.php page using the allowedAdminUsers variable
 if (isset($_SESSION['isAdmin'])) {
 	$isAdmin = $_SESSION['isAdmin'];
-}else{
+} else {
 	$isAdmin = false;
 }
 
 // to find current page
-$currentFile = $_SERVER["PHP_SELF"];
-$parts = Explode('/',$currentFile);
-$pageURI = $parts[count($parts) -1];
+$currentFile = $_SERVER['PHP_SELF'];
+$parts = explode("/", $currentFile);
+$pageURI = $parts[count($parts) - 1];
+
 // to find current user
 $currentUser = getCurrentWebUser();
 ?>
@@ -18,25 +19,24 @@ $currentUser = getCurrentWebUser();
 
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title><?php echo (isset($title) ? $title : "NetBoot/SUS/LDAP Proxy Server") ?></title>
+	<title><?php echo (isset($title) ? $title : "NetSUS"); ?></title>
 	<!-- Roboto Font CSS -->
-	<link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
+	<link href="theme/roboto.font.css" rel="stylesheet" type="text/css">
 	<!-- Bootstrap CSS -->
 	<link href="theme/bootstrap.css" rel="stylesheet" media="all">
 	<!-- Project CSS -->
-	<link rel="stylesheet" href="theme/styles.css" type="text/css">
+	<link href="theme/styles.css" rel="stylesheet" type="text/css">
 	<!-- JQuery -->
 	<script type="text/javascript" src="scripts/jquery/jquery-2.2.4.js"></script>
 	<!-- Bootstrap JavaScript -->
 	<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-	<script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
-	<script type="text/javascript" src="scripts/adminServicesSettings.js"></script>
+	<!-- Project JavaScript -->
 	<script type="text/javascript" src="scripts/ajax.js"></script>
-	<?php echo (isset($jsscriptfiles) ? $jsscriptfiles : "")?>
 </head>
 
-<?php if (!isset($title)) { $title = "NetBoot/SUS/LDAP Proxy Server Management"; } ?>
-<body <?php echo (isset($onloadjs) ? " onload=\"$onloadjs\"" : "")?>>
+<?php if (!isset($title)) { $title = "NetSUS Management"; } ?>
+<body>
+
     <!-- Restart Modal -->
     <div class="modal fade" id="restart-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -51,7 +51,7 @@ $currentUser = getCurrentWebUser();
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
-                    <button id="restart-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="restart-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
                     <button id="restart-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="restartServer();">Restart</button>
                 </div>
             </div>
@@ -73,7 +73,7 @@ $currentUser = getCurrentWebUser();
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
-                    <button id="shutdown-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="shutdown-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
                     <button id="shutdown-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="shutdownServer();">Shut Down</button>
                 </div>
             </div>
@@ -95,7 +95,7 @@ $currentUser = getCurrentWebUser();
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
                 </div>
                 <div class="modal-footer">
-                    <button id="disablegui-cancel" type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+                    <button id="disablegui-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
                     <button id="disablegui-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="disableGUI();">Disable</button>
                 </div>
             </div>
@@ -119,11 +119,11 @@ $currentUser = getCurrentWebUser();
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
-                            <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
+<?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
                             <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', 'webadmin-tab');">Change Password</a></li>
                             <li role="separator" class="divider"></li>
-                            <?php } ?>
-                            <li><a href="logout.php">Logout <span id="logoutuser"><?php echo $currentUser ?><span></a></li>
+<?php } ?>
+                            <li><a href="logout.php">Logout <span id="logoutuser"><?php echo $currentUser ?></span></a></li>
                         </ul>
                     </div>
                 </div>
@@ -165,8 +165,3 @@ $currentUser = getCurrentWebUser();
 
         <!-- Page Content -->
         <div class="container-fluid" id="page-content-wrapper">
-
-
-
-
-
