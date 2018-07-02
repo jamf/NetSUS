@@ -59,7 +59,11 @@ if ($df_free_percent < 20) {
                     <h3 class="modal-title">Notifications</h3>
                 </div>
                 <div class="modal-body" id="notify-message">
-					<div class="row <?php echo (in_array("accounts", $notifications) ? "" : "hidden"); ?>">
+                	<?php
+                	$i = 1;
+                	foreach ($notifications as $notification) {
+                		if ($notification == "accounts") { ?>
+					<div class="row">
 						<div class="col-xs-2 settings-item">
 							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts"></a>
 						</div>
@@ -68,8 +72,9 @@ if ($df_free_percent < 20) {
 							<p><a href="accounts.php">Click here to change them.</a></p>
 						</div>
 					</div>
-					<?php echo (in_array("accounts", $notifications) && sizeof($notifications) > 1 ? "<hr>" : ""); ?>
-					<div class="row <?php echo (in_array("certificates", $notifications) ? "" : "hidden"); ?>">
+					<?php }
+                		if ($notification == "certificates") { ?>
+					<div class="row">
 						<div class="col-xs-2 settings-item">
 							<a href="certificates.php"><img src="images/settings/PKI.png" alt="Certificates"></a>
 						</div>
@@ -78,7 +83,8 @@ if ($df_free_percent < 20) {
 							<p><a href="certificates.php">Click here to resolve this.</a></p>
 						</div>
 					</div>
-					<?php echo (in_array("certificates", $notifications) && sizeof($notifications) > 2 ? "<hr>" : ""); ?>
+					<?php }
+                		if ($notification == "storage") { ?>
 					<div class="row <?php echo (in_array("storage", $notifications) ? "" : "hidden"); ?>">
 						<div class="col-xs-2 settings-item">
 							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage"></a>
@@ -88,6 +94,12 @@ if ($df_free_percent < 20) {
 							<p><a href="storage.php">Click here to resolve this.</a></p>
 						</div>
 					</div>
+					<?php }
+						if ($i < sizeof($notifications)) { ?>
+						<hr>
+					<?php }
+						$i++;
+					} ?>					
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
