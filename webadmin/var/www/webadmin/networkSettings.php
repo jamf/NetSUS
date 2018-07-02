@@ -94,6 +94,8 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 }
 ?>
 
+<script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
+
 <script>
 function showErr(id, valid)
 {
