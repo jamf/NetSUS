@@ -48,49 +48,41 @@ if (sizeof($notifications) > 0) { ?>
                 <div class="modal-header">
                     <h3 class="modal-title">Notifications</h3>
                 </div>
-                <div class="modal-body" id="notify-message">
-<?php
-$i = 1;
-foreach ($notifications as $notification) {
-	if ($notification == "accounts") { ?>
-					<div class="row">
-						<div class="col-xs-2 settings-item">
+                <table class="table table-striped">
+<?php if (in_array("accounts", $notifications)) { ?>
+					<tr>
+						<td class="settings-item">
 							<a href="accounts.php"><img src="images/settings/Account.png" alt="User Accounts"></a>
-						</div>
-						<div class="col-xs-10">
+						</td>
+						<td>
 							<p style="padding-top: 12px;">Credentials have not been changed for all the default user accounts.</p>
 							<p><a href="accounts.php">Click here to change them.</a></p>
-						</div>
-					</div>
+						</td>
+					</tr>
 <?php }
-	if ($notification == "certificates") { ?>
-					<div class="row">
-						<div class="col-xs-2 settings-item">
+if (in_array("certificates", $notifications)) { ?>
+					<tr>
+						<td class="settings-item">
 							<a href="certificates.php"><img src="images/settings/PKI.png" alt="Certificates"></a>
-						</div>
-						<div class="col-xs-10">
+						</td>
+						<td>
 							<p style="padding-top: 12px;">The system is using a self-signed certificate.</p>
 							<p><a href="certificates.php">Click here to resolve this.</a></p>
-						</div>
-					</div>
+						</td>
+					</tr>
 <?php }
-	if ($notification == "storage") { ?>
-					<div class="row <?php echo (in_array("storage", $notifications) ? "" : "hidden"); ?>">
-						<div class="col-xs-2 settings-item">
+if (in_array("storage", $notifications)) { ?>
+					<tr>
+						<td class="settings-item">
 							<a href="storage.php"><img src="images/settings/Storage.png" alt="Storage"></a>
-						</div>
-						<div class="col-xs-10">
+						</td>
+						<td>
 							<p style="padding-top: 12px;">The file system is running low on disk space.</p>
 							<p><a href="storage.php">Click here to resolve this.</a></p>
-						</div>
-					</div>
-<?php }
-	if ($i < sizeof($notifications)) { ?>
-					<hr>
-<?php }
-	$i++;
-} ?>					
-                </div>
+						</td>
+					</tr>
+<?php } ?>					
+                </table>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
                 </div>
