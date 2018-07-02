@@ -31,9 +31,9 @@
 
 	<script type="text/javascript">
 	$(document).ready(function(){
-		var notifications = <?php echo sizeof($notifications); ?>;
-		if (notifications > 0) {
-			$("#notify-badge").html(notifications);
+		var count = <?php echo sizeof($notifications); ?>;
+		if (count > 0) {
+			$("#notify-badge").html(count);
 			$('#notify-badge').removeClass('hidden');
 			$('#notify-button').prop('disabled', false);
 		}
