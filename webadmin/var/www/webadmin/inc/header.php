@@ -40,7 +40,7 @@ if ($df_free_percent < 20) {
 	<!-- Project CSS -->
 	<link rel="stylesheet" href="theme/styles.css" type="text/css">
 	<!-- JQuery -->
-	<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
+	<script type="text/javascript" src="scripts/jquery/jquery-2.2.4.js"></script>
 	<!-- Bootstrap JavaScript -->
 	<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 	<script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>

@@ -169,7 +169,7 @@ $ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && siz
 				background-color: #292929;
 			}
 		</style>
-		<script type="text/javascript" src="scripts/jquery/jquery-2.2.0.js"></script>
+		<script type="text/javascript" src="scripts/jquery/jquery-2.2.4.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
 	</head> 
 
