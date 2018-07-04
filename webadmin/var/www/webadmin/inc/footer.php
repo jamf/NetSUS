@@ -7,9 +7,9 @@
 
     <!-- Menu Toggle Script -->
     <script>
-		$("#menu-toggle").click(function(e) {
+		$('#menu-toggle').click(function(e) {
 			e.preventDefault();
-			$("#wrapper").toggleClass("toggled");
+			$('#wrapper').toggleClass('toggled');
 		});
     </script>
 <?php
@@ -34,7 +34,7 @@ if (sizeof($notifications) > 0) { ?>
 		$(document).ready(function(){
 			var count = <?php echo sizeof($notifications); ?>;
 			if (count > 0) {
-				$("#notify-badge").html(count);
+				$('#notify-badge').html(count);
 				$('#notify-badge').removeClass('hidden');
 				$('#notify-button').prop('disabled', false);
 			}
