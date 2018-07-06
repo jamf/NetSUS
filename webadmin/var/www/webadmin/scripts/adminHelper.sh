@@ -451,17 +451,65 @@ killall dhcpd > /dev/null 2>&1
 /usr/local/sbin/dhcpd > /dev/null 2>&1
 ;;
 
+addshelluser)
+# $2: Username
+# $3: Full Name
+# $4: Account Type
+if [ "$4" = 'Administrator' ] || [ "$4" = 'Standard' ]; then
+	useradd -c "$3" -d /home/$2 -m -s /bin/bash $2
+else
+	useradd -c "$3" -d /dev/null -s $(which nologin) $2
+fi
+;;
+
 changeshelluser)
-login=$2
-comment=$3
-new_login=$4
-usermod -l $new_login -c "$comment" $login
+# $2: Username
+# $3: Full Name
+# $4: New Username
+if [ -d "/home/$2" ]; then
+	usermod -c "$3" -d /home/$4 -l $4 -m $2
+else
+	usermod -c "$3" -l $4 $2
+fi
+groupmod -n $4 $2 2>/dev/null
+;;
+
+adminshelluser)
+# $2: Username
+if [ "$(getent group wheel)" = '' ]; then
+	usermod -a -G adm,sudo,lpadmin,sambashare $2
+else
+	usermod -a -G wheel $2
+fi
+;;
+
+stdshelluser)
+# $2: Username
+if [ "$(getent group wheel)" = '' ]; then
+	deluser $2 adm
+	deluser $2 sudo
+	deluser $2 lpadmin
+	deluser $2 sambashare
+else
+	deluser $2 wheel
+fi
 ;;
 
 changeshellpass)
-username=$2
-password=$3
-echo $username:$password | chpasswd
+# $2: user_name
+# $3: password
+echo $2:"$3" | chpasswd
+(echo "$3"; echo "$3") | smbpasswd -s -a $2
+;;
+
+delshelluser)
+# $2: Username
+# $3: Delete Home
+if [ "$3" = 'true' ]; then
+	userdel -r $2
+else
+	userdel $2
+fi
 ;;
 
 installslapdconf)
