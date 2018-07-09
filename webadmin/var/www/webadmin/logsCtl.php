@@ -1,66 +1,44 @@
 <?php
 
-include "inc/config.php";
-include "inc/auth.php";
-include "inc/functions.php";
+session_start();
 
-$sURL="logs.php";
-$title = "Logs";
+if (!($_SESSION['isAuthUser'])) {
 
-if (isset($_GET['log']) && $_GET['log'] != '')
-{
-	$logcontent = suExec("displayLog ".$_GET['log']." ".$_GET['lines']);
-	include "inc/header.php";
-		
-?>
+	echo "Not authorized - please log in";
 
-<style>
-/* #page-content-wrapper {
-	height: 100vh;
-} */
-.log-viewer {
-    -webkit-box-flex: 1;
-    -ms-flex: 1;
-    flex: 1;
-    border-radius: 3px;
-    border: 1px solid #bfbfbf;
-    margin-top: 5px;
-    padding: 4px;
-    pointer-events: auto;
-	min-height: 400px;
-	/* height: 100%; */
+} else {
+
+	include "inc/config.php";
+	include "inc/dbConnect.php";
+	include "inc/functions.php";
+
+	// Download Log
+	if (isset($_GET['download'])) {
+		$logname = basename($_GET['download']);
+		$tmp_file = "/tmp/".$logname.".zip";
+		$logcontent = suExec("displayLog ".$_GET['download']." ".$_GET['lines']);
+		file_put_contents("/tmp/".$logname, $logcontent);
+		$zip = new ZipArchive();
+		$zip->open($tmp_file, ZipArchive::CREATE);
+		$zip->addFile("/tmp/".$logname, $logname);
+		$zip->close();
+		unlink("/tmp/".$logname);
+		if (file_exists($tmp_file)) {
+			if (ob_get_level()) ob_end_clean();
+			header('Content-Description: File Transfer');
+			header('Content-Type: application/octet-stream');
+			header('Content-Disposition: attachment; filename="'.$logname.'.zip"');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header('Content-Length: '.filesize($tmp_file));
+			ob_clean();
+			flush();
+			readfile($tmp_file);
+			unlink($tmp_file);
+			exit;
+		}
+	}
 }
-</style>
-
-<script type="text/javascript" src="scripts/ace/ace.js"></script>
-
-	<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="logs.php">Logs</a> <span class="glyphicon glyphicon-chevron-right"></span></div>
-	<h2><?php echo $_GET['log']; ?></h2>
-		<div class="row">
-			<div class="col-xs-12">
-
-				<hr>
-
-				<br>
-
-				<div id="viewer" class="log-viewer" tabindex="-1"><?php echo htmlentities($logcontent); ?></div>
-				<script>
-					var viewer = ace.edit("viewer");
-					viewer.session.setMode("ace/mode/text");
-					viewer.setTheme("ace/theme/clouds");
-					viewer.session.setFoldStyle("markbegin");
-					viewer.setShowPrintMargin(false);
-					viewer.setOption("readOnly", true);
-				</script>
-
-			</div>
-		</div>
-<?php }
-
-if (!isset($_GET['log'])) {
-	header('Location: '. $sURL);
-}
-
-include "inc/footer.php";
 
 ?>
