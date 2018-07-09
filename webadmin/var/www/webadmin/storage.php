@@ -22,7 +22,6 @@ $df_used_percent = ceil(100*$df_result[1]/$df_result[0]);
 $df_free = formatSize($df_result[2]*1024);
 $df_reserved = formatSize(($df_result[0]-$df_result[1]-$df_result[2])*1024);
 $df_reserved_percent = ceil(100*($df_result[0]-$df_result[1]-$df_result[2])/$df_result[0]);
-// To do: add warning and danger threasholds for progress bas styles
 
 $lv_result = trim(suExec("resizeStatus"));
 if (strpos($lv_result, 'ERROR') === false) {
@@ -38,6 +37,12 @@ if (strpos($lv_result, 'ERROR') === false) {
 			<style>
 				.progress-bar-light {
 					background-color: #558fc0;
+				}
+				.progress-bar-warning-light {
+					background-color: #ebbb77;
+				}
+				.progress-bar-danger-light {
+					background-color: #d2746d;
 				}
 			</style>
 
@@ -68,8 +73,8 @@ if (strpos($lv_result, 'ERROR') === false) {
 					<br>
 
 					<div class="progress">
-						<div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $df_used_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $df_used_percent; ?>%;"></div>
-						<div class="progress-bar progress-bar-light" role="progressbar" aria-valuenow="<?php echo $df_reserved_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $df_reserved_percent; ?>%;"></div>
+						<div class="progress-bar <?php echo ($df_used_percent >= 80 ? ($df_used_percent >= 90 ? "progress-bar-danger" : "progress-bar-warning") : ""); ?>" role="progressbar" aria-valuenow="<?php echo $df_used_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $df_used_percent; ?>%;"></div>
+						<div class="progress-bar <?php echo ($df_used_percent >= 80 ? ($df_used_percent >= 90 ? "progress-bar-danger-light" : "progress-bar-warning-light") : "progress-bar-light"); ?>" role="progressbar" aria-valuenow="<?php echo $df_reserved_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $df_reserved_percent; ?>%;"></div>
 					</div>
 
 					<hr>
