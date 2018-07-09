@@ -18,7 +18,7 @@ $notifications = array();
 if ($conf->needsToChangeAnyPasses()) {
 	array_push($notifications, "accounts");
 }
-if (suExec("getSSLstatus") != "true") {
+if (trim(suExec("getSSLstatus")) != "true") {
 	array_push($notifications, "certificates");
 }
 $df_result_str = trim(suExec("diskusage"));
