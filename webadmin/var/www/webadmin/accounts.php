@@ -17,32 +17,38 @@ if (isset($_POST['saveldapgroup'])) {
 }
 
 // System Accounts
+if (isset($_POST['addsysuser'])) {
+	suExec("addshelluser ".$_POST['addsysuserlogin']." \"".$_POST['addsysusergecos']."\" ".$_POST['addsysusertype']);
+	if ($_POST['addsysusertype'] == "Administrator") {
+		suExec("adminshelluser ".$_POST['addsysuserlogin']);
+	}
+	suExec("changeshellpass ".$_POST['addsysuserlogin']." \"".$_POST['addsysuserpass']."\"");
+}
 if (isset($_POST['savesysuser'])) {
-	if ($_POST['sysuserlogin'] == "afpuser") {
-		suExec("resetafppw ".$_POST['sysuserpass']);
+	suExec("changeshelluser ".$_POST['sysuserlogin']." \"".$_POST['sysusergecos']."\" ".$_POST['sysuserhome']." ".$_POST['sysusernewlogin']." ".$_POST['sysusershell']." ".$_POST['sysusernewuid']);
+	if ($_POST['sysuserlogin'] == $conf->getSetting("shelluser")) {
+		$conf->setSetting("shelluser", $_POST['sysusernewlogin']);
+		$conf->changedPass("shellaccount");
+	} else {
+		if ($_POST['sysuseradmin'] == "true") {
+			suExec("addshelladmin ".$_POST['sysusernewlogin']);
+		} else {
+			suExec("remshelladmin ".$_POST['sysusernewlogin']);
+		}
+	}
+}
+if (isset($_POST['savesyspass'])) {
+	if ($_POST['syspasslogin'] == "afpuser") {
+		suExec("resetafppw ".$_POST['sysnewpass']);
 		$conf->changedPass("afpaccount");
 	} else {
-		if ($_POST['sysuserlogin'] == "") {
-			suExec("addshelluser ".$_POST['sysusernewlogin']." \"".$_POST['usernewmodgecos']."\" ".$_POST['sysusertype']);
-			if ($_POST['sysusertype'] == "Administrator") {
-				suExec("adminshelluser ".$_POST['sysusernewlogin']);
-			}
-		} elseif ($_POST['sysuserlogin'] == "smbuser") {
+		suExec("changeshellpass ".$_POST['syspasslogin']." \"".$_POST['sysnewpass']."\"");
+		if ($_POST['syspasslogin'] == "smbuser") {
 			$conf->changedPass("smbaccount");
-		} else {
-			suExec("changeshelluser ".$_POST['sysuserlogin']." \"".$_POST['usernewmodgecos']."\" ".$_POST['sysusernewlogin']);
-			if ($_POST['sysuserlogin'] == $conf->getSetting("shelluser")) {
-				$conf->setSetting("shelluser", $_POST['sysusernewlogin']);
-				$conf->changedPass("shellaccount");
-			} else {
-				if ($_POST['sysuseradmin'] == "true") {
-					suExec("adminshelluser ".$_POST['sysusernewlogin']);
-				} else {
-					suExec("stdshelluser ".$_POST['sysusernewlogin']);
-				}
-			}
 		}
-		suExec("changeshellpass ".$_POST['sysusernewlogin']." \"".$_POST['sysuserpass']."\"");
+		if ($_POST['syspasslogin'] == $conf->getSetting("shelluser")) {
+			$conf->changedPass("shellaccount");
+		}
 	}
 }
 if (isset($_POST['userdel']) && $_POST['userdel'] != "") {
@@ -77,6 +83,8 @@ if ($conf->getSetting("shelluser") != "shelluser") {
 }
 $uid_min = preg_split("/\s+/", implode(preg_grep("/\bUID_MIN\b/i", file("/etc/login.defs"))))[1];
 $uid_max = preg_split("/\s+/", implode(preg_grep("/\bUID_MAX\b/i", file("/etc/login.defs"))))[1];
+$user_shells_str = trim(suExec("getShellList"));
+$user_shells = explode(" ", $user_shells_str);
 $sys_groups = array();
 foreach(file("/etc/group") as $entry) {
 	$entry_arr = explode(":", $entry);
@@ -99,7 +107,7 @@ foreach(file("/etc/passwd") as $entry) {
 	$sys_user['gid'] = $entry_arr[3];
 	$sys_user['gecos'] = $entry_arr[4];
 	$sys_user['home'] = $entry_arr[5];
-	$sys_user['shell'] = trim($entry_arr[6]);
+	$sys_user['shell'] = basename(trim($entry_arr[6]));
 	$sys_user['groups'] = array();
 	foreach($sys_groups as $sys_group) {
 		if (in_array($sys_user['name'], $sys_group['users'])) {
@@ -108,7 +116,7 @@ foreach(file("/etc/passwd") as $entry) {
 	}
 	if ($sys_user['uid'] < $uid_min || $sys_user['uid'] > $uid_max) {
 		$sys_user['type'] = "System";
-	} elseif (strpos($sys_user['shell'], '/false') || strpos($sys_user['shell'], '/nologin')) {
+	} elseif ($sys_user['shell'] == "false" || $sys_user['shell'] == "nologin") {
 		$sys_user['type'] = "Sharing";
 	} elseif (in_array("adm", $sys_user['groups']) && in_array("sudo", $sys_user['groups']) || in_array("wheel", $sys_user['groups'])) {
 		$sys_user['type'] = "Administrator";
@@ -146,13 +154,7 @@ foreach(file("/etc/passwd") as $entry) {
 								text: '<span class="glyphicon glyphicon-plus"></span> New',
 								className: 'btn-primary btn-sm',
 								action: function ( e, dt, node, config ) {
-									$('#sysuserlocked').val(false);
-									$('#sysuserlogin').val('');
-									$('#sysusergecos').val('');
-									$('#sysusertype').val('Standard');
-									$('#usernewmodgecos').val('');
-									$('#sysusernewlogin').val('');
-									$("#sysuser-modal").modal();
+									$("#addsysuser-modal").modal();
 								}
 							}
 						],
@@ -354,55 +356,126 @@ foreach(file("/etc/passwd") as $entry) {
 						ajaxPost('ajax.php', 'ldapserver=');
 						ajaxPost('ajax.php', 'ldapbase=');
 						$('#ldapstatus').text('Not Configured');
+						$('#configure_ldap').text('Configure');
 					} else {
 						ajaxPost('ajax.php', 'ldapdomain='+ldapdomain.value);
 						ajaxPost('ajax.php', 'ldapserver='+ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value);
 						ajaxPost('ajax.php', 'ldapbase='+ldapbase.value);
 						$('#ldapstatus').text($('#ldapdomain').val());
+						$('#configure_ldap').text('Modify');
 					}
 					$('#saveldap').prop('disabled', true);
 					$('#ldap-modal').modal('hide');
 				}
 
-				function toggleUserAdmin() {
-					var sysuseradmin = document.getElementById('sysuseradmin');
-					var sysusertype = document.getElementById('sysusertype');
-					if (sysuseradmin.checked) {
-						sysusertype.value = "Administrator";
+				function validAddSysUser() {
+					var syslogins = [<?php echo "\"".implode('", "', array_map(function($el){ return $el['name']; }, $sys_users))."\""; ?>];
+					var addsysusergecos = document.getElementById('addsysusergecos');
+					var addsysuserlogin = document.getElementById('addsysuserlogin');
+					var addsysuserpass = document.getElementById('addsysuserpass');
+					var addsysuserverify = document.getElementById('addsysuserverify');
+					if (/^[^:]{0,128}$/.test(addsysusergecos.value)) {
+						hideError(addsysusergecos, 'addsysusergecos_label');
 					} else {
-						sysusertype.value = "Standard";
+						showError(addsysusergecos, 'addsysusergecos_label');
+					}
+					if (/^[a-z_][a-z0-9_-]{1,31}$/.test(addsysuserlogin.value) && syslogins.indexOf(addsysuserlogin.value) == -1) {
+						hideError(addsysuserlogin, 'addsysuserlogin_label');
+					} else {
+						showError(addsysuserlogin, 'addsysuserlogin_label');
+					}
+					if (/^.{1,128}$/.test(addsysuserpass.value)) {
+						hideError(addsysuserpass, 'addsysuserpass_label');
+					} else {
+						showError(addsysuserpass, 'addsysuserpass_label');
+					}
+					if (/^.{1,128}$/.test(addsysuserverify.value) && addsysuserverify.value == addsysuserpass.value) {
+						hideError(addsysuserverify, 'addsysuserverify_label');
+					} else {
+						showError(addsysuserverify, 'addsysuserverify_label');
+					}
+					if (/^[^:]{1,128}$/.test(addsysusergecos.value) && /^[a-z_][a-z0-9_-]{1,31}$/.test(addsysuserlogin.value) && syslogins.indexOf(addsysuserlogin.value) && /^.{1,128}$/.test(addsysuserpass.value) && addsysuserpass.value == addsysuserverify.value) {
+						$('#addsysuser').prop('disabled', false);
+					} else {
+						$('#addsysuser').prop('disabled', true);
+					}
+				}
+
+				function validSysPass() {
+					var sysnewpass = document.getElementById('sysnewpass');
+					var syspassverify = document.getElementById('syspassverify');
+					if (/^.{1,128}$/.test(sysnewpass.value)) {
+						hideError(sysnewpass, 'sysnewpass_label');
+					} else {
+						showError(sysnewpass, 'sysnewpass_label');
+					}
+					if (/^.{1,128}$/.test(syspassverify.value) && syspassverify.value == sysnewpass.value) {
+						hideError(syspassverify, 'syspassverify_label');
+					} else {
+						showError(syspassverify, 'syspassverify_label');
+					}
+					if (/^.{1,128}$/.test(sysnewpass.value) && syspassverify.value == sysnewpass.value) {
+						$('#savesyspass').prop('disabled', false);
+					} else {
+						$('#savesyspass').prop('disabled', true);
 					}
 				}
 
 				function validSysUser() {
-					var sysusers = [<?php echo "\"".implode('", "', array_map(function($el){ return $el['name']; }, $sys_users))."\""; ?>];
-					var sysnames = [<?php echo "\"".implode('", "', array_map(function($el){ return $el['gecos']; }, $sys_users))."\""; ?>];
-					var usernewmodgecos = document.getElementById('usernewmodgecos');
+					var sysuidmin = <?php echo $uid_min; ?>;
+					var sysuidmax = <?php echo $uid_max; ?>;
+					var sysuids = [<?php echo implode(', ', array_map(function($el){ return $el['uid']; }, $sys_users)); ?>];
+					var syslogins = [<?php echo "\"".implode('", "', array_map(function($el){ return $el['name']; }, $sys_users))."\""; ?>];
+					var sysgecos = [<?php echo "\"".implode('", "', array_map(function($el){ return $el['gecos']; }, $sys_users))."\""; ?>];
+					var sysuserlocked = document.getElementById('sysuserlocked');
+					var sysuseruid = document.getElementById('sysuseruid');
 					var sysuserlogin = document.getElementById('sysuserlogin');
+					var sysusernewuid = document.getElementById('sysusernewuid');
 					var sysusernewlogin = document.getElementById('sysusernewlogin');
-					var sysuserpass = document.getElementById('sysuserpass');
-					var sysuserverify = document.getElementById('sysuserverify');
-					if (/^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (sysusers.indexOf(sysusernewlogin.value) == -1 || sysuserlogin.value == sysusernewlogin.value)) {
+					var sysusergecos = document.getElementById('sysusergecos');
+					var sysusershell = document.getElementById('sysusershell');
+					var sysuserhome = document.getElementById('sysuserhome');
+					var sysusertype = document.getElementById('sysusertype');
+					var sysuseradmin = document.getElementById('sysuseradmin');
+					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax) {
+						hideError(sysusernewuid, 'sysusernewuid_label');
+					} else {
+						showError(sysusernewuid, 'sysusernewuid_label');
+					}
+					if (/^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (syslogins.indexOf(sysusernewlogin.value) == -1 || sysusernewlogin.value == sysuserlogin.value)) {
 						hideError(sysusernewlogin, 'sysusernewlogin_label');
 					} else {
 						showError(sysusernewlogin, 'sysusernewlogin_label');
 					}
-					if (/^[^:]{1,128}$/.test(usernewmodgecos.value) && (sysnames.indexOf(usernewmodgecos.value) == -1 || sysusergecos.value == usernewmodgecos.value)) {
-						hideError(usernewmodgecos, 'usernewmodgecos_label');
+					if (/^[^:]{0,128}$/.test(sysusergecos.value)) {
+						hideError(sysusergecos, 'sysusergecos_label');
 					} else {
-						showError(usernewmodgecos, 'usernewmodgecos_label');
+						showError(sysusergecos, 'sysusergecos_label');
 					}
-					if (/^.{1,128}$/.test(sysuserpass.value)) {
-						hideError(sysuserpass, 'sysuserpass_label');
+					if (sysusershell.value == "nologin" || sysusershell.value == "false") {
+						sysuserhome.readOnly = true;
+						sysuserhome.value = "/dev/null";
+						sysuseradmin.checked = false;
+						sysusertype.value = "Sharing";
 					} else {
-						showError(sysuserpass, 'sysuserpass_label');
+						sysuserhome.readOnly = false;
+						if (/^(\/)[^\0:]*$/.test(sysuserhome.value) && sysuserhome.value != "/dev/null") {
+							hideError(sysuserhome, 'sysuserhome_label');
+						} else {
+							showError(sysuserhome, 'sysuserhome_label');
+						}
+						if (sysuseradmin.checked) {
+							sysusertype.value = "Administrator";
+						} else {
+							sysusertype.value = "Standard";
+						}
 					}
-					if (/^.{1,128}$/.test(sysuserverify.value) && sysuserverify.value == sysuserpass.value) {
-						hideError(sysuserverify, 'sysuserverify_label');
+					if (sysuserlocked.value == "true" || sysusershell.value == "false" || sysusershell.value == "nologin") {
+						sysuseradmin.disabled = true;
 					} else {
-						showError(sysuserverify, 'sysuserverify_label');
+						sysuseradmin.disabled = false;
 					}
-					if (/^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (sysusers.indexOf(sysusernewlogin.value) == -1 || sysuserlogin.value == sysusernewlogin.value) && /^[^:]{1,128}$/.test(usernewmodgecos.value) && (sysnames.indexOf(usernewmodgecos.value) == -1 || sysusergecos.value == usernewmodgecos.value) && /^.{1,128}$/.test(sysuserverify.value) && sysuserverify.value == sysuserpass.value) {
+					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax && /^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (syslogins.indexOf(sysusernewlogin.value) == -1 || sysusernewlogin.value == sysuserlogin.value) && /^[^:]{0,128}$/.test(sysusergecos.value) && (sysusertype.value == "Sharing" || sysusertype.value != "Sharing" && /^(\/)[^\0:]*$/.test(sysuserhome.value) && sysuserhome.value != "/dev/null")) {
 						$('#savesysuser').prop('disabled', false);
 					} else {
 						$('#savesysuser').prop('disabled', true);
@@ -413,34 +486,21 @@ foreach(file("/etc/passwd") as $entry) {
 			<script type="text/javascript">
 				$(document).ready(function(){
 					$('#sysuser-modal').on('show.bs.modal', function(e) {
+						$('#sysusernewuid').val($('#sysuseruid').val());
+						$('#sysusernewlogin').val($('#sysuserlogin').val());
 						if ($('#sysusertype').val() == 'Administrator') {
 							$('#sysuseradmin').prop('checked', true);
 						} else {
 							$('#sysuseradmin').prop('checked', false);
 						}
-						if ($('#sysusertype').val() == 'Sharing' || $('#sysuserlocked').val() == 'true' || $('#sysuserlogin').val() == '') {
-							$('#sysuseradmin').prop('disabled', true);
+						if ($('#sysuserlocked').val() == 'true') {
+							$('#sysusershell option[value="false"]').prop('disabled', true);
+							$('#sysusershell option[value="nologin"]').prop('disabled', true);
 						} else {
-							$('#sysuseradmin').prop('disabled', false);
+							$('#sysusershell option[value="false"]').prop('disabled', false);
+							$('#sysusershell option[value="nologin"]').prop('disabled', false);
 						}
-						if ($('#sysuserlogin').val() == 'afpuser' || $('#sysuserlogin').val() == 'smbuser') {
-							$('#usernewmodgecos').prop('readonly', true);
-							$('#sysusernewlogin').prop('readonly', true);
-						} else {
-							$('#usernewmodgecos').prop('readonly', false);
-							$('#sysusernewlogin').prop('readonly', false);
-						}
-						if ($('#sysuserlogin').val() == '') {
-							$('#sysuser_title').text('Add User');
-							$('#sysusertype_wrapper').removeClass('hidden');
-							$('#sysuseradmin_wrapper').addClass('hidden');
-						} else {
-							$('#sysuser_title').text('Modify User');
-							$('#sysusertype_wrapper').addClass('hidden');
-							$('#sysuseradmin_wrapper').removeClass('hidden');
-						}
-						$('#sysuserpass').val('');
-						$('#sysuserverify').val('');
+						validSysUser();
 					});
 				});
 			</script>
@@ -490,7 +550,7 @@ foreach(file("/etc/passwd") as $entry) {
 									</thead>
 									<tfoot>
 										<tr>
-											<td colspan="4" align="right"><button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button></td>
+											<td colspan="4" align="right"><button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Group</button></td>
 										</tr>
 									</tfoot>
 									<tbody>
@@ -514,7 +574,7 @@ foreach(file("/etc/passwd") as $entry) {
 								<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
 
 								<div style="padding-bottom: 12px;">Domain: <span id="ldapstatus" class="text-muted"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></div>
-								<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal">Configure</button>
+								<button type="button" id="configure_ldap" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Configure" : "Modify"); ?></button>
 
 								<!-- Webuser Modal -->
 								<div class="modal fade" id="webuser-modal" tabindex="-1" role="dialog">
@@ -671,7 +731,16 @@ foreach(file("/etc/passwd") as $entry) {
 if ($sys_user['type'] != "System") { ?>
 										<tr>
 											<td><?php echo ($sys_user['default'] ? "<span class=\"glyphicon glyphicon-exclamation-sign\"></span>" : "&nbsp;"); ?></td>
-											<td><a data-toggle="modal" href="#sysuser-modal" onClick="$('#sysuserlocked').val(<?php echo ($sys_user['locked'] ? "true" : "false"); ?>); $('#sysuserlogin').val('<?php echo $sys_user['name']; ?>'); $('#sysusergecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusertype').val('<?php echo $sys_user['type']; ?>'); $('#usernewmodgecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusernewlogin').val('<?php echo $sys_user['name']; ?>');"><?php echo $sys_user['gecos']; ?></a></td>
+											<td>
+												<div class="dropdown">
+													<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['gecos']; ?></a>
+													<ul class="dropdown-menu" aria-labelledby="sysuser<?php echo $sys_user['uid']; ?>">
+														<li class="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "disabled" : ""); ?>"><a data-toggle="modal" href="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "" : "#sysuser-modal"); ?>" onClick="$('#sysuserlocked').val(<?php echo ($sys_user['locked'] ? "true" : "false"); ?>); $('#sysuseruid').val('<?php echo $sys_user['uid']; ?>'); $('#sysuserlogin').val('<?php echo $sys_user['name']; ?>'); $('#sysusergecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusershell').val('<?php echo $sys_user['shell']; ?>'); $('#sysuserhome').val('<?php echo $sys_user['home']; ?>'); $('#sysusertype').val('<?php echo $sys_user['type']; ?>');">Modify User</a></li>
+														<li><a data-toggle="modal" href="#syspass-modal" onClick="$('#syspass_title').text('<?php echo $sys_user['gecos']; ?>'); $('#syspasslogin').val('<?php echo $sys_user['name']; ?>'); $('#sysnewpass').val(''); $('#syspassverify').val('');">Reset Password</a></li>
+													</ul>
+												</div>
+												
+											</td>
 											<td><?php echo $sys_user['name']; ?></a></td>
 											<td><?php echo $sys_user['type']; ?></td>
 											<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#userdel-modal" onClick="$('#userdelgecos').text('<?php echo $sys_user['gecos']; ?>'); $('#userdelhome').prop('checked', false); $('#userdelhome').prop('disabled', <?php echo ($sys_user['type'] == "Sharing" ? "true" : "false"); ?>); $('#userdel').val('<?php echo $sys_user['name']; ?>');" <?php echo ($sys_user['locked'] ? "disabled" : ""); ?>>Delete</button></td>
@@ -680,6 +749,46 @@ if ($sys_user['type'] != "System") { ?>
 } ?>
 									</tbody>
 								</table>
+
+								<!-- Add System User Modal -->
+								<div class="modal fade" id="addsysuser-modal" tabindex="-1" role="dialog">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h3 class="modal-title">New User</h3>
+											</div>
+											<div class="modal-body">
+												<h5><strong>Account Type</strong></h5>
+												<select id="addsysusertype" name="addsysusertype" class="form-control input-sm" onFocus="validAddSysUser();">
+													<option value="Administrator">Administrator</option>
+													<option value="Standard" selected>Standard</option>
+													<option value="Sharing">Sharing</option>
+												</select>
+												<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+												<div class="form-group">
+													<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+												</div>
+												<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
+												<div class="form-group">
+													<input type="text" name="addsysuserlogin" id="addsysuserlogin" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+												</div>
+												<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
+												<div class="form-group">
+													<input type="password" name="addsysuserpass" id="addsysuserpass" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+												</div>
+												<h5 id="addsysuserverify_label"><strong>Verify Password</strong></h5>
+												<div class="form-group">
+													<input type="password" name="addsysuserverify" id="addsysuserverify" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+												<button type="submit" name="addsysuser" id="addsysuser" class="btn btn-primary btn-sm" disabled>Save</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.modal -->
 
 								<!-- System User Modal -->
 								<div class="modal fade" id="sysuser-modal" tabindex="-1" role="dialog">
@@ -690,40 +799,66 @@ if ($sys_user['type'] != "System") { ?>
 											</div>
 											<div class="modal-body">
 												<input type="hidden" name="sysuserlocked" id="sysuserlocked" value=""/>
-												<input type="hidden" name="sysuserlogin" id="sysuserlogin" value=""/>
-												<input type="hidden" name="sysusergecos" id="sysusergecos" value=""/>
-												<div id="sysusertype_wrapper">
-													<h5><strong>Account Type</strong></h5>
-													<select id="sysusertype" name="sysusertype" class="form-control input-sm" onFocus="validSysUser();">
-														<option value="Administrator">Administrator</option>
-														<option value="Standard" selected>Standard</option>
-														<option value="Sharing">Sharing</option>
-													</select>
-												</div>
-												<h5 id="usernewmodgecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+												<h5 id="sysusernewuid_label"><strong>User ID</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
-													<input type="text" name="usernewmodgecos" id="usernewmodgecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
+													<input type="hidden" name="sysuseruid" id="sysuseruid" value=""/>
+													<input type="text" name="sysusernewuid" id="sysusernewuid" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 												</div>
 												<h5 id="sysusernewlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
+													<input type="hidden" name="sysuserlogin" id="sysuserlogin" value=""/>
 													<input type="text" name="sysusernewlogin" id="sysusernewlogin" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 												</div>
-												<h5 id="sysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
+												<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
-													<input type="password" name="sysuserpass" id="sysuserpass" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" />
+													<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 												</div>
-												<h5 id="sysuserverify_label"><strong>Verify Password</strong></h5>
+												<h5><strong>Login Shell</strong></h5>
+												<select id="sysusershell" name="sysusershell" class="form-control input-sm" onFocus="validSysUser();" onChange="validSysUser();" onBlur="validSysUser();">
+<?php foreach ($user_shells as $user_shell) { ?>
+													<option value="<?php echo basename($user_shell); ?>"><?php echo $user_shell; ?></option>
+<?php } ?>
+												</select>
+												<h5 id="sysuserhome_label"><strong>Home Directory</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
-													<input type="password" name="sysuserverify" id="sysuserverify" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" />
+													<input type="text" name="sysuserhome" id="sysuserhome" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 												</div>
+												<input type="hidden" name="sysusertype" id="sysusertype" value=""/>
 												<div id="sysuseradmin_wrapper" class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-													<input name="sysuseradmin" id="sysuseradmin" class="styled" type="checkbox" value="true" onFocus="validSysUser();" onChange="toggleUserAdmin();">
+													<input name="sysuseradmin" id="sysuseradmin" class="styled" type="checkbox" value="true" onChange="validSysUser();">
 													<label><strong>Allow User to Administer this Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 												</div>
 											</div>
 											<div class="modal-footer">
 												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
 												<button type="submit" name="savesysuser" id="savesysuser" class="btn btn-primary btn-sm" disabled>Save</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.modal -->
+
+								<!-- System Password Modal -->
+								<div class="modal fade" id="syspass-modal" tabindex="-1" role="dialog">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+											<div class="modal-header">
+												<h3 class="modal-title">Reset Password</h3>
+											</div>
+											<div class="modal-body">
+												<input type="hidden" name="syspasslogin" id="syspasslogin" value=""/>
+												<h5 id="sysnewpass_label"><strong>New Password</strong> <small>New password for <strong><span id="syspass_title">Username</span></strong>.</small></h5>
+												<div class="form-group">
+													<input type="password" name="sysnewpass" id="sysnewpass" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
+												</div>
+												<h5 id="syspassverify_label"><strong>Verify Password</strong></h5>
+												<div class="form-group">
+													<input type="password" name="syspassverify" id="syspassverify" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+												<button type="submit" name="savesyspass" id="savesyspass" class="btn btn-primary btn-sm" disabled>Save</button>
 											</div>
 										</div>
 									</div>

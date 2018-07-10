@@ -456,25 +456,32 @@ addshelluser)
 # $3: Full Name
 # $4: Account Type
 if [ "$4" = 'Administrator' ] || [ "$4" = 'Standard' ]; then
-	useradd -c "$3" -d /home/$2 -m -s /bin/bash $2
+	useradd -c "$3" -d /home/$2 -m -s $(which bash) $2
 else
 	useradd -c "$3" -d /dev/null -s $(which nologin) $2
 fi
 ;;
 
 changeshelluser)
-# $2: Username
+# $2: User Name
 # $3: Full Name
-# $4: New Username
-if [ -d "/home/$2" ]; then
-	usermod -c "$3" -d /home/$4 -l $4 -m $2
+# $4: Home Directory
+# $5: New User Name
+# $6: Login Shell
+# $7: User ID
+if [ "$4" != '/dev/null' ]; then
+	usermod -c "$3" -d $4 -l $5 -m -s $(which $6) -u $7 $2
 else
-	usermod -c "$3" -l $4 $2
+	usermod -c "$3" -l $5 -s $(which $6) -u $7 $2
 fi
-groupmod -n $4 $2 2>/dev/null
+groupmod -n $5 $2 2>/dev/null
+if [ ! -e $4 ]; then
+	mkdir -p $4
+	chown $5:$5 $4
+fi
 ;;
 
-adminshelluser)
+addshelladmin)
 # $2: Username
 if [ "$(getent group wheel)" = '' ]; then
 	usermod -a -G adm,sudo,lpadmin,sambashare $2
@@ -483,7 +490,7 @@ else
 fi
 ;;
 
-stdshelluser)
+remshelladmin)
 # $2: Username
 if [ "$(getent group wheel)" = '' ]; then
 	deluser $2 adm
@@ -510,6 +517,10 @@ if [ "$3" = 'true' ]; then
 else
 	userdel $2
 fi
+;;
+
+getShellList)
+echo $(which bash 2>/dev/null) $(which tcsh 2>/dev/null) $(which sh 2>/dev/null) $(which csh 2>/dev/null) $(which zsh 2>/dev/null) $(which ksh 2>/dev/null) $(which nologin 2>/dev/null) $(which false 2>/dev/null)
 ;;
 
 installslapdconf)
