@@ -12,14 +12,6 @@ if (!isset($_GET['resize'])) {
 } else {
 	include "inc/header.php";
 ?>
-			<style>
-				@media(min-width:768px) {
-					#nav-footer {
-						left: 220px;
-					}
-				}
-			</style>
-
 			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="storage.php">Storage</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Logical Volume</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 			<h2>Expand</h2>
 

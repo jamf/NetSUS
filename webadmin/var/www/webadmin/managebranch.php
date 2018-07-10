@@ -47,14 +47,6 @@ foreach($products as $productobj) {
 <link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 <link rel="stylesheet" href="theme/buttons.bootstrap.css" />
 
-<style>
-@media(min-width:768px) {
-  #nav-footer {
-    left: 220px;
-  }
-}
-</style>
-
 <script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="scripts/dataTables/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript" src="scripts/Buttons/dataTables.buttons.min.js"></script>

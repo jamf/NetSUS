@@ -497,10 +497,8 @@ Responsive Design
         position: relative;
         margin-right: 0;
     }
+
+	#nav-footer {
+		left: 220px;
+	}
 }
-
-
-
-
-
-
