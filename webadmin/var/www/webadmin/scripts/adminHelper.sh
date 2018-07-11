@@ -1140,12 +1140,12 @@ fi
 echo "
 pvresize $pvname
 lvextend --extents +100%FREE $lvpath --resizefs
-sed -ri 's/^#(exit 0)$/\1/' $rc_local
 sed -i '/\/root\/resizefs.sh/d' $rc_local
 rm -f \$0" >> /root/resizefs.sh
 chmod +x /root/resizefs.sh
+sed -i '/^exit 0/d' $rc_local
 echo '/root/resizefs.sh' >> $rc_local
-sed -ri 's/^(exit 0)$/#\1/' $rc_local
+echo 'exit 0' >> $rc_local
 echo "A restart is required for changes to take effect."
 ;;
 
