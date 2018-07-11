@@ -174,6 +174,10 @@ foreach(file("/etc/passwd") as $entry) {
 			</script>
 
 			<script type="text/javascript">
+				var web_default = <?php echo ($conf->needsToChangePass("webaccount") ? "true" : "false"); ?>;
+				var ldap_groups = <?php echo sizeof($ldap_admins); ?>;
+				var ldap_server = "<?php echo $ldap_server; ?>";
+
 				function showError(element, labelId = false) {
 					element.parentElement.classList.add("has-error");
 					if (labelId) {
@@ -252,12 +256,15 @@ foreach(file("/etc/passwd") as $entry) {
 						ajaxPost('ajax.php', 'webadminpass='+webnewpass.value);
 						$('#webadmin_warning').addClass('hidden');
 						$('#webuser_warning').addClass('hidden');
-						$('#webadmin-tab-icon').addClass('hidden'); // To do: validation for AD to hide warning in tab
+						if (ldap_server == "" && ldap_groups == 0 || ldap_server != "" && ldap_groups > 0) {
+							$('#webadmin-tab-icon').addClass('hidden');
+						}
 						$('#webpass').val('');
 						$('#webnewpass').val('');
 						$('#webverify').val('');
 						$('#savewebuser').prop('disabled', true);
 						$('#webuser-modal').modal('hide');
+						web_default = false;
 					} else {
 						showError(webpass, 'webpass_label');
 					}
@@ -358,14 +365,31 @@ foreach(file("/etc/passwd") as $entry) {
 						ajaxPost('ajax.php', 'ldapbase=');
 						$('#ldapstatus').text('Not Configured');
 						$('#addldapgroup').prop('disabled', true);
-						// $('#configure_ldap').text('Configure');
+						ldap_server = "";
 					} else {
 						ajaxPost('ajax.php', 'ldapdomain='+ldapdomain.value);
 						ajaxPost('ajax.php', 'ldapserver='+ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value);
 						ajaxPost('ajax.php', 'ldapbase='+ldapbase.value);
 						$('#ldapstatus').text($('#ldapdomain').val());
 						$('#addldapgroup').prop('disabled', false);
-						// $('#configure_ldap').text('Modify');
+						ldap_server = ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value;
+					}
+					if (ldap_server != "" && ldap_groups == 0) {
+						$('#group_error').removeClass('hidden');
+					} else {
+						$('#group_error').addClass('hidden');
+					}
+					if (ldap_server == "" && ldap_groups > 0) {
+						$('#ldap_error').removeClass('hidden');
+					} else {
+						$('#ldap_error').addClass('hidden');
+					}
+					if (web_default == false) {
+						if (ldap_server == "" && ldap_groups == 0 || ldap_server != "" && ldap_groups > 0) {
+							$('#webadmin-tab-icon').addClass('hidden');
+						} else {
+							$('#webadmin-tab-icon').removeClass('hidden');
+						}
 					}
 					$('#saveldap').prop('disabled', true);
 					$('#ldap-modal').modal('hide');
@@ -528,7 +552,7 @@ foreach(file("/etc/passwd") as $entry) {
 				<div class="col-xs-12">
 
 					<ul class="nav nav-tabs nav-justified" id="top-tabs">
-						<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span> Web Interface</a></li>
+						<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") || $ldap_server != "" && sizeof($ldap_admins) == 0 || $ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span> Web Interface</a></li>
 						<li><a class="tab-font" href="#system-tab" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>"></span> System Users</a></li>
 					</ul>
 
@@ -542,6 +566,14 @@ foreach(file("/etc/passwd") as $entry) {
 
 								<div id="webadmin_warning" class="<?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
 									<div class="text-muted"><span class="glyphicon glyphicon-exclamation-sign"></span> Credentials have not been changed for built-in account.</div>
+								</div>
+
+								<div id="group_error" class="<?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
+									<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> At least one group is required for Active Directory login.</div>
+								</div>
+
+								<div id="ldap_error" class="<?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
+									<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> Active Directory must be configured for group members to login.</div>
 								</div>
 
 								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer" id="sysusers-table_wrapper">
@@ -575,7 +607,7 @@ foreach(file("/etc/passwd") as $entry) {
 													</tr>
 <?php foreach ($ldap_admins as $key => $value) { ?>
 													<tr>
-														<td></td>
+														<td><span id="webuser_warning" class="glyphicon glyphicon-exclamation-sign <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span></td>
 														<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
 														<td>Active Directory group.</td>
 														<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
