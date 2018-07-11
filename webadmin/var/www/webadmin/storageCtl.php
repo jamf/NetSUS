@@ -5,15 +5,15 @@ include "inc/auth.php";
 include "inc/functions.php";
 
 $sURL="storage.php";
-$title = "Storage";
+$title = "Expand Logical Volume";
 
 if (!isset($_GET['resize'])) {
 	header('Location: '. $sURL);
 } else {
 	include "inc/header.php";
 ?>
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="storage.php">Storage</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Logical Volume</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<h2>Expand</h2>
+			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span> <a href="storage.php">Storage</a> <span class="glyphicon glyphicon-chevron-right"></span></div>
+			<h2>Expand Logical Volume</h2>
 
 			<div class="row">
 				<div class="col-xs-12">
@@ -32,12 +32,11 @@ while (!feof($proc)) {
 	echo fread($proc, 128);
 	@ flush();
 }
-?>
-					</pre>
+?></pre>
 
-					<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
-						<button type="button" class="btn btn-primary btn-sm pull-right" style="margin-top: 10px; margin-bottom: 10px; margin-right: 15px;" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
-					</nav>
+					<div class="text-left" style="padding-top: 12px;">
+						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+					</div>
 
 				</div> <!-- /.col -->
 			</div> <!-- /.row -->
