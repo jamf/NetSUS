@@ -151,8 +151,8 @@ foreach(file("/etc/passwd") as $entry) {
 					$('#sysusers-table').DataTable( {
 						buttons: [
 							{
-								text: '<span class="glyphicon glyphicon-plus"></span> New',
-								className: 'btn-primary btn-sm',
+								text: '<span class="glyphicon glyphicon-plus"></span> Add',
+								className: 'btn-sm',
 								action: function ( e, dt, node, config ) {
 									$("#addsysuser-modal").modal();
 								}
@@ -250,6 +250,7 @@ foreach(file("/etc/passwd") as $entry) {
 						}
 						$('#webuser_name').text($('#webuser').val());
 						ajaxPost('ajax.php', 'webadminpass='+webnewpass.value);
+						$('#webadmin_warning').addClass('hidden');
 						$('#webuser_warning').addClass('hidden');
 						$('#webadmin-tab-icon').addClass('hidden'); // To do: validation for AD to hide warning in tab
 						$('#webpass').val('');
@@ -356,13 +357,15 @@ foreach(file("/etc/passwd") as $entry) {
 						ajaxPost('ajax.php', 'ldapserver=');
 						ajaxPost('ajax.php', 'ldapbase=');
 						$('#ldapstatus').text('Not Configured');
-						$('#configure_ldap').text('Configure');
+						$('#addldapgroup').prop('disabled', true);
+						// $('#configure_ldap').text('Configure');
 					} else {
 						ajaxPost('ajax.php', 'ldapdomain='+ldapdomain.value);
 						ajaxPost('ajax.php', 'ldapserver='+ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value);
 						ajaxPost('ajax.php', 'ldapbase='+ldapbase.value);
 						$('#ldapstatus').text($('#ldapdomain').val());
-						$('#configure_ldap').text('Modify');
+						$('#addldapgroup').prop('disabled', false);
+						// $('#configure_ldap').text('Modify');
 					}
 					$('#saveldap').prop('disabled', true);
 					$('#ldap-modal').modal('hide');
@@ -394,7 +397,7 @@ foreach(file("/etc/passwd") as $entry) {
 					} else {
 						showError(addsysuserverify, 'addsysuserverify_label');
 					}
-					if (/^[^:]{1,128}$/.test(addsysusergecos.value) && /^[a-z_][a-z0-9_-]{1,31}$/.test(addsysuserlogin.value) && syslogins.indexOf(addsysuserlogin.value) && /^.{1,128}$/.test(addsysuserpass.value) && addsysuserpass.value == addsysuserverify.value) {
+					if (/^[^:]{0,128}$/.test(addsysusergecos.value) && /^[a-z_][a-z0-9_-]{1,31}$/.test(addsysuserlogin.value) && syslogins.indexOf(addsysuserlogin.value) && /^.{1,128}$/.test(addsysuserpass.value) && addsysuserpass.value == addsysuserverify.value) {
 						$('#addsysuser').prop('disabled', false);
 					} else {
 						$('#addsysuser').prop('disabled', true);
@@ -535,46 +538,61 @@ foreach(file("/etc/passwd") as $entry) {
 
 							<form method="POST" name="webadmin-form" id="webadmin-form">
 
-								<div style="padding: 8px 0px;" class="description">WEB INTERFACE DESCRIPTION</div>
+								<div style="padding: 12px 0px;" class="description">WEB INTERFACE DESCRIPTION</div>
 
-								<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
+								<div id="webadmin_warning" class="<?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
+									<div class="text-muted"><span class="glyphicon glyphicon-exclamation-sign"></span> Credentials have not been changed for built-in account.</div>
+								</div>
 
-								<table class="table table-striped">
-									<thead>
-										<tr>
-											<th></th>
-											<th>Name</th>
-											<th>Type</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tfoot>
-										<tr>
-											<td colspan="4" align="right"><button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Group</button></td>
-										</tr>
-									</tfoot>
-									<tbody>
-										<tr>
-											<td><span id="webuser_warning" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span></td>
-											<td><a data-toggle="modal" href="#webuser-modal"><span id="webuser_name"><?php echo $web_user; ?></span></a></td>
-											<td>Built-in account.</td>
-											<td align="right"><button type="button" class="btn btn-default btn-sm" disabled>Delete</button></td>
-										</tr>
+								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer" id="sysusers-table_wrapper">
+									<div class="row">
+										<div class="col-sm-9">
+											<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
+										</div>
+										<div class="col-sm-3 text-right">
+											<div class="dt-buttons btn-group">
+												<button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-12">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th></th>
+														<th>Name</th>
+														<th>Type</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td><span id="webuser_warning" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span></td>
+														<td><a data-toggle="modal" href="#webuser-modal"><span id="webuser_name"><?php echo $web_user; ?></span></a></td>
+														<td>Built-in account.</td>
+														<td align="right"><button type="button" class="btn btn-default btn-sm" disabled>Delete</button></td>
+													</tr>
 <?php foreach ($ldap_admins as $key => $value) { ?>
-										<tr>
-											<td></td>
-											<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
-											<td>Active Directory group.</td>
-											<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
-										</tr>
+													<tr>
+														<td></td>
+														<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
+														<td>Active Directory group.</td>
+														<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
+													</tr>
 <?php } ?>
-									</tbody>
-								</table>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+
+								<br>
 
 								<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
 
-								<div style="padding-bottom: 12px;">Domain: <span id="ldapstatus" class="text-muted"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></div>
-								<button type="button" id="configure_ldap" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Configure" : "Modify"); ?></button>
+								<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal"><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
+								<!-- <button type="button" id="configure_ldap" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Configure" : "Modify"); ?></button> -->
 
 								<!-- Webuser Modal -->
 								<div class="modal fade" id="webuser-modal" tabindex="-1" role="dialog">
@@ -707,21 +725,20 @@ foreach(file("/etc/passwd") as $entry) {
 
 							<form method="POST" name="system-form" id="system-form">
 
-								<div style="padding: 8px 0px;" class="description">SYSTEM USERS DESCRIPTION</div>
+								<div style="padding: 12px 0px;" class="description">SYSTEM USERS DESCRIPTION</div>
 
 <?php if ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount")) { ?>
-								<div style="padding-bottom: 8px;">
+								<div style="padding-bottom: 12px;">
 									<div class="text-muted"><span class="glyphicon glyphicon-exclamation-sign"></span> Credentials have not been changed for these user accounts.</div>
 								</div>
 <?php } ?>
-								<br>
 
 								<table id="sysusers-table" class="table table-striped">
 									<thead>
 										<tr>
 											<th></th>
-											<th>Full Name</th>
 											<th>User Name</th>
+											<th>Full Name</th>
 											<th>Type</th>
 											<th></th>
 										</tr>
@@ -733,7 +750,7 @@ if ($sys_user['type'] != "System") { ?>
 											<td><?php echo ($sys_user['default'] ? "<span class=\"glyphicon glyphicon-exclamation-sign\"></span>" : "&nbsp;"); ?></td>
 											<td>
 												<div class="dropdown">
-													<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['gecos']; ?></a>
+													<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['name']; ?></a>
 													<ul class="dropdown-menu" aria-labelledby="sysuser<?php echo $sys_user['uid']; ?>">
 														<li class="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "disabled" : ""); ?>"><a data-toggle="modal" href="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "" : "#sysuser-modal"); ?>" onClick="$('#sysuserlocked').val(<?php echo ($sys_user['locked'] ? "true" : "false"); ?>); $('#sysuseruid').val('<?php echo $sys_user['uid']; ?>'); $('#sysuserlogin').val('<?php echo $sys_user['name']; ?>'); $('#sysusergecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusershell').val('<?php echo $sys_user['shell']; ?>'); $('#sysuserhome').val('<?php echo $sys_user['home']; ?>'); $('#sysusertype').val('<?php echo $sys_user['type']; ?>');">Modify User</a></li>
 														<li><a data-toggle="modal" href="#syspass-modal" onClick="$('#syspass_title').text('<?php echo $sys_user['gecos']; ?>'); $('#syspasslogin').val('<?php echo $sys_user['name']; ?>'); $('#sysnewpass').val(''); $('#syspassverify').val('');">Reset Password</a></li>
@@ -741,7 +758,7 @@ if ($sys_user['type'] != "System") { ?>
 												</div>
 												
 											</td>
-											<td><?php echo $sys_user['name']; ?></a></td>
+											<td><?php echo $sys_user['gecos']; ?></td>
 											<td><?php echo $sys_user['type']; ?></td>
 											<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#userdel-modal" onClick="$('#userdelgecos').text('<?php echo $sys_user['gecos']; ?>'); $('#userdelhome').prop('checked', false); $('#userdelhome').prop('disabled', <?php echo ($sys_user['type'] == "Sharing" ? "true" : "false"); ?>); $('#userdel').val('<?php echo $sys_user['name']; ?>');" <?php echo ($sys_user['locked'] ? "disabled" : ""); ?>>Delete</button></td>
 										</tr>
@@ -755,7 +772,7 @@ if ($sys_user['type'] != "System") { ?>
 									<div class="modal-dialog" role="document">
 										<div class="modal-content">
 											<div class="modal-header">
-												<h3 class="modal-title">New User</h3>
+												<h3 class="modal-title">Add User</h3>
 											</div>
 											<div class="modal-body">
 												<h5><strong>Account Type</strong></h5>
@@ -764,13 +781,13 @@ if ($sys_user['type'] != "System") { ?>
 													<option value="Standard" selected>Standard</option>
 													<option value="Sharing">Sharing</option>
 												</select>
-												<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
-												</div>
 												<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
 													<input type="text" name="addsysuserlogin" id="addsysuserlogin" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+												</div>
+												<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+												<div class="form-group">
+													<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Optional]" value=""/>
 												</div>
 												<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
@@ -811,7 +828,7 @@ if ($sys_user['type'] != "System") { ?>
 												</div>
 												<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
 												<div class="form-group">
-													<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
+													<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Optional]" value=""/>
 												</div>
 												<h5><strong>Login Shell</strong></h5>
 												<select id="sysusershell" name="sysusershell" class="form-control input-sm" onFocus="validSysUser();" onChange="validSysUser();" onBlur="validSysUser();">
