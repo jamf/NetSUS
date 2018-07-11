@@ -314,6 +314,45 @@ $(document).ready(function(){
 
 			</div> <!-- end .tab-content -->
 
+			<div class="modal" id="sync-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="modal-title">Sync Running</h3>
+						</div>
+						<div class="modal-body">
+							<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal" id="purge-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header" id="purge-title">
+							<h3 class="modal-title">Purge Deprecated</h3>
+						</div>
+						<div class="modal-body hidden" id="purge-warning">
+							<div class="text-muted">This action is permanent and cannot be undone.</div>
+						</div>
+						<div class="modal-body" id="purge-progress">
+							<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+						</div>
+						<div class="modal-footer hidden" id="purge-confirm">
+							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+							<button type="button" class="btn btn-danger btn-sm" onClick="purgeDep();">Purge</button>
+						</div>
+						<div class="modal-footer" id="purge-refresh">
+							<button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</form> <!-- end form SUS -->
 	</div><!-- /.col -->
 </div><!-- /.row -->
