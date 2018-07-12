@@ -34,9 +34,10 @@ while (!feof($proc)) {
 }
 ?></pre>
 
-					<div class="text-left" style="padding-top: 12px;">
-						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
-					</div>
+					<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
+						<button type="button" class="btn btn-primary btn-sm btn-footer pull-right" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+						<button type="button" class="btn btn-default btn-sm btn-footer pull-right" onClick="document.location.href='storage.php'">Done</button>
+					</nav>
 
 				</div> <!-- /.col -->
 			</div> <!-- /.row -->
