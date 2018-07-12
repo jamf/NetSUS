@@ -139,7 +139,6 @@ foreach(file("/etc/passwd") as $entry) {
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
-			<link rel="stylesheet" href="theme/buttons.bootstrap.css" />
 
 			<script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
 			<script type="text/javascript" src="scripts/dataTables/dataTables.bootstrap.min.js"></script>
@@ -158,7 +157,7 @@ foreach(file("/etc/passwd") as $entry) {
 								}
 							}
 						],
-						"dom": "<'row'<'col-sm-4'f><'col-sm-4 text-center'i><'col-sm-4 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+						"dom": "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'l><'col-sm-8'p>>",
 						"order": [ 1, 'asc' ],
 						"lengthMenu": [ [5, 10, 25, -1], [5, 10, 25, "All"] ],
 						"pageLength": 10,
@@ -576,14 +575,18 @@ foreach(file("/etc/passwd") as $entry) {
 									<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> Active Directory must be configured for group members to login.</div>
 								</div>
 
-								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer" id="sysusers-table_wrapper">
+								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 									<div class="row">
-										<div class="col-sm-9">
-											<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
+										<div class="col-sm-10">
+											<div class="dataTables_filter">
+												<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
+											</div>
 										</div>
-										<div class="col-sm-3 text-right">
-											<div class="dt-buttons btn-group">
-												<button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+										<div class="col-sm-2">
+											<div class="dataTables_paginate">
+												<div class="btn-group">
+													<button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+												</div>
 											</div>
 										</div>
 									</div>

@@ -45,7 +45,6 @@ foreach($products as $productobj) {
 <link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 
 <link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
-<link rel="stylesheet" href="theme/buttons.bootstrap.css" />
 
 <script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="scripts/dataTables/dataTables.bootstrap.min.js"></script>
@@ -71,7 +70,7 @@ $(document).ready(function() {
 				}
 			}
 		],
-		"dom": "<'row'<'col-sm-4'f><'col-sm-4 text-center'i><'col-sm-4 text-right'B>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+		"dom": "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'l><'col-sm-8'p>>",
 		"order": [ 3, 'desc' ],
 		"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
 		"columns": [
