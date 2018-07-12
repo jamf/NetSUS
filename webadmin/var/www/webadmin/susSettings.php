@@ -113,19 +113,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 ?>
 
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
-
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
-
-			<style>
-				div.dataTables_wrapper div.dt-buttons {
-					text-align: right;
-				}
-				@media screen and (max-width: 767px) {
-					div.dataTables_wrapper div.dt-buttons {
-						text-align: center;
-					}
-				}
-			</style>
 
 			<script type="text/javascript">
 				var appleCatalogURLs = [<?php echo (empty($apple_catalog_urls) ? "" : "\"".implode('", "', $apple_catalog_urls)."\""); ?>];
@@ -204,7 +192,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 									<div class="row">
 										<div class="col-sm-10">
 											<div class="dataTables_filter">
-												<h5><strong>Additional Catalog URLs</strong></a> <small>Additional SUS catalog URLs to replicate.</small></h5>
+												<h5><strong>Additional Catalog URLs</strong> <small>Additional SUS catalog URLs to replicate.</small></h5>
 											</div>
 										</div>
 										<div class="col-sm-2">
