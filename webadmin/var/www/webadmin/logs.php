@@ -166,8 +166,10 @@ if (empty($log_content)) {
 
 					<br>
 
-					<a class="btn btn-default btn-sm" href="logs.php">Done</a>
-					<a class="btn btn-primary btn-sm pull-right" href="logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>">Download</a>
+					<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
+						<button type="button" class="btn btn-primary btn-sm btn-footer pull-right" onClick="document.location.href='logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>'">Download</button>
+						<button type="button" class="btn btn-default btn-sm btn-footer pull-right" onClick="document.location.href='logs.php'">Done</button>
+					</nav>
 <?php } ?>
 				</div> <!-- /.col -->
 			</div> <!-- /.row -->
