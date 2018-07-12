@@ -227,6 +227,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 												<tbody>
 <?php foreach ($other_catalog_urls as $catalog_url) { ?>
 													<tr>
+														<td><?php echo $catalog_url; ?></td>
 														<td align="right"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
 													</tr>
 <?php }
