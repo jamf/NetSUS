@@ -44,6 +44,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 div.dataTables_wrapper div.dataTables_info {
   padding-top: 8px;
   white-space: nowrap;
+  text-align: center;
 }
 div.dataTables_wrapper div.dataTables_paginate {
   margin: 0;
