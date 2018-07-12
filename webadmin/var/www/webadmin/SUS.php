@@ -160,7 +160,7 @@ if (empty($last_sync)) {
 								<div class="col-sm-2">
 									<div class="dataTables_paginate">
 										<div class="btn-group">
-											<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+											<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
 										</div>
 									</div>
 								</div>

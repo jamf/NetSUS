@@ -150,7 +150,7 @@ foreach(file("/etc/passwd") as $entry) {
 						buttons: [
 							{
 								text: '<span class="glyphicon glyphicon-plus"></span> Add',
-								className: 'btn-sm',
+								className: 'btn-primary btn-sm',
 								action: function ( e, dt, node, config ) {
 									$("#addsysuser-modal").modal();
 								}
@@ -584,7 +584,7 @@ foreach(file("/etc/passwd") as $entry) {
 										<div class="col-sm-2">
 											<div class="dataTables_paginate">
 												<div class="btn-group">
-													<button id="addldapgroup" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+													<button id="addldapgroup" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
 												</div>
 											</div>
 										</div>

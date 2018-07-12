@@ -404,7 +404,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 										<div class="col-sm-2">
 											<div class="dataTables_paginate">
 												<div class="btn-group">
-													<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button>
+													<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button>
 												</div>
 											</div>
 										</div>
