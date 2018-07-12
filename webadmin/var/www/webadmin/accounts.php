@@ -137,7 +137,6 @@ foreach(file("/etc/passwd") as $entry) {
 }
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
-
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 
 			<script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
