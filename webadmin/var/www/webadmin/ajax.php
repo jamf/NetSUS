@@ -110,16 +110,16 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
-	if (isset($_POST["smb"])) {
-		if ($_POST["smb"] == "enable") {
+	if (isset($_POST['smb'])) {
+		if ($_POST['smb'] == "enable") {
 			suExec("startsmb");
 		} else {
 			suExec("stopsmb");
 		}
 	}
 
-	if (isset($_POST["afp"])) {
-		if ($_POST["afp"] == "enable") {
+	if (isset($_POST['afp'])) {
+		if ($_POST['afp'] == "enable") {
 			suExec("startafp");
 		} else {
 			suExec("stopafp");
