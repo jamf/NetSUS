@@ -319,7 +319,8 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 				}
 
 				function toggleService() {
-					if ($('#sus_service').prop('checked')) {
+					if ($('#susenabled').prop('checked')) {
+						$('#sus').removeClass('hidden');
 						$('#baseurl').prop('disabled', false);
 						$('#mirrorpkgs').prop('disabled', false);
 						$('[name="catalogurl"]').prop('disabled', false);
@@ -331,6 +332,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 						ajaxPost('susCtl.php', 'service=enable');
 						validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');
 					} else {
+						$('#sus').addClass('hidden');
 						$('#baseurl').prop('disabled', true);
 						$('#mirrorpkgs').prop('disabled', true);
 						$('[name="catalogurl"]').prop('disabled', true);
@@ -378,7 +380,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					<form action="susSettings.php" method="post" name="SUS" id="SUS">
 
 						<div class="checkbox checkbox-primary" style="padding-top: 8px;">
-							<input name="sus_service" id="sus_service" class="styled" type="checkbox" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "true" ? "checked" : ""); ?>>
+							<input name="susenabled" id="susenabled" class="styled" type="checkbox" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "true" ? "checked" : ""); ?>>
 							<label><strong>Enable Software Update Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 						</div>
 

@@ -5,6 +5,40 @@
     </div>
     <!-- /#wrapper -->
 
+	<!-- Sidebar Menu Items -->
+    <script>
+//     	var sharing = '<?php echo $conf->getSetting("sharing"); ?>';
+    	var sus = '<?php echo $conf->getSetting("sus"); ?>';
+//     	var netboot = '<?php echo $conf->getSetting("netboot"); ?>';
+//     	var ldapproxy = '<?php echo $conf->getSetting("ldapproxy"); ?>';
+		$(document).ready(function(){
+/*
+			if (sharing == "true") {
+				$('#sharing').removeClass('hidden');
+			} else {
+				$('#sharing').addClass('hidden');
+			}
+*/
+			if (sus == "true") {
+				$('#sus').removeClass('hidden');
+			} else {
+				$('#sus').addClass('hidden');
+			}
+/*
+			if (netboot == "true") {
+				$('#netboot').removeClass('hidden');
+			} else {
+				$('#netboot').addClass('hidden');
+			}
+			if (ldapproxy == "true") {
+				$('#ldapproxy').removeClass('hidden');
+			} else {
+				$('#ldapproxy').addClass('hidden');
+			}
+*/
+		});
+    </script>
+
     <!-- Menu Toggle Script -->
     <script>
 		$('#menu-toggle').click(function(e) {
