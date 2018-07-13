@@ -380,7 +380,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					<form action="susSettings.php" method="post" name="SUS" id="SUS">
 
 						<div class="checkbox checkbox-primary" style="padding-top: 8px;">
-							<input name="susenabled" id="susenabled" class="styled" type="checkbox" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "true" ? "checked" : ""); ?>>
+							<input name="susenabled" id="susenabled" class="styled" type="checkbox" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "enabled" ? "checked" : ""); ?>>
 							<label><strong>Enable Software Update Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 						</div>
 

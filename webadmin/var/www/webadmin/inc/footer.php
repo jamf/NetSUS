@@ -19,7 +19,7 @@
 				$('#sharing').addClass('hidden');
 			}
 */
-			if (sus == "true") {
+			if (sus == "enabled") {
 				$('#sus').removeClass('hidden');
 			} else {
 				$('#sus').addClass('hidden');

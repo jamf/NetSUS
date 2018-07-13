@@ -25,9 +25,9 @@ if (!($_SESSION["isAuthUser"])) {
 
 	if (isset($_POST['service'])) {
 		if ($_POST['service'] == "enable") {
-			$conf->setSetting("sus", "true");
+			$conf->setSetting("sus", "enabled");
 		} else {
-			$conf->deleteSetting("sus");
+			$conf->setSetting("sus", "disabled");
 		}
 	}
 
