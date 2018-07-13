@@ -46,7 +46,7 @@ include "inc/header.php";
 				</a>
 			</div>
 			<!-- /Column -->
-<?php if ($conf->getSetting("sus") == "true") { ?>
+<?php if ($conf->getSetting("sus") == "enabled") { ?>
 			<!-- Column -->
 			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
