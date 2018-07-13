@@ -106,6 +106,16 @@ if (empty($last_sync)) {
 					}
 				}
 
+				function defaultBranch(element) {
+					checked = element.checked;
+					elements = document.getElementsByName('rootbranch');
+					for (i = 0; i < elements.length; i++) {
+						elements[i].checked = false;
+					}
+					ajaxPost('susCtl.php?branch='+element.value, 'rootbranch='+checked);
+					element.checked = checked;
+				}
+
 				function manSync() {
 					$("#sync-modal").addClass('fade');
 					$('#sync-modal').modal('show');
