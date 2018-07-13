@@ -152,16 +152,6 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					}
 				}
 
-				function defaultBranch(element) {
-					checked = element.checked;
-					elements = document.getElementsByName('rootbranch');
-					for (i = 0; i < elements.length; i++) {
-						elements[i].checked = false;
-					}
-					ajaxPost('susCtl.php?branch='+element.value, 'rootbranch='+checked);
-					element.checked = checked;
-				}
-
 				function validBaseUrl(element, labelId = false) {
 					hideSuccess(element);
 					if (/^http:\/\/(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][\/]|[1-9][0-9]|[1-9][0-9][\/]|1[0-9]{2}|1[0-9]{2}[\/]|2[0-4][0-9]|2[0-4][0-9][\/]|25[0-5]|25[0-5][\/])$|^http:\/\/(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][\/]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9][\/])$/.test(element.value)) {
@@ -327,6 +317,42 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					appleCatalogURLs = checkedCatalogURLs.concat(otherCatalogURLs);
 					ajaxPost("susCtl.php", "catalogurls="+appleCatalogURLs);
 				}
+
+				function toggleService() {
+					if ($('#sus_service').prop('checked')) {
+						$('#baseurl').prop('disabled', false);
+						$('#mirrorpkgs').prop('disabled', false);
+						$('[name="catalogurl"]').prop('disabled', false);
+						$('#add_other').prop('disabled', false);
+						$('#delete_other').prop('disabled', false);
+						$('[name="syncsch"]').prop('disabled', false);
+						$('#proxyhost').prop('disabled', false);
+						$('#proxyport').prop('disabled', false);
+						ajaxPost('susCtl.php', 'service=enable');
+						validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');
+					} else {
+						$('#baseurl').prop('disabled', true);
+						$('#mirrorpkgs').prop('disabled', true);
+						$('[name="catalogurl"]').prop('disabled', true);
+						$('#add_other').prop('disabled', true);
+						$('#delete_other').prop('disabled', true);
+						$('[name="syncsch"]').prop('disabled', true);
+						$('[name="syncsch"]').prop('checked', false);
+						ajaxPost('susCtl.php', 'syncschedule=Off');
+						$('#proxyhost').prop('disabled', true);
+						$('#proxyport').prop('disabled', true);
+						$('#proxyuser').prop('disabled', true);
+						$('#proxypass').prop('disabled', true);
+						$('#proxyverify').prop('disabled', true);
+						ajaxPost('susCtl.php', 'service=disable');
+					}
+				}
+			</script>
+
+			<script type="text/javascript">
+				$(document).ready(function(){
+					toggleService();
+				});
 			</script>
 
 			<script type="text/javascript">
@@ -352,7 +378,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					<form action="susSettings.php" method="post" name="SUS" id="SUS">
 
 						<div class="checkbox checkbox-primary" style="padding-top: 8px;">
-							<input name="sus_svc" id="sus_svc" class="styled" type="checkbox" value="true" onChange="">
+							<input name="sus_service" id="sus_service" class="styled" type="checkbox" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "true" ? "checked" : ""); ?>>
 							<label><strong>Enable Software Update Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 						</div>
 
@@ -413,7 +439,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 											<div class="col-sm-2">
 												<div class="dataTables_paginate">
 													<div class="btn-group">
-														<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button>
+														<button type="button" id="add_other" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button>
 													</div>
 												</div>
 											</div>
