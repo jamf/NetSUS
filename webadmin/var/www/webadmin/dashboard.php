@@ -6,13 +6,13 @@ include "inc/functions.php";
 
 $currentIP = trim(getCurrentIP());
 
-$title = "Dashboard";
-
-include "inc/header.php";
-
 if ($conf->getSetting("shelluser") != "shelluser") {
 	$conf->changedPass("shellaccount");
 }
+
+$title = "NetSUS Dashboard";
+
+include "inc/header.php";
 ?>
 
 <div class="panel panel-default panel-main">
@@ -40,19 +40,27 @@ if ($conf->getSetting("shelluser") != "shelluser") {
 	<div class="panel-body">
 		<div class="row">
 			<!-- Column -->
-			<div class="col-xs-6 col-md-2">
+			<div class="col-xs-4 col-md-2 dashboard-item">
+				<a href="susSettings.php">
+					<p><img src="images/settings/SoftwareUpdateServer.png" alt="Software Update"></p>
+				</a>
+			</div>
+			<!-- /Column -->
+<?php if ($conf->getSetting("sus") == "true") { ?>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
-					<h4>Last Sync</h4>
-					<span><?php echo $last_sync; ?></span>
+					<h5><strong>Last Sync</strong></h5>
+					<span class="text-muted"><?php echo $last_sync; ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-2">
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
-					<h4>Sync Status</h4>
-					<span><?php echo ($sync_status ? "Running" : "Not Running"); ?></span>
+					<h5><strong>Sync Status</strong></h5>
+					<span class="text-muted"><?php echo ($sync_status ? "Running" : "Not Running"); ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
@@ -60,22 +68,36 @@ if ($conf->getSetting("shelluser") != "shelluser") {
 			<div class="clearfix visible-xs-block visible-sm-block"></div>
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-2">
+			<div class="col-xs-4 col-md-2 visible-xs-block visible-sm-block"></div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
-					<h4>Disk Usage</h4>
-					<span><?php echo suExec("getsussize"); ?></span>
+					<h5><strong>Disk Usage</strong></h5>
+					<span class="text-muted"><?php echo suExec("getsussize"); ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
 
 			<!-- Column -->
-			<div class="col-xs-6 col-md-2">
+			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
-					<h4>Number of Branches</h4>
-					<span><?php echo suExec("numofbranches"); ?></span>
+					<h5><strong>Number of Branches</strong></h5>
+					<span class="text-muted"><?php echo suExec("numofbranches"); ?></span>
 				</div>
 			</div>
 			<!-- /Column -->
+<?php } else { ?>
+			<!-- Column -->
+			<div class="col-xs-8 col-md-10">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>Configure the Software Update Server</strong> <small>to manage and provide Apple Software Updates for macOS clients.</small></h5>
+					<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='susSettings.php'">Software Update Settings</button>
+				</div>
+			</div>
+			<!-- /Column -->
+<?php } ?>
 		</div>
 		<!-- /Row -->
 	</div>

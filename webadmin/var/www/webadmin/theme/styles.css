@@ -67,6 +67,10 @@ h2 {
 /*----------------------------------------------
 bs-callout for Dashboard
 ------------------------------------------------*/
+.dashboard-item img {
+    width: 84px;
+    margin-left: 12px;
+}
 .bs-callout {
     padding: 10px;
     height: 90px;
