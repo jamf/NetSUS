@@ -7,30 +7,28 @@
 
 	<!-- Sidebar Menu Items -->
     <script>
-//     	var sharing = '<?php echo $conf->getSetting("sharing"); ?>';
+     	var sharing = '<?php echo $conf->getSetting("sharing"); ?>';
     	var sus = '<?php echo $conf->getSetting("sus"); ?>';
 //     	var netboot = '<?php echo $conf->getSetting("netboot"); ?>';
 //     	var ldapproxy = '<?php echo $conf->getSetting("ldapproxy"); ?>';
 		$(document).ready(function(){
-/*
-			if (sharing == "true") {
+			if (sharing == "enabled") {
 				$('#sharing').removeClass('hidden');
 			} else {
 				$('#sharing').addClass('hidden');
 			}
-*/
 			if (sus == "enabled") {
 				$('#sus').removeClass('hidden');
 			} else {
 				$('#sus').addClass('hidden');
 			}
 /*
-			if (netboot == "true") {
+			if (netboot == "enabled") {
 				$('#netboot').removeClass('hidden');
 			} else {
 				$('#netboot').addClass('hidden');
 			}
-			if (ldapproxy == "true") {
+			if (ldapproxy == "enabled") {
 				$('#ldapproxy').removeClass('hidden');
 			} else {
 				$('#ldapproxy').addClass('hidden');

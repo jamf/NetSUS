@@ -110,6 +110,14 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
+	if (isset($_POST['sharing'])) {
+		if ($_POST['sharing'] == "enable") {
+			$conf->setSetting("sharing", "enabled");
+		} else {
+			$conf->setSetting("sharing", "disabled");
+		}
+	}
+
 	if (isset($_POST['smb'])) {
 		if ($_POST['smb'] == "enable") {
 			suExec("startsmb");

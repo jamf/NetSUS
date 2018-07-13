@@ -17,6 +17,84 @@ include "inc/header.php";
 
 <div class="panel panel-default panel-main">
 	<div class="panel-heading">
+		<strong>File Sharing</strong>
+	</div>
+	<?php
+	function shareExec($cmd) {
+		return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	}
+	$smb_conns = trim(suExec("smbconns"));
+	$afp_conns = trim(suExec("afpconns"));
+	?>
+
+	<div class="panel-body">
+		<div class="row">
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2 dashboard-item">
+				<a href="sharingSettings.php">
+					<p><img src="images/settings/Category.png" alt="File Sharing"></p>
+				</a>
+			</div>
+			<!-- /Column -->
+<?php if ($conf->getSetting("sharing") == "enabled") { ?>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>Number of Shares</strong></h5>
+					<span class="text-muted"><?php echo "2"; ?></span>
+				</div>
+			</div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>Disk Usage</strong></h5>
+					<span class="text-muted"><?php echo "4.0K"; ?></span>
+				</div>
+			</div>
+			<!-- /Column -->
+
+			<div class="clearfix visible-xs-block visible-sm-block"></div>
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2 visible-xs-block visible-sm-block"></div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>SMB Status</strong></h5>
+					<span class="text-muted"><?php echo (trim(suExec("getsmbstatus")) == "true" ? $smb_conns." Connection".($smb_conns != "1" ? "s" : "") : "Not Running"); ?></span>
+				</div>
+			</div>
+			<!-- /Column -->
+
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>AFP Status</strong></h5>
+					<span class="text-muted"><?php echo (trim(suExec("getafpstatus")) == "true" ? $afp_conns." Connection".($afp_conns != "1" ? "s" : "") : "Not Running"); ?></span>
+				</div>
+			</div>
+			<!-- /Column -->
+<?php } else { ?>
+			<!-- Column -->
+			<div class="col-xs-8 col-md-10">
+				<div class="bs-callout bs-callout-default">
+					<h5><strong>Configure File Sharing</strong> <small>to share files and folders with clients.</small></h5>
+					<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='sharingSettings.php'">File Sharing Settings</button>
+				</div>
+			</div>
+			<!-- /Column -->
+<?php } ?>
+		</div>
+		<!-- /Row -->
+	</div>
+</div>
+
+<div class="panel panel-default panel-main">
+	<div class="panel-heading">
 		<strong>Software Update Server</strong>
 	</div>
 	<?php
@@ -178,16 +256,5 @@ include "inc/header.php";
 		<!-- /Row -->
 	</div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 <?php include "inc/footer.php";?>

@@ -91,6 +91,20 @@ function toggleAFP(element) {
 		}
 	}
 }
+
+function toggleService() {
+	if ($('#sharingenabled').prop('checked')) {
+		$('#sharing').removeClass('hidden');
+		$('#smbstatus').prop('disabled', false);
+		$('#afpstatus').prop('disabled', false);
+		ajaxPost('ajax.php', 'sharing=enable');
+	} else {
+		$('#sharing').addClass('hidden');
+		$('#smbstatus').prop('disabled', true);
+		$('#afpstatus').prop('disabled', true);
+		ajaxPost('ajax.php', 'sharing=disable');
+	}
+}
 </script>
 
 <script type="text/javascript">
@@ -114,21 +128,21 @@ $(document).ready(function(){
 		<hr>
 
 		<div class="checkbox checkbox-primary" style="padding-top: 8px;">
-			<input name="sharing_svc" id="sharing_svc" class="styled" type="checkbox" value="true" onChange="">
+			<input name="sharingenabled" id="sharingenabled" class="styled" type="checkbox" value="true" onChange="toggleService();" <?php echo ($conf->getSetting("sharing") == "enabled" ? "checked" : ""); ?>>
 			<label><strong>Enable File Sharing</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 		</div>
 
 		<div class="service-settings">
 			<div class="checkbox checkbox-primary">
-				<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?>>
-				<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : "File Sharing: Off"); ?></span></label>
+				<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
+				<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : "SMB Sharing: Off"); ?></span></label>
 			</div>
 
 			<br>
 
 			<div class="checkbox checkbox-primary">
-				<input name="afpstatus" id="afpstatus" class="styled" type="checkbox" value="true" onChange="toggleAFP(this);" <?php echo ($afp_running ? "checked" : ""); ?>>
-				<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : "File Sharing: Off"); ?></span></label>
+				<input name="afpstatus" id="afpstatus" class="styled" type="checkbox" value="true" onChange="toggleAFP(this);" <?php echo ($afp_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
+				<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : "AFP Sharing: Off"); ?></span></label>
 			</div>
 		</div>
 
