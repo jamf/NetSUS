@@ -7,7 +7,7 @@ include "inc/functions.php";
 $sURL="SUS.php";
 
 function susExec($cmd) {
-	return exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	return shell_exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
 $branchstr = trim(susExec("getBranchlist"));

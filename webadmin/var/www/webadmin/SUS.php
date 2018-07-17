@@ -9,7 +9,7 @@ $title = "Software Update Server";
 include "inc/header.php";
 
 function susExec($cmd) {
-	return exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	return shell_exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
 // Base URL
