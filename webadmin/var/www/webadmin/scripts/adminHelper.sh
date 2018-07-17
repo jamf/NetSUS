@@ -1358,4 +1358,16 @@ if [ "${issuer}" != "${subject}" ]; then
 fi
 ;;
 
+getDirSize)
+# $2: Directory Path
+if [ "$2" != '' ]; then
+	dirSize=$(du -s "$2" 2>/dev/null | awk '{print $1}')
+fi
+if [ "$dirSize" != '' ]; then
+	echo "$dirSize"
+else
+	echo "0"
+fi
+;;
+
 esac
