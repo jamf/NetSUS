@@ -345,7 +345,7 @@ foreach ($file_shares as $key => $value) {
 			<div class="row">
 				<div class="col-xs-12"> 
 
-					<form action="sharing.php" method="post" name="sharing" id="sharing">
+					<form action="sharing.php" method="post" name="Sharing" id="Sharing">
 
 						<hr>
 
