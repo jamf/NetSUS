@@ -625,7 +625,7 @@ foreach(file("/etc/passwd") as $entry) {
 
 								<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
 
-								<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal"><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
+								<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal" href=""><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
 								<!-- <button type="button" id="configure_ldap" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Configure" : "Modify"); ?></button> -->
 
 								<!-- Webuser Modal -->
