@@ -82,7 +82,7 @@ include "inc/header.php";
 			<div class="col-xs-3 col-sm-2 settings-item">
 				<a href="susSettings.php">
 					<p><img src="images/settings/SoftwareUpdateServer.png" alt="Software Update"></p>
-					<p>Software Update</p>
+					<p style="white-space: nowrap;">Software Update</p>
 				</a>
 			</div>
 			<!-- /Column -->
