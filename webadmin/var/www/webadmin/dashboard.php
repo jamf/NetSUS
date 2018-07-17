@@ -29,14 +29,15 @@ include "inc/header.php";
 
 	<div class="panel-body">
 		<div class="row">
+<?php if ($conf->getSetting("sharing") == "enabled") { ?>
 			<!-- Column -->
 			<div class="col-xs-4 col-md-2 dashboard-item">
-				<a href="sharingSettings.php">
+				<a href="sharing.php">
 					<p><img src="images/settings/Category.png" alt="File Sharing"></p>
 				</a>
 			</div>
 			<!-- /Column -->
-<?php if ($conf->getSetting("sharing") == "enabled") { ?>
+
 			<!-- Column -->
 			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
@@ -80,6 +81,14 @@ include "inc/header.php";
 			<!-- /Column -->
 <?php } else { ?>
 			<!-- Column -->
+			<div class="col-xs-4 col-md-2 dashboard-item">
+				<a href="sharingSettings.php">
+					<p><img src="images/settings/Category.png" alt="File Sharing"></p>
+				</a>
+			</div>
+			<!-- /Column -->
+
+			<!-- Column -->
 			<div class="col-xs-8 col-md-10">
 				<div class="bs-callout bs-callout-default">
 					<h5><strong>Configure File Sharing</strong> <small>to share files and folders with clients.</small></h5>
@@ -117,14 +126,15 @@ include "inc/header.php";
 
 	<div class="panel-body">
 		<div class="row">
+<?php if ($conf->getSetting("sus") == "enabled") { ?>
 			<!-- Column -->
 			<div class="col-xs-4 col-md-2 dashboard-item">
-				<a href="susSettings.php">
+				<a href="SUS.php">
 					<p><img src="images/settings/SoftwareUpdateServer.png" alt="Software Update"></p>
 				</a>
 			</div>
 			<!-- /Column -->
-<?php if ($conf->getSetting("sus") == "enabled") { ?>
+
 			<!-- Column -->
 			<div class="col-xs-4 col-md-2">
 				<div class="bs-callout bs-callout-default">
@@ -167,6 +177,14 @@ include "inc/header.php";
 			</div>
 			<!-- /Column -->
 <?php } else { ?>
+			<!-- Column -->
+			<div class="col-xs-4 col-md-2 dashboard-item">
+				<a href="susSettings.php">
+					<p><img src="images/settings/SoftwareUpdateServer.png" alt="Software Update"></p>
+				</a>
+			</div>
+			<!-- /Column -->
+
 			<!-- Column -->
 			<div class="col-xs-8 col-md-10">
 				<div class="bs-callout bs-callout-default">
