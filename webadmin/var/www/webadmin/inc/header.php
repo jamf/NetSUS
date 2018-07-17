@@ -120,7 +120,7 @@ $currentUser = getCurrentWebUser();
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
 <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
-                            <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', 'webadmin-tab');">Change Password</a></li>
+                            <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', '#webadmin-tab');">Change Password</a></li>
                             <li role="separator" class="divider"></li>
 <?php } ?>
                             <li><a href="logout.php">Logout <span id="logoutuser"><?php echo $currentUser ?></span></a></li>
