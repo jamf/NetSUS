@@ -1370,4 +1370,22 @@ else
 fi
 ;;
 
+validCertKey)
+# $2: private key
+# $3: certificate
+key_modulus=$(openssl rsa -noout -modulus -in $2)
+crt_modulus=$(openssl x509 -noout -modulus -in $3)
+if [ "$key_modulus" = "$crt_modulus" ]; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+validCertChain)
+# $2: ca bundle
+# $3: certificate
+echo "$(openssl verify -CAfile $2 $3 | grep '^error')"
+;;
+
 esac
