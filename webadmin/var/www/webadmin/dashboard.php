@@ -325,10 +325,15 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 					<strong>LDAP Proxy Server</strong>
 				</div>
 <?php
+function ldapExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
+
+$ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 ?>
 				<div class="panel-body">
 					<div class="row">
-<?php ?>
+<?php if ($conf->getSetting("ldapproxy") == "enabled") { ?>
 						<!-- Column -->
 						<div class="col-xs-4 col-md-2 dashboard-item">
 							<a href="LDAPProxy.php">
@@ -341,12 +346,28 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 						<div class="col-xs-4 col-md-2">
 							<div class="bs-callout bs-callout-default">
 								<h5><strong>LDAP Proxy Status</strong></h5>
-								<span class="text-muted"><?php echo (getLDAPProxyStatus() ? "Running" : "Not Running"); ?></span>
+								<span class="text-muted"><?php echo ($ldap_running ? "Running" : "Not Running"); ?></span>
 							</div>
 						</div>
 						<!-- /Column -->
-<?php ?>
-<?php ?>
+<?php } else { ?>
+						<!-- Column -->
+						<div class="col-xs-4 col-md-2 dashboard-item">
+							<a href="ldapProxySettings.php">
+								<p><img src="images/settings/LDAPServer.png" alt="LDAP Proxy"></p>
+							</a>
+						</div>
+						<!-- /Column -->
+
+						<!-- Column -->
+						<div class="col-xs-8 col-md-10">
+							<div class="bs-callout bs-callout-default">
+								<h5><strong>Configure the LDAP Proxy Server</strong> <small>as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers.</small></h5>
+								<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='ldapProxySettings.php'">LDAP Proxy Settings</button>
+							</div>
+						</div>
+						<!-- /Column -->
+<?php } ?>
 					</div>
 					<!-- /Row -->
 				</div>

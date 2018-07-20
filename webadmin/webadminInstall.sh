@@ -203,6 +203,17 @@ if ! grep -q 'scripts/shareHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
 
+# Prevent writes to the webadmin's LDAP helper script
+chown root:root /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the LDAP helper script
+if ! grep -q 'scripts/ldapHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/ldapHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
 # Enable apache on SSL, dav and dav_fs, only needed on Ubuntu
 if [[ $(which a2enmod 2>&-) != "" ]]; then
 	# Previous NetSUS versions created a file where it should be a symlink

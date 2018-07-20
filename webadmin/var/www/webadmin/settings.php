@@ -94,8 +94,7 @@ include "inc/header.php";
 						<!-- /Column -->
 						<!-- Column -->
 						<div class="col-xs-3 col-sm-2 settings-item">
-							<!-- <a href="ldapProxySettings.php"> -->
-							<a href="LDAPProxy.php">
+							<a href="ldapProxySettings.php">
 								<p><img src="images/settings/LDAPServer.png" alt="LDAP Proxy"></p>
 								<p>LDAP Proxy</p>
 							</a>
