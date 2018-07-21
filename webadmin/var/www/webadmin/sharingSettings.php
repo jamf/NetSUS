@@ -14,7 +14,6 @@ $smb_conns = trim(suExec("smbconns"));
 $afp_running = (trim(suExec("getafpstatus")) === "true");
 $afp_conns = trim(suExec("afpconns"));
 ?>
-
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/bootstrap-toggle.css">
 
