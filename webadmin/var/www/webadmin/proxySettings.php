@@ -25,15 +25,13 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 				function toggleService() {
 					if ($('#proxyenabled').prop('checked')) {
 						$('#ldapproxy').removeClass('hidden');
-						$('#ldapproxystatus').prop('disabled', false);
 						ajaxPost('proxyCtl.php', 'service=enable');
 					} else {
 						$('#ldapproxy').addClass('hidden');
-						$('#ldapproxystatus').prop('disabled', true);
 						ajaxPost('proxyCtl.php', 'service=disable');
 					}
 				}
-				
+
 				function toggleDashboard() {
 					if ($('#dashboard').prop('checked')) {
 						ajaxPost('proxyCtl.php', 'dashboard=true');
@@ -57,6 +55,8 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 				<div class="col-xs-12"> 
 
 					<hr>
+
+					<div style="padding: 12px 0px;" class="description">LDAP PROXY DESCRIPTION</div>
 
 					<div class="checkbox checkbox-primary" style="padding-top: 12px;">
 						<input name="dashboard" id="dashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showproxy") == "false" ? "" : "checked"); ?>>
