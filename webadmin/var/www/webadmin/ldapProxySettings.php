@@ -59,7 +59,7 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 					<hr>
 
 					<div class="checkbox checkbox-primary" style="padding-top: 12px;">
-						<input name="proxydashboard" id="proxydashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showproxy") == "true" ? "checked" : ""); ?>>
+						<input name="proxydashboard" id="proxydashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showproxy") == "false" ? "" : "checked"); ?>>
 						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>
 
