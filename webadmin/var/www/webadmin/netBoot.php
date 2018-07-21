@@ -8,6 +8,11 @@ $title = "NetBoot Server";
 
 include "inc/header.php";
 
+// Helper Functions
+function shareExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
+
 $currentIP = trim(getCurrentIP());
 $currentNetmask = trim(getCurrentNetmask());
 $currentSubnet = trim(getNetAddress($currentIP, $currentNetmask));
@@ -125,7 +130,7 @@ if (!isset($_POST['disablenetboot']) && getNetBootStatus())
 {
 	$tftp_running = (trim(suExec("gettftpstatus")) === "true");
 	$nfs_running = (trim(suExec("getnfsstatus")) === "true");
-	$afp_running = (trim(suExec("getafpstatus")) === "true");
+	$afp_running = (trim(shareExec("getafpstatus")) === "true");
 	if (!$tftp_running)
 	{
 		echo "<div class=\"alert alert-danger\">ERROR: TFTP is not running, restart NetBoot</div>";
