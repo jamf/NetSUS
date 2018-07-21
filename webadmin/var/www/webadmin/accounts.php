@@ -790,7 +790,6 @@ if ($sys_user['type'] != "System") { ?>
 														<li><a data-toggle="modal" href="#syspass-modal" onClick="$('#syspass_title').text('<?php echo $sys_user['gecos']; ?>'); $('#syspasslogin').val('<?php echo $sys_user['name']; ?>'); $('#sysnewpass').val(''); $('#syspassverify').val('');">Reset Password</a></li>
 													</ul>
 												</div>
-												
 											</td>
 											<td><?php echo $sys_user['gecos']; ?></td>
 											<td><?php echo $sys_user['type']; ?></td>
