@@ -17,8 +17,8 @@ if (!($_SESSION['isAuthUser'])) {
 		return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 	}
 
-	if (isset($_POST['ldapproxy'])) {
-		if ($_POST['ldapproxy'] == "enable") {
+	if (isset($_POST['service'])) {
+		if ($_POST['service'] == "enable") {
 			$conf->setSetting("ldapproxy", "enabled");
 			ldapExec("enableproxy");
 		} else {
@@ -27,8 +27,8 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
-	if (isset($_POST['showproxy'])) {
-		if ($_POST['showproxy'] == "true") {
+	if (isset($_POST['dashboard'])) {
+		if ($_POST['dashboard'] == "true") {
 			$conf->setSetting("showproxy", "true");
 		} else {
 			$conf->setSetting("showproxy", "false");

@@ -85,8 +85,7 @@ include "inc/header.php";
 									<!-- /Column -->
 									<!-- Column -->
 									<div class="col-xs-3 col-sm-2 settings-item">
-										<!-- <a href="netbootSettings.php"> -->
-										<a href="netBoot.php">
+										<a href="netbootSettings.php">
 											<p><img src="images/settings/NetbootServer.png" alt="NetBoot"></p>
 											<p>NetBoot</p>
 										</a>
@@ -94,7 +93,7 @@ include "inc/header.php";
 									<!-- /Column -->
 									<!-- Column -->
 									<div class="col-xs-3 col-sm-2 settings-item">
-										<a href="ldapProxySettings.php">
+										<a href="proxySettings.php">
 											<p><img src="images/settings/LDAPServer.png" alt="LDAP Proxy"></p>
 											<p>LDAP Proxy</p>
 										</a>

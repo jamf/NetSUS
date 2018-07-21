@@ -367,7 +367,7 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 <?php } else { ?>
 						<!-- Column -->
 						<div class="col-xs-4 col-md-2 dashboard-item">
-							<a href="ldapProxySettings.php">
+							<a href="proxySettings.php">
 								<p><img src="images/settings/LDAPServer.png" alt="LDAP Proxy"></p>
 							</a>
 						</div>
@@ -377,7 +377,7 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 						<div class="col-xs-8 col-md-10">
 							<div class="bs-callout bs-callout-default">
 								<h5><strong>Configure the LDAP Proxy Server</strong> <small>as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers.</small></h5>
-								<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='ldapProxySettings.php'">LDAP Proxy Settings</button>
+								<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='proxySettings.php'">LDAP Proxy Settings</button>
 							</div>
 						</div>
 						<!-- /Column -->
