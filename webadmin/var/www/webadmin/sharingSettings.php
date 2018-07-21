@@ -8,11 +8,16 @@ $title = "File Sharing";
 
 include "inc/header.php";
 
-$smb_running = (trim(suExec("getsmbstatus")) === "true");
-$smb_conns = trim(suExec("smbconns"));
+// Helper Function
+function shareExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
 
-$afp_running = (trim(suExec("getafpstatus")) === "true");
-$afp_conns = trim(suExec("afpconns"));
+$smb_running = (trim(shareExec("getsmbstatus")) === "true");
+$smb_conns = trim(shareExec("smbconns"));
+
+$afp_running = (trim(shareExec("getafpstatus")) === "true");
+$afp_conns = trim(shareExec("afpconns"));
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/bootstrap-toggle.css">
@@ -25,31 +30,31 @@ $afp_conns = trim(suExec("afpconns"));
 						$('#sharing').removeClass('hidden');
 						$('#smbstatus').prop('disabled', false);
 						$('#afpstatus').prop('disabled', false);
-						ajaxPost('ajax.php', 'sharing=enable');
+						ajaxPost('sharingCtl.php', 'service=enable');
 					} else {
 						$('#sharing').addClass('hidden');
 						$('#smbstatus').prop('disabled', true);
 						$('#afpstatus').prop('disabled', true);
-						ajaxPost('ajax.php', 'sharing=disable');
+						ajaxPost('sharingCtl.php', 'service=disable');
 					}
 				}
 
 				function toggleDashboard() {
 					if ($('#sharingdashboard').prop('checked')) {
-						ajaxPost('ajax.php', 'showsharing=true');
+						ajaxPost('sharingCtl.php', 'dashboard=true');
 					} else {
-						ajaxPost('ajax.php', 'showsharing=false');
+						ajaxPost('sharingCtl.php', 'dashboard=false');
 					}
 				}
 
 				function toggleSMB(element) {
 					var smb_conns = document.getElementById("smb_conns");
 					if (element.checked) {
-						ajaxPost("ajax.php", "smb=enable");
-						var connections = parseInt(ajaxPost('ajax.php', 'smbconns'));
+						ajaxPost("sharingCtl.php", "smb=enable");
+						var connections = parseInt(ajaxPost('sharingCtl.php', 'smbconns'));
 						smb_conns.innerText = "Number of users connected: " + connections;
 					} else {
-						var connections = parseInt(ajaxPost('ajax.php', 'smbconns'));
+						var connections = parseInt(ajaxPost('sharingCtl.php', 'smbconns'));
 						if (connections > 0) {
 							if (connections == 1) {
 								message = 'is 1 user';
@@ -60,7 +65,7 @@ $afp_conns = trim(suExec("afpconns"));
 							$('#smb-warning').modal('show');
 							element.checked = true;
 						} else {
-							ajaxPost("ajax.php", "smb=disable");
+							ajaxPost("sharingCtl.php", "smb=disable");
 							smb_conns.innerText = "File Sharing: Off";
 						}
 					}
@@ -69,11 +74,11 @@ $afp_conns = trim(suExec("afpconns"));
 				function toggleAFP(element) {
 					var afp_conns = document.getElementById("afp_conns");
 					if (element.checked) {
-						ajaxPost("ajax.php", "afp=enable");
-						var connections = parseInt(ajaxPost('ajax.php', 'afpconns'));
+						ajaxPost("sharingCtl.php", "afp=enable");
+						var connections = parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
 						afp_conns.innerText = "Number of users connected: " + connections;
 					} else {
-						var connections = parseInt(ajaxPost('ajax.php', 'afpconns'));
+						var connections = parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
 						if (connections > 0) {
 							if (connections == 1) {
 								message = 'is 1 user';
@@ -84,7 +89,7 @@ $afp_conns = trim(suExec("afpconns"));
 							$('#afp-warning').modal('show');
 							element.checked = true;
 						} else {
-							ajaxPost("ajax.php", "afp=disable");
+							ajaxPost("sharingCtl.php", "afp=disable");
 							afp_conns.innerText = "File Sharing: Off";
 						}
 					}
@@ -136,7 +141,7 @@ $afp_conns = trim(suExec("afpconns"));
 								</div>
 								<div class="modal-footer">
 									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
-									<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('ajax.php', 'smb=disable'); document.getElementById('smbstatus').checked = false; smb_conns.innerText = 'File Sharing: Off';">Disable</button>
+									<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'smb=disable'); document.getElementById('smbstatus').checked = false; smb_conns.innerText = 'File Sharing: Off';">Disable</button>
 								</div>
 							</div>
 						</div>
@@ -156,7 +161,7 @@ $afp_conns = trim(suExec("afpconns"));
 								</div>
 								<div class="modal-footer">
 									<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
-									<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('ajax.php', 'afp=disable'); document.getElementById('afpstatus').checked = false; afp_conns.innerText = 'File Sharing: Off';">Disable</button>
+									<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'afp=disable'); document.getElementById('afpstatus').checked = false; afp_conns.innerText = 'File Sharing: Off';">Disable</button>
 								</div>
 							</div>
 						</div>

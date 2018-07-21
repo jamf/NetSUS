@@ -32,8 +32,8 @@ if (isset($_POST['delshare']) && $_POST['delshare'] != "NetBoot" && $_POST['dels
 // ####################################################################
 
 // Service Status
-$smb_running = (trim(suExec("getsmbstatus")) === "true");
-$afp_running = (trim(suExec("getafpstatus")) === "true");
+$smb_running = (trim(shareExec("getsmbstatus")) === "true");
+$afp_running = (trim(shareExec("getafpstatus")) === "true");
 
 // Users & Groups
 $uid_min = preg_split("/\s+/", implode(preg_grep("/\bUID_MIN\b/i", file("/etc/login.defs"))))[1];

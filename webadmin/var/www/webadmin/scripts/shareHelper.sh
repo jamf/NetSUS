@@ -2,6 +2,86 @@
 
 case $1 in
 
+getsmbstatus)
+SERVICE=smbd
+if [ -e "/etc/system-release" ]; then
+	SERVICE=smb
+fi
+if service $SERVICE status 2>&- | grep -q running ; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+smbconns)
+echo $(ss | grep microsoft-ds | wc | awk '{print $1}')
+;;
+
+getafpstatus)
+SERVICE=afpd
+if ps acx | grep -v grep | grep -q $SERVICE ; then
+	echo "true"
+else
+	echo "false"
+fi
+;;
+
+afpconns)
+echo $(ss | grep afpovertcp | wc | awk '{print $1}')
+;;
+
+startsmb)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=smbd
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE enable > /dev/null 2>&1
+	else
+		rm -f /etc/init/$SERVICE.override
+	fi
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=smb
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+stopsmb)
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	SERVICE=smbd
+	if [ "$(which systemctl 2>&-)" != '' ]; then
+		update-rc.d $SERVICE disable > /dev/null 2>&1
+	else
+		echo manual > /etc/init/$SERVICE.override
+	fi
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
+	SERVICE=smb
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+;;
+
+startafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE enable > /dev/null 2>&1
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE on > /dev/null 2>&1
+fi
+service $SERVICE start 2>&-
+;;
+
+stopafp)
+SERVICE=netatalk
+if [ "$(which update-rc.d 2>&-)" != '' ]; then
+	update-rc.d $SERVICE disable > /dev/null 2>&1
+elif [ "$(which chkconfig 2>&-)" != '' ]; then
+	chkconfig $SERVICE off > /dev/null 2>&1
+fi
+service $SERVICE stop 2>&-
+rm -rf /srv/NetBootClients/*
+;;
+
 getSMBshares)
 for i in $(grep include /etc/samba/smb.conf | grep -v '\(#\|;\)' | awk '{print $NF}'); do
 	if [ -e $i ]; then
@@ -154,21 +234,6 @@ delShareData)
 # $2: Share Path
 if [ "$2" != '' ]; then
 	rm -rf "$2"
-fi
-;;
-
-
-
-# Old functions
-getShareSize)
-# $2: Share Path
-if [ "$2" != '' ]; then
-	shareSize=$(du -s "$2" 2>/dev/null | awk '{print $1}')
-fi
-if [ "$shareSize" != '' ]; then
-	echo "$shareSize"
-else
-	echo "0"
 fi
 ;;
 

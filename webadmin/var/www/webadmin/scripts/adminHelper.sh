@@ -199,20 +199,20 @@ service avahi-daemon restart 2>&-
 #service $SERVICE restart 2>&-
 #;;
 
-startsmb)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	SERVICE=smbd
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		update-rc.d $SERVICE enable > /dev/null 2>&1
-	else
-		rm -f /etc/init/$SERVICE.override
-	fi
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	SERVICE=smb
-	chkconfig $SERVICE on > /dev/null 2>&1
-fi
-service $SERVICE start 2>&-
-;;
+#startsmb)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	SERVICE=smbd
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		update-rc.d $SERVICE enable > /dev/null 2>&1
+#	else
+#		rm -f /etc/init/$SERVICE.override
+#	fi
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	SERVICE=smb
+#	chkconfig $SERVICE on > /dev/null 2>&1
+#fi
+#service $SERVICE start 2>&-
+#;;
 
 #restartafp)
 #SERVICE=netatalk
@@ -420,11 +420,11 @@ chown $www_user "$conf"
 chmod u+w "$conf"
 ;;
 
-resetsmbpw)
-password=$2
-echo smbuser:$password | chpasswd
-(echo $password; echo $password) | smbpasswd -s -a smbuser
-;;
+#resetsmbpw)
+#password=$2
+#echo smbuser:$password | chpasswd
+#(echo $password; echo $password) | smbpasswd -s -a smbuser
+#;;
 
 #Needs updating if we host more than one Netboot Image
 resetafppw)
@@ -540,78 +540,78 @@ mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
 ;;
 
 
-getSUSlist)
-/var/lib/reposado/repoutil --products
-/var/lib/reposado/repoutil --updates
-;;
+#getSUSlist)
+#/var/lib/reposado/repoutil --products
+#/var/lib/reposado/repoutil --updates
+#;;
 
-getBranchlist)
-branches=$(/var/lib/reposado/repoutil --branches)
-echo $branches
-;;
+#getBranchlist)
+#branches=$(/var/lib/reposado/repoutil --branches)
+#echo $branches
+#;;
 
-createBranch)
-branch=$2
-cbranch=$(/var/lib/reposado/repoutil --new-branch $branch)
-echo $cbranch
-;;
+#createBranch)
+#branch=$2
+#cbranch=$(/var/lib/reposado/repoutil --new-branch $branch)
+#echo $cbranch
+#;;
 
-deleteBranch)
-branch=$2
-dbranch=$(echo y | /var/lib/reposado/repoutil --delete-branch $branch)
-echo $dbranch
-;;
+#deleteBranch)
+#branch=$2
+#dbranch=$(echo y | /var/lib/reposado/repoutil --delete-branch $branch)
+#echo $dbranch
+#;;
 
 #listBranch)
 #branch=$2
 #/var/lib/reposado/repoutil --list-branch $branch
 #;;
 
-prodinfo)
-id=$2
-/var/lib/reposado/repoutil --info $id
-;;
+#prodinfo)
+#id=$2
+#/var/lib/reposado/repoutil --info $id
+#;;
 
-addtobranch)
-product=$2
-branch=$3
-abranch=$(/var/lib/reposado/repoutil --add=$product $branch)
-echo $abranch
-;;
+#addtobranch)
+#product=$2
+#branch=$3
+#abranch=$(/var/lib/reposado/repoutil --add=$product $branch)
+#echo $abranch
+#;;
 
-reposync)
-/var/appliance/sus_sync.py > /dev/null 2>&1 &
-;;
+#reposync)
+#/var/appliance/sus_sync.py > /dev/null 2>&1 &
+#;;
 
-repopurge)
-/var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
-;;
+#repopurge)
+#/var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
+#;;
 
-removefrombranch)
-product=$2
-branch=$3
-rbranch=$(/var/lib/reposado/repoutil --remove-product=$product $branch)
-echo $rbranch
-;;
+#removefrombranch)
+#product=$2
+#branch=$3
+#rbranch=$(/var/lib/reposado/repoutil --remove-product=$product $branch)
+#echo $rbranch
+#;;
 
-setbaseurl)
-baseurl=$2
-sed -i '/LocalCatalogURLBase/{n;d}' /var/lib/reposado/preferences.plist
-sed -i "/LocalCatalogURLBase/ a\
-    <string>$baseurl<\/string>" /var/lib/reposado/preferences.plist
-;;
+#setbaseurl)
+#baseurl=$2
+#sed -i '/LocalCatalogURLBase/{n;d}' /var/lib/reposado/preferences.plist
+#sed -i "/LocalCatalogURLBase/ a\
+#    <string>$baseurl<\/string>" /var/lib/reposado/preferences.plist
+#;;
 
 diskusage)
 echo $(df --local --total | grep '^total' | awk '{print $2":"$3":"$4}')
 ;;
 
-netbootusage)
-echo $(du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}')
-;;
+#netbootusage)
+#echo $(du -h /srv/NetBoot/NetBootSP0/ | tail -1 | awk '{print $1}')
+#;;
 
-shadowusage)
-echo $(du -h /srv/NetBootClients/ | tail -1 | awk '{print $1}')
-;;
+#shadowusage)
+#echo $(du -h /srv/NetBootClients/ | tail -1 | awk '{print $1}')
+#;;
 
 #freemem)
 #echo $(free -m | grep Mem | awk '{print $4}')
@@ -621,126 +621,126 @@ echo $(du -h /srv/NetBootClients/ | tail -1 | awk '{print $1}')
 #du -h /srv/SUS | tail -1 | awk '{print $1}'
 #;;
 
-lastsussync)
-echo $(ls -alt /srv/SUS/html/content/catalogs/*.sucatalog* 2>/dev/null | head -1 | awk '{print $6" "$7}')
-;;
+#lastsussync)
+#echo $(ls -alt /srv/SUS/html/content/catalogs/*.sucatalog* 2>/dev/null | head -1 | awk '{print $6" "$7}')
+#;;
 
-afpconns)
-echo $(ss | grep afpovertcp | wc | awk '{print $1}')
-;;
+#afpconns)
+#echo $(ss | grep afpovertcp | wc | awk '{print $1}')
+#;;
 
-smbconns)
-echo $(ss | grep microsoft-ds | wc | awk '{print $1}')
-;;
+#smbconns)
+#echo $(ss | grep microsoft-ds | wc | awk '{print $1}')
+#;;
 
-getsyncstatus)
-SERVICE=repo_sync
-if ps ax | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getsyncstatus)
+#SERVICE=repo_sync
+#if ps ax | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
-getsussize)
-echo $(du -h /srv/SUS/ | tail -1 | awk '{print $1}')
-;;
+#getsussize)
+#echo $(du -h /srv/SUS/ | tail -1 | awk '{print $1}')
+#;;
 
-numofbranches)
-echo $(/var/lib/reposado/repoutil --branches | wc | awk '{print $1}')
-;;
+#numofbranches)
+#echo $(/var/lib/reposado/repoutil --branches | wc | awk '{print $1}')
+#;;
 
-rootBranch)
-branch=$2
-catalogArray="/srv/SUS/html/content/catalogs/others/index*_${branch}.sucatalog"
-for i in ${catalogArray}; do
-	catalogName="$(basename "${i}" "_${branch}.sucatalog")"
-	cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${branch}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
-done
-cp "/srv/SUS/html/content/catalogs/index_${branch}.sucatalog" "/srv/SUS/html/index.sucatalog"
-;;
+#rootBranch)
+#branch=$2
+#catalogArray="/srv/SUS/html/content/catalogs/others/index*_${branch}.sucatalog"
+#for i in ${catalogArray}; do
+#	catalogName="$(basename "${i}" "_${branch}.sucatalog")"
+#	cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${branch}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
+#done
+#cp "/srv/SUS/html/content/catalogs/index_${branch}.sucatalog" "/srv/SUS/html/index.sucatalog"
+#;;
 
-addsch)
-hour=$2
-crontab -l > /tmp/mycron
-sed -i '/sus_sync.py/d' /tmp/mycron
-echo "00 $hour * * * /var/appliance/sus_sync.py > /dev/null 2>&1" >> /tmp/mycron
-crontab /tmp/mycron
-rm /tmp/mycron
-;;
+#addsch)
+#hour=$2
+#crontab -l > /tmp/mycron
+#sed -i '/sus_sync.py/d' /tmp/mycron
+#echo "00 $hour * * * /var/appliance/sus_sync.py > /dev/null 2>&1" >> /tmp/mycron
+#crontab /tmp/mycron
+#rm /tmp/mycron
+#;;
 
-delsch)
-crontab -l > /tmp/mycron
-sed -i '/sus_sync.py/d' /tmp/mycron
-crontab /tmp/mycron
-rm /tmp/mycron
-;;
+#delsch)
+#crontab -l > /tmp/mycron
+#sed -i '/sus_sync.py/d' /tmp/mycron
+#crontab /tmp/mycron
+#rm /tmp/mycron
+#;;
 
-JSScreateConf)
-# $2: JSS URL
-# $3: Allow untrusted SSL certificate
-logFile="/usr/local/jds/logs/jdsinstaller.log"
-if [ "$3" = 'True' ]; then
-	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
-else
-	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
-fi
-if [ $? -ne 0 ]; then
-	echo "$result" | sed -e 's/^error: //'
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-else
-	echo "Created configuration file for $2"
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
-fi
-;;
+#JSScreateConf)
+## $2: JSS URL
+## $3: Allow untrusted SSL certificate
+#logFile="/usr/local/jds/logs/jdsinstaller.log"
+#if [ "$3" = 'True' ]; then
+#	result=$(/usr/local/sbin/jamfds createConf -k -url $2 2>&1)
+#else
+#	result=$(/usr/local/sbin/jamfds createConf -url $2 2>&1)
+#fi
+#if [ $? -ne 0 ]; then
+#	echo "$result" | sed -e 's/^error: //'
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to create configuration file" >> $logFile
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+#else
+#	echo "Created configuration file for $2"
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Created configuration file for $2" >> $logFile
+#fi
+#;;
 
-JSSenroll)
-logFile="/usr/local/jds/logs/jdsinstaller.log"
-if [ -d "/etc/apache2/sites-enabled" ]; then
-	conf="/etc/apache2/sites-enabled/jds.conf"
-	www_service=apache2
-fi
-if [ -d "/etc/httpd/conf.d" ]; then
-	conf="/etc/httpd/conf.d/jds.conf"
-	www_service=httpd
-fi
-echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
-echo "<VirtualHost *:443>" > $conf
-echo "	SSLEngine on" >> $conf
-echo "</VirtualHost>" >> $conf
-echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
-sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
-if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-fi
-if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
-	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
-fi
-result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
-if [ $? -ne 0 ]; then
-	echo "$result" | sed -e 's/^error: //'
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
-	rm -f $conf
-	exit
-else
-	echo "Enrolment complete"
-	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
-	/usr/local/sbin/jamfds policy > /dev/null 2>&1
-fi
-service $www_service reload > /dev/null 2>&1
-;;
+#JSSenroll)
+#logFile="/usr/local/jds/logs/jdsinstaller.log"
+#if [ -d "/etc/apache2/sites-enabled" ]; then
+#	conf="/etc/apache2/sites-enabled/jds.conf"
+#	www_service=apache2
+#fi
+#if [ -d "/etc/httpd/conf.d" ]; then
+#	conf="/etc/httpd/conf.d/jds.conf"
+#	www_service=httpd
+#fi
+#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Configuring site..." >> $logFile
+#echo "<VirtualHost *:443>" > $conf
+#echo "	SSLEngine on" >> $conf
+#echo "</VirtualHost>" >> $conf
+#echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Writing API RewriteRule..." >> $logFile
+#sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\tRewriteEngine on\n\tRewriteRule ^/jds/api/([0-9a-z/]*)$ /jds/api.php?call=$2 [QSA,NC]#' $conf
+#if [ -f "/etc/apache2/sites-enabled/jds.conf" ]; then
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+#fi
+#if [ -f "/etc/httpd/conf.d/jds.conf" ]; then
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Disabling Indexes on API..." >> $logFile
+#	sed -i 's#<VirtualHost \*:443>#<VirtualHost \*:443>\n\t<Directory /var/www/html/jds/>\n\t\tSSLVerifyClient require\n\t\tOptions None\n\t\tAllowOverride None\n\t</Directory>#' $conf
+#fi
+#result=$(/usr/local/sbin/jamfds enroll -uri $2 -u $3 -p $4 2>&1)
+#if [ $? -ne 0 ]; then
+#	echo "$result" | sed -e 's/^error: //'
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Failed to enroll" >> $logFile
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Check /usr/local/jds/logs/jamf.log for more information" >> $logFile
+#	rm -f $conf
+#	exit
+#else
+#	echo "Enrolment complete"
+#	echo "$(date '+[%Y-%m-%d %H:%M:%S]:') Enrolment complete" >> $logFile
+#	/usr/local/sbin/jamfds policy > /dev/null 2>&1
+#fi
+#service $www_service reload > /dev/null 2>&1
+#;;
 
-checkin)
-/usr/local/sbin/jamfds policy > /dev/null 2>&1
-;;
+#checkin)
+#/usr/local/sbin/jamfds policy > /dev/null 2>&1
+#;;
 
-JSSinventory)
-/usr/local/sbin/jamfds inventory > /dev/null 2>&1
-;;
+#JSSinventory)
+#/usr/local/sbin/jamfds inventory > /dev/null 2>&1
+#;;
 
 #enableAvahi)
 #if [ "$(which apt-get 2>&-)" != '' ]; then
@@ -902,39 +902,39 @@ sed -i 's:<webadmingui>.*</webadmingui>::' /var/appliance/conf/appliance.conf.xm
 ;;
 
 # SUS
-getsusproxyhost)
-echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
-;;
+#getsusproxyhost)
+#echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
+#;;
 
-getsusproxyport)
-echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
-;;
+#getsusproxyport)
+#echo $(grep 'proxy =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
+#;;
 
-getsusproxyuser)
-echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
-;;
+#getsusproxyuser)
+#echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 1)
+#;;
 
-getsusproxypass)
-echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
-;;
+#getsusproxypass)
+#echo $(grep 'proxy-user =' /var/lib/reposado/preferences.plist | cut -d \" -f 2 | cut -d : -f 2)
+#;;
 
-setsusproxy)
+#setsusproxy)
 # $2: proxyhost
 # $3: proxyport
 # $4: proxyuser
 # $5: proxypass
-sed -i '/proxy =/d' /var/lib/reposado/preferences.plist
-sed -i '/proxy-user =/d' /var/lib/reposado/preferences.plist
-if [ "$(python -c "import plistlib; print plistlib.readPlist('/var/lib/reposado/preferences.plist')['AdditionalCurlOptions']" 2>/dev/null)" = '[]' ]; then
-	python -c "import plistlib; p = plistlib.readPlist('/var/lib/reposado/preferences.plist'); del p['AdditionalCurlOptions']; plistlib.writePlist(p, '/var/lib/reposado/preferences.plist')"
-fi
-if [ "$3" != '' ]; then
-	python /var/www/html/webadmin/scripts/susproxy.py "proxy = \"$2:$3\"" "/var/lib/reposado/preferences.plist"
-fi
-if [ "$5" != '' ]; then
-	python /var/www/html/webadmin/scripts/susproxy.py "proxy-user = \"$4:$5\"" "/var/lib/reposado/preferences.plist"
-fi
-;;
+#sed -i '/proxy =/d' /var/lib/reposado/preferences.plist
+#sed -i '/proxy-user =/d' /var/lib/reposado/preferences.plist
+#if [ "$(python -c "import plistlib; print plistlib.readPlist('/var/lib/reposado/preferences.plist')['AdditionalCurlOptions']" 2>/dev/null)" = '[]' ]; then
+#	python -c "import plistlib; p = plistlib.readPlist('/var/lib/reposado/preferences.plist'); del p['AdditionalCurlOptions']; plistlib.writePlist(p, '/var/lib/reposado/preferences.plist')"
+#fi
+#if [ "$3" != '' ]; then
+#	python /var/www/html/webadmin/scripts/susproxy.py "proxy = \"$2:$3\"" "/var/lib/reposado/preferences.plist"
+#fi
+#if [ "$5" != '' ]; then
+#	python /var/www/html/webadmin/scripts/susproxy.py "proxy-user = \"$4:$5\"" "/var/lib/reposado/preferences.plist"
+#fi
+#;;
 
 # NetBoot
 getNBIproperty)
@@ -1190,62 +1190,62 @@ fi
 ;;
 
 # Services commands
-getsmbstatus)
-SERVICE=smbd
-if [ -e "/etc/system-release" ]; then
-	SERVICE=smb
-fi
-if service $SERVICE status 2>&- | grep -q running ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getsmbstatus)
+#SERVICE=smbd
+#if [ -e "/etc/system-release" ]; then
+#	SERVICE=smb
+#fi
+#if service $SERVICE status 2>&- | grep -q running ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
-stopsmb)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	SERVICE=smbd
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		update-rc.d $SERVICE disable > /dev/null 2>&1
-	else
-		echo manual > /etc/init/$SERVICE.override
-	fi
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	SERVICE=smb
-	chkconfig $SERVICE off > /dev/null 2>&1
-fi
-service $SERVICE stop 2>&-
-;;
+#stopsmb)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	SERVICE=smbd
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		update-rc.d $SERVICE disable > /dev/null 2>&1
+#	else
+#		echo manual > /etc/init/$SERVICE.override
+#	fi
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	SERVICE=smb
+#	chkconfig $SERVICE off > /dev/null 2>&1
+#fi
+#service $SERVICE stop 2>&-
+#;;
 
-getafpstatus)
-SERVICE=afpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getafpstatus)
+#SERVICE=afpd
+#if ps acx | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
-startafp)
-SERVICE=netatalk
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d $SERVICE enable > /dev/null 2>&1
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig $SERVICE on > /dev/null 2>&1
-fi
-service $SERVICE start 2>&-
-;;
+#startafp)
+#SERVICE=netatalk
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	update-rc.d $SERVICE enable > /dev/null 2>&1
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	chkconfig $SERVICE on > /dev/null 2>&1
+#fi
+#service $SERVICE start 2>&-
+#;;
 
-stopafp)
-SERVICE=netatalk
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d $SERVICE disable > /dev/null 2>&1
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig $SERVICE off > /dev/null 2>&1
-fi
-service $SERVICE stop 2>&-
-rm -rf /srv/NetBootClients/*
-;;
+#stopafp)
+#SERVICE=netatalk
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	update-rc.d $SERVICE disable > /dev/null 2>&1
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	chkconfig $SERVICE off > /dev/null 2>&1
+#fi
+#service $SERVICE stop 2>&-
+#rm -rf /srv/NetBootClients/*
+#;;
 
 # System Information
 getName)
@@ -1326,23 +1326,23 @@ getPortsInUse)
 echo $(lsof -i -P -n | grep LISTEN | awk -F : '{print $NF}' | awk '{print $1}' | sort -n -u)
 ;;
 
-getSMBshares)
-for i in $(grep include /etc/samba/smb.conf | grep -v '\(#\|;\)' | awk '{print $NF}'); do
-	if [ -e $i ]; then
-		sharepath=$(sed -n -e 's/^.*path.*=//p' $i | sed -e 's/^[ \t]*//;s/[ \t]*$//')
-		sharename=$(grep -o -P '(?<=\[).*(?=\])' $i)
-		echo $sharename:$sharepath
-	fi
-done
-;;
+#getSMBshares)
+#for i in $(grep include /etc/samba/smb.conf | grep -v '\(#\|;\)' | awk '{print $NF}'); do
+#	if [ -e $i ]; then
+#		sharepath=$(sed -n -e 's/^.*path.*=//p' $i | sed -e 's/^[ \t]*//;s/[ \t]*$//')
+#		sharename=$(grep -o -P '(?<=\[).*(?=\])' $i)
+#		echo $sharename:$sharepath
+#	fi
+#done
+#;;
 
-getAFPshares)
-grep -v "\(#\|^~\|^:\|^$\)" /etc/netatalk/AppleVolumes.default | while read i; do
-	sharepath=$(echo "$i" | awk '{print $1}')
-	sharename=$(echo "$i" | awk -F \" '{print $2}')
-	echo $sharename:$sharepath
-done
-;;
+#getAFPshares)
+#grep -v "\(#\|^~\|^:\|^$\)" /etc/netatalk/AppleVolumes.default | while read i; do
+#	sharepath=$(echo "$i" | awk '{print $1}')
+#	sharename=$(echo "$i" | awk -F \" '{print $2}')
+#	echo $sharename:$sharepath
+#done
+#;;
 
 getSSLstatus)
 if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then

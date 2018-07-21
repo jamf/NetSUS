@@ -14,7 +14,7 @@ function ajaxPost(url, data) {
 
 function restartModal() {
 	var message = '<div style="padding: 8px 0px;">Are you sure you want to restart the Server?</div>';
-	var connections = parseInt(ajaxPost('ajax.php', 'smbconns')) + parseInt(ajaxPost('ajax.php', 'afpconns'));
+	var connections = parseInt(ajaxPost('sharingCtl.php', 'smbconns')) + parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
 	if (connections > 0) {
 		if (connections == 1) {
 			users = 'is 1 user';
@@ -38,7 +38,7 @@ function restartServer() {
 
 function shutdownModal() {
 	var message = '<div style="padding: 8px 0px;">Are you sure you want to shut down the Server?<br>The Server will need to be restarted manually.</div>';
-	var connections = parseInt(ajaxPost('ajax.php', 'smbconns')) + parseInt(ajaxPost('ajax.php', 'afpconns'));
+	var connections = parseInt(ajaxPost('sharingCtl.php', 'smbconns')) + parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
 	if (connections > 0) {
 		if (connections == 1) {
 			users = 'is 1 user';

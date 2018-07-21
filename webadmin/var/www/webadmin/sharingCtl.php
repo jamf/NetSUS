@@ -15,6 +15,46 @@ if (!($_SESSION["isAuthUser"])) {
 		return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 	}
 
+	if (isset($_POST['service'])) {
+		if ($_POST['service'] == "enable") {
+			$conf->setSetting("sharing", "enabled");
+		} else {
+			$conf->setSetting("sharing", "disabled");
+		}
+	}
+
+	if (isset($_POST['dashboard'])) {
+		if ($_POST['dashboard'] == "true") {
+			$conf->setSetting("showsharing", "true");
+		} else {
+			$conf->setSetting("showsharing", "false");
+		}
+	}
+
+	if (isset($_POST['smb'])) {
+		if ($_POST['smb'] == "enable") {
+			shareExec("startsmb");
+		} else {
+			shareExec("stopsmb");
+		}
+	}
+
+	if (isset($_POST['afp'])) {
+		if ($_POST['afp'] == "enable") {
+			shareExec("startafp");
+		} else {
+			shareExec("stopafp");
+		}
+	}
+
+	if (isset($_POST['smbconns'])) {
+		echo trim(shareExec("smbconns"));
+	}
+
+	if (isset($_POST['afpconns'])) {
+		echo trim(shareExec("afpconns"));
+	}
+
 	if (isset($_POST['enablesmb'])) {
 		$enablesmb = explode(":", $_POST['enablesmb']);
 		shareExec("addSMBshare \"".$enablesmb[0]."\" \"".$enablesmb[1]."\" ".$enablesmb[2]." ".$enablesmb[3]);

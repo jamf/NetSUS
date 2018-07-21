@@ -213,6 +213,7 @@ function getLDAPProxyStatus()
 	}
 }
 
+/*
 function getSyncStatus()
 {
 	if (trim(suExec("getsyncstatus")) == "true")
@@ -223,7 +224,7 @@ function getSyncStatus()
 	{
 		return false;
 	}
-}
+}*/
 
 function formatPackage($package)
 {

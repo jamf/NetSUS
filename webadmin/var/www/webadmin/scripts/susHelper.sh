@@ -55,6 +55,10 @@ copyBranch)
 /var/lib/reposado/repoutil --copy-branch ${2} ${3}
 ;;
 
+numBranches)
+echo $(/var/lib/reposado/repoutil --branches | wc | awk '{print $1}')
+;;
+
 repoPurge)
 /var/lib/reposado/repoutil --purge-product=all-deprecated > /dev/null 2>&1 &
 ;;

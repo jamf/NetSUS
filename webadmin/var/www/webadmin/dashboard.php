@@ -17,12 +17,6 @@ function formatSize($size, $precision = 1) {
     $suffixes = array('B', 'kB', 'MB', 'GB', 'TB');   
     return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
-
-$smb_running = (trim(suExec("getsmbstatus")) === "true");
-$afp_running = (trim(suExec("getafpstatus")) === "true");
-
-$smb_conns = trim(suExec("smbconns"));
-$afp_conns = trim(suExec("afpconns"));
 ?>
 			<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showsharing") == "false" ? "hidden" : ""); ?>">
 				<div class="panel-heading">
@@ -32,6 +26,12 @@ $afp_conns = trim(suExec("afpconns"));
 function shareExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
+
+$smb_running = (trim(shareExec("getsmbstatus")) === "true");
+$afp_running = (trim(shareExec("getafpstatus")) === "true");
+
+$smb_conns = trim(shareExec("smbconns"));
+$afp_conns = trim(shareExec("afpconns"));
 
 $shares = array();
 $smb_str = trim(shareExec("getSMBshares"));
@@ -141,7 +141,7 @@ function susExec($cmd) {
 }
 
 $sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
-$sus_branches = trim(suExec("numofbranches"));
+$sus_branches = trim(susExec("numBranches"));
 
 $last_sync = $conf->getSetting("lastsussync");
 if (empty($last_sync)) {

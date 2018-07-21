@@ -13,14 +13,6 @@ if (!($_SESSION['isAuthUser'])) {
 	include "inc/config.php";
 	include "inc/functions.php";
 	
-	if (isset($_POST['smbconns'])) {
-		echo trim(suExec("smbconns"));
-	}
-
-	if (isset($_POST['afpconns'])) {
-		echo trim(suExec("afpconns"));
-	}
-
 	if (isset($_POST['restart'])) {
 		// Unset all of the session variables.
 		$_SESSION = array();
@@ -107,38 +99,6 @@ if (!($_SESSION['isAuthUser'])) {
 			$conf->deleteSetting("ldapbase");
 		} else {
 			$conf->setSetting("ldapbase", $_POST['ldapbase']);
-		}
-	}
-
-	if (isset($_POST['sharing'])) {
-		if ($_POST['sharing'] == "enable") {
-			$conf->setSetting("sharing", "enabled");
-		} else {
-			$conf->setSetting("sharing", "disabled");
-		}
-	}
-
-	if (isset($_POST['showsharing'])) {
-		if ($_POST['showsharing'] == "true") {
-			$conf->setSetting("showsharing", "true");
-		} else {
-			$conf->setSetting("showsharing", "false");
-		}
-	}
-
-	if (isset($_POST['smb'])) {
-		if ($_POST['smb'] == "enable") {
-			suExec("startsmb");
-		} else {
-			suExec("stopsmb");
-		}
-	}
-
-	if (isset($_POST['afp'])) {
-		if ($_POST['afp'] == "enable") {
-			suExec("startafp");
-		} else {
-			suExec("stopafp");
 		}
 	}
 
