@@ -8,8 +8,6 @@ $title = "NetSUS Dashboard";
 
 include "inc/header.php";
 
-$currentIP = trim(getCurrentIP());
-
 if ($conf->getSetting("shelluser") != "shelluser") {
 	$conf->changedPass("shellaccount");
 }
@@ -26,7 +24,7 @@ $afp_running = (trim(suExec("getafpstatus")) === "true");
 $smb_conns = trim(suExec("smbconns"));
 $afp_conns = trim(suExec("afpconns"));
 ?>
-			<div class="panel panel-default panel-main">
+			<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showsharing") == "false" ? "hidden" : ""); ?>">
 				<div class="panel-heading">
 					<strong>File Sharing</strong>
 				</div>
@@ -133,7 +131,7 @@ $shareusage = (formatSize($shareusage*1024, 0));
 				</div>
 			</div>
 
-			<div class="panel panel-default panel-main">
+			<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showsus") == "false" ? "hidden" : ""); ?>">
 				<div class="panel-heading">
 					<strong>Software Update Server</strong>
 				</div>
@@ -233,7 +231,7 @@ $sus_usage = (formatSize($sus_usage*1024, 0));
 				</div>
 			</div>
 
-			<div class="panel panel-default panel-main">
+			<div class="panel panel-default panel-main <?php echo ($conf->getSetting("shownetboot") == "false" ? "hidden" : ""); ?>">
 				<div class="panel-heading">
 					<strong>NetBoot Server</strong>
 				</div>
@@ -248,7 +246,7 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 ?>
 				<div class="panel-body">
 					<div class="row">
-<?php ?>
+<?php if ($conf->getSetting("netboot") == "enabled") { ?>
 						<!-- Column -->
 						<div class="col-xs-4 col-md-2 dashboard-item">
 							<a href="netBoot.php">
@@ -313,14 +311,30 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 							</div>
 						</div>
 						<!-- /Column -->
-<?php ?>
-<?php ?>
+<?php } else { ?>
+						<!-- Column -->
+						<div class="col-xs-4 col-md-2 dashboard-item">
+							<a href="netbootSettings.php">
+								<p><img src="images/settings/NetbootServer.png" alt="NetBoot"></p>
+							</a>
+						</div>
+						<!-- /Column -->
+
+						<!-- Column -->
+						<div class="col-xs-8 col-md-10">
+							<div class="bs-callout bs-callout-default">
+								<h5><strong>Configure the NetBoot Server</strong> <small>to allow you to host NetBoot images.</small></h5>
+								<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='netbootSettings.php'">NetBoot Settings</button>
+							</div>
+						</div>
+						<!-- /Column -->
+<?php } ?>
 					</div>
 					<!-- /Row -->
 				</div>
 			</div>
 
-			<div class="panel panel-default panel-main">
+			<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showproxy") == "false" ? "hidden" : ""); ?>">
 				<div class="panel-heading">
 					<strong>LDAP Proxy Server</strong>
 				</div>

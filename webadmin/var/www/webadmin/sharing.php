@@ -435,7 +435,7 @@ if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3 class="modal-title"><span id="permissionstitle">Share</span> Permissions</h3>
+										<h3 class="modal-title">Permissions for <span id="permissionstitle">Share</span></h3>
 									</div>
 									<div class="modal-body">
 										<input type="hidden" id="permsname" value=""/>
@@ -487,7 +487,7 @@ if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3 class="modal-title">Delete '<span id="delsharename">Share</span>'</h3>
+										<h3 class="modal-title">Delete <span id="delsharename">Share</span></h3>
 									</div>
 									<div class="modal-body">
 										<div class="text-muted">This action is permanent and cannot be undone.</div>

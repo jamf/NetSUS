@@ -16,8 +16,33 @@ $afp_conns = trim(suExec("afpconns"));
 ?>
 
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
+			<link rel="stylesheet" href="theme/bootstrap-toggle.css">
+
+			<script type="text/javascript" src="scripts/toggle/bootstrap-toggle.min.js"></script>
 
 			<script type="text/javascript">
+				function toggleService() {
+					if ($('#sharingenabled').prop('checked')) {
+						$('#sharing').removeClass('hidden');
+						$('#smbstatus').prop('disabled', false);
+						$('#afpstatus').prop('disabled', false);
+						ajaxPost('ajax.php', 'sharing=enable');
+					} else {
+						$('#sharing').addClass('hidden');
+						$('#smbstatus').prop('disabled', true);
+						$('#afpstatus').prop('disabled', true);
+						ajaxPost('ajax.php', 'sharing=disable');
+					}
+				}
+
+				function toggleDashboard() {
+					if ($('#sharingdashboard').prop('checked')) {
+						ajaxPost('ajax.php', 'showsharing=true');
+					} else {
+						ajaxPost('ajax.php', 'showsharing=false');
+					}
+				}
+
 				function toggleSMB(element) {
 					var smb_conns = document.getElementById("smb_conns");
 					if (element.checked) {
@@ -65,47 +90,38 @@ $afp_conns = trim(suExec("afpconns"));
 						}
 					}
 				}
-
-				function toggleService() {
-					if ($('#sharingenabled').prop('checked')) {
-						$('#sharing').removeClass('hidden');
-						$('#smbstatus').prop('disabled', false);
-						$('#afpstatus').prop('disabled', false);
-						ajaxPost('ajax.php', 'sharing=enable');
-					} else {
-						$('#sharing').addClass('hidden');
-						$('#smbstatus').prop('disabled', true);
-						$('#afpstatus').prop('disabled', true);
-						ajaxPost('ajax.php', 'sharing=disable');
-					}
-				}
 			</script>
 
 			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<h2>File Sharing</h2>
+			<div class="row">
+				<div class="col-xs-10"> 
+					<h2>File Sharing</h2>
+				</div>
+				<div class="col-xs-2 text-right"> 
+					<input type="checkbox" id="sharingenabled" <?php echo ($conf->getSetting("sharing") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+				</div>
+			</div>
 
 			<div class="row">
 				<div class="col-xs-12"> 
 
 					<hr>
 
-					<div class="checkbox checkbox-primary" style="padding-top: 8px;">
-						<input name="sharingenabled" id="sharingenabled" class="styled" type="checkbox" value="true" onChange="toggleService();" <?php echo ($conf->getSetting("sharing") == "enabled" ? "checked" : ""); ?>>
-						<label><strong>Enable File Sharing</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
+					<div style="padding-top: 12px;" class="description">FILE SHARING DESCRIPTION</div>
+
+					<div class="checkbox checkbox-primary" style="padding-top: 12px;">
+						<input name="sharingdashboard" id="sharingdashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showsharing") == "true" ? "checked" : ""); ?>>
+						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>
 
-					<div class="service-settings">
-						<div class="checkbox checkbox-primary">
-							<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
-							<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : "SMB Sharing: Off"); ?></span></label>
-						</div>
+					<div class="checkbox checkbox-primary" style="padding-top: 12px">
+						<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
+						<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : "SMB Sharing: Off"); ?></span></label>
+					</div>
 
-						<br>
-
-						<div class="checkbox checkbox-primary">
-							<input name="afpstatus" id="afpstatus" class="styled" type="checkbox" value="true" onChange="toggleAFP(this);" <?php echo ($afp_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
-							<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : "AFP Sharing: Off"); ?></span></label>
-						</div>
+					<div class="checkbox checkbox-primary" style="padding-top: 12px">
+						<input name="afpstatus" id="afpstatus" class="styled" type="checkbox" value="true" onChange="toggleAFP(this);" <?php echo ($afp_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
+						<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : "AFP Sharing: Off"); ?></span></label>
 					</div>
 
 					<!-- SMB Warning Modal -->
