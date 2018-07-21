@@ -13,8 +13,8 @@ if (!($_SESSION['isAuthUser'])) {
 	include "inc/config.php";
 	include "inc/functions.php";
 	
-	function nbExec($cmd) {
-		return shell_exec("sudo /bin/sh scripts/nbHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+	function netbootExec($cmd) {
+		return shell_exec("sudo /bin/sh scripts/netbootHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 	}
 
 	if (isset($_POST['service'])) {

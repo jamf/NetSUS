@@ -176,7 +176,7 @@ sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
 if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
 	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
 fi
-if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+if ! grep -q 'scripts/adminHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers.d/webadmin
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
@@ -189,6 +189,17 @@ chmod u+rx /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
 # Allow the webadmin from webadmin to invoke the sus helper script
 if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/susHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's netboot helper script
+chown root:root /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the netboot helper script
+if ! grep -q 'scripts/netbootHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/netbootHelper.sh *" >> /etc/sudoers.d/webadmin
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
 

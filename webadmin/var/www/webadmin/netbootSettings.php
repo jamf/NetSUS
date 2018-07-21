@@ -8,15 +8,15 @@ $title = "NetBoot";
 
 include "inc/header.php";
 
-// Helper Functions
-function shareExec($cmd) {
-	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+// Helper Function
+function netbootExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/netbootHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-$dhcp_running = (trim(suExec("getnetbootstatus")) === "true");
-$tftp_running = (trim(suExec("gettftpstatus")) === "true");
-$nfs_running = (trim(suExec("getnfsstatus")) === "true");
-$afp_running = (trim(shareExec("getafpstatus")) === "true");
+$dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
+$tftp_running = (trim(netbootExec("gettftpstatus")) === "true");
+$nfs_running = (trim(netbootExec("getnfsstatus")) === "true");
+$afp_running = (trim(netbootExec("getafpstatus")) === "true");
 
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
