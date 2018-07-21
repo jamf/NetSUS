@@ -31,6 +31,14 @@ if (!($_SESSION["isAuthUser"])) {
 		}
 	}
 
+	if (isset($_POST['dashboard'])) {
+		if ($_POST['dashboard'] == "true") {
+			$conf->setSetting("showsus", "true");
+		} else {
+			$conf->setSetting("showsus", "false");
+		}
+	}
+
 	if (isset($_POST['baseurl'])) {
 		$conf->setSetting("susbaseurl", $_POST['baseurl']);
 		if ($conf->getSetting("mirrorpkgs") == "true") {
