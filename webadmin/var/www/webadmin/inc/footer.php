@@ -9,7 +9,7 @@
     <script>
      	var sharing = '<?php echo $conf->getSetting("sharing"); ?>';
     	var sus = '<?php echo $conf->getSetting("sus"); ?>';
-//     	var netboot = '<?php echo $conf->getSetting("netboot"); ?>';
+     	var netboot = '<?php echo $conf->getSetting("netboot"); ?>';
      	var ldapproxy = '<?php echo $conf->getSetting("ldapproxy"); ?>';
 		$(document).ready(function(){
 			if (sharing == "enabled") {
@@ -22,13 +22,11 @@
 			} else {
 				$('#sus').addClass('hidden');
 			}
-/*
 			if (netboot == "enabled") {
 				$('#netboot').removeClass('hidden');
 			} else {
 				$('#netboot').addClass('hidden');
 			}
-*/
 			if (ldapproxy == "enabled") {
 				$('#ldapproxy').removeClass('hidden');
 			} else {
