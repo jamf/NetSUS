@@ -253,9 +253,7 @@ if ($ssl_certificate_str != "") {
 									<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
 								</div>
 
-								<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
-									<button type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm btn-footer pull-right" disabled>Create</button>
-								</nav>
+								<button type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm pull-right" disabled>Create</button>
 
 							</div><!-- /.tab-pane -->
 
@@ -282,10 +280,8 @@ if ($ssl_certificate_str != "") {
 									<textarea class="form-control input-sm" name="cabundle" id="cabundle" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['cabundle']) ? $_POST['cabundle'] : ""); ?></textarea>
 								</div>
 
-								<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
-									<button type="button" class="btn btn-primary btn-sm btn-footer pull-right <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
-									<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm btn-footer pull-right <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
-								</nav>
+								<button type="button" class="btn btn-primary btn-sm pull-right <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+								<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm pull-right <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
 
 							</div><!-- /.tab-pane -->
 

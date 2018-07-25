@@ -104,7 +104,7 @@ if (strpos($lv_result, 'ERROR') === false) {
 						<div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $lv_percent; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $lv_percent; ?>%;"></div>
 					</div>
 
-					<div class="text-left">
+					<div class="text-right">
 						<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#confirmExpand" <?php echo ($lv_percent < 100 ? "" : "disabled"); ?>>Expand</button>
 					</div>
 

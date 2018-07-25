@@ -150,10 +150,9 @@ if (empty($log_content)) {
 
 					</form> <!-- end form Logs -->
 <?php } else { ?>
-					<br>
+					<div class="text-muted" style="padding: 12px; 0px;"><?php echo basename($_POST['display_file'])." (".$log_size.")"; ?></div>
 
-					<div class="text-muted"><?php echo basename($_POST['display_file'])." (".$log_size.")"; ?></div>
-
+<div class="form-group has-feedback">
 					<div id="viewer" class="log-viewer" tabindex="-1"><?php echo htmlentities($log_content); ?></div>
 					<script>
 						var viewer = ace.edit("viewer");
@@ -163,13 +162,9 @@ if (empty($log_content)) {
 						viewer.setShowPrintMargin(false);
 						viewer.setOption("readOnly", true);
 					</script>
-
-					<br>
-
-					<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
-						<button type="button" class="btn btn-primary btn-sm btn-footer pull-right" onClick="document.location.href='logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>'">Download</button>
-						<button type="button" class="btn btn-default btn-sm btn-footer pull-right" onClick="document.location.href='logs.php'">Done</button>
-					</nav>
+</div>
+					<button type="button" class="btn btn-primary btn-sm pull-right" onClick="document.location.href='logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>'">Download</button>
+					<button type="button" class="btn btn-default btn-sm pull-right" style="margin-right: 20px;" onClick="document.location.href='logs.php'">Done</button>
 <?php } ?>
 				</div> <!-- /.col -->
 			</div> <!-- /.row -->
