@@ -134,44 +134,62 @@ fi
 
 #Get the local time
 getlocaltime)
-echo $(date)
+echo $(date +"%a %b %d %H:%M:%S %Y")
+;;
+
+#Set the local time
+setlocaltime)
+# $2: date
+date -s "$2"
 ;;
 
 #Get the time server that is set
 gettimeserver)
 if [ -f "/etc/ntp/step-tickers" ]; then
-	echo $(cat /etc/ntp/step-tickers 2>/dev/null | grep -v "^$" | grep -m 1 -v '#')
-else
-	echo $(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
+	timeserver=$(grep -v "^$" /etc/ntp/step-tickers 2>/dev/null | grep -m 1 -v '#')
+elif [ -f "/etc/ntp.conf" ]; then
+	timeserver=$(grep -m 1 '^server\|^pool' /etc/ntp.conf | awk '{print $2}')
+elif [ -f "/etc/systemd/timesyncd.conf" ]; then
+	timeserver=$(grep '^NTP=' /etc/systemd/timesyncd.conf | cut -d = -f 2 | awk '{print $1}')
 fi
+echo $timeserver
 ;;
 
 #Set the time server
 settimeserver)
-newTimeServer=$2
+# $2: timeserver
 if [ -f "/etc/ntp/step-tickers" ]; then
-	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
-	if [ "$currentTimeServer" != "$newTimeServer" ]; then
-		echo "# List of NTP servers used by the ntpdate service." > /etc/ntp/step-tickers
-		echo $newTimeServer >> /etc/ntp/step-tickers
-	fi
-else
-	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $2}')
-	if [ "$currentTimeServer" != "$newTimeServer" ]; then
-		echo "server $newTimeServer" > /etc/cron.daily/ntpdate
-	fi
+	echo "# List of NTP servers used by the ntpdate service." > /etc/ntp/step-tickers
+	echo $2 >> /etc/ntp/step-tickers
+	ntpdate $2
+elif [ -f "/etc/ntp.conf" ]; then
+	sed -i "0,/^server/{s/^server.*/server $2/}" /etc/ntp.conf
+	sed -i "0,/^pool/{s/^pool.*/pool $2 iburst/}" /etc/ntp.conf
+	service ntp restart 2>&-
+elif [ -f "/etc/systemd/timesyncd.conf" ]; then
+	sed -i "s/^NTP=.*/NTP=$2/" /etc/systemd/timesyncd.conf
+	systemctl restart systemd-timesyncd
 fi
-ntpdate $newTimeServer
 ;;
 
-# *** Timezone retrieval done through PHP
-# Set time zone
-settz)
-timezone=$2
-if [ "$(which timedatectl 2>&-)" != '' ] && [ "$(which dpkg-reconfigure 2>&-)" != '' ]; then
-	echo $(timedatectl set-timezone $timezone && dpkg-reconfigure --frontend noninteractive tzdata)
+# Get time zone
+gettimezone)
+if [ "$(which timedatectl 2>&-)" != '' ]; then
+	echo $(timedatectl | grep 'Time.*zone' | cut -d : -f 2 | awk '{print $1}')
 else
-	echo ZONE=\"$timezone\" > /etc/sysconfig/clock && ln -sf /usr/share/zoneinfo/$timezone /etc/localtime
+	echo $(cat /etc/sysconfig/clock | awk -F '\"' '{print $2}')
+fi
+
+;;
+
+# Set time zone
+settimezone)
+# $2: timezone
+if [ "$(which timedatectl 2>&-)" != '' ]; then
+	timedatectl set-timezone $2
+else
+	echo ZONE=\"$2\" > /etc/sysconfig/clock
+	cp /usr/share/zoneinfo/$2 /etc/localtime
 fi
 ;;
 

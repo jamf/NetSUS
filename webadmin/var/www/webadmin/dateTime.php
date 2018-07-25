@@ -6,90 +6,167 @@ include "inc/functions.php";
 
 $title = "Date/Time";
 
+// Script setup.
+ini_set('error_reporting', E_ALL);
+date_default_timezone_set('UTC');
+include 'inc/parser.php';
+$local_file = 'images/timezone/tz_map.png';
+list($map_width, $map_height) = getimagesize($local_file);
+$timezones = timezone_picker_parse_files($map_width, $map_height, 'images/timezone/tz_world.txt', 'images/timezone/tz_islands.txt');
+
 include "inc/header.php";
 
 //Save the date/time settings if the SaveDateTime
-if (isset($_POST['SaveDateTime'])) {
-	if (isset($_POST['timezone'])) {
-        	$tz = $_POST['timezone'];
-	        setTimeZone($tz);
-	}
-
-	if (isset($_POST['timeserver'])) {
-		$ts = $_POST['timeserver'];
-		setTimeServer($ts);
-	}
-	echo "<div class=\"alert alert-success\">Configuration saved.</div>";
+if (isset($_POST['savetimeserver'])) {
+ 	suExec("settimeserver ".$_POST['timeserver']);
+}
+if (isset($_POST['savetime'])) {
+ 	suExec("setlocaltime ".$_POST['localtime']);
+}
+if (isset($_POST['savetimezone'])) {
+ 	suExec("settimezone ".$_POST['timezone']);
 }
 
+$currentServer = trim(suExec("gettimeserver"));
+$currentTime = trim(suExec("getlocaltime"));
+$currentZone = trim(suExec("gettimezone"));
 ?>
+			<link rel="stylesheet" href="theme/bootstrap-datetimepicker.css" />
 
-<script>
-function showErr(id, valid)
-{
-	if (valid || document.getElementById(id).value == "")
-	{
-		document.getElementById(id).style.borderColor = "";
-		document.getElementById(id).style.backgroundColor = "";
-	}
-	else
-	{
-		document.getElementById(id).style.borderColor = "#a94442";
-		document.getElementById(id).style.backgroundColor = "#f2dede";
-	}
-}
-function enableButton(id, enable)
-{
-	document.getElementById(id).disabled = !enable;
-}
+			<script type="text/javascript" src="scripts/moment/moment.min.js"></script>
+			<script type="text/javascript" src="scripts/bootstrap/transition.js"></script>
+			<script type="text/javascript" src="scripts/bootstrap/collapse.js"></script>
+			<script type="text/javascript" src="scripts/datetimepicker/bootstrap-datetimepicker.min.js"></script>
 
-function validateTimeserver()
-{
-	var validTimeserver = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("timeserver").value);
-	showErr("timeserver", validTimeserver);
-	enableButton("SaveDateTime", validTimeserver);
-}
-</script>
+			<script type="text/javascript">
+				$(function () {
+					$('#settime').datetimepicker({
+						format: 'ddd MMM DD HH:mm:ss YYYY',
+					});
+				});
+			</script>
 
-<h2>Date/Time</h2>
+			<style>
+				#timezone-picker {
+					text-align: center;
+					overflow-x: auto;
+					white-space: nowrap;
+					padding-bottom: 8px;
+				}
+				#timezone-picker div,
+				#timezone-picker map {
+					margin: auto;
+				}
+			</style>
 
-<div class="row">
-	<div class="col-xs-12 col-sm-6 col-md-4">
+			<script type="text/javascript" src="scripts/timezonepicker/jquery.maphilight.min.js"></script>
+			<script type="text/javascript" src="scripts/timezonepicker/jquery.timezone-picker.min.js"></script>
 
-		<hr>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#timezone-image').timezonePicker({
+						target: '#timezone-menu'
+					});
+					$('#timezone-menu option[value="<?php echo $currentZone; ?>"]').prop('selected', true);
+				});
+			</script>
 
-		<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
-			<input type="hidden" name="userAction" value="DateTime">
+			<script type="text/javascript">
+				function showError(element, labelId = false) {
+					element.parentElement.classList.add("has-error");
+					if (labelId) {
+						document.getElementById(labelId).classList.add("text-danger");
+					}
+				}
 
-			<span class="label label-default">Current Time</span>
-			<span class="description">Current time on the NetBoot/SUS/LDAP Proxy server</span>
-			<span><?php print getLocalTime();?></span>
-			<br>
+				function hideError(element, labelId = false) {
+					element.parentElement.classList.remove("has-error");
+					if (labelId) {
+						document.getElementById(labelId).classList.remove("text-danger");
+					}
+				}
 
-			<span class="label label-default">Current Time Zone</span>
-			<span class="description">Current time zone on the NetBoot/SUS/LDAP Proxy server</span>
-			<span>
-				<select class="form-control input-sm" id="timezone" name="timezone" onClick="validateTimeserver();" onChange="validateTimeserver();">
-					<?php echo getSystemTimeZoneMenu();?>
-				</select>
-			</span>
+				function validTimeserver() {
+					var timeserver = document.getElementById('timeserver');
+					if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(timeserver.value)) {
+						hideError(timeserver, 'timeserver_label');
+						$('#savetimeserver').prop('disabled', false);
+					} else {
+						showError(timeserver, 'timeserver_label');
+						$('#savetimeserver').prop('disabled', false);
+					}
+				}
 
-			<span class="label label-default">Network Time Server</span>
-			<span class="description">Server to use to synchronize the date/time (e.g. "pool.ntp.org")</span>
-			<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo getCurrentTimeServer();?>" onClick="validateTimeserver();" onKeyUp="validateTimeserver();" />
+				function validTime() {
+					var localtime = document.getElementById('localtime');
+					if (Date.parse(localtime.value)) {
+						hideError(localtime, 'localtime_label');
+						$('#savetime').prop('disabled', false);
+					} else {
+						showError(localtime, 'localtime_label');
+						$('#savetime').prop('disabled', false);
+					}
+				}
+			</script>
 
-			<br>
+			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+			<h2>Date/Time</h2>
 
-			<input type="submit" class="btn btn-primary" value="Save" name="SaveDateTime" id="SaveDateTime" disabled="disabled" />
+			<div class="row">
+				<div class="col-xs-12">
 
-		</form>
+					<hr>
 
-		<br>
-		<hr>
-		<br>
-		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='settings.php'">
+					<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
 
-	</div><!-- /.col -->
-</div><!-- /.row -->
+						<h5 id="timeserver_label" style="padding-top: 8px;"><strong>Network Time Server</strong> <small>Server to use to synchronize the date/time (e.g. "pool.ntp.org").</small></h5>
+						<div class="input-group has-feedback">
+							<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo $currentServer;?>" onFocus="validTimeserver();" onKeyUp="validTimeserver();" onBlur="validTimeserver();"/>
+							<span class="input-group-btn">
+								<button type="submit" name="savetimeserver" id="savetimeserver" class="btn btn-primary btn-sm" disabled>Save</button>
+							</span>
+						</div>
 
+						<h5 id="localtime_label" style="padding-top: 8px;"><strong>Current Time</strong> <small>Current time on the NetSUS server.</small></h5>
+						<div class="form-group has-feedback">
+							<div class="input-group has-feedback date" id="settime" name="settime">
+								<span class="input-group-addon input-sm" style="color: #555; background-color: #eee; border: 1px solid #ccc; border-right: 0;">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+								<input type="text" id="localtime" name="localtime" class="form-control input-sm" value="<?php echo $currentTime; ?>" onFocus="validTime();" onKeyUp="validTime();" onBlur="validTime();"/>
+								<span class="input-group-btn">
+									<button type="submit" name="savetime" id="savetime" class="btn btn-primary btn-sm" disabled>Save</button>
+								</span>
+							</div>
+						</div>
+
+						<h5 id="timezone_label" style="padding-top: 8px;"><strong>Current Time Zone</strong> <small>Current time zone on the NetSUS server.</small></h5>
+						<div id="timezone-picker">
+							<img id="timezone-image" src="<?php print $local_file; ?>" width="<?php print $map_width; ?>" height="<?php print $map_height; ?>" usemap="#timezone-map" />
+							<img class="timezone-pin" src="images/timezone/pin.png" style="padding-top: 4px;" />
+							<map name="timezone-map" id="timezone-map">
+<?php foreach ($timezones as $timezone_name => $timezone) {
+foreach ($timezone['polys'] as $coords) { ?>
+								<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="poly" coords="<?php print implode(',', $coords); ?>" />
+<?php }
+foreach ($timezone['rects'] as $coords) { ?>
+								<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="rect" coords="<?php print implode(',', $coords); ?>" />
+<?php }
+} ?>
+							</map>
+						</div>
+						<button type="submit" name="savetimezone" id="savetimezone" class="btn btn-primary btn-sm pull-right">Save</button>
+						<div style="margin-right: 51px;">
+							<select id="timezone-menu" name="timezone" class="form-control input-sm">
+								<option value="">Select...</option>
+<?php foreach (DateTimeZone::listIdentifiers() as $identifier) { ?>
+								<option value="<?php echo $identifier; ?>"><?php echo $identifier; ?></option>
+<?php } ?>
+							</select>
+						</div>
+
+					</form>
+
+				</div><!-- /.col -->
+			</div><!-- /.row -->
 <?php include "inc/footer.php"; ?>

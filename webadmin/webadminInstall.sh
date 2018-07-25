@@ -38,6 +38,9 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install php-ldap
 	apt_install php-xml
 	apt_install php-zip
+	if [ ! -f "/etc/systemd/timesyncd.conf" ]; then
+		apt_install ntp
+	fi
 	www_user=www-data
 	www_service=apache2
 elif [[ $(which yum 2>&-) != "" ]]; then
@@ -81,25 +84,54 @@ else
 	service iptables save >> $logFile 2>&1
 fi
 
-# Initial configuration of the network time server
-if [ -f "/etc/ntp/step-tickers" ]; then
-	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
-	if [[ $currentTimeServer == "" ]]; then
-		if [[ $(readlink /etc/system-release) == "centos-release" ]]; then
-			currentTimeServer=0.centos.pool.ntp.org
-		else
-			currentTimeServer=0.rhel.pool.ntp.org
-		fi
-		echo $currentTimeServer >> /etc/ntp/step-tickers
-	fi
-else
-	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $NF}')
-	if [[ $currentTimeServer == "" ]]; then
-		echo "server 0.ubuntu.pool.ntp.org" > /etc/cron.daily/ntpdate
+# Initial configuration of time zone
+if [[ $(which timedatectl 2>&-) != "" ]]; then
+	if ! timedatectl --no-pager list-timezones | grep -q "$(timedatectl | grep 'Time.*zone' | cut -d : -f 2 | awk '{print $1}')"; then
+		timedatectl set-timezone "America/New_York"
 	fi
 fi
-if [[ $currentTimeServer != "" ]]; then
-	ntpdate $currentTimeServer >> $logFile 2>&1
+
+# Initial configuration of the network time server
+if [ -f "/etc/ntp/step-tickers" ]; then
+	timeServer=$(grep -v "^$" /etc/ntp/step-tickers | grep -m 1 -v '#')
+	if [[ $timeServer == "" ]]; then
+		if [[ $(readlink /etc/system-release) == "centos-release" ]]; then
+			timeServer=0.centos.pool.ntp.org
+		else
+			timeServer=0.rhel.pool.ntp.org
+		fi
+		echo $timeServer >> /etc/ntp/step-tickers
+	fi
+else
+	timeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $NF}')
+	if [ -f "/etc/ntp.conf" ]; then
+		i=0
+		for j in $(sed -e '/fallback/q' /etc/ntp.conf | grep '^server\|^pool' | awk '{print $2}'); do
+			if [ $i -gt 0 ]; then
+				sed -i "/$j/d" /etc/ntp.conf
+			fi
+			let i++
+		done
+		if [[ $timeServer != "" ]]; then
+			sed -i "0,/^server/{s/^server.*/server $timeServer/}" /etc/ntp.conf
+			sed -i "0,/^pool/{s/^pool.*/pool $timeServer iburst/}" /etc/ntp.conf
+			rm -f /etc/cron.daily/ntpdate
+		fi
+		service ntp restart >> $logFile 2>&1
+	else
+		sed -i 's/#NTP=/NTP=' /etc/systemd/timesyncd.conf
+		if [[ $timeServer == "" ]]; then
+			timeServer=$(grep '^NTP=' /etc/systemd/timesyncd.conf | cut -d = -f 2 | awk '{print $1}')
+		fi
+		if [[ $timeServer == "" ]]; then
+			timeServer=0.ubuntu.pool.ntp.org
+		fi
+		sed -i "s/^NTP=.*/NTP=$timeServer/" /etc/systemd/timesyncd.conf
+		systemctl restart systemd-timesyncd
+	fi
+fi
+if [[ $(which ntpdate 2>&-) != "" ]]; then
+	ntpdate $timeServer >> $logFile 2>&1
 fi
 
 # Enable console dialog
