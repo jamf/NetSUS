@@ -104,13 +104,6 @@ if ($afp_str != "") {
 foreach ($file_shares as $key => $value) {
 	$file_shares[$key]['http'] = (trim(shareExec("getHTTPshare \"".$key."\"")) === "true");
 }
-
-
-//echo "<pre>";
-// print_r(array_values($file_shares));
-//print_r(json_encode(array_values($file_shares), JSON_PRETTY_PRINT));
-//echo "</pre>";
-
 ?>
 
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
