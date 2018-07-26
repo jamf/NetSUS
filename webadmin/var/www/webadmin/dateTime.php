@@ -27,6 +27,10 @@ if (isset($_POST['savetimezone'])) {
  	suExec("settimezone ".$_POST['timezone']);
 }
 
+// ####################################################################
+// End of GET/POST parsing
+// ####################################################################
+
 $currentServer = trim(suExec("gettimeserver"));
 $currentTime = trim(suExec("getlocaltime"));
 $currentZone = trim(suExec("gettimezone"));
