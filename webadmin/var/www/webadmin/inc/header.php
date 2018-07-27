@@ -155,9 +155,9 @@ $currentUser = getCurrentWebUser();
                 <li class=""><a href="#"><span class="glyphicon"></span></a></li>
                 <!-- begin Sidebar Menu Items -->
                 <li id="sharing" class="<?php if ($pageURI == "sharing.php") { echo "active"; } ?>"><a href="sharing.php"><span class="glyphicon glyphicon-folder-open marg-right"></span>File Sharing</a></li>
-                <li id="sus" class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="glyphicon glyphicon-hdd marg-right"></span>Software Update Server</a></li>
-                <li id="netboot" class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="glyphicon glyphicon-import marg-right"></span>NetBoot Server</a></li>
-                <li id="ldapproxy" class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-transfer marg-right"></span>LDAP Proxy</a></li>
+                <li id="sus" class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="netsus-icon icon-sus marg-right"></span>Software Update Server</a></li>
+                <li id="netboot" class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="netsus-icon icon-netboot marg-right"></span>NetBoot Server</a></li>
+                <li id="ldapproxy" class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-book marg-right"></span>LDAP Proxy</a></li>
                 <!-- end Sidebar Menu Items -->
             </ul>
         </div>
