@@ -57,12 +57,6 @@ if (isset($_POST['delProxy'])) {
 // ####################################################################
 
 $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
-$hostname = trim(getCurrentHostname());
-if (trim(suExec("getSSLstatus")) == "true") {
-	$ldap_url = "ldaps://".$hostname.":636/";
-} else {
-	$ldap_url = "ldap://".$hostname.":389/";
-}
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
@@ -213,19 +207,19 @@ if (trim(suExec("getSSLstatus")) == "true") {
 
 					<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-						<hr>
-
-						<div id="slapd_status" style="padding-top: 12px;" class="description"><?php echo ($ldap_running ? "Available on your network at ".$ldap_url : ($conf->getSetting("ldapproxy") == "enabled" ? "LDAP: Not Running" : "LDAP: Off")); ?></div>
-
-						<div id="slapd_info" class="<?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
-							<div class="text-info"><span class="glyphicon glyphicon-info-sign"></span> LDAP service will start when a proxy configuration is added.</div>
+						<div id="slapd_info" class="panel panel-default <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+							<div class="panel-body">
+								<div class="text-info"><span class="glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
+							</div>
 						</div>
 
-						<div id="slapd_error" class="<?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
-							<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> Error in proxy configuration.</div>
+						<div id="slapd_error" class="panel panel-default <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
+							<div class="panel-body">
+								<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
+							</div>
 						</div>
 
-						<br>
+						<hr style="padding-bottom: 12px;">
 
 						<table id="proxy-table" class="table table-striped">
 							<thead>
