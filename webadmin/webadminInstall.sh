@@ -119,7 +119,7 @@ else
 		fi
 		service ntp restart >> $logFile 2>&1
 	else
-		sed -i 's/#NTP=/NTP=' /etc/systemd/timesyncd.conf
+		sed -i 's/#NTP=/NTP=/' /etc/systemd/timesyncd.conf
 		if [[ $timeServer == "" ]]; then
 			timeServer=$(grep '^NTP=' /etc/systemd/timesyncd.conf | cut -d = -f 2 | awk '{print $1}')
 		fi
