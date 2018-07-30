@@ -127,7 +127,7 @@ include "inc/header.php";
 								<!-- /Row -->
 							</td>
 						</tr>
-					<table>
+					</table>
 				</div>
 			</div>
 <?php include "inc/footer.php"; ?>
