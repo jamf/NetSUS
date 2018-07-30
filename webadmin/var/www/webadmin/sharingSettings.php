@@ -113,9 +113,7 @@ $afp_conns = trim(shareExec("afpconns"));
 
 					<hr>
 
-					<div style="padding-top: 12px;" class="description">FILE SHARING DESCRIPTION</div>
-
-					<div class="checkbox checkbox-primary" style="padding-top: 12px;">
+					<div class="checkbox checkbox-primary" style="padding-top: 9px;">
 						<input name="sharingdashboard" id="sharingdashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showsharing") == "false" ? "" : "checked"); ?>>
 						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>
