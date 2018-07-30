@@ -141,6 +141,11 @@ if [ -f "/etc/rc.d/rc.local" ]; then
 	rc_local=/etc/rc.d/rc.local
 else
 	rc_local=/etc/rc.local
+	if [ ! -f "/etc/rc.local" ]; then
+		echo '#!/bin/sh -e' > /etc/rc.local
+		echo >> /etc/rc.local
+		chmod +x /etc/rc.local
+	fi
 fi
 sed -i '/TERM/d' $rc_local
 sed -i '/dialog.sh/d' $rc_local
@@ -152,7 +157,9 @@ exit 0' >> $rc_local
 chmod +x $rc_local
 
 # Configure php
-if [ -f "/etc/php/7.0/apache2/php.ini" ]; then
+if [ -f "/etc/php/7.2/apache2/php.ini" ]; then
+	php_ini=/etc/php/7.2/apache2/php.ini
+elif [ -f "/etc/php/7.0/apache2/php.ini" ]; then
 	php_ini=/etc/php/7.0/apache2/php.ini
 elif [ -f "/etc/php5/apache2/php.ini" ]; then
 	php_ini=/etc/php5/apache2/php.ini

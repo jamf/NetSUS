@@ -15,8 +15,11 @@ fi
 
 case $NAME in
 "Ubuntu")
-	if [[ "$VERSION_ID" == "14.04" ]] || [[ "$VERSION_ID" == "16.04" ]] ; then
+	if [[ "$VERSION_ID" == "14.04" ]] || [[ "$VERSION_ID" == "16.04" ]] || [[ "$VERSION_ID" == "18.04" ]] ; then
 		log "$PRETTY_NAME found"
+		if [[ "$VERSION_ID" == "18.04" ]] ; then
+			log "Warning: $NAME support is currently experimental, proceed with caution."
+		fi
 		exit 0
 	else
 		log "Error: $NAME version must be 14.04 or 16.04 (Detected $VERSION_ID)."
