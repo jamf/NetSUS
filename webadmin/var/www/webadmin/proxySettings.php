@@ -63,21 +63,21 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 			<div class="row">
 				<div class="col-xs-12">
 
-					<div id="slapd_info" class="panel panel-default <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+					<hr style="padding-bottom: 9px;">
+
+					<div id="slapd_info" style="margin-top: 9px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<div class="text-info"><span class="glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
+							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
 						</div>
 					</div>
 
-					<div id="slapd_error" class="panel panel-default <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
+					<div id="slapd_error" style="margin-top: 9px; border-color: #d43f3a;" class="panel panel-danger <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
 						<div class="panel-body">
-							<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
 						</div>
 					</div>
 
-					<hr>
-
-					<div style="padding-top: 9px;" class="checkbox checkbox-primary">
+					<div class="checkbox checkbox-primary">
 						<input name="dashboard" id="dashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showproxy") == "false" ? "" : "checked"); ?>>
 						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>

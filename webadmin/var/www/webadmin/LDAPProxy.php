@@ -207,19 +207,19 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 
 					<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-						<div id="slapd_info" class="panel panel-default <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+						<hr style="padding-bottom: 18px;">
+
+						<div id="slapd_info" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
 							<div class="panel-body">
-								<div class="text-info"><span class="glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
+								<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
 							</div>
 						</div>
 
-						<div id="slapd_error" class="panel panel-default <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
+						<div id="slapd_error" style="border-color: #d43f3a;" class="panel panel-danger <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
 							<div class="panel-body">
-								<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
+								<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
 							</div>
 						</div>
-
-						<hr style="padding-bottom: 12px;">
 
 						<table id="proxy-table" class="table table-striped">
 							<thead>
