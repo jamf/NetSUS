@@ -405,33 +405,27 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 
 							<div class="tab-pane active fade in" id="preferences-tab">
 
-								<div style="padding: 8px 0px;" class="description">PREFERENCES DESCRIPTION</div>
-
-								<div class="checkbox checkbox-primary" style="padding-top: 12px;">
+								<div class="checkbox checkbox-primary" style="padding-top: 9px;">
 									<input name="dashboard" id="dashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showsus") == "false" ? "" : "checked"); ?>>
 									<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 								</div>
 
 								<hr>
-								<br>
 
-								<h5 id="baseurl_label"><strong>Base URL</strong> <small>Base URL for the software update server (e.g. "http://sus.mycompany.corp").</small></h5>
+								<h5 id="baseurl_label" style="padding-top: 12px;"><strong>Base URL</strong> <small>Base URL for the software update server (e.g. "http://sus.mycompany.corp").</small></h5>
 								<div class="form-group has-feedback">
 									<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" placeholder="[Required]" value="<?php echo $susbaseurl; ?>" onFocus="validBaseUrl(this, 'baseurl_label');" onKeyUp="validBaseUrl(this, 'baseurl_label');" onChange="updateBaseUrl(this);"/>
 								</div>
 
-								<div class="checkbox checkbox-primary checkbox-inline">
+								<div class="checkbox checkbox-primary checkbox-inline" style="padding-bottom: 12px;">
 									<input name="mirrorpkgs" id="mirrorpkgs" class="styled" type="checkbox" value="mirrorpkgs" onChange="javascript: ajaxPost('susCtl.php', 'mirrorpkgs=' + this.checked);" <?php echo ($conf->getSetting("mirrorpkgs") == "true" ? "checked" : ""); ?>>
 									<label><strong>Store Updates on this Server</strong> <span style="font-size: 75%; color: #777;">Ensure that computers install software updates from this software update server instead of downloading and installing them from Apple's software update server.</span></label>
 								</div>
 
-								<br>
-								<br>
 								<hr>
-								<br>
 
-								<h5><strong>Apple Catalog URLs</strong> <small>Specify the Apple SUS catalog URLs to replicate.</small></h5>
-								<div class="row">
+								<h5 style="padding-top: 12px;"><strong>Apple Catalog URLs</strong> <small>Select the Apple SUS catalog URLs to replicate.</small></h5>
+								<div class="row" style="padding-bottom: 12px;">
 <?php foreach ($default_catalog_map as $array) {
 if ($array["default"]) { ?>
 									<div class="col-xs-2 col-md-1">
@@ -444,15 +438,13 @@ if ($array["default"]) { ?>
 } ?>
 								</div>
 
-								<br>
 								<hr>
-								<br>
 
-								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer" style="padding-top: 12px;">
 									<div class="row">
 										<div class="col-sm-10">
 											<div class="dataTables_filter">
-												<h5><strong>Additional Catalog URLs</strong> <small>Additional SUS catalog URLs to replicate.</small></h5>
+												<h5><strong>Additional Catalog URLs</strong> <small>Specify additional SUS catalog URLs to replicate.</small></h5>
 											</div>
 										</div>
 										<div class="col-sm-2">
@@ -533,9 +525,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 
 							<div class="tab-pane fade in" id="schedule-tab">
 
-								<div style="padding: 8px 0px;" class="description">SCHEDULE DESCRIPTION</div>
-
-								<h5><strong>Schedule</strong> <small>Time at which to sync the list of available updates with Apple's Software Update server each day.</small></h5>
+								<h5 style="padding-top: 12px;"><strong>Schedule</strong> <small>Time at which to sync the list of available updates with Apple's Software Update server each day.</small></h5>
 								<div class="row">
 									<div class="col-xs-2 col-md-1">
 										<div class="checkbox checkbox-primary checkbox-inline">
@@ -591,9 +581,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 
 							<div class="tab-pane fade in" id="proxy-tab">
 
-								<div style="padding: 8px 0px;" class="description">PROXY DESCRIPTION</div>
-
-								<h5 id="proxyhost_label"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
+								<h5 id="proxyhost_label" style="padding-top: 12px;"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
 								<div class="row">
 									<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
 										<div class="has-feedback">
