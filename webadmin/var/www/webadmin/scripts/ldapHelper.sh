@@ -29,4 +29,27 @@ fi
 service slapd start 2>&-
 ;;
 
+touchconf)
+conf="$2"
+if [ "$(getent passwd www-data)" != '' ]; then
+	www_user=www-data
+elif [ "$(getent passwd apache)" != '' ]; then
+	www_user=apache
+fi
+touch "$conf"
+chown $www_user "$conf"
+chmod u+w "$conf"
+;;
+
+installslapdconf)
+if [ -d "/etc/ldap" ]; then
+	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+fi
+if [ -d "/etc/openldap" ]; then
+	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
+	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
+fi
+;;
+
 esac

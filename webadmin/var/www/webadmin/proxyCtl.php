@@ -20,9 +20,15 @@ if (!($_SESSION['isAuthUser'])) {
 	if (isset($_POST['service'])) {
 		if ($_POST['service'] == "enable") {
 			$conf->setSetting("ldapproxy", "enabled");
-			ldapExec("enableproxy");
 		} else {
 			$conf->setSetting("ldapproxy", "disabled");
+		}
+	}
+
+	if (isset($_POST['slapd'])) {
+		if ($_POST['slapd'] == "enable") {
+			ldapExec("enableproxy");
+		} else {
 			ldapExec("disableproxy");
 		}
 	}
