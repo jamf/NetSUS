@@ -97,7 +97,7 @@ $currentZone = trim(suExec("gettimezone"));
 						$('#savetimeserver').prop('disabled', false);
 					} else {
 						showError(timeserver, 'timeserver_label');
-						$('#savetimeserver').prop('disabled', false);
+						$('#savetimeserver').prop('disabled', true);
 					}
 				}
 
@@ -108,7 +108,7 @@ $currentZone = trim(suExec("gettimezone"));
 						$('#savetime').prop('disabled', false);
 					} else {
 						showError(localtime, 'localtime_label');
-						$('#savetime').prop('disabled', false);
+						$('#savetime').prop('disabled', true);
 					}
 				}
 			</script>
