@@ -8,9 +8,15 @@ $title = "LDAP Proxy";
 
 include "inc/header.php";
 
+$slapd_error = "";
+
 // Helper Function
 function ldapExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
+
+if (isset($_POST['enableproxy'])) {
+	ldapExec("enableproxy");
 }
 
 if (isset($_POST['addProxy']) && isset($_POST['inLDAP']) && isset($_POST['outLDAP']) && isset($_POST['inURL'])
@@ -24,7 +30,7 @@ if (isset($_POST['addProxy']) && isset($_POST['inLDAP']) && isset($_POST['outLDA
 	$lpconf = str_replace("##PROXIES##", $ldapproxies, $lpconf);
 	ldapExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE) {
-		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
+		$slapd_error = "Unable to update slapd.conf";
 	}
 	if (trim(ldapExec("getldapproxystatus")) === "true") {
 		ldapExec("disableproxy");
@@ -43,7 +49,7 @@ if (isset($_POST['delProxy'])) {
 	$lpconf = str_replace("##PROXIES##", $ldapproxies, $lpconf);
 	ldapExec("touchconf \"/var/appliance/conf/slapd.conf.new\"");
 	if(file_put_contents("/var/appliance/conf/slapd.conf.new", $lpconf) === FALSE) {
-		echo "<div class=\"alert alert-danger\">ERROR: Unable to update slapd.conf</div>";
+		$slapd_error = "Unable to update slapd.conf";
 	}
 	ldapExec("disableproxy");
 	ldapExec("installslapdconf");
@@ -52,11 +58,18 @@ if (isset($_POST['delProxy'])) {
 	}
 }
 
+$ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
+if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 && !$ldap_running) {
+	if (isset($_POST['enableproxy'])) {
+		$slapd_error = "Error in proxy configuration.";
+	} else {
+		$slapd_error = "The LDAP service is not running. <a href=\"\" onClick=\"enableProxy();\">Click here to start it</a>.";
+	}
+}
+
 // ####################################################################
 // End of GET/POST parsing
 // ####################################################################
-
-$ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
@@ -191,6 +204,11 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 					}
 				}
 
+				function enableProxy() {
+					$('#enableproxy').val('true');
+					$('#LDAPProxy').submit();
+				}
+
 				//Ensure all inputs have values before enabling the add button
 				$(document).ready(function () {
 					$('#inLDAP, #outLDAP, #inHost, #inPort').focus(validLdap);
@@ -215,9 +233,10 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 							</div>
 						</div>
 
-						<div id="slapd_error" style="border-color: #d43f3a;" class="panel panel-danger <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
+						<div id="slapd_error" style="border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
 							<div class="panel-body">
-								<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
+								<input type="hidden" id="enableproxy" name="enableproxy" value="">
+								<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
 							</div>
 						</div>
 
