@@ -12,6 +12,16 @@ function shareExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
+// Start SMB
+if (!empty($_POST['startsmb'])) {
+	shareExec("startsmb");
+}
+
+// Start AFP
+if (!empty($_POST['startafp'])) {
+	shareExec("startafp");
+}
+
 // Add Share
 if (isset($_POST['addshare']) && $_POST['addsharename'] != "" && $_POST['addsharepath'] != "") {
 	shareExec("addSMBshare \"".$_POST['addsharename']."\" \"".$_POST['addsharepath']."\" ".$_POST['addshareowner']);
@@ -34,6 +44,8 @@ if (isset($_POST['delshare']) && $_POST['delshare'] != "NetBoot" && $_POST['dels
 // Service Status
 $smb_running = (trim(shareExec("getsmbstatus")) === "true");
 $afp_running = (trim(shareExec("getafpstatus")) === "true");
+$smb_error = "";
+$afp_error = "";
 
 // Users & Groups
 $uid_min = preg_split("/\s+/", implode(preg_grep("/\bUID_MIN\b/i", file("/etc/login.defs"))))[1];
@@ -101,11 +113,26 @@ if ($afp_str != "") {
 		}
 	}
 }
+$smb_shares = 0;
+$afp_shares = 0;
 foreach ($file_shares as $key => $value) {
 	$file_shares[$key]['http'] = (trim(shareExec("getHTTPshare \"".$key."\"")) === "true");
+	if ($file_shares[$key]['smb']) {
+		$smb_shares++;
+	}
+	if ($file_shares[$key]['afp']) {
+		$afp_shares++;
+	}
+}
+
+// Alerts
+if ($smb_shares > 1 && !$smb_running) {
+	$smb_error = "The SMB service is not running. <a href=\"\" onClick=\"startSMB();\">Click here to start it</a>.";
+}
+if ($afp_shares > 1 && !$afp_running) {
+	$afp_error = "The AFP service is not running. <a href=\"\" onClick=\"startAFP();\">Click here to start it</a>.";
 }
 ?>
-
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 
@@ -126,7 +153,7 @@ foreach ($file_shares as $key => $value) {
 								}
 							}
 						],
-						"dom": "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+						"dom": "<'row'<'col-sm-4'f><'col-sm-6'i><'col-sm-2'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-3'l><'col-sm-9'p>>",
 						"order": [ 3, 'asc' ],
 						"lengthMenu": [ [5, 10, 25, -1], [5, 10, 25, "All"] ],
 						"pageLength": 10,
@@ -146,7 +173,19 @@ foreach ($file_shares as $key => $value) {
 				var smb_running = <?php echo ($smb_running ? "true" : "false"); ?>;
 				var afp_running = <?php echo ($afp_running ? "true" : "false"); ?>;
 				var shares = <?php print_r(json_encode(array_values($file_shares))); ?>;
+				var smb_shares = <?php echo $smb_shares; ?>;
+				var afp_shares = <?php echo $afp_shares; ?>;
 				var share = {};
+
+				function startSMB() {
+					$('#startsmb').val('true');
+					$('#Sharing').submit();
+				}
+
+				function startAFP() {
+					$('#startafp').val('true');
+					$('#Sharing').submit();
+				}
 
 				function showError(element, labelId = false) {
 					element.parentElement.classList.add("has-error");
@@ -196,10 +235,18 @@ foreach ($file_shares as $key => $value) {
 					if (smb.checked) {
 						shares[i]['smb'] = true;
 						ajaxPost('sharingCtl.php', 'enablesmb='+shares[i]['name']+':'+shares[i]['path']+':'+shares[i]['rwlist'].toString()+':'+shares[i]['rolist'].toString());
+						smb_shares++;
 					} else {
 						shares[i]['smb'] = false;
 						ajaxPost('sharingCtl.php', 'disablesmb='+shares[i]['name']);
+						smb_shares--;
 					}
+					if (smb_shares > 1 && !smb_running) {
+						$('#smb_error').removeClass('hidden');
+					} else {
+						$('#smb_error').addClass('hidden');
+					}
+					console.log('smb_shares: '+smb_shares);
 					if (smb.checked && afp.checked) {
 						smb.disabled = false;
 						afp.disabled = false;
@@ -219,9 +266,16 @@ foreach ($file_shares as $key => $value) {
 					if (afp.checked) {
 						shares[i]['afp'] = true;
 						ajaxPost('sharingCtl.php', 'enableafp='+shares[i]['name']+':'+shares[i]['path']+':'+shares[i]['rwlist'].toString()+':'+shares[i]['rolist'].toString());
+						afp_shares++;
 					} else {
 						shares[i]['afp'] = false;
 						ajaxPost('sharingCtl.php', 'disableafp='+shares[i]['name']);
+						afp_shares--;
+					}
+					if (afp_shares > 1 && !afp_running) {
+						$('#afp_error').removeClass('hidden');
+					} else {
+						$('#afp_error').addClass('hidden');
 					}
 					if (smb.checked && afp.checked) {
 						smb.disabled = false;
@@ -237,7 +291,7 @@ foreach ($file_shares as $key => $value) {
 				}
 
 				function toggleHTTP(i) {
-					var http = document.getElementById('http'+i);
+					var http = document.getElementById('http-'+i);
 					if (http.checked) {
 						shares[i]['http'] = true;
 						ajaxPost('sharingCtl.php', 'enablehttp='+shares[i]['name']+':'+shares[i]['path']);
@@ -332,173 +386,188 @@ foreach ($file_shares as $key => $value) {
 				}
 			</script>
 
-			<div class="description">&nbsp;</div>
-			<h2>File Sharing</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description">&nbsp;</div>
+					<h2>File Sharing</h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12"> 
+			<form action="sharing.php" method="post" name="Sharing" id="Sharing">
 
-					<form action="sharing.php" method="post" name="Sharing" id="Sharing">
+				<div style="padding: 63px 20px 1px;">
+					<div id="smb_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($smb_shares > 1 && !$smb_running ? "" : "hidden"); ?>">
+						<div class="panel-body">
+							<input type="hidden" id="startsmb" name="startsmb" value="">
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The SMB service is not running. <a href="" onClick="startSMB();">Click here to start it</a>.</div>
+						</div>
+					</div>
 
-						<hr>
+					<div id="afp_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($afp_shares > 1 && !$afp_running ? "" : "hidden"); ?>">
+						<div class="panel-body">
+							<input type="hidden" id="startafp" name="startafp" value="">
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The AFP service is not running. <a href="" onClick="startAFP();">Click here to start it</a>.</div>
+						</div>
+					</div>
+				</div>
 
-						<div style="padding: 12px 0px;" class="description">FILE SHARING DESCRIPTION</div>
-
-						<table id="share-table" class="table table-striped">
-							<thead>
-								<tr>
-									<th>SMB</th>
-									<th>AFP</th>
-									<th>HTTP</th>
-									<th>Share Name</th>
-									<th>Share Path</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
+				<div style="padding: 15px 20px 1px; overflow-x: auto;">
+					<table id="share-table" class="table table-striped" style="border-bottom: 1px solid #eee;">
+						<thead>
+							<tr>
+								<th>SMB</th>
+								<th>AFP</th>
+								<th>HTTP</th>
+								<th>Share Name</th>
+								<th>Share Path</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
 <?php $i = 0;
-foreach ($file_shares as $key => $value) { ?>
-								<tr>
-									<td>
-										<div class="checkbox checkbox-primary" style="margin-top: 0;">
-											<input type="checkbox" id="smb-<?php echo $i; ?>" value="true" onChange="toggleSMB('<?php echo $i; ?>');" <?php echo ($value["smb"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" || $value["afp"] == false ? "disabled" : ""); ?>/>
-											<label/>
-										</div>
-									</td>
-									<td>
-										<div class="checkbox checkbox-primary" style="margin-top: 0;">
-											<input type="checkbox" id="afp-<?php echo $i; ?>" value="true" onChange="toggleAFP('<?php echo $i; ?>');" <?php echo ($value["afp"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" || $value["smb"] == false ? "disabled" : ""); ?>/>
-											<label/>
-										</div>
-									</td>
-									<td>
-										<div class="checkbox checkbox-primary" style="margin-top: 0;">
-											<input type="checkbox" id="http-<?php echo $i; ?>" value="true" onChange="toggleHTTP('<?php echo $i; ?>');" <?php echo ($value["http"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" ? "disabled" : ""); ?>/>
-											<label/>
-										</div>
-									</td>
-									<td><a data-toggle="modal" href="#permissions-modal" onClick="permissionsModal('<?php echo $i; ?>');"><?php echo $value["name"]; ?></a></td>
-									<td><?php echo $key; ?></td>
-									<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delshare-modal" onClick="$('#delsharename').text('<?php echo $value["name"]; ?>'); $('#delsharedata').val('<?php echo $key; ?>'); $('#delshare').val('<?php echo $value["name"]; ?>');" <?php echo ($value["name"] == "NetBoot" ? "disabled" : ""); ?>>Delete</button></td>
-								</tr>
-<?php $i++;
-} ?>
-							</tbody>
-						</table>
-
-						<!-- Add Share Modal -->
-						<div class="modal fade" id="addshare-modal" tabindex="-1" role="dialog">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3 class="modal-title">Add Share</h3>
+foreach ($file_shares as $key => $value) {
+if ($value["name"] != "NetBoot") { ?>
+							<tr>
+								<td>
+									<div class="checkbox checkbox-primary checkbox-inline">
+										<input type="checkbox" id="smb-<?php echo $i; ?>" value="true" onChange="toggleSMB('<?php echo $i; ?>');" <?php echo ($value["smb"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" || $value["afp"] == false ? "disabled" : ""); ?>/>
+										<label/>
 									</div>
-									<div class="modal-body">
-										<h5 id="addsharename_label"><strong>Share Name</strong> <small>Share display name (e.g. "JamfShare")</small></h5>
-										<div class="form-group">
-											<input type="text" name="addsharename" id="addsharename" class="form-control input-sm" onFocus="validAddShare();" onKeyUp="validAddShare();" onBlur="validAddShare();" placeholder="[Required]" value=""/>
-										</div>
-										<h5 id="addsharepath_label"><strong>Share Path</strong> <small>Path to share (e.g. "/srv/JamfShare")</small></h5>
-										<div class="form-group">
-											<input type="text" name="addsharepath" id="addsharepath" class="form-control input-sm" onFocus="validAddShare();" onKeyUp="validAddShare();" onBlur="validAddShare();" placeholder="[Required]" value=""/>
-										</div>
-										<h5 id="addshareowner_label"><strong>Share Owner</strong></h5>
-										<div class="form-group has-feedback">
-											<select id="addshareowner" name="addshareowner" class="form-control input-sm" onChange="validAddShare();">
-												<option value="">Select...</option>
+								</td>
+								<td>
+									<div class="checkbox checkbox-primary checkbox-inline">
+										<input type="checkbox" id="afp-<?php echo $i; ?>" value="true" onChange="toggleAFP('<?php echo $i; ?>');" <?php echo ($value["afp"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" || $value["smb"] == false ? "disabled" : ""); ?>/>
+										<label/>
+									</div>
+								</td>
+								<td>
+									<div class="checkbox checkbox-primary checkbox-inline">
+										<input type="checkbox" id="http-<?php echo $i; ?>" value="true" onChange="toggleHTTP('<?php echo $i; ?>');" <?php echo ($value["http"] ? "checked" : ""); ?> <?php echo ($value["name"] == "NetBoot" ? "disabled" : ""); ?>/>
+										<label/>
+									</div>
+								</td>
+								<td><a data-toggle="modal" href="#permissions-modal" onClick="permissionsModal('<?php echo $i; ?>');"><?php echo $value["name"]; ?></a></td>
+								<td><?php echo $key; ?></td>
+								<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delshare-modal" onClick="$('#delsharename').text('<?php echo $value["name"]; ?>'); $('#delsharedata').val('<?php echo $key; ?>'); $('#delshare').val('<?php echo $value["name"]; ?>');" <?php echo ($value["name"] == "NetBoot" ? "disabled" : ""); ?>>Delete</button></td>
+							</tr>
+<?php }
+$i++;
+} ?>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Add Share Modal -->
+				<div class="modal fade" id="addshare-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Add Share</h3>
+							</div>
+							<div class="modal-body">
+								<h5 id="addsharename_label"><strong>Share Name</strong> <small>Share display name (e.g. "JamfShare")</small></h5>
+								<div class="form-group">
+									<input type="text" name="addsharename" id="addsharename" class="form-control input-sm" onFocus="validAddShare();" onKeyUp="validAddShare();" onBlur="validAddShare();" placeholder="[Required]" value=""/>
+								</div>
+								<h5 id="addsharepath_label"><strong>Share Path</strong> <small>Path to share (e.g. "/srv/JamfShare")</small></h5>
+								<div class="form-group">
+									<input type="text" name="addsharepath" id="addsharepath" class="form-control input-sm" onFocus="validAddShare();" onKeyUp="validAddShare();" onBlur="validAddShare();" placeholder="[Required]" value=""/>
+								</div>
+								<h5 id="addshareowner_label"><strong>Share Owner</strong> <small>To add additional users, edit the share after creation</small></h5>
+								<div class="form-group has-feedback">
+									<select id="addshareowner" name="addshareowner" class="form-control input-sm" onChange="validAddShare();">
+										<option value="">Select...</option>
 <?php foreach($users as $user) {
 if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
-												<option value="<?php echo $user['name']; ?>"><?php echo (empty($user['gecos']) ? $user['name'] : $user['gecos']); ?></option>
+										<option value="<?php echo $user['name']; ?>"><?php echo (empty($user['gecos']) ? $user['name'] : $user['gecos']); ?></option>
 <?php }
 } ?>
-											</select>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-										<button type="submit" name="addshare" id="addshare" class="btn btn-primary btn-sm" disabled>Save</button>
-									</div>
+									</select>
 								</div>
 							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+								<button type="submit" name="addshare" id="addshare" class="btn btn-primary btn-sm" disabled>Save</button>
+							</div>
 						</div>
-						<!-- /.modal -->
+					</div>
+				</div>
+				<!-- /.modal -->
 
-						<!-- Permissions Modal -->
-						<div class="modal fade" id="permissions-modal" tabindex="-1" role="dialog">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3 class="modal-title">Permissions for <span id="permissionstitle">Share</span></h3>
-									</div>
-									<div class="modal-body">
-										<input type="hidden" id="permsname" value=""/>
-										<input type="hidden" id="permspath" value=""/>
-										<input type="hidden" id="permssmb" value="">
-										<input type="hidden" id="permsafp" value="">
-										<table id="privilege-table" class="table table-striped">
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Read &amp; Write</th>
-													<th>Read Only</th>
-												</tr>
-											</thead>
-											<tbody>
+				<!-- Permissions Modal -->
+				<div class="modal fade" id="permissions-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Permissions for <span id="permissionstitle">Share</span></h3>
+							</div>
+							<!-- <div class="modal-body"> -->
+								<input type="hidden" id="permsname" value=""/>
+								<input type="hidden" id="permspath" value=""/>
+								<input type="hidden" id="permssmb" value="">
+								<input type="hidden" id="permsafp" value="">
+								<table id="privilege-table" class="table table-striped" style="margin-bottom: 0px;">
+									<thead>
+										<tr>
+											<th style="padding-left: 16px;">Name</th>
+											<th>Read &amp; Write</th>
+											<th>Read Only</th>
+										</tr>
+									</thead>
+									<tbody>
 <?php foreach($users as $user) {
 if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
-												<tr>
-													<td><?php echo (empty($user['gecos']) ? $user['name'] : $user['gecos']); ?></td>
-													<td>
-														<div class="checkbox checkbox-primary" style="margin-top: 0;">
-															<input type="checkbox" name="readwrite" value="<?php echo $user['name']; ?>" onChange="toggleRW(this);"/>
-															<label/>
-														</div>
-													</td>
-													<td>
-														<div class="checkbox checkbox-primary" style="margin-top: 0;">
-															<input type="checkbox" name="readonly" value="<?php echo $user['name']; ?>" onChange="toggleRO(this);"/>
-															<label/>
-														</div>
-													</td>
-												</tr>
+										<tr>
+											<td style="padding-left: 16px;"><?php echo (empty($user['gecos']) ? $user['name'] : $user['gecos']); ?></td>
+											<td>
+												<div class="checkbox checkbox-primary checkbox-inline">
+													<input type="checkbox" name="readwrite" value="<?php echo $user['name']; ?>" onChange="toggleRW(this);"/>
+													<label/>
+												</div>
+											</td>
+											<td>
+												<div class="checkbox checkbox-primary checkbox-inline">
+													<input type="checkbox" name="readonly" value="<?php echo $user['name']; ?>" onChange="toggleRO(this);"/>
+													<label/>
+												</div>
+											</td>
+										</tr>
 <?php }
 } ?>
-											</tbody>
-										</table>
-									</div>
-									<div class="modal-footer">
-										<button type="button" class="btn btn-default btn-sm pull-left" onClick="localStorage.setItem('activeAcctsTab', '#system-tab'); document.location.href='accounts.php';">Users</button>
-										<button type="button" data-dismiss="modal" class="btn btn-primary btn-sm">Done</button>
-									</div>
-								</div>
+									</tbody>
+								</table>
+							<!-- </div> -->
+							<div class="modal-footer">
+								<button type="button" class="btn btn-default btn-sm pull-left" onClick="localStorage.setItem('activeAcctsTab', '#system-tab'); document.location.href='accounts.php';">Users</button>
+								<button type="button" data-dismiss="modal" class="btn btn-primary btn-sm">Done</button>
 							</div>
 						</div>
-						<!-- /.modal -->
+					</div>
+				</div>
+				<!-- /.modal -->
 
-						<!-- Delete Share Modal -->
-						<div class="modal fade" id="delshare-modal" tabindex="-1" role="dialog">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3 class="modal-title">Delete <span id="delsharename">Share</span></h3>
-									</div>
-									<div class="modal-body">
-										<div class="text-muted">This action is permanent and cannot be undone.</div>
-										<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-											<input name="delsharedata" id="delsharedata" class="styled" type="checkbox" value="true">
-											<label><strong>Delete Share Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
-										</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-										<button type="submit" name="delshare" id="delshare" class="btn btn-danger btn-sm" value="">Delete</button>
-									</div>
+				<!-- Delete Share Modal -->
+				<div class="modal fade" id="delshare-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Delete <span id="delsharename">Share</span></h3>
+							</div>
+							<div class="modal-body">
+								<div class="text-muted">This action is permanent and cannot be undone.</div>
+								<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
+									<input name="delsharedata" id="delsharedata" class="styled" type="checkbox" value="true">
+									<label><strong>Delete Share Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 								</div>
 							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+								<button type="submit" name="delshare" id="delshare" class="btn btn-danger btn-sm" value="">Delete</button>
+							</div>
 						</div>
-						<!-- /.modal -->
+					</div>
+				</div>
+				<!-- /.modal -->
 
-					</form> <!-- end form Sharing -->
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+			</form> <!-- end form Sharing -->
 <?php include "inc/footer.php"; ?>
