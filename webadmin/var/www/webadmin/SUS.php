@@ -148,8 +148,6 @@ if (empty($last_sync)) {
 				</div>
 			</nav>
 
-			<hr>
-
 			<div style="padding: 72px 20px 3px; background-color: #f9f9f9;">
 				<h5><strong>Last Sync</strong> <small><span id="last_sync"><?php echo $last_sync; ?></span></small></h5>
 			</div>
@@ -190,13 +188,13 @@ foreach ($branches as $branch) {
 if ($branch != "") { ?>
 									<tr>
 										<td>
-											<div class="checkbox checkbox-primary" style="margin-top: 0;">
+											<div class="checkbox checkbox-primary checkbox-inline">
 												<input type="checkbox" name="rootbranch" id="rootbranch<?php echo $i; ?>" value="<?php echo $branch; ?>" onChange="defaultBranch(this);" <?php echo ($conf->getSetting("rootbranch") == $branch ? "checked" : ""); ?>/>
 												<label/>
 											</div>
 										</td>
 										<td>
-											<div class="checkbox checkbox-primary" style="margin-top: 0;">
+											<div class="checkbox checkbox-primary checkbox-inline">
 												<input type="checkbox" id="autosync[<?php echo $branch; ?>]" value="<?php echo $branch; ?>" onChange="javascript:ajaxPost('susCtl.php?branch='+this.value, 'autosync='+this.checked);" <?php echo ($conf->containsAutosyncBranch($branch) ? "checked" : ""); ?>/>
 												<label/>
 											</div>

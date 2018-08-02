@@ -642,6 +642,7 @@ if ($array["default"]) { ?>
 				<!-- /#modal -->
 
 			</form> <!-- end form SUS -->
+
 <?php if ($sync_status) { ?>
 		<script>
 			$(window).load(function() {
