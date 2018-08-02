@@ -460,7 +460,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 
 			<hr>
 
-			<div style="padding: 9px 20px 1px;">
+			<div style="padding: 9px 20px 16px;">
 				<h5><strong>Apple Catalog URLs</strong> <small>Select the Apple SUS catalog URLs to replicate.</small></h5>
 				<div class="row">
 <?php foreach ($default_catalog_map as $array) {
@@ -476,31 +476,55 @@ if ($array["default"]) { ?>
 				</div>
 			</div>
 
-			<div style="padding-top: 16px;">
-				<table class="table" style="border-top: 1px solid #eee; border-bottom: 1px solid #eee; background-color: #f9f9f9;">
-					<thead>
-						<tr>
-							<td style="padding-left: 20px;"><h5><strong>Additional Catalog URLs</strong> <small>Specify additional SUS catalog URLs to replicate.</small></h5></td>
-							<td align="right" style="padding-right: 20px;"><button type="button" id="add_other" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button></td>
-						</tr>
-					</thead>
-					<tbody>
-<?php foreach ($other_catalog_urls as $catalog_url) { ?>
-						<tr>
-							<td style="padding-left: 20px;"><?php echo $catalog_url; ?></td>
-							<td align="right" style="padding-right: 20px;"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
-						</tr>
-<?php }
-if (sizeof($other_catalog_urls) == 0) { ?>
-						<tr>
-							<td align="center" valign="top" colspan="2" class="dataTables_empty">No data available in table</td>
-						</tr>
-<?php } ?>
-					</tbody>
-				</table>
+			<hr>
+
+			<div style="padding: 8px 20px 1px; background-color: #f9f9f9; overflow-x: auto;">
+				<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+					<div class="row">
+						<div class="col-sm-10">
+							<div class="dataTables_filter">
+								<h5><strong>Additional Catalog URLs</strong> <small>Specify additional SUS catalog URLs to replicate.</small></h5>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="dataTables_paginate">
+								<div class="btn-group">
+									<button type="button" id="add_other" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createCatalog"><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-12">
+							<table id="catalogTable" class="table">
+								<thead>
+									<tr>
+										<th>URL</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+			<?php foreach ($other_catalog_urls as $catalog_url) { ?>
+									<tr>
+										<td><?php echo $catalog_url; ?></td>
+										<td align="right"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
+									</tr>
+			<?php }
+			if (sizeof($other_catalog_urls) == 0) { ?>
+									<tr>
+										<td align="center" valign="top" colspan="2" class="dataTables_empty">No data available in table</td>
+									</tr>
+			<?php } ?>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<div style="padding: 4px 20px 1px;">
+			<hr>
+<!--
+			<div style="padding: 9px 20px 1px;">
 				<h5 id="proxyhost_label"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
 				<div class="row">
 					<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
@@ -528,7 +552,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 					<input type="password" name="proxyverify" id="proxyverify" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[3]) ? $proxy[3] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); hideSuccess(document.getElementById('proxypass')); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
 				</div>
 			</div>
-
+-->
 			<!-- Sync Modal -->
 			<div class="modal" id="sync-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 				<div class="modal-dialog" role="document">
