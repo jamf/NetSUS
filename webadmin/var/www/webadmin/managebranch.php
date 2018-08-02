@@ -190,8 +190,8 @@ foreach ($products as $productobj) { ?>
 									</div>
 								</td>
 								<td><a data-toggle="modal" href="#Description" onClick="updateModalContent('<?php echo $productobj->title; ?><?php echo ($productobj->Deprecated == "(Deprecated)" ? " <small>(Deprecated)</small>" : "") ?>', '<?php echo $productobj->id; ?>');"><?php echo $productobj->title; ?></a> <?php echo $productobj->Deprecated; ?></td>
-								<td nowrap><?php echo $productobj->version; ?></td>
-								<td nowrap><?php echo $productobj->PostDate; ?></td>
+								<td><?php echo $productobj->version; ?></td>
+								<td><?php echo $productobj->PostDate; ?></td>
 							</tr>
 <?php $i++;
 } ?>
