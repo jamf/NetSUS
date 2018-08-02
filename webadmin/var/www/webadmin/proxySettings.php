@@ -13,7 +13,22 @@ function ldapExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
+if (!empty($_POST['enableproxy'])) {
+	ldapExec("enableproxy");
+}
+
 $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
+if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 && !$ldap_running) {
+	if (isset($_POST['enableproxy'])) {
+		$slapd_error = "Error in proxy configuration.";
+	} else {
+		$slapd_error = "The LDAP service is not running. <a href=\"\" onClick=\"enableProxy();\">Click here to start it</a>.";
+	}
+}
+
+// ####################################################################
+// End of GET/POST parsing
+// ####################################################################
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/bootstrap-toggle.css">
@@ -48,32 +63,40 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 						ajaxPost('proxyCtl.php', 'dashboard=false');
 					}
 				}
+
+				function enableProxy() {
+					$('#enableproxy').val('true');
+					$('#LDAPProxy').submit();
+				}
 			</script>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<div class="row">
-				<div class="col-xs-10"> 
-					<h2>LDAP Proxy</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<div class="row">
+						<div class="col-xs-10"> 
+							<h2>LDAP Proxy</h2>
+						</div>
+						<div class="col-xs-2 text-right"> 
+							<input type="checkbox" id="proxyenabled" <?php echo ($conf->getSetting("ldapproxy") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+						</div>
+					</div>
 				</div>
-				<div class="col-xs-2 text-right"> 
-					<input type="checkbox" id="proxyenabled" <?php echo ($conf->getSetting("ldapproxy") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
-				</div>
-			</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
+			<form action="proxySettings.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-					<hr style="padding-bottom: 9px;">
-
-					<div id="slapd_info" style="margin-top: 9px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+				<div style="padding: 70px 20px 1px; background-color: #f9f9f9;">
+					<div id="slapd_info" style="margin-top: 9px; margin-bottom: 17px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
 						</div>
 					</div>
 
-					<div id="slapd_error" style="margin-top: 9px; border-color: #d43f3a;" class="panel panel-danger <?php echo (!$ldap_running && $conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 ? "" : "hidden"); ?>">
+					<div id="slapd_error" style="margin-top: 9px; margin-bottom: 17px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Error in proxy configuration.</div>
+							<input type="hidden" id="enableproxy" name="enableproxy" value="">
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
 						</div>
 					</div>
 
@@ -81,7 +104,9 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 						<input name="dashboard" id="dashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("showproxy") == "false" ? "" : "checked"); ?>>
 						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>
+				</div>
 
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+				<hr>
+
+			</form> <!-- end form LDAPProxy -->
 <?php include "inc/footer.php"; ?>

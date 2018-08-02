@@ -15,7 +15,7 @@ function ldapExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-if (isset($_POST['enableproxy'])) {
+if (!empty($_POST['enableproxy'])) {
 	ldapExec("enableproxy");
 }
 
@@ -217,119 +217,119 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 				});
 			</script>
 
-			<div class="description">&nbsp;</div>
-			<h2>LDAP Proxy</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description">&nbsp;</div>
+					<h2>LDAP Proxy</h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
+			<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-					<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
-
-						<hr style="padding-bottom: 18px;">
-
-						<div id="slapd_info" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
-							<div class="panel-body">
-								<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>LDAP service will start when a proxy configuration is added.</div>
-							</div>
+				<div style="padding: 63px 20px 1px;">
+					<div id="slapd_info" style="margin-top: 16px; margin-bottom: 0px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>The LDAP service will start when a proxy configuration is added.</div>
 						</div>
+					</div>
 
-						<div id="slapd_error" style="border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
-							<div class="panel-body">
-								<input type="hidden" id="enableproxy" name="enableproxy" value="">
-								<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
-							</div>
+					<div id="slapd_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
+						<div class="panel-body">
+							<input type="hidden" id="enableproxy" name="enableproxy" value="">
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
 						</div>
+					</div>
+				</div>
 
-						<table id="proxy-table" class="table table-striped">
-							<thead>
-								<tr>
-									<th>Exposed Distinguished Name</th>
-									<th>Real Distinguished Name</th>
-									<th>LDAP URL</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
+				<div style="padding: 15px 20px 1px; overflow-x: auto;">
+					<table id="proxy-table" class="table table-striped" style="border-bottom: 1px solid #eee;">
+						<thead>
+							<tr>
+								<th>Exposed Distinguished Name</th>
+								<th>Real Distinguished Name</th>
+								<th>LDAP URL</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
 <?php foreach($conf->getProxies() as $key => $value) { ?>
-								<tr>
-									<td><?php echo $value['outLDAP']?></td>
-									<td><?php echo $value['inLDAP']?></td>
-									<td><?php echo $value['inURL']?></td>
-									<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delproxy-modal" onClick="$('#deleteoutLDAP').val('<?php echo $value['outLDAP']; ?>'); $('#deleteinLDAP').val('<?php echo $value['inLDAP']; ?>'); $('#deleteinURL').val('<?php echo $value['inURL']; ?>');">Delete</button></td>
-								</tr>
+							<tr>
+								<td><?php echo $value['outLDAP']?></td>
+								<td><?php echo $value['inLDAP']?></td>
+								<td><?php echo $value['inURL']?></td>
+								<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delproxy-modal" onClick="$('#deleteoutLDAP').val('<?php echo $value['outLDAP']; ?>'); $('#deleteinLDAP').val('<?php echo $value['inLDAP']; ?>'); $('#deleteinURL').val('<?php echo $value['inURL']; ?>');">Delete</button></td>
+							</tr>
 <?php } ?>
-							</tbody>
-						</table>
+						</tbody>
+					</table>
+				</div>
 
-						<!-- Add Proxy Modal -->
-						<div class="modal fade" id="addproxy-modal" tabindex="-1" role="dialog">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3 class="modal-title">Add LDAP Proxy</h3>
-									</div>
-									<div class="modal-body">
-										<h5 id="outLDAP_label"><strong>Exposed Distinguished Name</strong> <small>Example: DC=jss,DC=corp</small></h5>
-										<div class="form-group">
-											<input type="text" name="outLDAP" id="outLDAP" class="form-control input-sm" placeholder="[Required]" value=""/>
-										</div>
-										<h5 id="inLDAP_label"><strong>Real Distinguished Name</strong> <small>Example: DC=myorg,DC=corp</small></h5>
-										<div class="form-group">
-											<input type="text" name="inLDAP" id="inLDAP" class="form-control input-sm" placeholder="[Required]" value=""/>
-										</div>
-										<h5 id="inHost_label"><strong>Server and Port</strong> <small>Example: ldap.myorg.corp:636</small></h5>
-										<div class="row">
-											<input type="hidden" name="inURL" id="inURL" value=""/>
-											<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
-												<div class="has-feedback">
-													<input type="text" name="inHost" id="inHost" class="form-control input-sm" placeholder="[Required]" value=""/>
-												</div>
-											</div>
-											<div class="col-xs-1 text-center" style="padding-left: 0px; padding-right: 0px; width: 2%;">:</div>
-											<div class="col-xs-3" style="padding-left: 0px;">
-												<div class="has-feedback">
-													<input type="text" name="inPort" id="inPort" class="form-control input-sm" placeholder="[Required]" value="" onFocus="hideWarning(this);"/>
-												</div>
-											</div>
-										</div>
-										<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-											<input name="inScheme" id="inScheme" class="styled" type="checkbox" value="ldaps" onChange="toggleScheme(); validLdap();">
-											<label><strong>Use SSL</strong> <span style="font-size: 75%; color: #777;">Connect to the LDAP server over SSL. SSL must be enabled on the LDAP server for this to work.</span></label>
+				<!-- Add Proxy Modal -->
+				<div class="modal fade" id="addproxy-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Add LDAP Proxy</h3>
+							</div>
+							<div class="modal-body">
+								<h5 id="outLDAP_label"><strong>Exposed Distinguished Name</strong> <small>Example: DC=jss,DC=corp</small></h5>
+								<div class="form-group">
+									<input type="text" name="outLDAP" id="outLDAP" class="form-control input-sm" placeholder="[Required]" value=""/>
+								</div>
+								<h5 id="inLDAP_label"><strong>Real Distinguished Name</strong> <small>Example: DC=myorg,DC=corp</small></h5>
+								<div class="form-group">
+									<input type="text" name="inLDAP" id="inLDAP" class="form-control input-sm" placeholder="[Required]" value=""/>
+								</div>
+								<h5 id="inHost_label"><strong>Server and Port</strong> <small>Example: ldap.myorg.corp:636</small></h5>
+								<div class="row">
+									<input type="hidden" name="inURL" id="inURL" value=""/>
+									<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
+										<div class="has-feedback">
+											<input type="text" name="inHost" id="inHost" class="form-control input-sm" placeholder="[Required]" value=""/>
 										</div>
 									</div>
-									<div class="modal-footer">
-										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-										<button type="submit" name="addProxy" id="addProxy" class="btn btn-primary btn-sm" disabled>Save</button>
+									<div class="col-xs-1 text-center" style="padding-left: 0px; padding-right: 0px; width: 2%;">:</div>
+									<div class="col-xs-3" style="padding-left: 0px;">
+										<div class="has-feedback">
+											<input type="text" name="inPort" id="inPort" class="form-control input-sm" placeholder="[Required]" value="" onFocus="hideWarning(this);"/>
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
-						<!-- /.modal -->
-
-						<!-- Delete Proxy Modal -->
-						<div class="modal fade" id="delproxy-modal" tabindex="-1" role="dialog">
-							<div class="modal-dialog" role="document">
-								<div class="modal-content">
-									<div class="modal-header">
-										<h3 class="modal-title">Delete Proxy</h3>
-									</div>
-									<div class="modal-body">
-										<input type="hidden" id="deleteoutLDAP" name="deleteoutLDAP" value=""/>
-										<input type="hidden" id="deleteinLDAP" name="deleteinLDAP" value=""/>
-										<input type="hidden" id="deleteinURL" name="deleteinURL" value=""/>
-										<div class="text-muted">This action is permanent and cannot be undone.</div>
-									</div>
-									<div class="modal-footer">
-										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-										<button type="submit" name="delProxy" id="delProxy" class="btn btn-danger btn-sm" value="delProxy">Delete</button>
-									</div>
+								<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
+									<input name="inScheme" id="inScheme" class="styled" type="checkbox" value="ldaps" onChange="toggleScheme(); validLdap();">
+									<label><strong>Use SSL</strong> <span style="font-size: 75%; color: #777;">Connect to the LDAP server over SSL. SSL must be enabled on the LDAP server for this to work.</span></label>
 								</div>
 							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+								<button type="submit" name="addProxy" id="addProxy" class="btn btn-primary btn-sm" disabled>Save</button>
+							</div>
 						</div>
-						<!-- /.modal -->
+					</div>
+				</div>
+				<!-- /.modal -->
 
-					</form> <!-- end form LDAPProxy -->
+				<!-- Delete Proxy Modal -->
+				<div class="modal fade" id="delproxy-modal" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Delete Proxy</h3>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="deleteoutLDAP" name="deleteoutLDAP" value=""/>
+								<input type="hidden" id="deleteinLDAP" name="deleteinLDAP" value=""/>
+								<input type="hidden" id="deleteinURL" name="deleteinURL" value=""/>
+								<div class="text-muted">This action is permanent and cannot be undone.</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+								<button type="submit" name="delProxy" id="delProxy" class="btn btn-danger btn-sm" value="delProxy">Delete</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.modal -->
 
-				</div><!-- /.col -->
-			</div><!-- /.row -->
+			</form> <!-- end form LDAPProxy -->
 <?php include "inc/footer.php"; ?>
