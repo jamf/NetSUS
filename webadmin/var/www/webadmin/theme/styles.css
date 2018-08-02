@@ -190,10 +190,10 @@ Upper Navigation
     background-color: none;
 }
 .navbar-btn-icon .badge {
-	position: absolute;
-	top: 3px;
-	right: 3px;
-	background-color: #d9534f;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background-color: #d9534f;
 }
 .dropdown-menu.dropdown-menu-navbar {
     border-top-right-radius: 0;
@@ -278,6 +278,12 @@ Side Navigation
 /*----------------------------------------------
 Lower Navigation
 ------------------------------------------------*/
+#nav-footer {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
 .btn-footer {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -289,7 +295,7 @@ Page Content Wrapper
 ------------------------------------------------*/
 #page-content-wrapper {
     position: absolute;
-    padding: 20px;
+    padding: 20px 0px;
     margin-top: 50px;
     width: 100%;
     -webkit-transition: all 0.5s ease;
@@ -301,6 +307,20 @@ Page Content Wrapper
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
     margin-right: -220px;
+}
+
+/*----------------------------------------------
+Page Title Navigation
+------------------------------------------------*/
+#nav-title {
+    top: 51px;
+    height: 83px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 /*----------------------------------------------
@@ -484,19 +504,19 @@ Settings Page
 Login Page
 ------------------------------------------------*/
 .login-wrapper {
-	float: right;
-	position: relative;
-	left: -50%;
-	text-align: left;
+    float: right;
+    position: relative;
+    left: -50%;
+    text-align: left;
 }
 .login-wrapper > .login-panel {
-	position: relative;
-	left: 50%;
-	width: 300px;
-	margin-top: 70px;
-	-webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-	-moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
-	box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    position: relative;
+    left: 50%;
+    width: 300px;
+    margin-top: 70px;
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
 }
 .panel-login {
     background-image: none;
@@ -550,6 +570,10 @@ Responsive Design
     #wrapper.toggled #page-content-wrapper {
         position: relative;
         margin-right: 0;
+    }
+
+    #nav-title {
+        left: 220px;
     }
 
     #nav-footer {
