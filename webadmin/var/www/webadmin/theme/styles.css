@@ -289,6 +289,9 @@ Lower Navigation
     margin-bottom: 10px;
     margin-right: 20px;
 }
+#wrapper.toggled #nav-footer {
+    margin-left: 220px;
+}
 
 /*----------------------------------------------
 Page Content Wrapper
@@ -580,6 +583,10 @@ Responsive Design
     #wrapper.toggled #nav-title {
         margin-left: 0;
         margin-right: 0;
+    }
+
+    #wrapper.toggled #nav-footer {
+        margin-left: 0;
     }
 
     #nav-title {
