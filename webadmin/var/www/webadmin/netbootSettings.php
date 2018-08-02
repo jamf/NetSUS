@@ -44,28 +44,30 @@ $afp_running = (trim(netbootExec("getafpstatus")) === "true");
 				}
 			</script>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<div class="row">
-				<div class="col-xs-10"> 
-					<h2>NetBoot</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<div class="row">
+						<div class="col-xs-10"> 
+							<h2>NetBoot</h2>
+						</div>
+						<div class="col-xs-2 text-right"> 
+							<input type="checkbox" id="netbootenabled" <?php echo ($conf->getSetting("netboot") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+						</div>
+					</div>
 				</div>
-				<div class="col-xs-2 text-right"> 
-					<input type="checkbox" id="netbootenabled" <?php echo ($conf->getSetting("netboot") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
-				</div>
-			</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12"> 
+			<form action="netbootSettings.php" method="post" name="NetBoot" id="NetBoot">
 
-					<hr>
-
-					<div style="padding: 12px 0px;" class="description">NETBOOT DESCRIPTION</div>
-
-					<div class="checkbox checkbox-primary" style="padding-top: 12px;">
+				<div style="padding: 70px 20px 1px; background-color: #f9f9f9;">
+					<div class="checkbox checkbox-primary">
 						<input name="dashboard" id="dashboard" class="styled" type="checkbox" value="true" onChange="toggleDashboard();" <?php echo ($conf->getSetting("shownetboot") == "false" ? "" : "checked"); ?>>
 						<label><strong>Show in Dashboard</strong><br><span style="font-size: 75%; color: #777;">Display service status in the NetSUS dashboard.</span></label>
 					</div>
+				</div>
 
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+				<hr>
+
+			</form> <!-- end form NetBoot -->
 <?php include "inc/footer.php"; ?>
