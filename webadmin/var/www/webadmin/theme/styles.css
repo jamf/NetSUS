@@ -321,6 +321,11 @@ Page Title Navigation
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    z-index: 980;
+}
+#wrapper.toggled #nav-title {
+    margin-left: 220px;
+    margin-right: -220px;
 }
 
 /*----------------------------------------------
@@ -569,6 +574,11 @@ Responsive Design
 
     #wrapper.toggled #page-content-wrapper {
         position: relative;
+        margin-right: 0;
+    }
+
+    #wrapper.toggled #nav-title {
+        margin-left: 0;
         margin-right: 0;
     }
 
