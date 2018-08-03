@@ -68,11 +68,11 @@ NetSUS Icons
 ------------------------------------------------*/
 @font-face {
   font-family: 'netsus-icons';
-  src:  url('../fonts/netsus-icons.eot?etkipk');
-  src:  url('../fonts/netsus-icons.eot?etkipk#iefix') format('embedded-opentype'),
-    url('../fonts/netsus-icons.ttf?etkipk') format('truetype'),
-    url('../fonts/netsus-icons.woff?etkipk') format('woff'),
-    url('../fonts/netsus-icons.svg?etkipk#netsus-icons') format('svg');
+  src:  url('../fonts/netsus-icons.eot?yva3hb');
+  src:  url('../fonts/netsus-icons.eot?yva3hb#iefix') format('embedded-opentype'),
+    url('../fonts/netsus-icons.ttf?yva3hb') format('truetype'),
+    url('../fonts/netsus-icons.woff?yva3hb') format('woff'),
+    url('../fonts/netsus-icons.svg?yva3hb#netsus-icons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -87,6 +87,9 @@ NetSUS Icons
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.icon-netinstall:before {
+  content: "\e903";
 }
 .icon-netboot:before {
   content: "\e900";
