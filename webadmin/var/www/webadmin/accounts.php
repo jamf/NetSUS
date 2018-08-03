@@ -378,8 +378,10 @@ foreach(file("/etc/passwd") as $entry) {
 						$('#group_error').addClass('hidden');
 					}
 					if (ldap_server == "" && ldap_groups > 0) {
+						$('[name="group_warning"]').removeClass('hidden');
 						$('#ldap_error').removeClass('hidden');
 					} else {
+						$('[name="group_warning"]').addClass('hidden');
 						$('#ldap_error').addClass('hidden');
 					}
 					if (web_default == false) {
@@ -543,407 +545,426 @@ foreach(file("/etc/passwd") as $entry) {
 				});
 			</script>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<h2>Accounts</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<h2>Accounts</h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
+			<div style="padding: 80px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+				<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
+					<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") || $ldap_server != "" && sizeof($ldap_admins) == 0 || $ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span> Web Interface</a></li>
+					<li><a class="tab-font" href="#system-tab" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>"></span> System Users</a></li>
+				</ul>
+			</div>
 
-					<ul class="nav nav-tabs nav-justified" id="top-tabs">
-						<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") || $ldap_server != "" && sizeof($ldap_admins) == 0 || $ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span> Web Interface</a></li>
-						<li><a class="tab-font" href="#system-tab" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>"></span> System Users</a></li>
-					</ul>
+			<div class="tab-content">
 
-					<div class="tab-content">
+				<div class="tab-pane active fade in" id="webadmin-tab">
 
-						<div class="tab-pane active fade in" id="webadmin-tab">
+					<form method="POST" name="webadmin-form" id="webadmin-form">
 
-							<form method="POST" name="webadmin-form" id="webadmin-form">
-
-								<div style="padding: 12px 0px;" class="description">WEB INTERFACE DESCRIPTION</div>
-
-								<div id="webadmin_warning" class="<?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
-									<div class="text-muted"><span class="glyphicon glyphicon-exclamation-sign"></span> Credentials have not been changed for built-in account.</div>
+						<div style="padding: 0px 20px 1px;">
+							<div id="webadmin_warning" style="margin-top: 16px; margin-bottom: 0px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Credentials have not been changed for built-in account.</div>
 								</div>
+							</div>
 
-								<div id="group_error" class="<?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
-									<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> At least one group is required for Active Directory login.</div>
+							<div id="group_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>At least one group is required for Active Directory login.</div>
 								</div>
+							</div>
 
-								<div id="ldap_error" class="<?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>" style="padding-bottom: 12px;">
-									<div class="text-danger"><span class="glyphicon glyphicon-exclamation-sign"></span> Active Directory must be configured for group members to login.</div>
+							<div id="ldap_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Active Directory must be configured for group members to login.</div>
 								</div>
+							</div>
 
-								<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
-									<div class="row">
-										<div class="col-sm-10">
-											<div class="dataTables_filter">
-												<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
-											</div>
+							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">WEB INTERFACE DESCRIPTION</div>
+						</div>
+
+						<hr>
+
+						<div style="padding: 8px 20px 1px; overflow-x: auto; background-color: #f9f9f9;">
+							<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+								<div class="row">
+									<div class="col-sm-10">
+										<div class="dataTables_filter">
+											<h5><strong>Users &amp; Groups</strong> <small>Users &amp; groups for administering the server.</small></h5>
 										</div>
-										<div class="col-sm-2">
-											<div class="dataTables_paginate">
-												<div class="btn-group">
-													<button id="addldapgroup" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
-												</div>
+									</div>
+									<div class="col-sm-2">
+										<div class="dataTables_paginate">
+											<div class="btn-group">
+												<button id="addldapgroup" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldapgroup-modal" onClick="$('#renameldapgroup').val(''); $('#newldapgroup').val('');" <?php echo ($ldap_server == "" ? "disabled": ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
 											</div>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-sm-12">
-											<table class="table table-striped">
-												<thead>
-													<tr>
-														<th></th>
-														<th>Name</th>
-														<th>Type</th>
-														<th></th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td><span id="webuser_warning" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span></td>
-														<td><a data-toggle="modal" href="#webuser-modal"><span id="webuser_name"><?php echo $web_user; ?></span></a></td>
-														<td>Built-in account.</td>
-														<td align="right"><button type="button" class="btn btn-default btn-sm" disabled>Delete</button></td>
-													</tr>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<table class="table">
+											<thead>
+												<tr>
+													<th></th>
+													<th>Name</th>
+													<th>Type</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td><span id="webuser_warning" class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span></td>
+													<td><a data-toggle="modal" href="#webuser-modal"><span id="webuser_name"><?php echo $web_user; ?></span></a></td>
+													<td>Built-in account.</td>
+													<td align="right"><button type="button" class="btn btn-default btn-sm" disabled>Delete</button></td>
+												</tr>
 <?php foreach ($ldap_admins as $key => $value) { ?>
-													<tr>
-														<td><span id="webuser_warning" class="glyphicon glyphicon-exclamation-sign <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span></td>
-														<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
-														<td>Active Directory group.</td>
-														<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
-													</tr>
+												<tr>
+													<td><span name="group_warning" class="text-danger glyphicon glyphicon-exclamation-sign <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span></td>
+													<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
+													<td>Active Directory group.</td>
+													<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
+												</tr>
 <?php } ?>
-												</tbody>
-											</table>
-										</div>
+											</tbody>
+										</table>
 									</div>
 								</div>
+							</div>
+						</div>
 
-								<br>
+						<hr>
 
-								<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
+						<div style="padding: 4px 20px 16px;">
+							<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
+							<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal" href=""><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
+						</div>
 
-								<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal" href=""><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
-								<!-- <button type="button" id="configure_ldap" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#ldap-modal"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Configure" : "Modify"); ?></button> -->
+						<!-- Webuser Modal -->
+						<div class="modal fade" id="webuser-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Built-In Account</h3>
+									</div>
+									<div class="modal-body">
+										<h5 id="webuser_label"><strong>Username</strong> <small>Username for the account.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="text" name="webuser" id="webuser" class="form-control input-sm" placeholder="[Required]" value="<?php echo $web_user; ?>" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
+										</div>
 
-								<!-- Webuser Modal -->
-								<div class="modal fade" id="webuser-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Built-In Account</h3>
-											</div>
-											<div class="modal-body">
-												<h5 id="webuser_label"><strong>Username</strong> <small>Username for the account.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="text" name="webuser" id="webuser" class="form-control input-sm" placeholder="[Required]" value="<?php echo $web_user; ?>" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
-												</div>
+										<h5 id="webpass_label"><strong>Current Password</strong> <small>Current password for the account.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="password" name="webpass" id="webpass" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
+										</div>
 
-												<h5 id="webpass_label"><strong>Current Password</strong> <small>Current password for the account.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="password" name="webpass" id="webpass" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
-												</div>
+										<h5 id="webnewpass_label"><strong>New Password</strong> <small>New password for the account.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="password" name="webnewpass" id="webnewpass" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
+										</div>
 
-												<h5 id="webnewpass_label"><strong>New Password</strong> <small>New password for the account.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="password" name="webnewpass" id="webnewpass" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
-												</div>
-
-												<h5 id="webverify_label"><strong>Verify Password</strong></h5>
-												<div class="form-group has-feedback">
-													<input type="password" name="webverify" id="webverify" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-												<button type="button" id="savewebuser" class="btn btn-primary btn-sm pull-right" onClick="saveWebUser();" disabled>Save</button>
-											</div>
+										<h5 id="webverify_label"><strong>Verify Password</strong></h5>
+										<div class="form-group has-feedback">
+											<input type="password" name="webverify" id="webverify" class="form-control input-sm" placeholder="[Required]" onFocus="validWebUser();" onKeyUp="validWebUser();" onBlur="validWebUser();"/>
 										</div>
 									</div>
-								</div>
-								<!-- /.modal -->
-
-								<!-- Add/Edit AD Group Modal -->
-								<div class="modal fade" id="ldapgroup-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Active Directory Group</h3>
-											</div>
-											<div class="modal-body">
-												<h5 id="newldapgroup_label"><strong>Group Name</strong> <small>Active Directory group name.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="text" id="newldapgroup" name="newldapgroup" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validLdapGroup();" onKeyUp="validLdapGroup();" onBlur="validLdapGroup();"/>
-												</div>
-												<input type="hidden" id="renameldapgroup" name="deleteldapgroup" value=""/>
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-												<button type="submit" id="saveldapgroup" name="saveldapgroup" class="btn btn-primary btn-sm pull-right" disabled>Save</button>
-											</div>
-										</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+										<button type="button" id="savewebuser" class="btn btn-primary btn-sm pull-right" onClick="saveWebUser();" disabled>Save</button>
 									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-								<!-- Delete AD Group Modal -->
-								<div class="modal fade" id="deleteldap-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 id="deleteldap-title" class="modal-title">Delete Group?</h3>
-											</div>
-											<div class="modal-body">
-												<div class="text-muted">Members of this group will no longer be able to log in to the web interface.</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-												<button type="submit" id="deleteldapgroup" name="deleteldapgroup" class="btn btn-danger btn-sm" value="">Delete</button>
-											</div>
+						<!-- Add/Edit AD Group Modal -->
+						<div class="modal fade" id="ldapgroup-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Active Directory Group</h3>
+									</div>
+									<div class="modal-body">
+										<h5 id="newldapgroup_label"><strong>Group Name</strong> <small>Active Directory group name.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="text" id="newldapgroup" name="newldapgroup" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validLdapGroup();" onKeyUp="validLdapGroup();" onBlur="validLdapGroup();"/>
 										</div>
+										<input type="hidden" id="renameldapgroup" name="deleteldapgroup" value=""/>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+										<button type="submit" id="saveldapgroup" name="saveldapgroup" class="btn btn-primary btn-sm pull-right" disabled>Save</button>
 									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-								<!-- AD Configuration Modal -->
-								<div class="modal fade" id="ldap-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Active Directory</h3>
-											</div>
-											<div class="modal-body">
-												<h5 id="ldapdomain_label"><strong>Domain</strong> <small>Active Directory fully qualified domain name.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="text" name="ldapdomain" id="ldapdomain" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_domain; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
-												</div>
-												<h5 id="ldaphost_label"><strong>Server and Port</strong> <small>Hostname or IP address, and port number of the LDAP server.</small></h5>
-												<div class="row">
-													<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
-														<div class="has-feedback">
-															<input type="text" name="ldaphost" id="ldaphost" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_host; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
-														</div>
-													</div>
-													<div class="col-xs-1 text-center" style="padding-left: 0px; padding-right: 0px; width: 2%;">:</div>
-													<div class="col-xs-3" style="padding-left: 0px;">
-														<div class="has-feedback">
-															<input type="text" name="ldapport" id="ldapport" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_port; ?>" onFocus="hideWarning(this); validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
-														</div>
-													</div>
-												</div>
-												<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-													<input name="ldapscheme" id="ldapscheme" class="styled" type="checkbox" value="ldaps" onChange="toggleScheme(); validLdap();" <?php echo ($ldap_scheme == "ldaps" ? "checked" : ""); ?>>
-													<label><strong>Use SSL</strong> <span style="font-size: 75%; color: #777;">Connect to the LDAP server over SSL. SSL must be enabled on the LDAP server for this to work.</span></label>
-												</div>
-												<h5 id="ldapbase_label"><strong>Search Base</strong> <small>Distinguished name of the LDAP search base.</small></h5>
-												<div class="form-group has-feedback">
-													<input type="text" name="ldapbase" id="ldapbase" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-												<button type="button" id="saveldap" class="btn btn-primary btn-sm pull-right" onClick="saveLdap();" disabled>Save</button>
-											</div>
-										</div>
+						<!-- Delete AD Group Modal -->
+						<div class="modal fade" id="deleteldap-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 id="deleteldap-title" class="modal-title">Delete Group?</h3>
+									</div>
+									<div class="modal-body">
+										<div class="text-muted">Members of this group will no longer be able to log in to the web interface.</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+										<button type="submit" id="deleteldapgroup" name="deleteldapgroup" class="btn btn-danger btn-sm" value="">Delete</button>
 									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-							</form>
-
-						</div> <!-- /.tab-pane -->
-
-						<div class="tab-pane fade in" id="system-tab">
-
-							<form method="POST" name="system-form" id="system-form">
-
-								<div style="padding: 12px 0px;" class="description">SYSTEM USERS DESCRIPTION</div>
-
-<?php if ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount")) { ?>
-								<div style="padding-bottom: 12px;">
-									<div class="text-muted"><span class="glyphicon glyphicon-exclamation-sign"></span> Credentials have not been changed for these user accounts.</div>
+						<!-- AD Configuration Modal -->
+						<div class="modal fade" id="ldap-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Active Directory</h3>
+									</div>
+									<div class="modal-body">
+										<h5 id="ldapdomain_label"><strong>Domain</strong> <small>Active Directory fully qualified domain name.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="text" name="ldapdomain" id="ldapdomain" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_domain; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+										</div>
+										<h5 id="ldaphost_label"><strong>Server and Port</strong> <small>Hostname or IP address, and port number of the LDAP server.</small></h5>
+										<div class="row">
+											<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
+												<div class="has-feedback">
+													<input type="text" name="ldaphost" id="ldaphost" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_host; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+												</div>
+											</div>
+											<div class="col-xs-1 text-center" style="padding-left: 0px; padding-right: 0px; width: 2%;">:</div>
+											<div class="col-xs-3" style="padding-left: 0px;">
+												<div class="has-feedback">
+													<input type="text" name="ldapport" id="ldapport" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_port; ?>" onFocus="hideWarning(this); validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+												</div>
+											</div>
+										</div>
+										<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
+											<input name="ldapscheme" id="ldapscheme" class="styled" type="checkbox" value="ldaps" onChange="toggleScheme(); validLdap();" <?php echo ($ldap_scheme == "ldaps" ? "checked" : ""); ?>>
+											<label><strong>Use SSL</strong> <span style="font-size: 75%; color: #777;">Connect to the LDAP server over SSL. SSL must be enabled on the LDAP server for this to work.</span></label>
+										</div>
+										<h5 id="ldapbase_label"><strong>Search Base</strong> <small>Distinguished name of the LDAP search base.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="text" name="ldapbase" id="ldapbase" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+										<button type="button" id="saveldap" class="btn btn-primary btn-sm pull-right" onClick="saveLdap();" disabled>Save</button>
+									</div>
 								</div>
-<?php } ?>
+							</div>
+						</div>
+						<!-- /.modal -->
 
-								<table id="sysusers-table" class="table table-striped">
-									<thead>
-										<tr>
-											<th></th>
-											<th>User Name</th>
-											<th>Full Name</th>
-											<th>Type</th>
-											<th></th>
-										</tr>
-									</thead>
-									<tbody>
+					</form> <!-- end form webadmin -->
+
+				</div> <!-- /.tab-pane -->
+
+				<div class="tab-pane fade in" id="system-tab">
+
+					<form method="POST" name="system-form" id="system-form">
+
+						<div style="padding: 0px 20px 1px;">
+							<div id="webadmin_warning" style="margin-top: 16px; margin-bottom: 0px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Credentials have not been changed for these user accounts.</div>
+								</div>
+							</div>
+
+							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">SYSTEM USERS DESCRIPTION</div>
+						</div>
+
+						<hr>
+
+						<div style="padding: 8px 20px 1px; overflow-x: auto; background-color: #f9f9f9;">
+							<table id="sysusers-table" class="table" style="border-bottom: 1px solid #eee;">
+								<thead>
+									<tr>
+										<th></th>
+										<th>User Name</th>
+										<th>Full Name</th>
+										<th>Type</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
 <?php foreach($sys_users as $sys_user) {
 if ($sys_user['type'] != "System") { ?>
-										<tr>
-											<td><?php echo ($sys_user['default'] ? "<span class=\"glyphicon glyphicon-exclamation-sign\"></span>" : "&nbsp;"); ?></td>
-											<td>
-												<div class="dropdown">
-													<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['name']; ?></a>
-													<ul class="dropdown-menu" aria-labelledby="sysuser<?php echo $sys_user['uid']; ?>">
-														<li class="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "disabled" : ""); ?>"><a data-toggle="modal" href="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "" : "#sysuser-modal"); ?>" onClick="$('#sysuserlocked').val(<?php echo ($sys_user['locked'] ? "true" : "false"); ?>); $('#sysuseruid').val('<?php echo $sys_user['uid']; ?>'); $('#sysuserlogin').val('<?php echo $sys_user['name']; ?>'); $('#sysusergecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusershell').val('<?php echo $sys_user['shell']; ?>'); $('#sysuserhome').val('<?php echo $sys_user['home']; ?>'); $('#sysusertype').val('<?php echo $sys_user['type']; ?>');">Modify User</a></li>
-														<li><a data-toggle="modal" href="#syspass-modal" onClick="$('#syspass_title').text('<?php echo $sys_user['gecos']; ?>'); $('#syspasslogin').val('<?php echo $sys_user['name']; ?>'); $('#sysnewpass').val(''); $('#syspassverify').val('');">Reset Password</a></li>
-													</ul>
-												</div>
-											</td>
-											<td><?php echo $sys_user['gecos']; ?></td>
-											<td><?php echo $sys_user['type']; ?></td>
-											<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#userdel-modal" onClick="$('#userdelgecos').text('<?php echo $sys_user['gecos']; ?>'); $('#userdelhome').prop('checked', false); $('#userdelhome').prop('disabled', <?php echo ($sys_user['type'] == "Sharing" ? "true" : "false"); ?>); $('#userdel').val('<?php echo $sys_user['name']; ?>');" <?php echo ($sys_user['locked'] ? "disabled" : ""); ?>>Delete</button></td>
-										</tr>
+									<tr>
+										<td><span class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($sys_user['default'] ? "" : "hidden"); ?>"></span></td>
+										<td>
+											<div class="dropdown">
+												<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['name']; ?></a>
+												<ul class="dropdown-menu" aria-labelledby="sysuser<?php echo $sys_user['uid']; ?>">
+													<li class="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "disabled" : ""); ?>"><a data-toggle="modal" href="<?php echo ($sys_user['name'] == "afpuser" || $sys_user['name'] == "smbuser" ? "" : "#sysuser-modal"); ?>" onClick="$('#sysuserlocked').val(<?php echo ($sys_user['locked'] ? "true" : "false"); ?>); $('#sysuseruid').val('<?php echo $sys_user['uid']; ?>'); $('#sysuserlogin').val('<?php echo $sys_user['name']; ?>'); $('#sysusergecos').val('<?php echo $sys_user['gecos']; ?>'); $('#sysusershell').val('<?php echo $sys_user['shell']; ?>'); $('#sysuserhome').val('<?php echo $sys_user['home']; ?>'); $('#sysusertype').val('<?php echo $sys_user['type']; ?>');">Modify User</a></li>
+													<li><a data-toggle="modal" href="#syspass-modal" onClick="$('#syspass_title').text('<?php echo $sys_user['gecos']; ?>'); $('#syspasslogin').val('<?php echo $sys_user['name']; ?>'); $('#sysnewpass').val(''); $('#syspassverify').val('');">Reset Password</a></li>
+												</ul>
+											</div>
+										</td>
+										<td><?php echo $sys_user['gecos']; ?></td>
+										<td><?php echo $sys_user['type']; ?></td>
+										<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#userdel-modal" onClick="$('#userdelgecos').text('<?php echo $sys_user['gecos']; ?>'); $('#userdelhome').prop('checked', false); $('#userdelhome').prop('disabled', <?php echo ($sys_user['type'] == "Sharing" ? "true" : "false"); ?>); $('#userdel').val('<?php echo $sys_user['name']; ?>');" <?php echo ($sys_user['locked'] ? "disabled" : ""); ?>>Delete</button></td>
+									</tr>
 <?php }
 } ?>
-									</tbody>
-								</table>
+								</tbody>
+							</table>
+						</div>
 
-								<!-- Add System User Modal -->
-								<div class="modal fade" id="addsysuser-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Add User</h3>
-											</div>
-											<div class="modal-body">
-												<h5><strong>Account Type</strong></h5>
-												<select id="addsysusertype" name="addsysusertype" class="form-control input-sm" onFocus="validAddSysUser();">
-													<option value="Administrator">Administrator</option>
-													<option value="Standard" selected>Standard</option>
-													<option value="Sharing">Sharing</option>
-												</select>
-												<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="text" name="addsysuserlogin" id="addsysuserlogin" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
-												</div>
-												<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Optional]" value=""/>
-												</div>
-												<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="password" name="addsysuserpass" id="addsysuserpass" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
-												</div>
-												<h5 id="addsysuserverify_label"><strong>Verify Password</strong></h5>
-												<div class="form-group">
-													<input type="password" name="addsysuserverify" id="addsysuserverify" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-												<button type="submit" name="addsysuser" id="addsysuser" class="btn btn-primary btn-sm" disabled>Save</button>
-											</div>
+						<hr>
+
+						<!-- Add System User Modal -->
+						<div class="modal fade" id="addsysuser-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Add User</h3>
+									</div>
+									<div class="modal-body">
+										<h5><strong>Account Type</strong></h5>
+										<select id="addsysusertype" name="addsysusertype" class="form-control input-sm" onFocus="validAddSysUser();">
+											<option value="Administrator">Administrator</option>
+											<option value="Standard" selected>Standard</option>
+											<option value="Sharing">Sharing</option>
+										</select>
+										<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="text" name="addsysuserlogin" id="addsysuserlogin" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+										</div>
+										<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Optional]" value=""/>
+										</div>
+										<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="password" name="addsysuserpass" id="addsysuserpass" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
+										</div>
+										<h5 id="addsysuserverify_label"><strong>Verify Password</strong></h5>
+										<div class="form-group">
+											<input type="password" name="addsysuserverify" id="addsysuserverify" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
 										</div>
 									</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+										<button type="submit" name="addsysuser" id="addsysuser" class="btn btn-primary btn-sm" disabled>Save</button>
+									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-								<!-- System User Modal -->
-								<div class="modal fade" id="sysuser-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 id="sysuser_title" class="modal-title">Modify User</h3>
-											</div>
-											<div class="modal-body">
-												<input type="hidden" name="sysuserlocked" id="sysuserlocked" value=""/>
-												<h5 id="sysusernewuid_label"><strong>User ID</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="hidden" name="sysuseruid" id="sysuseruid" value=""/>
-													<input type="text" name="sysusernewuid" id="sysusernewuid" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
-												</div>
-												<h5 id="sysusernewlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="hidden" name="sysuserlogin" id="sysuserlogin" value=""/>
-													<input type="text" name="sysusernewlogin" id="sysusernewlogin" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
-												</div>
-												<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Optional]" value=""/>
-												</div>
-												<h5><strong>Login Shell</strong></h5>
-												<select id="sysusershell" name="sysusershell" class="form-control input-sm" onFocus="validSysUser();" onChange="validSysUser();" onBlur="validSysUser();">
+						<!-- System User Modal -->
+						<div class="modal fade" id="sysuser-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 id="sysuser_title" class="modal-title">Modify User</h3>
+									</div>
+									<div class="modal-body">
+										<input type="hidden" name="sysuserlocked" id="sysuserlocked" value=""/>
+										<h5 id="sysusernewuid_label"><strong>User ID</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="hidden" name="sysuseruid" id="sysuseruid" value=""/>
+											<input type="text" name="sysusernewuid" id="sysusernewuid" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
+										</div>
+										<h5 id="sysusernewlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="hidden" name="sysuserlogin" id="sysuserlogin" value=""/>
+											<input type="text" name="sysusernewlogin" id="sysusernewlogin" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
+										</div>
+										<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Optional]" value=""/>
+										</div>
+										<h5><strong>Login Shell</strong></h5>
+										<select id="sysusershell" name="sysusershell" class="form-control input-sm" onFocus="validSysUser();" onChange="validSysUser();" onBlur="validSysUser();">
 <?php foreach ($user_shells as $user_shell) { ?>
-													<option value="<?php echo basename($user_shell); ?>"><?php echo $user_shell; ?></option>
+											<option value="<?php echo basename($user_shell); ?>"><?php echo $user_shell; ?></option>
 <?php } ?>
-												</select>
-												<h5 id="sysuserhome_label"><strong>Home Directory</strong> <small>DESCRIPTION</small></h5>
-												<div class="form-group">
-													<input type="text" name="sysuserhome" id="sysuserhome" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
-												</div>
-												<input type="hidden" name="sysusertype" id="sysusertype" value=""/>
-												<div id="sysuseradmin_wrapper" class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-													<input name="sysuseradmin" id="sysuseradmin" class="styled" type="checkbox" value="true" onChange="validSysUser();">
-													<label><strong>Allow User to Administer this Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-												<button type="submit" name="savesysuser" id="savesysuser" class="btn btn-primary btn-sm" disabled>Save</button>
-											</div>
+										</select>
+										<h5 id="sysuserhome_label"><strong>Home Directory</strong> <small>DESCRIPTION</small></h5>
+										<div class="form-group">
+											<input type="text" name="sysuserhome" id="sysuserhome" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
+										</div>
+										<input type="hidden" name="sysusertype" id="sysusertype" value=""/>
+										<div id="sysuseradmin_wrapper" class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
+											<input name="sysuseradmin" id="sysuseradmin" class="styled" type="checkbox" value="true" onChange="validSysUser();">
+											<label><strong>Allow User to Administer this Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
 										</div>
 									</div>
-								</div>
-								<!-- /.modal -->
-
-								<!-- System Password Modal -->
-								<div class="modal fade" id="syspass-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Reset Password</h3>
-											</div>
-											<div class="modal-body">
-												<input type="hidden" name="syspasslogin" id="syspasslogin" value=""/>
-												<h5 id="sysnewpass_label"><strong>New Password</strong> <small>New password for <strong><span id="syspass_title">Username</span></strong>.</small></h5>
-												<div class="form-group">
-													<input type="password" name="sysnewpass" id="sysnewpass" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
-												</div>
-												<h5 id="syspassverify_label"><strong>Verify Password</strong></h5>
-												<div class="form-group">
-													<input type="password" name="syspassverify" id="syspassverify" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-												<button type="submit" name="savesyspass" id="savesyspass" class="btn btn-primary btn-sm" disabled>Save</button>
-											</div>
-										</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+										<button type="submit" name="savesysuser" id="savesysuser" class="btn btn-primary btn-sm" disabled>Save</button>
 									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-								<!-- Delete User Modal -->
-								<div class="modal fade" id="userdel-modal" tabindex="-1" role="dialog">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h3 class="modal-title">Delete '<span id="userdelgecos">User</span>'</h3>
-											</div>
-											<div class="modal-body">
-												<div class="text-muted">This action is permanent and cannot be undone.</div>
-												<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
-													<input name="userdelhome" id="userdelhome" class="styled" type="checkbox" value="true">
-													<label><strong>Delete Home Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
-												</div>
-											</div>
-											<div class="modal-footer">
-												<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-												<button type="submit" name="userdel" id="userdel" class="btn btn-danger btn-sm" value="">Delete</button>
-											</div>
+						<!-- System Password Modal -->
+						<div class="modal fade" id="syspass-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Reset Password</h3>
+									</div>
+									<div class="modal-body">
+										<input type="hidden" name="syspasslogin" id="syspasslogin" value=""/>
+										<h5 id="sysnewpass_label"><strong>New Password</strong> <small>New password for <strong><span id="syspass_title">Username</span></strong>.</small></h5>
+										<div class="form-group">
+											<input type="password" name="sysnewpass" id="sysnewpass" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
+										</div>
+										<h5 id="syspassverify_label"><strong>Verify Password</strong></h5>
+										<div class="form-group">
+											<input type="password" name="syspassverify" id="syspassverify" class="form-control input-sm" onFocus="validSysPass();" onKeyUp="validSysPass();" onBlur="validSysPass();" placeholder="[Required]" />
 										</div>
 									</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+										<button type="submit" name="savesyspass" id="savesyspass" class="btn btn-primary btn-sm" disabled>Save</button>
+									</div>
 								</div>
-								<!-- /.modal -->
+							</div>
+						</div>
+						<!-- /.modal -->
 
-							</form>
+						<!-- Delete User Modal -->
+						<div class="modal fade" id="userdel-modal" tabindex="-1" role="dialog">
+							<div class="modal-dialog" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h3 class="modal-title">Delete '<span id="userdelgecos">User</span>'</h3>
+									</div>
+									<div class="modal-body">
+										<div class="text-muted">This action is permanent and cannot be undone.</div>
+										<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
+											<input name="userdelhome" id="userdelhome" class="styled" type="checkbox" value="true">
+											<label><strong>Delete Home Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+										<button type="submit" name="userdel" id="userdel" class="btn btn-danger btn-sm" value="">Delete</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /.modal -->
 
-						</div> <!-- /.tab-pane -->
+					</form> <!-- end form system -->
 
-					</div> <!-- /.tab-content -->
-
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+				</div> <!-- /.tab-pane -->
+			</div> <!-- /.tab-content -->
 <?php include "inc/footer.php"; ?>
