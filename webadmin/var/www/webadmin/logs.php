@@ -102,13 +102,14 @@ if (empty($log_content)) {
 			<script type="text/javascript" src="scripts/ace/ace.js"></script>
 <?php } ?>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span><?php echo (isset($_POST['display_file']) ? " <a href=\"logs.php\">Logs</a> <span class=\"glyphicon glyphicon-chevron-right\"></span>" : ""); ?></div>
-			<h2><?php echo (isset($_POST['display_file']) ? $_POST['display_file'] : "Logs"); ?></h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Information</span> <span class="glyphicon glyphicon-chevron-right"></span><?php echo (isset($_POST['display_file']) ? " <a href=\"logs.php\">Logs</a> <span class=\"glyphicon glyphicon-chevron-right\"></span>" : ""); ?></div>
+					<h2><?php echo (isset($_POST['display_file']) ? $_POST['display_file'] : "Logs"); ?></h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
-
-					<hr>
+			<div style="padding: 70px 20px 16px; background-color: #f9f9f9;">
 <?php if (empty($log_content)) { ?>
 					<form action="logs.php" method="post" name="logs" id="logs">
 
@@ -152,20 +153,24 @@ if (empty($log_content)) {
 <?php } else { ?>
 					<div class="text-muted" style="padding: 12px; 0px;"><?php echo basename($_POST['display_file'])." (".$log_size.")"; ?></div>
 
-<div class="form-group has-feedback">
-					<div id="viewer" class="log-viewer" tabindex="-1"><?php echo htmlentities($log_content); ?></div>
-					<script>
-						var viewer = ace.edit("viewer");
-						viewer.session.setMode("ace/mode/text");
-						viewer.setTheme("ace/theme/clouds");
-						viewer.session.setFoldStyle("markbegin");
-						viewer.setShowPrintMargin(false);
-						viewer.setOption("readOnly", true);
-					</script>
-</div>
-					<button type="button" class="btn btn-primary btn-sm pull-right" onClick="document.location.href='logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>'">Download</button>
-					<button type="button" class="btn btn-default btn-sm pull-right" style="margin-right: 20px;" onClick="document.location.href='logs.php'">Done</button>
+					<div class="form-group has-feedback">
+						<div id="viewer" class="log-viewer" tabindex="-1"><?php echo htmlentities($log_content); ?></div>
+						<script>
+							var viewer = ace.edit("viewer");
+							viewer.session.setMode("ace/mode/text");
+							viewer.setTheme("ace/theme/clouds");
+							viewer.session.setFoldStyle("markbegin");
+							viewer.setShowPrintMargin(false);
+							viewer.setOption("readOnly", true);
+						</script>
+					</div>
+
+					<div class="text-right">
+						<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='logs.php'">Done</button>
+						<button type="button" class="btn btn-primary btn-sm" onClick="document.location.href='logsCtl.php?download=<?php echo $_POST['display_file']; ?>&lines=<?php echo $_POST['display_lines']; ?>'">Download</button>
+					</div>
 <?php } ?>
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+			</div>
+
+			<hr>
 <?php include "inc/footer.php"; ?>
