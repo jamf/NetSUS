@@ -113,64 +113,72 @@ $currentZone = trim(suExec("gettimezone"));
 				}
 			</script>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<h2>Date/Time</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<h2>Date/Time</h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
+			<form action="dateTime.php" method="post" name="DateTime" id="DateTime">
 
-					<hr>
+				<div style="padding: 70px 20px 16px; background-color: #f9f9f9;">
+					<h5 id="timeserver_label"><strong>Network Time Server</strong> <small>Server to use to synchronize the date/time (e.g. "pool.ntp.org").</small></h5>
+					<div class="input-group has-feedback">
+						<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo $currentServer;?>" onFocus="validTimeserver();" onKeyUp="validTimeserver();" onBlur="validTimeserver();"/>
+						<span class="input-group-btn">
+							<button type="submit" name="savetimeserver" id="savetimeserver" class="btn btn-primary btn-sm" disabled>Save</button>
+						</span>
+					</div>
+				</div>
 
-					<form action="dateTime.php" method="post" name="DateTimeSettings" id="DateTimeSettings">
+				<hr>
 
-						<h5 id="timeserver_label" style="padding-top: 8px;"><strong>Network Time Server</strong> <small>Server to use to synchronize the date/time (e.g. "pool.ntp.org").</small></h5>
-						<div class="input-group has-feedback">
-							<input type="text" name="timeserver" id="timeserver" class="form-control input-sm" value="<?php echo $currentServer;?>" onFocus="validTimeserver();" onKeyUp="validTimeserver();" onBlur="validTimeserver();"/>
+				<div style="padding: 6px 20px 1px;">
+					<h5 id="localtime_label"><strong>Current Time</strong> <small>Current time on the NetSUS server.</small></h5>
+					<div class="form-group has-feedback">
+						<div class="input-group has-feedback date" id="settime" name="settime">
+							<span class="input-group-addon input-sm" style="color: #555; background-color: #eee; border: 1px solid #ccc; border-right: 0;">
+								<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+							<input type="text" id="localtime" name="localtime" class="form-control input-sm" value="<?php echo $currentTime; ?>" onFocus="validTime();" onKeyUp="validTime();" onBlur="validTime();"/>
 							<span class="input-group-btn">
-								<button type="submit" name="savetimeserver" id="savetimeserver" class="btn btn-primary btn-sm" disabled>Save</button>
+								<button type="submit" name="savetime" id="savetime" class="btn btn-primary btn-sm" disabled>Save</button>
 							</span>
 						</div>
+					</div>
+				</div>
 
-						<h5 id="localtime_label" style="padding-top: 8px;"><strong>Current Time</strong> <small>Current time on the NetSUS server.</small></h5>
-						<div class="form-group has-feedback">
-							<div class="input-group has-feedback date" id="settime" name="settime">
-								<span class="input-group-addon input-sm" style="color: #555; background-color: #eee; border: 1px solid #ccc; border-right: 0;">
-									<span class="glyphicon glyphicon-calendar"></span>
-								</span>
-								<input type="text" id="localtime" name="localtime" class="form-control input-sm" value="<?php echo $currentTime; ?>" onFocus="validTime();" onKeyUp="validTime();" onBlur="validTime();"/>
-								<span class="input-group-btn">
-									<button type="submit" name="savetime" id="savetime" class="btn btn-primary btn-sm" disabled>Save</button>
-								</span>
-							</div>
-						</div>
+				<hr>
 
-						<h5 id="timezone_label" style="padding-top: 8px;"><strong>Current Time Zone</strong> <small>Current time zone on the NetSUS server.</small></h5>
-						<div id="timezone-picker">
-							<img id="timezone-image" src="<?php print $local_file; ?>" width="<?php print $map_width; ?>" height="<?php print $map_height; ?>" usemap="#timezone-map" />
-							<img class="timezone-pin" src="images/timezone/pin.png" style="padding-top: 4px;" />
-							<map name="timezone-map" id="timezone-map">
+				<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+					<h5 id="timezone_label"><strong>Current Time Zone</strong> <small>Current time zone on the NetSUS server.</small></h5>
+					<div id="timezone-picker">
+						<img id="timezone-image" src="<?php print $local_file; ?>" width="<?php print $map_width; ?>" height="<?php print $map_height; ?>" usemap="#timezone-map" />
+						<img class="timezone-pin" src="images/timezone/pin.png" style="padding-top: 4px;" />
+						<map name="timezone-map" id="timezone-map">
 <?php foreach ($timezones as $timezone_name => $timezone) {
 foreach ($timezone['polys'] as $coords) { ?>
-								<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="poly" coords="<?php print implode(',', $coords); ?>" />
+							<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="poly" coords="<?php print implode(',', $coords); ?>" />
 <?php }
 foreach ($timezone['rects'] as $coords) { ?>
-								<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="rect" coords="<?php print implode(',', $coords); ?>" />
+							<area data-timezone="<?php print $timezone_name; ?>" data-country="<?php print $timezone['country']; ?>" data-pin="<?php print implode(',', $timezone['pin']); ?>" data-offset="<?php print $timezone['offset']; ?>" shape="rect" coords="<?php print implode(',', $coords); ?>" />
 <?php }
 } ?>
-							</map>
-						</div>
-						<button type="submit" name="savetimezone" id="savetimezone" class="btn btn-primary btn-sm pull-right">Save</button>
-						<div style="margin-right: 51px;">
-							<select id="timezone-menu" name="timezone" class="form-control input-sm">
-								<option value="">Select...</option>
+						</map>
+					</div>
+					<button type="submit" name="savetimezone" id="savetimezone" class="btn btn-primary btn-sm pull-right">Save</button>
+					<div style="margin-right: 51px;">
+						<select id="timezone-menu" name="timezone" class="form-control input-sm">
+							<option value="">Select...</option>
 <?php foreach (DateTimeZone::listIdentifiers() as $identifier) { ?>
-								<option value="<?php echo $identifier; ?>"><?php echo $identifier; ?></option>
+							<option value="<?php echo $identifier; ?>"><?php echo $identifier; ?></option>
 <?php } ?>
-							</select>
-						</div>
+						</select>
+					</div>
+				</div>
 
-					</form>
+				<hr>
 
-				</div><!-- /.col -->
-			</div><!-- /.row -->
+			</form> <!-- end form DateTime -->
 <?php include "inc/footer.php"; ?>
