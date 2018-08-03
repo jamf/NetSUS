@@ -188,107 +188,143 @@ if ($ssl_certificate_str != "") {
 				});
 			</script>
 
-			<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
-			<h2>Certificates</h2>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<h2>Certificates</h2>
+				</div>
+			</nav>
 
-			<div class="row">
-				<div class="col-xs-12">
+			<div style="padding: 80px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+				<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
+					<li class="active"><a class="tab-font" href="#cert-tab" role="tab" data-toggle="tab">SSL Certificate</a></li>
+					<li><a class="tab-font" href="#csr-tab" role="tab" data-toggle="tab">Certificate Signing Request</a></li>
+					<li><a class="tab-font" href="#modify-tab" role="tab" data-toggle="tab">Modify Certificates</a></li>
+				</ul>
+			</div>
 
-					<form action="certificates.php" method="post" name="certificates" id="certificates">
+			<form action="certificates.php" method="post" name="Certificates" id="Certificates">
 
-						<ul class="nav nav-tabs nav-justified" id="top-tabs">
-							<li class="active"><a class="tab-font" href="#cert-tab" role="tab" data-toggle="tab">SSL Certificate</a></li>
-							<li><a class="tab-font" href="#csr-tab" role="tab" data-toggle="tab">Certificate Signing Request</a></li>
-							<li><a class="tab-font" href="#modify-tab" role="tab" data-toggle="tab">Modify Certificates</a></li>
-						</ul>
+				<div class="tab-content">
 
-						<div class="tab-content">
+					<div class="tab-pane active fade in" id="cert-tab">
 
-							<div class="tab-pane active fade in" id="cert-tab">
+						<div style="padding: 0px 20px 1px;">
+							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">SSL CERTIFICATE DESCRIPTION</div>
+						</div>
 
-								<div style="padding: 8px 0px;" class="description">CERTIFICATE DESCRIPTION</div>
+						<hr>
 
-								<h5><strong>Subject Name</strong></h5>
-								<div class="text-muted"><?php echo $ssl_certificate['Owner']; ?></div>
+						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+							<h5><strong>Subject Name</strong></h5>
+							<div class="text-muted"><?php echo $ssl_certificate['Owner']; ?></div>
 
-								<h5><strong>Issuer</strong></h5>
-								<div class="text-muted"><?php echo $ssl_certificate['Issuer']; ?></div>
+							<h5><strong>Issuer</strong></h5>
+							<div class="text-muted"><?php echo $ssl_certificate['Issuer']; ?></div>
 
-								<h5><strong>Expiration Date</strong></h5>
-								<div class="text-muted"><?php echo $ssl_certificate['Expires']; ?></div>
+							<h5><strong>Expiration Date</strong></h5>
+							<div class="text-muted"><?php echo $ssl_certificate['Expires']; ?></div>
+						</div>
 
-							</div><!-- /.tab-pane -->
+						<hr>
 
-							<div class="tab-pane fade in" id="csr-tab">
+					</div><!-- /.tab-pane -->
 
-								<div style="padding: 8px 0px;" class="description">CSR DESCRIPTION</div>
+					<div class="tab-pane fade in" id="csr-tab">
 
-								<h5 id="common_name_label"><strong>Common Name</strong> <small>Common Name for the certificate (e.g. "netsus.mycompany.corp").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+						<div style="padding: 0px 20px 1px;">
+							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">CSR DESCRIPTION</div>
+						</div>
+
+						<hr>
+
+						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+							<h5 id="common_name_label"><strong>Common Name</strong> <small>Common Name for the certificate (e.g. "netsus.mycompany.corp").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<h5 id="organizational_unit_label"><strong>Organizational Unit</strong> <small>Name of the organizational unit (e.g. "JAMFSW").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<h5 id="organization_label"><strong>Organization</strong> <small>Name of the organization (e.g. "JAMF Software").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<h5 id="locality_label"><strong>City or Locality</strong> <small>Name of the City or Locality (e.g. "Minneapolis").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="locality" id="locality" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<h5 id="state_label"><strong>State or Province</strong> <small>Name of the State or Province (e.g. "MN").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="state" id="state" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<h5 id="country_label"><strong>Country Code</strong> <small>Two-letter country code for this unit (e.g. "US").</small></h5>
+							<div class="form-group has-feedback">
+								<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							</div>
+
+							<div class="text-right">
+								<button type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm" disabled>Create</button>
+							</div>
+						</div>
+
+						<hr>
+
+					</div><!-- /.tab-pane -->
+
+					<div class="tab-pane fade in" id="modify-tab">
+
+						<div style="padding: 0px 20px 1px;">
+							<div style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($cert_error) ? "hidden" : ""); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $cert_error; ?></div>
 								</div>
+							</div>
 
-								<h5 id="organizational_unit_label"><strong>Organizational Unit</strong> <small>Name of the organizational unit (e.g. "JAMFSW").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
+							<div style="margin-top: 16px; margin-bottom: 0px; border-color: #4cae4c;" class="panel panel-success <?php echo (empty($cert_success) ? "hidden" : ""); ?>">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $cert_success; ?></div>
 								</div>
+							</div>
 
-								<h5 id="organization_label"><strong>Organization</strong> <small>Name of the organization (e.g. "JAMF Software").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
-								</div>
+							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">MODIFY DESCRIPTION</div>
+						</div>
 
-								<h5 id="locality_label"><strong>City or Locality</strong> <small>Name of the City or Locality (e.g. "Minneapolis").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="locality" id="locality" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
-								</div>
+						<hr>
 
-								<h5 id="state_label"><strong>State or Province</strong> <small>Name of the State or Province (e.g. "MN").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="state" id="state" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
-								</div>
+						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+							<h5 id="privatekey_label"><strong>Private Key</strong> <small>Paste the content of RSA private key file, including the BEGIN and END tags.</small></h5>
+							<div class="form-group has-feedback">
+								<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['privatekey']) ? $_POST['privatekey'] : ""); ?></textarea>
+							</div>
 
-								<h5 id="country_label"><strong>Country Code</strong> <small>Two-letter country code for this unit (e.g. "US").</small></h5>
-								<div class="form-group has-feedback">
-									<input type="text" name="country" id="country" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
-								</div>
+							<h5 id="certificate_label"><strong>Certificate</strong> <small>Paste the content of the certificate file, including the BEGIN and END tags.</small></h5>
+							<div class="form-group has-feedback">
+								<textarea class="form-control input-sm" name="certificate" id="certificate" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['certificate']) ? $_POST['certificate'] : ""); ?></textarea>
+							</div>
 
-								<button type="submit" name="create_csr" id="create_csr" class="btn btn-primary btn-sm pull-right" disabled>Create</button>
+							<h5 id="cabundle_label"><strong>CA Bundle</strong> <small>Paste the content of the CA bundle, including the BEGIN and END tags.</small></h5>
+							<div class="form-group has-feedback">
+								<textarea class="form-control input-sm" name="cabundle" id="cabundle" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['cabundle']) ? $_POST['cabundle'] : ""); ?></textarea>
+							</div>
 
-							</div><!-- /.tab-pane -->
+							<div class="text-right">
+								<button type="button" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+								<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
+							</div>
+						</div>
 
-							<div class="tab-pane fade in" id="modify-tab">
+						<hr>
 
-								<div style="padding: 8px 0px;" class="description">MODIFY DESCRIPTION</div>
+					</div><!-- /.tab-pane -->
 
-								<div class="text-danger <?php echo (empty($cert_error) ? "hidden" : ""); ?>" style="padding-bottom: 8px;"><span class="glyphicon glyphicon-exclamation-sign"></span> <?php echo $cert_error; ?></div>
+				</div> <!-- end .tab-content -->
 
-								<div class="text-success <?php echo (empty($cert_success) ? "hidden" : ""); ?>" style="padding-bottom: 8px;"><span class="glyphicon glyphicon-ok-sign"></span> <?php echo $cert_success; ?></div>
-
-								<h5 id="privatekey_label"><strong>Private Key</strong> <small>Paste the content of RSA private key file, including the BEGIN and END tags.</small></h5>
-								<div class="form-group has-feedback">
-									<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['privatekey']) ? $_POST['privatekey'] : ""); ?></textarea>
-								</div>
-
-								<h5 id="certificate_label"><strong>Certificate</strong> <small>Paste the content of the certificate file, including the BEGIN and END tags.</small></h5>
-								<div class="form-group has-feedback">
-									<textarea class="form-control input-sm" name="certificate" id="certificate" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['certificate']) ? $_POST['certificate'] : ""); ?></textarea>
-								</div>
-
-								<h5 id="cabundle_label"><strong>CA Bundle</strong> <small>Paste the content of the CA bundle, including the BEGIN and END tags.</small></h5>
-								<div class="form-group has-feedback">
-									<textarea class="form-control input-sm" name="cabundle" id="cabundle" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['cabundle']) ? $_POST['cabundle'] : ""); ?></textarea>
-								</div>
-
-								<button type="button" class="btn btn-primary btn-sm pull-right <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
-								<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm pull-right <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
-
-							</div><!-- /.tab-pane -->
-
-						</div> <!-- end .tab-content -->
-
-					</form> <!-- end Certificates form -->
-
-				</div> <!-- /.col -->
-			</div> <!-- /.row -->
+			</form> <!-- end Certificates form -->
 <?php include "inc/footer.php"; ?>
