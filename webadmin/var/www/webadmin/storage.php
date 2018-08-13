@@ -53,13 +53,9 @@ if (strpos($lv_result, 'ERROR') === false) {
 				</div>
 			</nav>
 
-			<div style="padding: 70px 20px 1px; background-color: #f9f9f9;">
-					<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">STORAGE DESCRIPTION</div>
-			</div>
+			<div style="padding: 79px 20px 1px; background-color: #f9f9f9;">
+				<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">STORAGE DESCRIPTION</div>
 
-			<hr>
-
-			<div style="padding: 6px 20px 0px;">
 				<h5><strong>File System</strong></h5>
 
 				<div class="row">
@@ -82,7 +78,7 @@ if (strpos($lv_result, 'ERROR') === false) {
 
 			<hr>
 
-			<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+			<div style="padding: 6px 20px 16px;">
 				<h5><strong>Logical Volume</strong></h5>
 <?php if (strpos($lv_result,'ERROR') !== false) { ?>
 				<div style="margin-top: 13px; margin-bottom: 0px;" class="panel panel-primary">
@@ -112,8 +108,6 @@ if (strpos($lv_result, 'ERROR') === false) {
 				</div>
 <?php } ?>
 			</div>
-
-			<hr>
 
 			<!-- Expand Volume Modal -->
 			<div class="modal fade" id="confirmExpand" tabindex="-1" role="dialog">

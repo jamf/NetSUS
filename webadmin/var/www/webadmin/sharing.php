@@ -389,30 +389,35 @@ if ($afp_shares > 1 && !$afp_running) {
 			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>
-					<h2>File Sharing</h2>
+					<div class="row">
+						<div class="col-xs-10"> 
+							<h2>File Sharing</h2>
+						</div>
+						<div class="col-xs-2 text-right"> 
+							<!-- <button type="button" class="btn btn-default btn-sm" >Settings</button> -->
+						</div>
+					</div>
 				</div>
 			</nav>
 
 			<form action="sharing.php" method="post" name="Sharing" id="Sharing">
 
-				<div style="padding: 63px 20px 1px;">
-					<div id="smb_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($smb_shares > 1 && !$smb_running ? "" : "hidden"); ?>">
+				<div style="padding: 79px 20px 1px; background-color: #f9f9f9; overflow-x: auto;">
+					<div id="smb_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($smb_shares > 1 && !$smb_running ? "" : "hidden"); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="startsmb" name="startsmb" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The SMB service is not running. <a href="" onClick="startSMB();">Click here to start it</a>.</div>
 						</div>
 					</div>
 
-					<div id="afp_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($afp_shares > 1 && !$afp_running ? "" : "hidden"); ?>">
+					<div id="afp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($afp_shares > 1 && !$afp_running ? "" : "hidden"); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="startafp" name="startafp" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The AFP service is not running. <a href="" onClick="startAFP();">Click here to start it</a>.</div>
 						</div>
 					</div>
-				</div>
 
-				<div style="padding: 15px 20px 1px; overflow-x: auto;">
-					<table id="share-table" class="table table-striped" style="border-bottom: 1px solid #eee;">
+					<table id="share-table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 						<thead>
 							<tr>
 								<th>SMB</th>
@@ -426,7 +431,7 @@ if ($afp_shares > 1 && !$afp_running) {
 						<tbody>
 <?php $i = 0;
 foreach ($file_shares as $key => $value) {
-if ($value["name"] != "NetBoot") { ?>
+if ($value["name"] != "NetBoot" && $value["name"] != "NetBootClients") { ?>
 							<tr>
 								<td>
 									<div class="checkbox checkbox-primary checkbox-inline">
@@ -456,6 +461,8 @@ $i++;
 						</tbody>
 					</table>
 				</div>
+
+				<hr>
 
 				<!-- Add Share Modal -->
 				<div class="modal fade" id="addshare-modal" tabindex="-1" role="dialog">
@@ -506,7 +513,7 @@ if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
 								<input type="hidden" id="permspath" value=""/>
 								<input type="hidden" id="permssmb" value="">
 								<input type="hidden" id="permsafp" value="">
-								<table id="privilege-table" class="table table-striped" style="margin-bottom: 0px;">
+								<table id="privilege-table" class="table table-hover" style="margin-bottom: 0px;">
 									<thead>
 										<tr>
 											<th style="padding-left: 16px;">Name</th>

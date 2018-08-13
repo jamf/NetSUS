@@ -170,7 +170,7 @@ foreach($products as $productobj) {
 				<hr>
 
 				<div style="padding: 15px 20px 1px; overflow-x: auto;">
-					<table id="package_table" class="table table-striped" style="border-bottom: 1px solid #eee;">
+					<table id="package_table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 						<thead>
 							<tr>
 								<th>Enable</th>

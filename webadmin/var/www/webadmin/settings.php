@@ -87,7 +87,7 @@ include "inc/header.php";
 					<div class="col-xs-3 col-sm-2 settings-item">
 						<a href="netbootSettings.php">
 							<p><img src="images/settings/NetbootServer.png" alt="NetBoot"></p>
-							<p>NetBoot</p>
+							<p>NetBoot Server</p>
 						</a>
 					</div>
 					<!-- /Column -->

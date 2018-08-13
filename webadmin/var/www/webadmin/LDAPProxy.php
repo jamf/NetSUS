@@ -220,29 +220,34 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>
-					<h2>LDAP Proxy</h2>
+					<div class="row">
+						<div class="col-xs-10"> 
+							<h2>LDAP Proxy</h2>
+						</div>
+						<div class="col-xs-2 text-right"> 
+							<!-- <button type="button" class="btn btn-default btn-sm" >Settings</button> -->
+						</div>
+					</div>
 				</div>
 			</nav>
 
 			<form action="LDAPProxy.php" method="post" name="LDAPProxy" id="LDAPProxy">
 
-				<div style="padding: 63px 20px 1px;">
-					<div id="slapd_info" style="margin-top: 16px; margin-bottom: 0px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
+				<div style="padding: 79px 20px 1px; background-color: #f9f9f9; overflow-x: auto;">
+					<div id="slapd_info" style="margin-top: 0px; margin-bottom: 16px;" class="panel panel-primary <?php echo ($conf->getSetting("ldapproxy") != "enabled" || sizeof($conf->getProxies()) > 0 ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>The LDAP service will start when a proxy configuration is added.</div>
 						</div>
 					</div>
 
-					<div id="slapd_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
+					<div id="slapd_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="enableproxy" name="enableproxy" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
 						</div>
 					</div>
-				</div>
 
-				<div style="padding: 15px 20px 1px; overflow-x: auto;">
-					<table id="proxy-table" class="table table-striped" style="border-bottom: 1px solid #eee;">
+					<table id="proxy-table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 						<thead>
 							<tr>
 								<th>Exposed Distinguished Name</th>
@@ -263,6 +268,8 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 						</tbody>
 					</table>
 				</div>
+
+				<hr>
 
 				<!-- Add Proxy Modal -->
 				<div class="modal fade" id="addproxy-modal" tabindex="-1" role="dialog">

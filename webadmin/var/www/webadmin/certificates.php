@@ -6,6 +6,9 @@ include "inc/functions.php";
 
 $title = "Certificates";
 
+$cert_error = "";
+$cert_success = "";
+
 if (isset($_POST['create_csr'])) {
 	suExec("createCsr \"".$_POST['common_name']."\" \"".$_POST['organizational_unit']."\" \"".$_POST['organization']."\" \"".$_POST['locality']."\" \"".$_POST['state']."\" \"".$_POST['country']."\"");
 	$tmp_file = "/tmp/certreq.zip";
@@ -34,9 +37,6 @@ if (isset($_POST['create_csr'])) {
 }
 
 include "inc/header.php";
-
-$cert_error = "";
-$cert_success = "";
 
 if (isset($_POST['apply-certs'])) {
 	// Certificate Verification Checks
@@ -122,6 +122,17 @@ if ($ssl_certificate_str != "") {
 	}
 }
 ?>
+			<style>
+				#tab-content {
+					margin-top: 209px;
+				}
+				@media(min-width:768px) {
+					#tab-content {
+						margin-top: 119px;
+					}
+				}
+			</style>
+
 			<script type="text/javascript">
 				function showError(element, labelId = false) {
 					element.parentElement.classList.add("has-error");
@@ -193,29 +204,24 @@ if ($ssl_certificate_str != "") {
 					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 					<h2>Certificates</h2>
 				</div>
+				<div style="padding: 16px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+					<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
+						<li class="active"><a class="tab-font" href="#cert-tab" role="tab" data-toggle="tab">SSL Certificate</a></li>
+						<li><a class="tab-font" href="#csr-tab" role="tab" data-toggle="tab">Certificate Signing Request</a></li>
+						<li><a class="tab-font" href="#modify-tab" role="tab" data-toggle="tab">Modify Certificates</a></li>
+					</ul>
+				</div>
 			</nav>
-
-			<div style="padding: 80px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
-				<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
-					<li class="active"><a class="tab-font" href="#cert-tab" role="tab" data-toggle="tab">SSL Certificate</a></li>
-					<li><a class="tab-font" href="#csr-tab" role="tab" data-toggle="tab">Certificate Signing Request</a></li>
-					<li><a class="tab-font" href="#modify-tab" role="tab" data-toggle="tab">Modify Certificates</a></li>
-				</ul>
-			</div>
 
 			<form action="certificates.php" method="post" name="Certificates" id="Certificates">
 
-				<div class="tab-content">
+				<div id="tab-content" class="tab-content">
 
 					<div class="tab-pane active fade in" id="cert-tab">
 
-						<div style="padding: 0px 20px 1px;">
-							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">SSL CERTIFICATE DESCRIPTION</div>
-						</div>
+						<div style="padding: 16px 20px 1px;">
+							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">SSL CERTIFICATE DESCRIPTION</div>
 
-						<hr>
-
-						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
 							<h5><strong>Subject Name</strong></h5>
 							<div class="text-muted"><?php echo $ssl_certificate['Owner']; ?></div>
 
@@ -226,19 +232,13 @@ if ($ssl_certificate_str != "") {
 							<div class="text-muted"><?php echo $ssl_certificate['Expires']; ?></div>
 						</div>
 
-						<hr>
-
 					</div><!-- /.tab-pane -->
 
 					<div class="tab-pane fade in" id="csr-tab">
 
-						<div style="padding: 0px 20px 1px;">
-							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">CSR DESCRIPTION</div>
-						</div>
+						<div style="padding: 16px 20px 1px;">
+							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">CSR DESCRIPTION</div>
 
-						<hr>
-
-						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
 							<h5 id="common_name_label"><strong>Common Name</strong> <small>Common Name for the certificate (e.g. "netsus.mycompany.corp").</small></h5>
 							<div class="form-group has-feedback">
 								<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
@@ -274,31 +274,24 @@ if ($ssl_certificate_str != "") {
 							</div>
 						</div>
 
-						<hr>
-
 					</div><!-- /.tab-pane -->
 
 					<div class="tab-pane fade in" id="modify-tab">
 
-						<div style="padding: 0px 20px 1px;">
-							<div style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($cert_error) ? "hidden" : ""); ?>">
+						<div style="padding: 16px 20px 1px;">
+							<div style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($cert_error) ? "hidden" : ""); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $cert_error; ?></div>
 								</div>
 							</div>
 
-							<div style="margin-top: 16px; margin-bottom: 0px; border-color: #4cae4c;" class="panel panel-success <?php echo (empty($cert_success) ? "hidden" : ""); ?>">
+							<div style="margin-bottom: 16px; border-color: #4cae4c;" class="panel panel-success <?php echo (empty($cert_success) ? "hidden" : ""); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $cert_success; ?></div>
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">MODIFY DESCRIPTION</div>
-						</div>
-
-						<hr>
-
-						<div style="padding: 6px 20px 16px; background-color: #f9f9f9;">
+							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">MODIFY DESCRIPTION</div>
 							<h5 id="privatekey_label"><strong>Private Key</strong> <small>Paste the content of RSA private key file, including the BEGIN and END tags.</small></h5>
 							<div class="form-group has-feedback">
 								<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['privatekey']) ? $_POST['privatekey'] : ""); ?></textarea>
@@ -319,8 +312,6 @@ if ($ssl_certificate_str != "") {
 								<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
 							</div>
 						</div>
-
-						<hr>
 
 					</div><!-- /.tab-pane -->
 

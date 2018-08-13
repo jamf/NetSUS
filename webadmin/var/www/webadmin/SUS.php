@@ -144,7 +144,14 @@ if (empty($last_sync)) {
 			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>
-					<h2>Software Update Server</h2>
+					<div class="row">
+						<div class="col-xs-10"> 
+							<h2>Software Update Server</h2>
+						</div>
+						<div class="col-xs-2 text-right"> 
+							<!-- <button type="button" class="btn btn-default btn-sm" >Settings</button> -->
+						</div>
+					</div>
 				</div>
 			</nav>
 
@@ -172,7 +179,7 @@ if (empty($last_sync)) {
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<table id="branchTable" class="table">
+							<table id="branchTable" class="table table-hover">
 								<thead>
 									<tr>
 										<th>Default</th>
@@ -249,7 +256,6 @@ if (empty($branches)) { ?>
 				</div>
 			</div>
 			<!-- /#modal -->
-
 
 			<!-- Purge Modal -->
 			<div class="modal" id="purge-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">

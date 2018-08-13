@@ -139,6 +139,17 @@ foreach(file("/etc/passwd") as $entry) {
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 
+			<style>
+				#tab-content {
+					margin-top: 166px;
+				}
+				@media(min-width:768px) {
+					#tab-content {
+						margin-top: 119px;
+					}
+				}
+			</style>
+
 			<script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
 			<script type="text/javascript" src="scripts/dataTables/dataTables.bootstrap.min.js"></script>
 			<script type="text/javascript" src="scripts/Buttons/dataTables.buttons.min.js"></script>
@@ -550,46 +561,41 @@ foreach(file("/etc/passwd") as $entry) {
 					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">System</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 					<h2>Accounts</h2>
 				</div>
+				<div style="padding: 16px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
+					<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
+						<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") || $ldap_server != "" && sizeof($ldap_admins) == 0 || $ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span> Web Interface</a></li>
+						<li><a class="tab-font" href="#system-tab" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>"></span> System Users</a></li>
+					</ul>
+				</div>
 			</nav>
 
-			<div style="padding: 80px 20px 0px; background-color: #f9f9f9; border-bottom: 1px solid #ddd;">
-				<ul class="nav nav-tabs nav-justified" id="top-tabs" style="margin-bottom: -1px;">
-					<li class="active"><a class="tab-font" href="#webadmin-tab" role="tab" data-toggle="tab"><span id="webadmin-tab-icon" class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") || $ldap_server != "" && sizeof($ldap_admins) == 0 || $ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span> Web Interface</a></li>
-					<li><a class="tab-font" href="#system-tab" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>"></span> System Users</a></li>
-				</ul>
-			</div>
-
-			<div class="tab-content">
+			<div id="tab-content" class="tab-content">
 
 				<div class="tab-pane active fade in" id="webadmin-tab">
 
 					<form method="POST" name="webadmin-form" id="webadmin-form">
 
-						<div style="padding: 0px 20px 1px;">
-							<div id="webadmin_warning" style="margin-top: 16px; margin-bottom: 0px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>">
+						<div style="padding: 16px 20px 1px; overflow-x: auto;">
+							<div id="webadmin_warning" style="margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Credentials have not been changed for built-in account.</div>
 								</div>
 							</div>
 
-							<div id="group_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>">
+							<div id="group_error" style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>At least one group is required for Active Directory login.</div>
 								</div>
 							</div>
 
-							<div id="ldap_error" style="margin-top: 16px; margin-bottom: 0px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>">
+							<div id="ldap_error" style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Active Directory must be configured for group members to login.</div>
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">WEB INTERFACE DESCRIPTION</div>
-						</div>
+							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">WEB INTERFACE DESCRIPTION</div>
 
-						<hr>
-
-						<div style="padding: 8px 20px 1px; overflow-x: auto; background-color: #f9f9f9;">
 							<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 								<div class="row">
 									<div class="col-sm-10">
@@ -607,7 +613,7 @@ foreach(file("/etc/passwd") as $entry) {
 								</div>
 								<div class="row">
 									<div class="col-sm-12">
-										<table class="table">
+										<table class="table table-hover">
 											<thead>
 												<tr>
 													<th></th>
@@ -618,7 +624,7 @@ foreach(file("/etc/passwd") as $entry) {
 											</thead>
 											<tbody>
 												<tr>
-													<td><span id="webuser_warning" class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>"></span></td>
+													<td><span id="webuser_warning" class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($conf->needsToChangePass("webaccount") ? "" : "hidden"); ?>" style="font-size: 17px;"></span></td>
 													<td><a data-toggle="modal" href="#webuser-modal"><span id="webuser_name"><?php echo $web_user; ?></span></a></td>
 													<td>Built-in account.</td>
 													<td align="right"><button type="button" class="btn btn-default btn-sm" disabled>Delete</button></td>
@@ -640,10 +646,12 @@ foreach(file("/etc/passwd") as $entry) {
 
 						<hr>
 
-						<div style="padding: 4px 20px 16px;">
+						<div style="padding: 4px 20px 16px; background-color: #f9f9f9;">
 							<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
 							<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal" href=""><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
 						</div>
+
+						<hr>
 
 						<!-- Webuser Modal -->
 						<div class="modal fade" id="webuser-modal" tabindex="-1" role="dialog">
@@ -776,20 +784,16 @@ foreach(file("/etc/passwd") as $entry) {
 
 					<form method="POST" name="system-form" id="system-form">
 
-						<div style="padding: 0px 20px 1px;">
-							<div id="webadmin_warning" style="margin-top: 16px; margin-bottom: 0px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>">
+						<div style="padding: 16px 20px 1px;">
+							<div id="webadmin_warning" style="margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Credentials have not been changed for these user accounts.</div>
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">SYSTEM USERS DESCRIPTION</div>
-						</div>
+							<div class="text-muted" style="font-size: 12px; padding-bottom: 16px;">SYSTEM USERS DESCRIPTION</div>
 
-						<hr>
-
-						<div style="padding: 8px 20px 1px; overflow-x: auto; background-color: #f9f9f9;">
-							<table id="sysusers-table" class="table" style="border-bottom: 1px solid #eee;">
+							<table id="sysusers-table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 								<thead>
 									<tr>
 										<th></th>
@@ -803,7 +807,7 @@ foreach(file("/etc/passwd") as $entry) {
 <?php foreach($sys_users as $sys_user) {
 if ($sys_user['type'] != "System") { ?>
 									<tr>
-										<td><span class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($sys_user['default'] ? "" : "hidden"); ?>"></span></td>
+										<td><span class="text-warning glyphicon glyphicon-exclamation-sign <?php echo ($sys_user['default'] ? "" : "hidden"); ?>" style="font-size: 17px;"></span></td>
 										<td>
 											<div class="dropdown">
 												<a href="#" id="sysuser<?php echo $sys_user['uid']; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php echo $sys_user['name']; ?></a>
@@ -822,8 +826,6 @@ if ($sys_user['type'] != "System") { ?>
 								</tbody>
 							</table>
 						</div>
-
-						<hr>
 
 						<!-- Add System User Modal -->
 						<div class="modal fade" id="addsysuser-modal" tabindex="-1" role="dialog">
