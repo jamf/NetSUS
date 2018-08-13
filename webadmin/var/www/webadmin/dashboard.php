@@ -39,7 +39,7 @@ $smb_str = trim(shareExec("getSMBshares"));
 if ($smb_str != "") {
 	foreach(explode("\n", $smb_str) as $value) {
 		$share = explode(":", $value);
-		if ($share[0] != "NetBoot") {
+		if ($share[0] != "NetBoot" && $share[0] != "NetBootClients") {
 			array_push($shares, $share[1]);
 		}
 	}
@@ -53,11 +53,15 @@ if ($afp_str != "") {
 		}
 	}
 }
-$shareusage = 0;
+$shareusage = 4;
 foreach ($shares as $share) {
 	$shareusage += trim(suExec("getDirSize ".$share));
 }
 $shareusage = (formatSize($shareusage*1024, 0));
+
+if (empty($conf->getSetting("sharing"))) {
+	$conf->setSetting("sharing", "disabled");
+}
 ?>
 					<div class="panel-body">
 						<div class="row">
@@ -158,6 +162,14 @@ if (empty($last_sync)) {
 
 $sus_usage = trim(suExec("getDirSize /srv/SUS"));
 $sus_usage = (formatSize($sus_usage*1024, 0));
+
+if (empty($conf->getSetting("sus"))) {
+	if ($last_sync == "Never") {
+		$conf->setSetting("sus", "disabled");
+	} else {
+		$conf->setSetting("sus", "enabled");
+	}
+}
 ?>
 				<div class="panel-body">
 					<div class="row">
@@ -224,7 +236,7 @@ $sus_usage = (formatSize($sus_usage*1024, 0));
 							<div class="col-xs-8 col-md-10">
 								<div class="bs-callout bs-callout-default">
 									<h5><strong>Configure the Software Update Server</strong> <small>to manage and provide Apple Software Updates for macOS clients.</small></h5>
-									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='susSettings.php'">Software Update Settings</button>
+									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='susSettings.php'">Software Update Server Settings</button>
 								</div>
 							</div>
 							<!-- /Column -->
@@ -239,13 +251,30 @@ $sus_usage = (formatSize($sus_usage*1024, 0));
 						<strong>NetBoot Server</strong>
 					</div>
 <?php
-$netbootstatus = getNetBootStatus();
+function netbootExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/netbootHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
+
+$dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
+if ($dhcp_running) {
+	netbootExec("stopdhcp");
+	netbootExec("startbsdp");
+}
+$bsdp_running = (trim(netbootExec("getbsdpstatus")) === "true");
 
 $netbootusage = trim(suExec("getDirSize /srv/NetBoot/NetBootSP0"));
 $netbootusage = (formatSize($netbootusage*1024, 0));
 
 $shadowusage = trim(suExec("getDirSize /srv/NetBootClients"));
 $shadowusage = (formatSize($shadowusage*1024, 0));
+
+if (empty($conf->getSetting("netboot"))) {
+	if ($dhcp_running) {
+		$conf->setSetting("netboot", "enabled");
+	} else {
+		$conf->setSetting("netboot", "disabled");
+	}
+}
 ?>
 					<div class="panel-body">
 						<div class="row">
@@ -261,8 +290,8 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 							<!-- Column -->
 							<div class="col-xs-4 col-md-2">
 								<div class="bs-callout bs-callout-default">
-									<h5><strong>DHCP Status</strong></h5>
-									<span class="text-muted"><?php echo ($netbootstatus ? "Running" : "Not Running"); ?></span>
+									<h5><strong>BSDP Status</strong></h5>
+									<span class="text-muted"><?php echo ($bsdp_running ? "Running" : "Not Running"); ?></span>
 								</div>
 							</div>
 							<!-- /Column -->
@@ -272,30 +301,6 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 								<div class="bs-callout bs-callout-default">
 									<h5><strong>NetBoot Image Size</strong></h5>
 									<span class="text-muted"><?php echo $netbootusage; ?></span>
-								</div>
-							</div>
-							<!-- /Column -->
-
-							<div class="clearfix visible-xs-block visible-sm-block"></div>
-
-							<!-- Column -->
-							<div class="col-xs-4 col-md-2 visible-xs-block visible-sm-block"></div>
-							<!-- /Column -->
-
-							<!-- Column -->
-							<div class="col-xs-4 col-md-2">
-								<div class="bs-callout bs-callout-default">
-									<h5><strong>Active SMB Connections</strong></h5>
-									<span class="text-muted"><?php echo $smb_conns; ?></span>
-								</div>
-							</div>
-							<!-- /Column -->
-
-							<!-- Column -->
-							<div class="col-xs-4 col-md-2">
-								<div class="bs-callout bs-callout-default">
-									<h5><strong>Active AFP Connections</strong></h5>
-									<span class="text-muted"><?php echo $afp_conns; ?></span>
 								</div>
 							</div>
 							<!-- /Column -->
@@ -327,7 +332,7 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 							<div class="col-xs-8 col-md-10">
 								<div class="bs-callout bs-callout-default">
 									<h5><strong>Configure the NetBoot Server</strong> <small>to allow you to host NetBoot images.</small></h5>
-									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='netbootSettings.php'">NetBoot Settings</button>
+									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='netbootSettings.php'">NetBoot Server Settings</button>
 								</div>
 							</div>
 							<!-- /Column -->
@@ -339,7 +344,7 @@ $shadowusage = (formatSize($shadowusage*1024, 0));
 
 				<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showproxy") == "false" ? "hidden" : ""); ?>">
 					<div class="panel-heading">
-						<strong>LDAP Proxy Server</strong>
+						<strong>LDAP Proxy</strong>
 					</div>
 <?php
 function ldapExec($cmd) {
@@ -347,6 +352,14 @@ function ldapExec($cmd) {
 }
 
 $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
+
+if (empty($conf->getSetting("ldapproxy"))) {
+	if ($ldap_running) {
+		$conf->setSetting("ldapproxy", "enabled");
+	} else {
+		$conf->setSetting("ldapproxy", "disabled");
+	}
+}
 ?>
 					<div class="panel-body">
 						<div class="row">
@@ -362,7 +375,7 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 							<!-- Column -->
 							<div class="col-xs-4 col-md-2">
 								<div class="bs-callout bs-callout-default">
-									<h5><strong>LDAP Proxy Status</strong></h5>
+									<h5><strong>LDAP Status</strong></h5>
 									<span class="text-muted"><?php echo ($ldap_running ? "Running" : "Not Running"); ?></span>
 								</div>
 							</div>
@@ -379,7 +392,7 @@ $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 							<!-- Column -->
 							<div class="col-xs-8 col-md-10">
 								<div class="bs-callout bs-callout-default">
-									<h5><strong>Configure the LDAP Proxy Server</strong> <small>as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers.</small></h5>
+									<h5><strong>Configure the LDAP Proxy</strong> <small>as a lightweight proxy that acts as a middleware layer between LDAP clients and LDAP directory servers.</small></h5>
 									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='proxySettings.php'">LDAP Proxy Settings</button>
 								</div>
 							</div>

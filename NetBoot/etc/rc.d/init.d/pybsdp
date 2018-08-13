@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides: bsdpd
+# Default-Start:
+# Default-Stop:
+# Should-Start: portreserve
+# Required-Start: $network
+# Required-Stop:
+# Short-Description: Start and stop the BSDP server
+# Description: bsdpd provides the Boot Service Discovery Protocol (BSDP)
+#              server.
+### END INIT INFO
+#
+# chkconfig: - 65 35
+# description: bsdpd provides the Boot Service Discovery Protocol (BSDP) \
+#              server
+# pidfile: /var/run/pybsdp.pid
+
+EXEC="/usr/local/sbin/pybsdp"
+PROG=pybsdp
+PIDFILE=/var/run/$PROG.pid
+
+case "$1" in
+start)
+	printf "%-59s" "Starting $PROG:"
+	PID=`$EXEC > /dev/null 2>&1 & echo $!`
+	if [ -z $PID ]; then
+		printf "%s\n" "[FAILED]"
+	else
+		echo $PID > $PIDFILE
+		printf "%s\n" "[  OK  ]"
+	fi
+;;
+status)
+	printf "$PROG "
+	if [ -f $PIDFILE ]; then
+		PID=`cat $PIDFILE`
+		if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+			printf "%s\n" "dead but pid file exists"
+		else
+			echo "(pid $PID) is running..."
+		fi
+	else
+		echo "is stopped"
+	fi
+;;
+stop)
+	printf "%-59s" "Stopping $PROG:"
+	PID=`cat $PIDFILE`
+	if [ -f $PIDFILE ]; then
+		kill -HUP $PID
+		printf "%s\n" "[  OK  ]"
+		rm -f $PIDFILE
+	else
+		printf "%s\n" "pid file not found"
+	fi
+;;
+
+restart)
+	$0 stop
+	$0 start
+;;
+
+*)
+	echo "Usage: $0 {status|start|stop|restart}"
+	exit 1
+esac

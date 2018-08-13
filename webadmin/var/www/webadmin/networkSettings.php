@@ -94,6 +94,12 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 }
 ?>
 
+<style>
+	#page-content-wrapper {
+		padding: 20px;
+	}
+</style>
+
 <script type="text/javascript" src="scripts/adminNetworkSettings.js"></script>
 
 <script>

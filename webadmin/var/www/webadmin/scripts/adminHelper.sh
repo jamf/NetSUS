@@ -254,177 +254,177 @@ service avahi-daemon restart 2>&-
 #;;
 
 #Needs updating if we do multiple NetBoot images
-setnbimages)
-nbi=$2
-if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')" >/dev/null 2>&1; then
-	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Index']" 2>&-)
-	isinstall=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['IsInstall']" 2>&-)
-	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Kind']" 2>&-)
-	name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Name']" 2>&-)
-	rootpath=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['RootPath']" 2>&-)
-	type=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Type']" 2>&-)
-fi
-if [ "$index" = '' ]; then
-	index=526
-fi
-if [ "$isinstall" = 'True' ]; then
-	isinstall=8
-else
-	isinstall=0
-fi
-if [ "$kind" = '' ]; then
-	kind=1
-fi
-if [ "$name" = '' ]; then
-	name=$(basename $nbi .nbi)
-	if [ "$name" = '' ]; then
-		name='Faux NetBoot'
-	fi
-fi
-if [ "$rootpath" = '' ]; then
-	if [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg ]; then
-		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg)
-	elif [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage ]; then
-		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage)
-	else
-		exit 1
-	fi
-fi
-index_hex=$(printf "%x" ${index} | tr "[:lower:]" "[:upper:]")
-while [ ${#index_hex} -lt 4 ]; do
-	index_hex=0${index_hex}
-done
-boot_image_id="${isinstall}${kind}:00:$(echo ${index_hex} | cut -c 1,2):$(echo ${index_hex} | cut -c 3,4)"
-length_hex=$(printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]")
-while [ ${#length_hex} -lt 2 ]; do
-	length_hex=0${length_hex}
-done
-count_hex=$(printf "%x" ${#name} | tr "[:lower:]" "[:upper:]")
-while [ ${#count_hex} -lt 2 ]; do
-	count_hex=0${count_hex}
-done
-name_hex=$(echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g')
-boot_image_list=${length_hex}:${boot_image_id}:${count_hex}:${name_hex}
-cur_image_id=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
-root_path_ip=$(grep 'root-path' /etc/dhcpd.conf | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
-sed -i "s/${cur_image_id}/${boot_image_id}/g" /etc/dhcpd.conf
-sed -i "s/04:02:FF:FF:07:04:.*/04:02:FF:FF:07:04:${boot_image_id}:08:04:${boot_image_id}:09:${boot_image_list};/" /etc/dhcpd.conf
-sed -i 's|filename ".*";|filename "'${nbi}'/i386/booter";|' /etc/dhcpd.conf
-if [ "$type" = 'NFS' ]; then
-	sed -i 's|option root-path.*|option root-path "nfs:'${root_path_ip}':/srv/NetBoot/NetBootSP0:'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
-else
-	sed -i 's|option root-path.*|option root-path "http://'${root_path_ip}'/NetBoot/NetBootSP0/'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
-fi
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		# update-rc.d smbd enable > /dev/null 2>&1
-		update-rc.d tftpd-hpa enable > /dev/null 2>&1
-		# systemctl enable openbsd-inetd > /dev/null 2>&1
-		systemctl enable nfs-server > /dev/null 2>&1
-		service nfs-server start 2>&-
-	else
-		# rm -f /etc/init/smbd.override
-		rm -f /etc/init/tftpd-hpa.override
-		# update-rc.d openbsd-inetd enable > /dev/null 2>&1
-		update-rc.d nfs-kernel-server enable > /dev/null 2>&1
-		service nfs-kernel-server start 2>&-
-	fi
-	update-rc.d netatalk enable > /dev/null 2>&1
-	# service smbd start 2>&-
-	service tftpd-hpa start 2>&-
-	# service openbsd-inetd start 2>&-
-	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	# chkconfig smb on > /dev/null 2>&1
-	chkconfig tftp on > /dev/null 2>&1
-	chkconfig nfs on > /dev/null 2>&1
-	chkconfig netatalk on > /dev/null 2>&1
-	# service smb start 2>&-
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		service tftp start 2>&-
-	else
-		service xinetd restart 2>&-
-	fi
-	service nfs start 2>&-
-	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
-fi
-service netatalk start 2>&-
-/var/appliance/configurefornetboot
-;;
+#setnbimages)
+#nbi=$2
+#if python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')" >/dev/null 2>&1; then
+#	index=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Index']" 2>&-)
+#	isinstall=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['IsInstall']" 2>&-)
+#	kind=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Kind']" 2>&-)
+#	name=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Name']" 2>&-)
+#	rootpath=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['RootPath']" 2>&-)
+#	type=$(python -c "import plistlib; print plistlib.readPlist('/srv/NetBoot/NetBootSP0/${nbi}/NBImageInfo.plist')['Type']" 2>&-)
+#fi
+#if [ "$index" = '' ]; then
+#	index=526
+#fi
+#if [ "$isinstall" = 'True' ]; then
+#	isinstall=8
+#else
+#	isinstall=0
+#fi
+#if [ "$kind" = '' ]; then
+#	kind=1
+#fi
+#if [ "$name" = '' ]; then
+#	name=$(basename $nbi .nbi)
+#	if [ "$name" = '' ]; then
+#		name='Faux NetBoot'
+#	fi
+#fi
+#if [ "$rootpath" = '' ]; then
+#	if [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg ]; then
+#		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.dmg)
+#	elif [ -f "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage ]; then
+#		rootpath=$(basename "/srv/NetBoot/NetBootSP0/${nbi}/"*.sparseimage)
+#	else
+#		exit 1
+#	fi
+#fi
+#index_hex=$(printf "%x" ${index} | tr "[:lower:]" "[:upper:]")
+#while [ ${#index_hex} -lt 4 ]; do
+#	index_hex=0${index_hex}
+#done
+#boot_image_id="${isinstall}${kind}:00:$(echo ${index_hex} | cut -c 1,2):$(echo ${index_hex} | cut -c 3,4)"
+#length_hex=$(printf "%x" $((${#name}+5)) | tr "[:lower:]" "[:upper:]")
+#while [ ${#length_hex} -lt 2 ]; do
+#	length_hex=0${length_hex}
+#done
+#count_hex=$(printf "%x" ${#name} | tr "[:lower:]" "[:upper:]")
+#while [ ${#count_hex} -lt 2 ]; do
+#	count_hex=0${count_hex}
+#done
+#name_hex=$(echo ${name} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/:0A://g')
+#boot_image_list=${length_hex}:${boot_image_id}:${count_hex}:${name_hex}
+#cur_image_id=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
+#root_path_ip=$(grep 'root-path' /etc/dhcpd.conf | grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
+#sed -i "s/${cur_image_id}/${boot_image_id}/g" /etc/dhcpd.conf
+#sed -i "s/04:02:FF:FF:07:04:.*/04:02:FF:FF:07:04:${boot_image_id}:08:04:${boot_image_id}:09:${boot_image_list};/" /etc/dhcpd.conf
+#sed -i 's|filename ".*";|filename "'${nbi}'/i386/booter";|' /etc/dhcpd.conf
+#if [ "$type" = 'NFS' ]; then
+#	sed -i 's|option root-path.*|option root-path "nfs:'${root_path_ip}':/srv/NetBoot/NetBootSP0:'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
+#else
+#	sed -i 's|option root-path.*|option root-path "http://'${root_path_ip}'/NetBoot/NetBootSP0/'${nbi}'/'${rootpath}'";|' /etc/dhcpd.conf
+#fi
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		# update-rc.d smbd enable > /dev/null 2>&1
+#		update-rc.d tftpd-hpa enable > /dev/null 2>&1
+#		# systemctl enable openbsd-inetd > /dev/null 2>&1
+#		systemctl enable nfs-server > /dev/null 2>&1
+#		service nfs-server start 2>&-
+#	else
+#		# rm -f /etc/init/smbd.override
+#		rm -f /etc/init/tftpd-hpa.override
+#		# update-rc.d openbsd-inetd enable > /dev/null 2>&1
+#		update-rc.d nfs-kernel-server enable > /dev/null 2>&1
+#		service nfs-kernel-server start 2>&-
+#	fi
+#	update-rc.d netatalk enable > /dev/null 2>&1
+#	# service smbd start 2>&-
+#	service tftpd-hpa start 2>&-
+#	# service openbsd-inetd start 2>&-
+#	cp -f /var/appliance/configurefornetboot /etc/network/if-up.d/configurefornetboot
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	# chkconfig smb on > /dev/null 2>&1
+#	chkconfig tftp on > /dev/null 2>&1
+#	chkconfig nfs on > /dev/null 2>&1
+#	chkconfig netatalk on > /dev/null 2>&1
+#	# service smb start 2>&-
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		service tftp start 2>&-
+#	else
+#		service xinetd restart 2>&-
+#	fi
+#	service nfs start 2>&-
+#	cp -f /var/appliance/configurefornetboot /sbin/ifup-local
+#fi
+#service netatalk start 2>&-
+#/var/appliance/configurefornetboot
+#;;
 
-disableproxy)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d slapd disable > /dev/null 2>&1
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig slapd off > /dev/null 2>&1
-fi
-service slapd stop 2>&-
-;;
+#disableproxy)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	update-rc.d slapd disable > /dev/null 2>&1
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	chkconfig slapd off > /dev/null 2>&1
+#fi
+#service slapd stop 2>&-
+#;;
 
-enableproxy)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	update-rc.d slapd enable > /dev/null 2>&1
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig slapd on > /dev/null 2>&1
-fi
-service slapd start 2>&-
-;;
+#enableproxy)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	update-rc.d slapd enable > /dev/null 2>&1
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	chkconfig slapd on > /dev/null 2>&1
+#fi
+#service slapd start 2>&-
+#;;
 
-disablenetboot)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		# update-rc.d smbd disable > /dev/null 2>&1
-		update-rc.d tftpd-hpa disable > /dev/null 2>&1
-		# systemctl disable openbsd-inetd > /dev/null 2>&1
-		systemctl disable nfs-server > /dev/null 2>&1
-		service nfs-server stop 2>&-
-	else
-		# echo manual > /etc/init/smbd.override
-		echo manual > /etc/init/tftpd-hpa.override
-		# update-rc.d openbsd-inetd disable > /dev/null 2>&1
-		update-rc.d nfs-kernel-server disable > /dev/null 2>&1
-		service nfs-kernel-server stop 2>&-
-	fi
-	update-rc.d netatalk disable > /dev/null 2>&1
-	# service smbd stop 2>&-
-	service tftpd-hpa stop 2>&-
-	# service openbsd-inetd stop 2>&-
-	rm -f /etc/network/if-up.d/configurefornetboot
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	chkconfig netatalk off > /dev/null 2>&1
-	# chkconfig smb off > /dev/null 2>&1
-	chkconfig tftp off > /dev/null 2>&1
-	chkconfig nfs off > /dev/null 2>&1
-	# service smb stop 2>&-
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		service tftp stop 2>&-
-	else
-		service xinetd restart 2>&-
-	fi
-	service nfs stop 2>&-
-	rm -f /sbin/ifup-local
-fi
-service netatalk stop 2>&-
-killall dhcpd > /dev/null 2>&1
-;;
+#disablenetboot)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		# update-rc.d smbd disable > /dev/null 2>&1
+#		update-rc.d tftpd-hpa disable > /dev/null 2>&1
+#		# systemctl disable openbsd-inetd > /dev/null 2>&1
+#		systemctl disable nfs-server > /dev/null 2>&1
+#		service nfs-server stop 2>&-
+#	else
+#		# echo manual > /etc/init/smbd.override
+#		echo manual > /etc/init/tftpd-hpa.override
+#		# update-rc.d openbsd-inetd disable > /dev/null 2>&1
+#		update-rc.d nfs-kernel-server disable > /dev/null 2>&1
+#		service nfs-kernel-server stop 2>&-
+#	fi
+#	update-rc.d netatalk disable > /dev/null 2>&1
+#	# service smbd stop 2>&-
+#	service tftpd-hpa stop 2>&-
+#	# service openbsd-inetd stop 2>&-
+#	rm -f /etc/network/if-up.d/configurefornetboot
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	chkconfig netatalk off > /dev/null 2>&1
+#	# chkconfig smb off > /dev/null 2>&1
+#	chkconfig tftp off > /dev/null 2>&1
+#	chkconfig nfs off > /dev/null 2>&1
+#	# service smb stop 2>&-
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		service tftp stop 2>&-
+#	else
+#		service xinetd restart 2>&-
+#	fi
+#	service nfs stop 2>&-
+#	rm -f /sbin/ifup-local
+#fi
+#service netatalk stop 2>&-
+#killall dhcpd > /dev/null 2>&1
+#;;
 
-getnetbootstatus)
-SERVICE=dhcpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getnetbootstatus)
+#SERVICE=dhcpd
+#if ps acx | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
-getldapproxystatus)
-SERVICE=slapd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getldapproxystatus)
+#SERVICE=slapd
+#if ps acx | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
 touchconf)
 conf="$2"
@@ -446,10 +446,14 @@ chmod u+w "$conf"
 
 #Needs updating if we host more than one Netboot Image
 resetafppw)
-password=$2
-echo afpuser:$password | chpasswd
+# $2: password
+echo afpuser:${2} | chpasswd
+sed -i "s/netbootpass.*/netbootpass = ${2}/" /etc/pybsdp.conf
+if service pybsdp status 2>&- | grep -q running ; then
+	service pybsdp restart 2>&-
+fi
 ip=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }')
-afppw=$(echo ${password} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
+afppw=$(echo ${2} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
 afppwlen=$(echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c)
 afppwlen=$(expr ${afppwlen} / 2)
 iphex=$(echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
@@ -465,8 +469,10 @@ if [ -f "/etc/dhcpd.conf" ]; then
 	imageid=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
 	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
 fi
-killall dhcpd > /dev/null 2>&1
-/usr/local/sbin/dhcpd > /dev/null 2>&1
+if ps acx | grep -v grep | grep -q dhcpd ; then
+	killall dhcpd > /dev/null 2>&1
+	/usr/local/sbin/dhcpd > /dev/null 2>&1
+fi
 ;;
 
 addshelluser)
@@ -541,21 +547,21 @@ getShellList)
 echo $(which bash 2>/dev/null) $(which tcsh 2>/dev/null) $(which sh 2>/dev/null) $(which csh 2>/dev/null) $(which zsh 2>/dev/null) $(which ksh 2>/dev/null) $(which nologin 2>/dev/null) $(which false 2>/dev/null)
 ;;
 
-installslapdconf)
-if [ -d "/etc/ldap" ]; then
-	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
-	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
-fi
-if [ -d "/etc/openldap" ]; then
-	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
-	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
-fi
-;;
+#installslapdconf)
+#if [ -d "/etc/ldap" ]; then
+#	mv /etc/ldap/slapd.conf /etc/ldap/slapd.conf.bak
+#	mv /var/appliance/conf/slapd.conf.new /etc/ldap/slapd.conf
+#fi
+#if [ -d "/etc/openldap" ]; then
+#	mv /etc/openldap/slapd.conf /etc/openldap/slapd.conf.bak
+#	mv /var/appliance/conf/slapd.conf.new /etc/openldap/slapd.conf
+#fi
+#;;
 
-installdhcpdconf)
-mv /etc/dhcpd.conf /etc/dhcpd.conf.bak
-mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
-;;
+#installdhcpdconf)
+#mv /etc/dhcpd.conf /etc/dhcpd.conf.bak
+#mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
+#;;
 
 
 #getSUSlist)
@@ -955,65 +961,65 @@ sed -i 's:<webadmingui>.*</webadmingui>::' /var/appliance/conf/appliance.conf.xm
 #;;
 
 # NetBoot
-getNBIproperty)
+#getNBIproperty)
 # $2: NBI
 # $3: Property
-plistfile=$(ls "/srv/NetBoot/NetBootSP0/${2}/"*.plist 2>/dev/null)
-if [ "$plistfile" != '' ]; then
-	value=$(python -c "import plistlib; print plistlib.readPlist('${plistfile}')['${3}']" 2>/dev/null)
-fi
-echo "${value}"
-;;
+#plistfile="/srv/NetBoot/NetBootSP0/${2}/NBImageInfo.plist"
+#if [ "$plistfile" != '' ]; then
+#	value=$(python -c "import plistlib; print plistlib.readPlist('${plistfile}')['${3}']" 2>/dev/null)
+#fi
+#echo "${value}"
+#;;
 
-setNBIproperties)
-Image=$2
-Name="$(echo $3 | sed -e 's/\\//g')"
-Description="$(echo $4 | sed -e 's/\\//g')"
-Type=$5
-Index=$6
-SupportsDiskless=$7
-if [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg ]; then
-	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg)
-elif [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage ]; then
-	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage)
-else
-	exit 1
-fi
-python /var/www/html/webadmin/scripts/nbiproperties.py "/srv/NetBoot/NetBootSP0/${Image}/NBImageInfo.plist" "$RootPath" "$Name" "$Description" $Type $Index $SupportsDiskless
-;;
+#setNBIproperties)
+#Image=$2
+#Name="$(echo $3 | sed -e 's/\\//g')"
+#Description="$(echo $4 | sed -e 's/\\//g')"
+#Type=$5
+#Index=$6
+#SupportsDiskless=$7
+#if [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg ]; then
+#	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.dmg)
+#elif [ -f "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage ]; then
+#	RootPath=$(basename "/srv/NetBoot/NetBootSP0/${Image}/"*.sparseimage)
+#else
+#	exit 1
+#fi
+#python /var/www/html/webadmin/scripts/nbiproperties.py "/srv/NetBoot/NetBootSP0/${Image}/NBImageInfo.plist" "$RootPath" "$Name" "$Description" $Type $Index $SupportsDiskless
+#;;
 
-gettftpstatus)
-if [ "$(which update-rc.d 2>&-)" != '' ]; then
-	if service tftpd-hpa status 2>/dev/null | grep -q running ; then
-		echo "true"
-	else
-		echo "false"
-	fi
-elif [ "$(which chkconfig 2>&-)" != '' ]; then
-	if [ "$(which systemctl 2>&-)" != '' ]; then
-		if systemctl status tftp | grep -q running ; then
-			echo "true"
-		else
-			echo "false"
-		fi
-	else
-		if service xinetd status | grep -q running && chkconfig | sed 's/[ \t]//g' | grep tftp | grep -q ':on' ; then
-			echo "true"
-		else
-			echo "false"
-		fi
-	fi
-fi
-;;
+#gettftpstatus)
+#if [ "$(which update-rc.d 2>&-)" != '' ]; then
+#	if service tftpd-hpa status 2>/dev/null | grep -q running ; then
+#		echo "true"
+#	else
+#		echo "false"
+#	fi
+#elif [ "$(which chkconfig 2>&-)" != '' ]; then
+#	if [ "$(which systemctl 2>&-)" != '' ]; then
+#		if systemctl status tftp | grep -q running ; then
+#			echo "true"
+#		else
+#			echo "false"
+#		fi
+#	else
+#		if service xinetd status | grep -q running && chkconfig | sed 's/[ \t]//g' | grep tftp | grep -q ':on' ; then
+#			echo "true"
+#		else
+#			echo "false"
+#		fi
+#	fi
+#fi
+#;;
 
-getnfsstatus)
-SERVICE=nfsd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
+#getnfsstatus)
+#SERVICE=nfsd
+#if ps acx | grep -v grep | grep -q $SERVICE ; then
+#	echo "true"
+#else
+#	echo "false"
+#fi
+#;;
 
 # Certificates
 getSSLCertificate)
