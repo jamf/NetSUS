@@ -375,7 +375,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 							<h2>Software Update Server</h2>
 						</div>
 						<div class="col-xs-2 text-right"> 
-							<input type="checkbox" id="susenabled" <?php echo ($conf->getSetting("sus") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+							<input type="checkbox" id="susenabled" data-toggle="toggle" data-size="small" onChange="toggleService();" <?php echo ($conf->getSetting("sus") == "enabled" ? "checked" : ""); ?>>
 						</div>
 					</div>
 				</div>
@@ -496,7 +496,7 @@ if ($array["default"]) { ?>
 					</div>
 					<div class="row">
 						<div class="col-sm-12">
-							<table id="catalogTable" class="table">
+							<table id="catalogTable" class="table table-hover">
 								<thead>
 									<tr>
 										<th>URL</th>
@@ -504,17 +504,17 @@ if ($array["default"]) { ?>
 									</tr>
 								</thead>
 								<tbody>
-			<?php foreach ($other_catalog_urls as $catalog_url) { ?>
+<?php foreach ($other_catalog_urls as $catalog_url) { ?>
 									<tr>
 										<td><?php echo $catalog_url; ?></td>
 										<td align="right"><button id="delete_other" type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_catalog" onClick="document.getElementById('deletecatalogurl').value = '<?php echo $catalog_url?>';" <?php echo (sizeof($apple_catalog_urls) == 1 ? "disabled" : ""); ?>>Delete</button></td>
 									</tr>
-			<?php }
-			if (sizeof($other_catalog_urls) == 0) { ?>
+<?php }
+if (sizeof($other_catalog_urls) == 0) { ?>
 									<tr>
 										<td align="center" valign="top" colspan="2" class="dataTables_empty">No data available in table</td>
 									</tr>
-			<?php } ?>
+<?php } ?>
 								</tbody>
 							</table>
 						</div>

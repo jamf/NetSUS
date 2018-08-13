@@ -139,7 +139,7 @@ $afp_conns = trim(shareExec("afpconns"));
 							<h2>File Sharing</h2>
 						</div>
 						<div class="col-xs-2 text-right"> 
-							<input type="checkbox" id="sharingenabled" <?php echo ($conf->getSetting("sharing") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+							<input type="checkbox" id="sharingenabled" data-toggle="toggle" data-size="small" onChange="toggleService();" <?php echo ($conf->getSetting("sharing") == "enabled" ? "checked" : ""); ?>>
 						</div>
 					</div>
 				</div>

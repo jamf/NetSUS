@@ -78,7 +78,7 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 							<h2>LDAP Proxy</h2>
 						</div>
 						<div class="col-xs-2 text-right"> 
-							<input type="checkbox" id="proxyenabled" <?php echo ($conf->getSetting("ldapproxy") == "enabled" ? "checked" : ""); ?> data-toggle="toggle" onChange="toggleService();">
+							<input type="checkbox" id="proxyenabled" data-toggle="toggle" data-size="small" onChange="toggleService();" <?php echo ($conf->getSetting("ldapproxy") == "enabled" ? "checked" : ""); ?>>
 						</div>
 					</div>
 				</div>
