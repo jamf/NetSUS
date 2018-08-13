@@ -14,6 +14,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	# Ensure that the package lists are re-created to avoid installation failure
 	# rm -rf /var/lib/apt/lists/*
 	# Update package lists
+	add-apt-repository universe >> $logFile
 	apt-get -q update >> $logFile
 	if [[ $? -ne 0 ]]; then
 		log "Error: Failed to update package index files."

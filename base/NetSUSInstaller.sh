@@ -96,6 +96,7 @@ if [[ $INTERACTIVE = true ]]; then
   echo "
 The following will be installed
 * Appliance Web Interface
+* File Sharing
 * Software Update Server
 * NetBoot Server
 * LDAP Proxy
