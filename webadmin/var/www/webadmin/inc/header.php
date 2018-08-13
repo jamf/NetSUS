@@ -119,6 +119,11 @@ $currentUser = getCurrentWebUser();
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
+                            <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static">Disable GUI</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
+                            <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
+                            <li role="separator" class="divider"></li>
 <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
                             <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', '#webadmin-tab');">Change Password</a></li>
                             <li role="separator" class="divider"></li>
@@ -131,6 +136,8 @@ $currentUser = getCurrentWebUser();
 					<button type="button" id="notify-button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal" disabled><span class="glyphicon glyphicon-flash"></span><span id="notify-badge" class="badge hidden"></span></button>
                 </div>
                 <div class="navbar-gear">
+					<button type="button" class="navbar-btn-icon" onClick="document.location.href='settings.php'"><span class="glyphicon glyphicon-cog"></span></button>
+<!--
                     <div class="btn-group">
                         <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
@@ -142,6 +149,7 @@ $currentUser = getCurrentWebUser();
                             <li><a href="settings.php">Settings</a></li>
                         </ul>
                     </div>
+-->
                 </div>
             </div>
         </div>
@@ -154,10 +162,10 @@ $currentUser = getCurrentWebUser();
             <ul class="nav sidebar-nav">
                 <li class=""><a href="#"><span class="glyphicon"></span></a></li>
                 <!-- begin Sidebar Menu Items -->
-                <li id="sharing" class="<?php if ($pageURI == "sharing.php") { echo "active"; } ?>"><a href="sharing.php"><span class="glyphicon glyphicon-folder-open marg-right"></span>File Sharing</a></li>
-                <li id="sus" class="<?php if ($pageURI == "SUS.php") { echo "active"; } ?>"><a href="SUS.php"><span class="netsus-icon icon-sus marg-right"></span>Software Update Server</a></li>
-                <li id="netboot" class="<?php if ($pageURI == "netBoot.php") { echo "active"; } ?>"><a href="netBoot.php"><span class="netsus-icon icon-netboot marg-right"></span>NetBoot Server</a></li>
-                <li id="ldapproxy" class="<?php if ($pageURI == "LDAPProxy.php") { echo "active"; } ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-book marg-right"></span>LDAP Proxy</a></li>
+                <li id="sharing" class="<?php echo ($conf->getSetting("sharing") == "enabled" ? ($pageURI == "sharing.php" ? "active" : "") : "hidden"); ?>"><a href="sharing.php"><span class="glyphicon glyphicon-folder-open marg-right"></span>File Sharing</a></li>
+                <li id="sus" class="<?php echo ($conf->getSetting("sus") == "enabled" ? ($pageURI == "SUS.php" ? "active" : "") : "hidden"); ?>"><a href="SUS.php"><span class="netsus-icon icon-sus marg-right"></span>Software Update Server</a></li>
+                <li id="netboot" class="<?php echo ($conf->getSetting("netboot") == "enabled" ? ($pageURI == "netBoot.php" ? "active" : "") : "hidden"); ?>"><a href="netBoot.php"><span class="netsus-icon icon-netboot marg-right"></span>NetBoot Server</a></li>
+                <li id="ldapproxy" class="<?php echo ($conf->getSetting("ldapproxy") == "enabled" ? ($pageURI == "LDAPProxy.php" ? "active" : "") : "hidden"); ?>"><a href="LDAPProxy.php"><span class="glyphicon glyphicon-book marg-right"></span>LDAP Proxy</a></li>
                 <!-- end Sidebar Menu Items -->
             </ul>
         </div>

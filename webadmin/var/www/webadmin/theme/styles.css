@@ -327,7 +327,7 @@ Page Title Navigation
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    z-index: 980;
+    z-index: 90;
 }
 #wrapper.toggled #nav-title {
     margin-left: 220px;
