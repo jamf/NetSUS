@@ -39,7 +39,7 @@ $smb_str = trim(shareExec("getSMBshares"));
 if ($smb_str != "") {
 	foreach(explode("\n", $smb_str) as $value) {
 		$share = explode(":", $value);
-		if ($share[0] != "NetBoot" && $share[0] != "NetBootClients") {
+		if ($share[0] != "NetBoot") {
 			array_push($shares, $share[1]);
 		}
 	}
@@ -48,7 +48,7 @@ $afp_str = trim(shareExec("getAFPshares"));
 if ($afp_str != "") {
 	foreach(explode("\n", $afp_str) as $value) {
 		$share = explode(":", $value);
-		if ($share[0] != "NetBoot" && !in_array($share[1], $shares)) {
+		if ($share[0] != "NetBoot" && $share[0] != "NetBootClients" && !in_array($share[1], $shares)) {
 			array_push($shares, $share[1]);
 		}
 	}
