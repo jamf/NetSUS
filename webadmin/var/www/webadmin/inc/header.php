@@ -121,9 +121,6 @@ $currentUser = getCurrentWebUser();
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
                             <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static">Disable GUI</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
-                            <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
-                            <li role="separator" class="divider"></li>
 <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
                             <li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', '#webadmin-tab');">Change Password</a></li>
                             <li role="separator" class="divider"></li>
@@ -137,19 +134,15 @@ $currentUser = getCurrentWebUser();
                 </div>
                 <div class="navbar-gear">
 					<button type="button" class="navbar-btn-icon" onClick="document.location.href='settings.php'"><span class="glyphicon glyphicon-cog"></span></button>
-<!--
+                </div>
+                <div class="navbar-off">
                     <div class="btn-group">
-                        <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span></button>
+                        <button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-off"></span></button>
                         <ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
                             <li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
                             <li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static">Disable GUI</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="settings.php">Settings</a></li>
                         </ul>
                     </div>
--->
                 </div>
             </div>
         </div>

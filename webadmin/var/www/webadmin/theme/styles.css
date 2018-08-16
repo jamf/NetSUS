@@ -135,16 +135,22 @@ Upper Navigation
 .navbar-user {
     position: absolute;
     top: 0px;
-    right: 110px;
+    right: 160px;
     height: 50px;
 }
 .navbar-flash {
     position: absolute;
     top: 0px;
-    right: 60px;
+    right: 110px;
     height: 50px;
 }
 .navbar-gear {
+    position: absolute;
+    top: 0px;
+    right: 60px;
+    height: 50px;
+}
+.navbar-off {
     position: absolute;
     top: 0px;
     right: 10px;
