@@ -59,7 +59,7 @@ foreach ($shares as $share) {
 }
 $shareusage = (formatSize($shareusage*1024, 0));
 
-if (empty($conf->getSetting("sharing"))) {
+if ($conf->getSetting("sharing") == "") {
 	$conf->setSetting("sharing", "disabled");
 }
 ?>
@@ -163,7 +163,7 @@ if (empty($last_sync)) {
 $sus_usage = trim(suExec("getDirSize /srv/SUS"));
 $sus_usage = (formatSize($sus_usage*1024, 0));
 
-if (empty($conf->getSetting("sus"))) {
+if ($conf->getSetting("sus") == "") {
 	if ($last_sync == "Never") {
 		$conf->setSetting("sus", "disabled");
 	} else {
@@ -268,7 +268,7 @@ $netbootusage = (formatSize($netbootusage*1024, 0));
 $shadowusage = trim(suExec("getDirSize /srv/NetBootClients"));
 $shadowusage = (formatSize($shadowusage*1024, 0));
 
-if (empty($conf->getSetting("netboot"))) {
+if ($conf->getSetting("netboot") == "") {
 	if ($dhcp_running) {
 		$conf->setSetting("netboot", "enabled");
 	} else {
@@ -353,7 +353,7 @@ function ldapExec($cmd) {
 
 $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 
-if (empty($conf->getSetting("ldapproxy"))) {
+if ($conf->getSetting("ldapproxy") == "") {
 	if ($ldap_running) {
 		$conf->setSetting("ldapproxy", "enabled");
 	} else {
