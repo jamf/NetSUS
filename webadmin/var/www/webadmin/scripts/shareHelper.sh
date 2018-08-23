@@ -190,12 +190,24 @@ if [ ! -e "${3}" ]; then
 	mkdir -p "${3}"
 fi
 if [ "$conf" != '' ]; then
-	echo "Alias /${2}/ \"${3}/\"
-	<Directory ${3}/>
-		Options FollowSymLinks MultiViews
-		AllowOverride None
-		Require all granted
-	</Directory>" > ${conf}
+    if httpd -v 2>/dev/null | grep version | grep -q '2.2'; then
+		echo "Alias /${2}/ \"${3}/\"
+
+<Directory ${3}/>
+	Options FollowSymLinks MultiViews
+	AllowOverride None
+	Order allow,deny
+	Allow from all
+</Directory>" > ${conf}
+	else
+		echo "Alias /${2}/ \"${3}/\"
+
+<Directory ${3}/>
+	Options FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>" > ${conf}
+	fi
 fi
 if [ -d "/etc/apache2/sites-enabled" ]; then
 	service apache2 reload
