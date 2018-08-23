@@ -28,14 +28,16 @@ echo $(/var/lib/reposado/repoutil --branches)
 
 rootBranch)
 # $2: Branch
-rm -f /srv/SUS/html/*.sucatalog
+rm -f /var/www/html/*.sucatalog
 if [ "${2}" != '' ]; then
 	catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
 	for i in ${catalogArray}; do
 		catalogName="$(basename "${i}" "_${2}.sucatalog")"
-		cp "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/srv/SUS/html/${catalogName}.sucatalog"
+		ln -fs "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/var/www/html/${catalogName}.sucatalog"
 	done
-	cp "/srv/SUS/html/content/catalogs/index_${2}.sucatalog" "/srv/SUS/html/index.sucatalog"
+	if [ -f "/srv/SUS/html/content/catalogs/index_${2}.sucatalog" ]; then
+		ln -fs "/srv/SUS/html/content/catalogs/index_${2}.sucatalog" "/var/www/html/index.sucatalog"
+	fi
 fi
 ;;
 

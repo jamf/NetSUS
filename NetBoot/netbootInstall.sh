@@ -301,30 +301,34 @@ fi
 if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
 	# Remove any entries from old installations
 	sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
-	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	# sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/apache2/sites-enabled/000-netboot.conf
 fi
 if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 	# Remove any entries from old installations
     sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/httpd/conf/httpd.conf
-    if httpd -v | grep version | grep -q '2.2'; then 
-    	echo '
-    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    	echo '
-    	<Directory "/srv/NetBoot">
-    	Options Indexes FollowSymLinks MultiViews
-    	AllowOverride None
-    	Order allow,deny
-    	Allow from all
-    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    if httpd -v 2>/dev/null | grep version | grep -q '2.2'; then
+    	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Order allow,deny
+	Allow from all
+</Directory>' > /etc/httpd/conf.d/netboot.conf
     else
-    	echo '
-    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    	echo '
-    	<Directory "/srv/NetBoot">
-    	Options Indexes FollowSymLinks MultiViews
-    	AllowOverride None
-    	Require all granted
-    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/httpd/conf.d/netboot.conf
     fi
 fi
 

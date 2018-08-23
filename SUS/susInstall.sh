@@ -91,9 +91,15 @@ fi
 # TODO - This will not take into account if the installer is run again
 
 if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
-	sed -i "s:DocumentRoot.*:DocumentRoot /srv/SUS/html/:g" /etc/apache2/sites-enabled/000-default.conf
+	sed -i "s:DocumentRoot.*:DocumentRoot /var/www/html:g" /etc/apache2/sites-enabled/000-default.conf
 	sed -i '/[[:space:]]*<Directory \/srv\/SUS\//,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
-	sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	#sed -i "s'</VirtualHost>'\t<Directory /srv/SUS/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	echo 'Alias /content/ "/srv/SUS/html/content/"
+<Directory /srv/SUS/html/content/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/apache2/sites-enabled/000-sus.conf
 	sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default.conf
 	# Remove any entries from old installations
 	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default.conf
@@ -133,7 +139,25 @@ if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 	sed -i 's:/srv/SUS/html:/var/www/html:' /etc/httpd/conf/httpd.conf
 	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/httpd/conf/httpd.conf
 	sed -i '/sucatalog/d' /etc/httpd/conf/httpd.conf
-	sed -i 's:/var/www/html:/srv/SUS/html:' /etc/httpd/conf/httpd.conf	
+	# sed -i 's:/var/www/html:/srv/SUS/html:' /etc/httpd/conf/httpd.conf
+    if httpd -v 2>/dev/null | grep version | grep -q '2.2'; then
+    	echo 'Alias /content/ "/srv/SUS/html/content/"
+
+<Directory /srv/SUS/html/content/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Order allow,deny
+	Allow from all
+</Directory>' > /etc/httpd/conf.d/sus.conf
+    else
+    	echo 'Alias /content/ "/srv/SUS/html/content/"
+
+<Directory /srv/SUS/html/content/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/httpd/conf.d/sus.conf
+fi
 	cat >>/etc/httpd/conf/httpd.conf <<ZHEREDOC
 	<IfModule mod_rewrite.c>
 		RewriteEngine On
