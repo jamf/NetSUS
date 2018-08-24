@@ -863,7 +863,7 @@ if [ -f "/etc/ssl/certs/ssl-cert-snakeoil.pem" ]; then
 	mkdir -p /etc/apache2/ssl.crt/
 	cp /var/appliance/conf/appliance.chain.pem /etc/apache2/ssl.crt/server-ca.crt
 	chown openldap /var/appliance/conf/appliance.private.key
-	sed -i --follow-symlinks "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
+	sed -i "s/#SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/SSLCertificateChainFile \/etc\/apache2\/ssl.crt\/server-ca.crt/g" /etc/apache2/sites-enabled/default-ssl.conf
 fi
 if [ -f "/etc/pki/tls/certs/localhost.crt" ]; then
 	cp /var/appliance/conf/appliance.certificate.pem /etc/pki/tls/certs/localhost.crt
