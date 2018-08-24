@@ -1,15 +1,20 @@
 <?php
+// Re-direct to HTTPS if connecting via HTTP
+if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on") {
+	header("Location: https://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_URL']);
+}
+
 session_start();
 include "inc/config.php";
 include "inc/functions.php";
-$amAuthURL="dashboard.php";
+$amAuthURL = "dashboard.php";
 if (isset($_SESSION['isAuthUser'])) {
 	header('Location: '. $amAuthURL);
 }
 
-$isAuth=FALSE;
+$isAuth = FALSE;
 
-$type="suslogin";
+$type = "suslogin";
 
 if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username = $_POST['username'];

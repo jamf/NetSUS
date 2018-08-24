@@ -1,4 +1,9 @@
 <?php
+// Re-direct to HTTPS if connecting via HTTP
+if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on") {
+	header("Location: https://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_URL']);
+}
+
 //Read in whether or not the user is an admin - this is populated at the index.php page using the allowedAdminUsers variable
 if (isset($_SESSION['isAdmin'])) {
 	$isAdmin = $_SESSION['isAdmin'];
