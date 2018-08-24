@@ -332,7 +332,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 						$('#proxyhost').prop('disabled', false);
 						$('#proxyport').prop('disabled', false);
 						ajaxPost('susCtl.php', 'service=enable');
-						validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');
+						// validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');
 					} else {
 						$('#sus').addClass('hidden');
 						$('#baseurl').prop('disabled', true);

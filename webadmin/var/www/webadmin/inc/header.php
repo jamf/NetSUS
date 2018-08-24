@@ -138,7 +138,7 @@ $currentUser = getCurrentWebUser();
 					<button type="button" id="notify-button" class="navbar-btn-icon" data-toggle="modal" data-target="#notify-modal" disabled><span class="glyphicon glyphicon-flash"></span><span id="notify-badge" class="badge hidden"></span></button>
                 </div>
                 <div class="navbar-gear">
-					<button type="button" class="navbar-btn-icon" onClick="document.location.href='settings.php'"><span class="glyphicon glyphicon-cog"></span></button>
+					<button type="button" id="settings" class="navbar-btn-icon" onClick="document.location.href='settings.php'"><span class="glyphicon glyphicon-cog"></span></button>
                 </div>
                 <div class="navbar-off">
                     <div class="btn-group">

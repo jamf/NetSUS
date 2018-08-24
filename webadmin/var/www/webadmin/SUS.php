@@ -141,6 +141,12 @@ if (empty($last_sync)) {
 				}
 			</script>
 
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#settings').attr('onclick', 'document.location.href="susSettings.php"');
+				});
+			</script>
+
 			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>

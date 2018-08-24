@@ -268,6 +268,12 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 				});
 			</script>
 
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#settings').attr('onclick', 'document.location.href="netbootSettings.php"');
+				});
+			</script>
+
 			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>
