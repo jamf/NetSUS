@@ -60,11 +60,7 @@ if (isset($_POST['delProxy'])) {
 
 $ldap_running = (trim(ldapExec("getldapproxystatus")) === "true");
 if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) > 0 && !$ldap_running) {
-	if (isset($_POST['enableproxy'])) {
-		$slapd_error = "Error in proxy configuration.";
-	} else {
-		$slapd_error = "The LDAP service is not running. <a href=\"\" onClick=\"enableProxy();\">Click here to start it</a>.";
-	}
+	$slapd_error = "The LDAP service is not running. <a href=\"\" onClick=\"enableProxy();\">Click here to start it</a>.";
 }
 
 // ####################################################################
