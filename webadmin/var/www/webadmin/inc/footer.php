@@ -1,17 +1,17 @@
 
-        </div>
-        <!-- /#page-content-wrapper -->
+		</div>
+		<!-- /#page-content-wrapper -->
 
-    </div>
-    <!-- /#wrapper -->
+	</div>
+	<!-- /#wrapper -->
 
-    <!-- Menu Toggle Script -->
-    <script>
+	<!-- Menu Toggle Script -->
+	<script>
 		$('#menu-toggle').click(function(e) {
 			e.preventDefault();
 			$('#wrapper').toggleClass('toggled');
 		});
-    </script>
+	</script>
 <?php
 // notifications
 $notifications = array();
@@ -41,14 +41,14 @@ if (sizeof($notifications) > 0) { ?>
 		});
 	</script>
 
-    <!-- Notification Modal -->
-    <div class="modal fade" id="notify-modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Notifications</h3>
-                </div>
-                <table class="table table-striped" style="margin-bottom: 0px;">
+	<!-- Notification Modal -->
+	<div class="modal fade" id="notify-modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 class="modal-title">Notifications</h3>
+				</div>
+				<table class="table table-striped" style="margin-bottom: 0px;">
 <?php if (in_array("accounts", $notifications)) { ?>
 					<tr>
 						<td class="settings-item">
@@ -81,14 +81,14 @@ if (in_array("storage", $notifications)) { ?>
 							<p><a href="storage.php">Click here to resolve this.</a></p>
 						</td>
 					</tr>
-<?php } ?>					
-                </table>
-                <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<?php } ?>
+				</table>
+				<div class="modal-footer">
+					<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-right">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 	<!-- /#modal -->
 <?php } ?>
 

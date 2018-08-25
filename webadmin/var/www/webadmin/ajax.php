@@ -12,7 +12,7 @@ if (!($_SESSION['isAuthUser'])) {
 
 	include "inc/config.php";
 	include "inc/functions.php";
-	
+
 	if (isset($_POST['restart'])) {
 		// Unset all of the session variables.
 		$_SESSION = array();

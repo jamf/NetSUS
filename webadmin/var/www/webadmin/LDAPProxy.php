@@ -223,10 +223,10 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 				<div style="padding: 19px 20px 1px;">
 					<div class="description">&nbsp;</div>
 					<div class="row">
-						<div class="col-xs-10"> 
+						<div class="col-xs-10">
 							<h2>LDAP Proxy</h2>
 						</div>
-						<div class="col-xs-2 text-right"> 
+						<div class="col-xs-2 text-right">
 							<!-- <button type="button" class="btn btn-default btn-sm" >Settings</button> -->
 						</div>
 					</div>

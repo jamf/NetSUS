@@ -34,7 +34,7 @@ case $NAME in
 		log "Error: $NAME version must be 6.4 or later (Detected $VERSION_ID)."
 		exit 1
 	fi
-	if yum repolist | grep repolist | grep -q ': 0'; then 
+	if yum repolist | grep repolist | grep -q ': 0'; then
         log "Error: This system is does not have any available repositories."
 		exit 1
     fi

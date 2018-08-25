@@ -169,7 +169,7 @@ foreach($products as $productobj) {
 							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $status_msg; ?></div>
 						</div>
 					</div>
-					
+
 					<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">Select Apple Software Updates to be enabled in this branch. Click the <em>Apply</em> button to save changes.<br><strong>Note:</strong> The <em>Select All</em> and <em>Clear All</em> buttons apply to only updates visible in the table.</div>
 				</div>
 

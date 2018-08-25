@@ -1,7 +1,7 @@
 <?php	// connect to database
 
 if( isset( $CONNECT ) ) {
-    return;
+	return;
 }
 
 $CONNECT=1;

@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 detectedOS=`lsb_release -s -d 2>/dev/null | sed -e 's/"//g'`
 if [ -z "$detectedOS" ]
@@ -19,7 +19,7 @@ message="\n
 | Welcome to the NetSUS Appliance.\n
 | OS: $detectedOS\n
 | To Login to the NetSUS Appliance:\n
-| https://$ip/webadmin\n 
+| https://$ip/webadmin\n
 | Username: webadmin\n
 | Password: webadmin\n
 +-----------oOO-------------------------------+\n

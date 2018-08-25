@@ -105,7 +105,7 @@ if (!in_array($currentSubnet, $subnets)) {
 
 			<script type="text/javascript">
 				/* var subnet_error = <?php echo $subnet_error; ?>;
-				
+
 				function showError(element, labelId = false) {
 					element.parentElement.classList.add("has-error");
 					if (labelId) {
@@ -184,10 +184,10 @@ if (!in_array($currentSubnet, $subnets)) {
 				<div style="padding: 19px 20px 1px;">
 					<div class="description"><a href="settings.php">Settings</a> <span class="glyphicon glyphicon-chevron-right"></span> <span class="text-muted">Services</span> <span class="glyphicon glyphicon-chevron-right"></span></div>
 					<div class="row">
-						<div class="col-xs-10"> 
+						<div class="col-xs-10">
 							<h2>NetBoot Server</h2>
 						</div>
-						<div class="col-xs-2 text-right"> 
+						<div class="col-xs-2 text-right">
 							<input type="checkbox" id="netbootenabled" data-toggle="toggle" data-size="small" onChange="toggleService();" <?php echo ($conf->getSetting("netboot") == "enabled" ? "checked" : ""); ?>>
 						</div>
 					</div>

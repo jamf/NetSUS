@@ -12,7 +12,7 @@ if (!($_SESSION['isAuthUser'])) {
 
 	include "inc/config.php";
 	include "inc/functions.php";
-	
+
 	function netbootExec($cmd) {
 		return shell_exec("sudo /bin/sh scripts/netbootHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 	}
@@ -68,7 +68,7 @@ if (!($_SESSION['isAuthUser'])) {
 	if (isset($_POST['setnbimage'])) {
 		netbootExec("setnbimage \"".$_POST['setnbimage']."\"");
 	}
-	
+
 	if (isset($_POST['bsdp'])) {
 		if ($_POST['bsdp'] == "start") {
 			netbootExec("startbsdp");
@@ -76,7 +76,7 @@ if (!($_SESSION['isAuthUser'])) {
 			netbootExec("stopbsdp");
 		}
 	}
-	
+
 	/* if (isset($_POST['dhcp'])) {
 		if ($_POST['dhcp'] == "start") {
 			netbootExec("startdhcp");
@@ -84,7 +84,7 @@ if (!($_SESSION['isAuthUser'])) {
 			netbootExec("stopdhcp");
 		}
 	} */
-	
+
 	if (isset($_POST['tftp'])) {
 		if ($_POST['tftp'] == "start") {
 			netbootExec("starttftp");
@@ -92,7 +92,7 @@ if (!($_SESSION['isAuthUser'])) {
 			netbootExec("stoptftp");
 		}
 	}
-	
+
 	if (isset($_POST['nfs'])) {
 		if ($_POST['nfs'] == "start") {
 			netbootExec("startnfs");
@@ -100,7 +100,7 @@ if (!($_SESSION['isAuthUser'])) {
 			netbootExec("stopnfs");
 		}
 	}
-	
+
 	if (isset($_POST['afp'])) {
 		if ($_POST['afp'] == "start") {
 			netbootExec("startafp");

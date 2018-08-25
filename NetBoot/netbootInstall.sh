@@ -376,7 +376,7 @@ if [ -f "/etc/modprobe.d/lockd.conf" ]; then
 	sed -i 's/.*nlm_tcpport.*/options lockd nlm_tcpport=32803/' /etc/modprobe.d/lockd.conf
 	if ! grep -q nlm_udpport /etc/modprobe.d/lockd.conf; then
 		echo "options lockd nlm_udpport=32769" >> /etc/modprobe.d/lockd.conf
-	fi 
+	fi
 	sed -i 's/.*nlm_udpport.*/options lockd nlm_udpport=32769/' /etc/modprobe.d/lockd.conf
 fi
 sed -i "/NetBootSP0/d" /etc/exports

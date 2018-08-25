@@ -9,9 +9,9 @@ $title = "Storage";
 include "inc/header.php";
 
 function formatSize($size, $precision = 1) {
-    $base = log($size, 1024);
-    $suffixes = array('B', 'kB', 'MB', 'GB', 'TB');   
-    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+	$base = log($size, 1024);
+	$suffixes = array('B', 'kB', 'MB', 'GB', 'TB');
+	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 
 $df_result_str = trim(suExec("diskusage"));

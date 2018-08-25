@@ -41,22 +41,22 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 
 		// password
 		$password = $_POST['password'];
-	
+
 		// ldap server url
 		$ldap_url = $conf->getSetting("ldapserver");
 
 		// active directory DN (base location of ldap search)
 		$ldap_dn = $conf->getSetting("ldapbase");
- 
+
 		// active directory admin group names
 		$admin_grps = $conf->getAdmins();
- 
+
 		// domain, for purposes of constructing $username
 		$domain = '@'.$conf->getSetting("ldapdomain");
- 
+
 		// connect to active directory
 		$ldap = ldap_connect($ldap_url);
- 
+
 		// configure ldap params
 		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
@@ -68,7 +68,7 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 			$filter = "(sAMAccountName=".$username.")";
 			$attr = array("memberof");
 			$result = ldap_search($ldap, $ldap_dn, $filter, $attr);
-	
+
 			$entries = ldap_get_entries($ldap, $result);
 			ldap_unbind($ldap);
 
@@ -113,11 +113,11 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 <!DOCTYPE html>
 
 <html>
-	<head> 
-	    <title>NetSUS Server</title>
-	    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-	    <meta http-equiv="expires" content="0">
-	    <meta http-equiv="pragma" content="no-cache">
+	<head>
+		<title>NetSUS Server</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="pragma" content="no-cache">
 		<!-- Roboto Font CSS -->
 		<link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
 		<!-- Bootstrap CSS -->
@@ -176,7 +176,7 @@ $ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && siz
 		</style>
 		<script type="text/javascript" src="scripts/jquery/jquery-2.2.4.js"></script>
 		<script type="text/javascript" src="scripts/bootstrap.min.js"></script>
-	</head> 
+	</head>
 
 	<body>
 

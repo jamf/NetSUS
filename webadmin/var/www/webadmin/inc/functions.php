@@ -1,7 +1,7 @@
 <?php
 
 if( isset( $FUNCTIONS ) ) {
-    return;
+	return;
 }
 
 $FUNCTIONS=1;
@@ -11,23 +11,23 @@ function getSystemTimeZones($path="/usr/share/zoneinfo/right")
 	$tzlist = array();
 	$i=0;
 	if ($handle = opendir($path)) {
-	    /* This is the correct way to loop over the directory. */
-	    while (false !== ($file = readdir($handle))) {
-	        if (is_dir($path."/".$file) && $file != "posix" && $file != "right")
-	        {
-	        	$zones = getSystemTimeZones($path."/".$file);
-	        	foreach ($zones as $zone)
-	        	{
-	        		$tzlist[$i++] = $file."/".$zone;
-	        	}
-	        }
-	        else
-	        {
-	        	$tzlist[$i++] = $file;
-	        }
-	    }
+		/* This is the correct way to loop over the directory. */
+		while (false !== ($file = readdir($handle))) {
+			if (is_dir($path."/".$file) && $file != "posix" && $file != "right")
+			{
+				$zones = getSystemTimeZones($path."/".$file);
+				foreach ($zones as $zone)
+				{
+					$tzlist[$i++] = $file."/".$zone;
+				}
+			}
+			else
+			{
+				$tzlist[$i++] = $file;
+			}
+		}
 
-	    closedir($handle);
+		closedir($handle);
 	}
 	sort($tzlist);
 	return $tzlist;
@@ -36,25 +36,25 @@ function getSystemTimeZones($path="/usr/share/zoneinfo/right")
 function getSystemTimeZoneMenu()
 {
 	$currentTZ = getCurrentTimeZone();
-    $timezone_identifiers = DateTimeZone::listIdentifiers();
-    foreach($timezone_identifiers as $value){
-        if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
-        {
+	$timezone_identifiers = DateTimeZone::listIdentifiers();
+	foreach($timezone_identifiers as $value){
+		if (preg_match('/^(America|Australia|Antartica|Arctic|Asia|Atlantic|Europe|Indian|Pacific)\//', $value))
+		{
 			if (!isset($continent)) {
 				$continent = '';
 			}
-            $ex=explode("/",$value);//obtain continent,city
-            if ($continent!=$ex[0]){
-                if ($continent!="") $return = '</optgroup>'."\n";
-                echo '<optgroup label="'.$ex[0].'">'."\n";
-            }
+			$ex=explode("/",$value);//obtain continent,city
+			if ($continent!=$ex[0]){
+				if ($continent!="") $return = '</optgroup>'."\n";
+				echo '<optgroup label="'.$ex[0].'">'."\n";
+			}
 
-            $city=$ex[1];
-            $continent=$ex[0];
-            echo '<option value="'.$value.'"'.($value==$currentTZ?" selected=\"selected\"":"").'>'.$city.(isset($ex[2])?"/".$ex[2]:"").'</option>'."\n";
-        }
-    }
-    echo "</optgroup>\n";
+			$city=$ex[1];
+			$continent=$ex[0];
+			echo '<option value="'.$value.'"'.($value==$currentTZ?" selected=\"selected\"":"").'>'.$city.(isset($ex[2])?"/".$ex[2]:"").'</option>'."\n";
+		}
+	}
+	echo "</optgroup>\n";
 }
 
 function suExec($cmd)
@@ -151,41 +151,41 @@ function setWebAdminUser($username, $password)
 /*
 function getDN($ldapconn, $samaccountname, $basedn)
 {
-    $attributes = array("dn");
-    $result = ldap_search($ldapconn, $basedn, "(|(samaccountname=".$samaccountname.")(userprincipalname=".$samaccountname."))", $attributes);
-    if ($result === FALSE)
-        return '';
-    $entries = ldap_get_entries($ldapconn, $result);
-    if ($entries['count'] > 0)
-        return $entries[0]['dn'];
-    else
-        return '';
+	$attributes = array("dn");
+	$result = ldap_search($ldapconn, $basedn, "(|(samaccountname=".$samaccountname.")(userprincipalname=".$samaccountname."))", $attributes);
+	if ($result === FALSE)
+		return '';
+	$entries = ldap_get_entries($ldapconn, $result);
+	if ($entries['count'] > 0)
+		return $entries[0]['dn'];
+	else
+		return '';
 };
 
 function checkLDAPGroupEx($ldapconn, $userdn, $groupdn)
 {
-    $attributes = array("memberOf");
-    $result = ldap_read($ldapconn, $userdn, "(objectclass=*)", $attributes);
-    if ($result === FALSE)
-        return FALSE;
-    $entries = ldap_get_entries($ldapconn, $result);
-    if ($entries['count'] <= 0)
-        return FALSE;
-    if (empty($entries[0]['memberof']))
-    {
-        return FALSE;
-    }
-    else
-    {
-        for ($i = 0; $i < $entries[0]['memberof']['count']; $i++)
-        {
-            if ($entries[0]['memberof'][$i] == $groupdn)
-                return TRUE;
-            elseif (checkLDAPGroupEx($ldapconn, $entries[0]['memberof'][$i], $groupdn))
-                return TRUE;
-        }
-    }
-    return FALSE;
+	$attributes = array("memberOf");
+	$result = ldap_read($ldapconn, $userdn, "(objectclass=*)", $attributes);
+	if ($result === FALSE)
+		return FALSE;
+	$entries = ldap_get_entries($ldapconn, $result);
+	if ($entries['count'] <= 0)
+		return FALSE;
+	if (empty($entries[0]['memberof']))
+	{
+		return FALSE;
+	}
+	else
+	{
+		for ($i = 0; $i < $entries[0]['memberof']['count']; $i++)
+		{
+			if ($entries[0]['memberof'][$i] == $groupdn)
+				return TRUE;
+			elseif (checkLDAPGroupEx($ldapconn, $entries[0]['memberof'][$i], $groupdn))
+				return TRUE;
+		}
+	}
+	return FALSE;
 };
 */
 

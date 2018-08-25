@@ -13,9 +13,9 @@ if ($conf->getSetting("shelluser") != "shelluser") {
 }
 
 function formatSize($size, $precision = 1) {
-    $base = log($size, 1024);
-    $suffixes = array('B', 'kB', 'MB', 'GB', 'TB');   
-    return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+	$base = log($size, 1024);
+	$suffixes = array('B', 'kB', 'MB', 'GB', 'TB');
+	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 ?>
 			<div style="padding: 0px 20px;">

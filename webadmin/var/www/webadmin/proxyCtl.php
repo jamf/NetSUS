@@ -12,7 +12,7 @@ if (!($_SESSION['isAuthUser'])) {
 
 	include "inc/config.php";
 	include "inc/functions.php";
-	
+
 	function ldapExec($cmd) {
 		return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 	}

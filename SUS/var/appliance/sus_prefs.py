@@ -53,7 +53,7 @@ else:
 		try:
 			value = plistObj[key]
 		except KeyError:
-			value = ""	
+			value = ""
 		if (type(value) is list):
 			for string in value: print string
 		else:
