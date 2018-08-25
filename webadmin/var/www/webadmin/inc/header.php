@@ -24,6 +24,7 @@ $currentUser = getCurrentWebUser();
 
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="refresh" content="<?php print ini_get("session.gc_maxlifetime"); ?>; url=/webadmin/logout.php">
 	<title><?php echo (isset($title) ? $title : "NetSUS"); ?></title>
 	<!-- Roboto Font CSS -->
 	<link href="theme/roboto.font.css" rel="stylesheet" type="text/css">
