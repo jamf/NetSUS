@@ -187,6 +187,9 @@ ZHEREDOC
 	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
 fi
 
+# Relocate default catalogs
+mv /srv/SUS/html/*.sucatalog /var/www/html/
+
 log "OK"
 
 log "Finished deploying SUS"
