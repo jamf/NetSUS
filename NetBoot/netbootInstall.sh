@@ -422,7 +422,7 @@ mkdir -p /usr/local/lib/pybsdp
 cp -R ./resources/pybsdp /usr/local/sbin/ >> $logFile
 cp -R ./resources/lib/pybsdp/* /usr/local/lib/pybsdp/ >> $logFile
 if [ ! -f "/etc/pybsdp.conf" ]; then
-	NBPASS=$(for i in $(grep "01:01:02:08:04:.*.:80" /var/appliance/conf/dhcpd.conf | sed 's/.*option.*01:01:02:08:04:.*.:80:.*:61:66:70:75:73:65:72:3A://g' | awk -F40 '{print $1}' | sed 's/\(.*\)./\1/;s/:/ /g') ; do printf "\x$i" ; done)
+	NBPASS=$(for i in $(grep "01:01:02:08:04:.*.:80" /var/appliance/conf/dhcpd.conf 2>/dev/null | sed 's/.*option.*01:01:02:08:04:.*.:80:.*:61:66:70:75:73:65:72:3A://g' | awk -F40 '{print $1}' | sed 's/\(.*\)./\1/;s/:/ /g') ; do printf "\x$i" ; done)
 	if [[ $NBPASS == "" ]]; then
 		NBPASS=afpuser1
 	fi

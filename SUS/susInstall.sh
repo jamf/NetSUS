@@ -188,7 +188,7 @@ ZHEREDOC
 fi
 
 # Relocate default catalogs
-mv /srv/SUS/html/*.sucatalog /var/www/html/
+mv /srv/SUS/html/*.sucatalog /var/www/html/ 2>/dev/null
 
 log "OK"
 
