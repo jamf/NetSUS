@@ -220,8 +220,6 @@ if ($ssl_certificate_str != "") {
 					<div class="tab-pane active fade in" id="cert-tab">
 
 						<div style="padding: 16px 20px 1px;">
-							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">SSL CERTIFICATE DESCRIPTION</div>
-
 							<h5><strong>Subject Name</strong></h5>
 							<div class="text-muted"><?php echo $ssl_certificate['Owner']; ?></div>
 
@@ -237,8 +235,6 @@ if ($ssl_certificate_str != "") {
 					<div class="tab-pane fade in" id="csr-tab">
 
 						<div style="padding: 16px 20px 1px;">
-							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">CSR DESCRIPTION</div>
-
 							<h5 id="common_name_label"><strong>Common Name</strong> <small>Common Name for the certificate (e.g. "netsus.mycompany.corp").</small></h5>
 							<div class="form-group has-feedback">
 								<input type="text" name="common_name" id="common_name" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
@@ -291,7 +287,6 @@ if ($ssl_certificate_str != "") {
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">MODIFY DESCRIPTION</div>
 							<h5 id="privatekey_label"><strong>Private Key</strong> <small>Paste the content of RSA private key file, including the BEGIN and END tags.</small></h5>
 							<div class="form-group has-feedback">
 								<textarea class="form-control input-sm" name="privatekey" id="privatekey" rows="4" onFocus="validCerts();" onKeyUp="validCerts();" onBlur="validCerts();"><?php echo (isset($_POST['privatekey']) ? $_POST['privatekey'] : ""); ?></textarea>

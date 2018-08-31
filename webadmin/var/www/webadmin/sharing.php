@@ -570,7 +570,7 @@ if ($user['uid'] >= $uid_min && $user['uid'] <= $uid_max) { ?>
 								<div class="text-muted">This action is permanent and cannot be undone.</div>
 								<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
 									<input name="delsharedata" id="delsharedata" class="styled" type="checkbox" value="true">
-									<label><strong>Delete Share Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
+									<label><strong>Delete Share Directory</strong> <span style="font-size: 75%; color: #777;">Delete the share's directory and all data.</span></label>
 								</div>
 							</div>
 							<div class="modal-footer">

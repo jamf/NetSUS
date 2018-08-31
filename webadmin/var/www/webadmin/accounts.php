@@ -594,8 +594,6 @@ foreach(file("/etc/passwd") as $entry) {
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">WEB INTERFACE DESCRIPTION</div>
-
 							<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 								<div class="row">
 									<div class="col-sm-10">
@@ -791,8 +789,6 @@ foreach(file("/etc/passwd") as $entry) {
 								</div>
 							</div>
 
-							<div class="text-muted" style="font-size: 12px; padding-bottom: 16px;">SYSTEM USERS DESCRIPTION</div>
-
 							<table id="sysusers-table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 								<thead>
 									<tr>
@@ -841,15 +837,15 @@ if ($sys_user['type'] != "System") { ?>
 											<option value="Standard" selected>Standard</option>
 											<option value="Sharing">Sharing</option>
 										</select>
-										<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="addsysuserlogin_label"><strong>User Name</strong> <small>Username for the account.</small></h5>
 										<div class="form-group">
 											<input type="text" name="addsysuserlogin" id="addsysuserlogin" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
 										</div>
-										<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="addsysusergecos_label"><strong>Full Name</strong> <small>Name of the user (e.g. "John Smith").</small></h5>
 										<div class="form-group">
 											<input type="text" name="addsysusergecos" id="addsysusergecos" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Optional]" value=""/>
 										</div>
-										<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="addsysuserpass_label"><strong>New Password</strong> <small>Password for the account.</small></h5>
 										<div class="form-group">
 											<input type="password" name="addsysuserpass" id="addsysuserpass" class="form-control input-sm" onFocus="validAddSysUser();" onKeyUp="validAddSysUser();" onBlur="validAddSysUser();" placeholder="[Required]" value=""/>
 										</div>
@@ -876,17 +872,17 @@ if ($sys_user['type'] != "System") { ?>
 									</div>
 									<div class="modal-body">
 										<input type="hidden" name="sysuserlocked" id="sysuserlocked" value=""/>
-										<h5 id="sysusernewuid_label"><strong>User ID</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="sysusernewuid_label"><strong>User ID</strong> <small>The numerical value of the user's ID.</small></h5>
 										<div class="form-group">
 											<input type="hidden" name="sysuseruid" id="sysuseruid" value=""/>
 											<input type="text" name="sysusernewuid" id="sysusernewuid" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 										</div>
-										<h5 id="sysusernewlogin_label"><strong>User Name</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="sysusernewlogin_label"><strong>User Name</strong> <small>Username for the account.</small></h5>
 										<div class="form-group">
 											<input type="hidden" name="sysuserlogin" id="sysuserlogin" value=""/>
 											<input type="text" name="sysusernewlogin" id="sysusernewlogin" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 										</div>
-										<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="sysusergecos_label"><strong>Full Name</strong> <small>Name of the user (e.g. "John Smith").</small></h5>
 										<div class="form-group">
 											<input type="text" name="sysusergecos" id="sysusergecos" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Optional]" value=""/>
 										</div>
@@ -896,14 +892,14 @@ if ($sys_user['type'] != "System") { ?>
 											<option value="<?php echo basename($user_shell); ?>"><?php echo $user_shell; ?></option>
 <?php } ?>
 										</select>
-										<h5 id="sysuserhome_label"><strong>Home Directory</strong> <small>DESCRIPTION</small></h5>
+										<h5 id="sysuserhome_label"><strong>Home Directory</strong> <small>Home directory for the account.</small></h5>
 										<div class="form-group">
 											<input type="text" name="sysuserhome" id="sysuserhome" class="form-control input-sm" onFocus="validSysUser();" onKeyUp="validSysUser();" onBlur="validSysUser();" placeholder="[Required]" value=""/>
 										</div>
 										<input type="hidden" name="sysusertype" id="sysusertype" value=""/>
 										<div id="sysuseradmin_wrapper" class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
 											<input name="sysuseradmin" id="sysuseradmin" class="styled" type="checkbox" value="true" onChange="validSysUser();">
-											<label><strong>Allow User to Administer this Server</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
+											<label><strong>Allow User to Administer this Server</strong></label>
 										</div>
 									</div>
 									<div class="modal-footer">
@@ -953,7 +949,7 @@ if ($sys_user['type'] != "System") { ?>
 										<div class="text-muted">This action is permanent and cannot be undone.</div>
 										<div class="checkbox checkbox-primary checkbox-inline" style="padding-top: 12px;">
 											<input name="userdelhome" id="userdelhome" class="styled" type="checkbox" value="true">
-											<label><strong>Delete Home Directory</strong> <span style="font-size: 75%; color: #777;">DESCRIPTION</span></label>
+											<label><strong>Delete Home Directory</strong> <span style="font-size: 75%; color: #777;">Delete user's home directory and all data.</span></label>
 										</div>
 									</div>
 									<div class="modal-footer">

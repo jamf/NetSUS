@@ -293,7 +293,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 			<form action="networkSettings.php" method="post" name="NetworkSettings" id="NetworkSettings">
 
 				<div style="padding: 70px 20px 16px; background-color: #f9f9f9;">
-					<h5 id="hostname_label"><strong>Hostname</strong> <small>DESCRIPTION.</small></h5>
+					<h5 id="hostname_label"><strong>Hostname</strong> <small>The NetSUS server's host name.</small></h5>
 					<div class="input-group has-feedback">
 						<input type="text" name="hostname" id="hostname" class="form-control input-sm" value="<?php echo getCurrentHostname(); ?>" onFocus="validHostname();" onKeyUp="validHostname();" onBlur="validHostname();"/>
 						<span class="input-group-btn">
@@ -398,7 +398,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 				<hr>
 
 				<div style="padding: 4px 20px; background-color: #f9f9f9;">
-					<h5><strong>Proxy</strong> <small>DESCRIPTION.</small></h5>
+					<h5><strong>Proxy</strong> <small>Configure proxy settings to be used for this server.</small></h5>
 					<div style="padding-bottom: 12px;">Network Proxy: <a data-toggle="modal" data-target="#proxy-modal" href=""><?php echo (isset($proxy[0]) ? $proxy[0].":".$proxy[1] : "Not Configured"); ?></a></div>
 				</div>
 
@@ -463,7 +463,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 						</div>
 					</div>
 
-					<h5><strong>SSH Server</strong> <small>DESCRIPTION.</small></h5>
+					<h5><strong>SSH Server</strong> <small>Allow ssh login to this server.</small></h5>
 					<button type="submit" name="SSH" class="btn btn-primary btn-sm" style="width: 65px;"><?php echo ($ssh_running ? 'Disable' : 'Enable'); ?></button>
 				</div>
 
@@ -488,7 +488,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 						</div>
 					</div>
 
-					<h5><strong>Firewall</strong> <small>DESCRIPTION.</small></h5>
+					<h5><strong>Firewall</strong> <small>Restrict incoming connections to this server.</small></h5>
 					<button type="submit" name="Firewall" class="btn btn-primary btn-sm" style="width: 65px;"><?php echo ($fw_running ? 'Disable' : 'Enable'); ?></button>
 				</div>
 

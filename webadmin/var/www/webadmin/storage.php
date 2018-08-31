@@ -54,8 +54,6 @@ if (strpos($lv_result, 'ERROR') === false) {
 			</nav>
 
 			<div style="padding: 79px 20px 1px; background-color: #f9f9f9;">
-				<div class="text-muted" style="font-size: 12px; padding-bottom: 8px;">STORAGE DESCRIPTION</div>
-
 				<h5><strong>File System</strong></h5>
 
 				<div class="row">
