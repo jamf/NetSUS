@@ -2,15 +2,6 @@
 
 case $1 in
 
-getdhcpstatus)
-SERVICE=dhcpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
-	echo "true"
-else
-	echo "false"
-fi
-;;
-
 getsmbstatus)
 SERVICE=smbd
 if [ -e "/etc/system-release" ]; then

@@ -88,14 +88,14 @@ if (isset($_POST['delsubnet'])) {
 // ####################################################################
 
 // Subnet Check
-$subnets = $conf->getSubnets();
+/* $subnets = $conf->getSubnets();
 $currentIP = trim(getCurrentIP());
 $currentNetmask = trim(getCurrentNetmask());
 $currentNetwork = trim(getNetAddress($currentIP, $currentNetmask));
 $currentSubnet = array("subnet" => $currentNetwork, "netmask" => $currentNetmask);
 if (!in_array($currentSubnet, $subnets)) {
 	$subnet_error = true;
-}
+} */
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
 			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
@@ -285,12 +285,12 @@ if (sizeof($conf->getSubnets()) == 0) { ?>
 							<div class="modal-body">
 								<h5 id="subnet_label"><strong>Subnet</strong> <small>IP or Network address.</small></h5>
 								<div class="form-group">
-									<input type="text" name="subnet" id="subnet" class="form-control input-sm" value="<?php echo ($subnet_error ? $currentNetwork : ""); ?>"/>
+									<input type="text" name="subnet" id="subnet" class="form-control input-sm" value="<?php // echo ($subnet_error ? $currentNetwork : ""); ?>"/>
 								</div>
 
 								<h5 id="netmask_label"><strong>Netmask</strong> <small>Subnet mask for network.</small></h5>
 								<div class="form-group">
-									<input type="text" name="netmask" id="netmask" class="form-control input-sm" value="<?php echo ($subnet_error ? $currentNetmask : ""); ?>"/>
+									<input type="text" name="netmask" id="netmask" class="form-control input-sm" value="<?php // echo ($subnet_error ? $currentNetmask : ""); ?>"/>
 								</div>
 							</div>
 							<div class="modal-footer">

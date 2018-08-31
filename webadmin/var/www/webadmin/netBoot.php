@@ -67,14 +67,14 @@ if (isset($_POST['savenbi'])) {
 // ####################################################################
 
 // Subnet Check
-$subnets = $conf->getSubnets();
+/* $subnets = $conf->getSubnets();
 $currentIP = trim(getCurrentIP());
 $currentNetmask = trim(getCurrentNetmask());
 $currentNetwork = trim(getNetAddress($currentIP, $currentNetmask));
 $currentSubnet = array("subnet" => $currentNetwork, "netmask" => $currentNetmask);
 if (!in_array($currentSubnet, $subnets)) {
 	$subnet_error = true;
-}
+} */
 
 // Service Status
 $dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
@@ -305,7 +305,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 						</div>
 					</div>
 
-					<!-- <div id="dhcp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($dhcp_running || $default_image == "" || sizeof($subnets) == 0 ? "hidden" : ""); ?>">
+					<!-- <div id="dhcp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php // echo ($dhcp_running || $default_image == "" || sizeof($subnets) == 0 ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="startdhcp" name="startdhcp" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The DHCP service is not running. <a href="" onClick="startDHCP();">Click here to start it</a>.</div>
@@ -355,7 +355,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 							<div class="col-sm-2">
 								<div class="dataTables_paginate">
 									<div class="btn-group">
-										<button type="button" id="uploadnbi" class="btn btn-primary btn-sm" onClick="ajaxPost('sharingCtl.php', 'smb=enable'); window.location.assign('smb://smbuser@<?php echo $currentIP; ?>/NetBoot');"><span class="glyphicon glyphicon-plus"></span> Upload</button>
+										<button type="button" id="uploadnbi" class="btn btn-primary btn-sm" onClick="ajaxPost('sharingCtl.php', 'smb=enable'); window.location.assign('smb://smbuser@<?php echo $_SERVER['SERVER_NAME']; ?>/NetBoot');"><span class="glyphicon glyphicon-plus"></span> Upload</button>
 									</div>
 								</div>
 							</div>

@@ -13,8 +13,6 @@ function shareExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-$netboot_running = (trim(shareExec("getdhcpstatus")) === "true");
-
 $smb_running = (trim(shareExec("getsmbstatus")) === "true");
 $smb_conns = trim(shareExec("smbconns"));
 
