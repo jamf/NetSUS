@@ -277,29 +277,29 @@ fi
 if service pybsdp status 2>&- | grep -q running ; then
 	service pybsdp restart 2>&-
 fi
-if [ -f "/var/appliance/conf/dhcpd.conf" ]; then
-	ip=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }')
-	afppw=$(echo ${2} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
-	afppwlen=$(echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c)
-	afppwlen=$(expr ${afppwlen} / 2)
-	iphex=$(echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
-	num=$(echo ${iphex} | sed 's/://g' | wc -c)
-	num=$(expr ${num} / 2)
-	num=$(expr ${num} + 23)
-	num=$(expr ${num} + ${afppwlen})
-	lengthhex=$(awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }')
-	newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:${afppw}
-	imageid=$(grep '04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
-	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
-fi
-if [ -f "/etc/dhcpd.conf" ]; then
-	imageid=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
-	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
-fi
-if ps acx | grep -v grep | grep -q dhcpd ; then
-	killall dhcpd > /dev/null 2>&1
-	/usr/local/sbin/dhcpd > /dev/null 2>&1
-fi
+# if [ -f "/var/appliance/conf/dhcpd.conf" ]; then
+# 	ip=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }')
+# 	afppw=$(echo ${2} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
+# 	afppwlen=$(echo ${afppw} | sed 's/://g' | tr -d ' ' | wc -c)
+# 	afppwlen=$(expr ${afppwlen} / 2)
+# 	iphex=$(echo ${ip} | xxd -c 1 -ps -u | tr '\n' ':' | sed 's/0A://g' | sed 's/\(.*\)./\1/')
+# 	num=$(echo ${iphex} | sed 's/://g' | wc -c)
+# 	num=$(expr ${num} / 2)
+# 	num=$(expr ${num} + 23)
+# 	num=$(expr ${num} + ${afppwlen})
+# 	lengthhex=$(awk -v dec=${num} 'BEGIN { n=split(dec,d,"."); for(i=1;i<=n;i++) printf ":%02X",d[i]; print "" }')
+# 	newafp=61:66:70:3A:2F:2F:61:66:70:75:73:65:72:3A:${afppw}
+# 	imageid=$(grep '04:02:FF:FF:07:04' /var/appliance/conf/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
+# 	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /var/appliance/conf/dhcpd.conf
+# fi
+# if [ -f "/etc/dhcpd.conf" ]; then
+# 	imageid=$(grep '04:02:FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*04:02:FF:FF:07:04://g' | cut -c1-11)
+# 	sed -i "s/01:01:02:08:04:${imageid}:80:.*/01:01:02:08:04:${imageid}:80${lengthhex}:${newafp}:40:${iphex}:2F:4E:65:74:42:6F:6F:74:81:11:4E:65:74:42:6F:6F:74:30:30:31:2F:53:68:61:64:6F:77;/g" /etc/dhcpd.conf
+# fi
+# if ps acx | grep -v grep | grep -q dhcpd ; then
+# 	killall dhcpd > /dev/null 2>&1
+# 	/usr/local/sbin/dhcpd > /dev/null 2>&1
+# fi
 ;;
 
 addshelluser)
