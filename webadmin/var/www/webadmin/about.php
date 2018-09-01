@@ -36,11 +36,35 @@ $install_type = trim(suExec("getInstallType"));
 					<h3>Open Source Acknowledgments</h3>
 					<div class="about">
 
+						<p class="bold">Ace</p>
+						<p><a href="https://ace.c9.io/" target="_blank">https://ace.c9.io/</a></p>
+
+						<p class="bold">Bootstrap</p>
+						<p><a href="https://getbootstrap.com/" target="_blank">https://getbootstrap.com/</a></p>
+
+						<p class="bold">Bootstrap DateTimePicker</p>
+						<p><a href="https://eonasdan.github.io/bootstrap-datetimepicker/" target="_blank">https://eonasdan.github.io/bootstrap-datetimepicker/</a></p>
+
+						<p class="bold">Bootstrap Toggle</p>
+						<p><a href="http://www.bootstraptoggle.com/" target="_blank">http://www.bootstraptoggle.com/</a></p>
+
+						<p class="bold">DataTables</p>
+						<p><a href="https://datatables.net/" target="_blank">https://datatables.net/</a></p>
+
+						<p class="bold">jQuery</p>
+						<p><a href="https://jquery.com/" target="_blank">https://jquery.com/</a></p>
+
+						<p class="bold">Moment.js</p>
+						<p><a href="https://momentjs.com/" target="_blank">https://momentjs.com/</a></p>
+
+						<p class="bold">pybsdp</p>
+						<p><a href="https://github.com/cabal95/pybsdp/" target="_blank">https://github.com/cabal95/pybsdp/</a></p>
+
 						<p class="bold">Reposado</p>
 						<p><a href="https://github.com/wdas/reposado/" target="_blank">https://github.com/wdas/reposado/</a></p>
 
-						<p class="bold">ISC's DHCP</p>
-						<p><a href="http://www.isc.org/software/dhcp/" target="_blank">http://www.isc.org/software/dhcp/</a></p>
+						<p class="bold">timezonepicker</p>
+						<p><a href="https://github.com/quicksketch/timezonepicker/" target="_blank">https://github.com/quicksketch/timezonepicker/</a></p>
 
 						<p class="bold"><?php echo $os_name; ?></p>
 <?php if ($home_url != '') { ?>
@@ -59,17 +83,18 @@ if ($install_type == 'apt-get') { ?>
 							} else {
 								echo "<li>libapache2-mod-php</li>"; }
 							?>
+							<li>lvm2</li>
 							<li>netatalk</li>
-							<!-- <li>nfs-kernel-server</li> -->
-							<li>openbsd-inetd</li>
+							<li>nfs-kernel-server</li>
+							<li>ntp</li>
 							<li>parted</li>
 							<?php if (version_compare(phpversion(), "7.0") < 0) {
 								echo "<li>php5-ldap</li>";
 							} else {
 								echo "<li>php-ldap</li>";
 								echo "<li>php-xml</li>";
+								echo "<li>php-zip</li>";
 							} ?>
-							<li>policycoreutils</li>
 							<li>python-configparser</li>
 							<li>python-m2crypto</li>
 							<li>python-pycurl</li>
@@ -87,10 +112,12 @@ if ($install_type == 'yum') { ?>
 							<li>dialog</li>
 							<li>dmidecode</li>
 							<li>expect</li>
+							<li>lsof</li>
+							<li>lvm2</li>
 							<li>m2crypto</li>
 							<li>mod_ssl</li>
 							<li>netatalk</li>
-							<!-- <li>nfs-utils</li> -->
+							<li>nfs-utils</li>
 							<li>ntpdate</li>
 							<li>openldap-servers</li>
 							<li>parted</li>
