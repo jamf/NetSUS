@@ -4,7 +4,7 @@ case $1 in
 
 getldapproxystatus)
 SERVICE=slapd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
+if pgrep -x "$SERVICE" > /dev/null; then
 	echo "true"
 else
 	echo "false"

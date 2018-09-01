@@ -159,13 +159,13 @@ fi
 if ps acx | grep -v grep | grep -q dhcpd; then
   start_bsdp="true"
 fi
-if ps acx | grep -v grep | grep -q afpd; then
+if pgrep -x "afpd" > /dev/null; then
   start_afp="true"
 fi
-if ps acx | grep -v grep | grep -q nfsd; then
+if pgrep -x "nfsd" > /dev/null; then
   start_nfs="true"
 fi
-if ps acx | grep -v grep | grep -q slapd; then
+if pgrep -x "slapd" > /dev/null; then
   start_ldap="true"
 fi
 

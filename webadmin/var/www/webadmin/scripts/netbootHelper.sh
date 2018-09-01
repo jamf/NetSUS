@@ -68,8 +68,7 @@ fi
 ;;
 
 getdhcpstatus)
-SERVICE=dhcpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
+if ps acx | grep -v grep | grep -q dhcpd ; then
 	echo "true"
 else
 	echo "false"
@@ -111,7 +110,7 @@ fi
 
 getnfsstatus)
 SERVICE=nfsd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
+if pgrep -x "$SERVICE" > /dev/null; then
 	echo "true"
 else
 	echo "false"
@@ -120,7 +119,7 @@ fi
 
 getafpstatus)
 SERVICE=afpd
-if ps acx | grep -v grep | grep -q $SERVICE ; then
+if pgrep -x "$SERVICE" > /dev/null; then
 	echo "true"
 else
 	echo "false"
