@@ -831,4 +831,15 @@ validCertChain)
 echo "$(openssl verify -CAfile $2 $3 | grep '^error')"
 ;;
 
+backupConf)
+if [ "$(getent passwd www-data)" != '' ]; then
+	www_user=www-data
+elif [ "$(getent passwd apache)" != '' ]; then
+	www_user=apache
+fi
+tar czf /tmp/backup.tar.gz /var/appliance/conf/ /var/lib/reposado/preferences.plist
+chown $www_user /tmp/backup.tar.gz
+chmod u+w /tmp/backup.tar.gz
+;;
+
 esac
