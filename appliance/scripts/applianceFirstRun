@@ -16,6 +16,8 @@ if [ ! -f "/var/appliance/.applianceSetupDone" ]; then
 		fi
 	fi
 	touch /var/appliance/.applianceSetupDone
+	sed -i '/applianceFirstRun/d' /etc/rc.local
+	rm -f "${0}"
 fi
 
 exit 0
