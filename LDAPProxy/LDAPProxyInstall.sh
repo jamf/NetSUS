@@ -7,6 +7,7 @@ apt_install() {
 	if [[ $(apt-cache -n search ^${1}$ | awk '{print $1}' | grep ^${1}$) == "$1" ]] && [[ $(dpkg -s $1 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
 		apt-get -qq -y install $1 >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -16,6 +17,7 @@ yum_install() {
 	if yum -q list $1 &>- && [[ $(rpm -qa $1) == "" ]] ; then
 		yum install $1 -y -q >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
