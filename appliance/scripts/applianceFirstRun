@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ ! -f "/var/appliance/.applianceSetupDone" ]; then
+	active=0
+	for i in $(ip link | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | grep -w 'BROADCAST' | awk -F ': ' '{print $2}'); do
+		if grep -q "iface ${i} inet" /etc/network/interfaces; then
+			active=1
+		fi
+	done
+	if [ ${active} -eq 0 ]; then
+		cfg=$(grep 'iface' /etc/network/interfaces | grep -v loopback | head -1 | awk '{print $2}')
+		iface=$(ip link | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | grep -w 'BROADCAST' | head -1 | awk -F ': ' '{print $2}')
+		if [ "${cfg}" != "${iface}" ]; then
+			sed -i "s/${cfg}/${iface}/g" /etc/network/interfaces
+			service networking restart
+		fi
+	fi
+	touch /var/appliance/.applianceSetupDone
+fi
+
+exit 0
