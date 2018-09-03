@@ -114,7 +114,7 @@ foreach(file("/etc/passwd") as $entry) {
 			array_push($sys_user['groups'], $sys_group['name']);
 		}
 	}
-	if ($sys_user['uid'] < $uid_min || $sys_user['uid'] > $uid_max) {
+	if ($sys_user['name'] != "shelluser" && ($sys_user['uid'] < $uid_min || $sys_user['uid'] > $uid_max)) {
 		$sys_user['type'] = "System";
 	} elseif ($sys_user['shell'] == "false" || $sys_user['shell'] == "nologin") {
 		$sys_user['type'] = "Sharing";
@@ -475,7 +475,7 @@ foreach(file("/etc/passwd") as $entry) {
 					var sysuserhome = document.getElementById('sysuserhome');
 					var sysusertype = document.getElementById('sysusertype');
 					var sysuseradmin = document.getElementById('sysuseradmin');
-					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax) {
+					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && (sysusernewlogin.value == "shelluser" || sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax)) {
 						hideError(sysusernewuid, 'sysusernewuid_label');
 					} else {
 						showError(sysusernewuid, 'sysusernewuid_label');
@@ -513,7 +513,7 @@ foreach(file("/etc/passwd") as $entry) {
 					} else {
 						sysuseradmin.disabled = false;
 					}
-					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax && /^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (syslogins.indexOf(sysusernewlogin.value) == -1 || sysusernewlogin.value == sysuserlogin.value) && /^[^:]{0,128}$/.test(sysusergecos.value) && (sysusertype.value == "Sharing" || sysusertype.value != "Sharing" && /^(\/)[^\0:]*$/.test(sysuserhome.value) && sysuserhome.value != "/dev/null")) {
+					if (sysusernewuid.value == parseInt(sysusernewuid.value) && (sysuids.indexOf(parseInt(sysusernewuid.value)) == -1 || sysusernewuid.value == sysuseruid.value) && (sysusernewlogin.value == "shelluser" || sysusernewuid.value >= sysuidmin && sysusernewuid.value <= sysuidmax) && /^[a-z_][a-z0-9_-]{1,31}$/.test(sysusernewlogin.value) && (syslogins.indexOf(sysusernewlogin.value) == -1 || sysusernewlogin.value == sysuserlogin.value) && /^[^:]{0,128}$/.test(sysusergecos.value) && (sysusertype.value == "Sharing" || sysusertype.value != "Sharing" && /^(\/)[^\0:]*$/.test(sysuserhome.value) && sysuserhome.value != "/dev/null")) {
 						$('#savesysuser').prop('disabled', false);
 					} else {
 						$('#savesysuser').prop('disabled', true);
