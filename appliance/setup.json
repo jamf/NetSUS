@@ -108,7 +108,7 @@
                     "modifyvm",
                     "{{.Name}}",
                     "--nic1",
-                    "bridged"
+                    "nat"
                 ],
                 [
                     "modifyvm",
