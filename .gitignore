@@ -9,3 +9,4 @@ motd.legal-displayed
 packer_cache
 output-virtualbox-iso
 
+appliance/iso/ubuntu-16.04.5-server-amd64.iso
