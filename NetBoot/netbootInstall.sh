@@ -419,7 +419,9 @@ printf '
 fi
 
 # BSDP Support
-service pybsdp stop >> $logFile 2>&1
+if service pybsdp status 2>&- | grep -q running; then
+	service pybsdp stop >> $logFile 2>&1
+fi
 mkdir -p /usr/local/lib/pybsdp
 cp -R ./resources/pybsdp /usr/local/sbin/ >> $logFile
 cp -R ./resources/lib/pybsdp/* /usr/local/lib/pybsdp/ >> $logFile

@@ -305,7 +305,7 @@ elif [[ $(which chkconfig 2>&-) != "" ]]; then
     chkconfig pybsdp on >> $logFile 2>&1
     service pybsdp start >> $logFile 2>&1
   else
-    chkconfig pybsdp off >> $logFile 2>&1
+    #chkconfig pybsdp off >> $logFile 2>&1
     service pybsdp stop >> $logFile 2>&1
   fi
   if [[ $start_afp == "true" ]]; then
