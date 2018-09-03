@@ -64,10 +64,6 @@ if (!($_SESSION["isAuthUser"])) {
 		}
 	}
 
-	if (isset($_POST['proxy'])) {
-		susExec("setProxy ".$_POST['proxy']);
-	}
-
 	if (isset($_POST['catalogurls'])) {
 		$apple_catalog_urls_str = str_replace(",", " ", $_POST['catalogurls']);
 		susExec("setCatalogURLs \"".$apple_catalog_urls_str."\"");

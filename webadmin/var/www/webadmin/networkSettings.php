@@ -13,10 +13,7 @@ $ssh_running = (trim(suExec("getSSHstatus")) == "true");
 $fw_running = (trim(suExec("getFirewallstatus")) == "true");
 
 $iface_msg = "";
-$ssh_success = "";
-$ssh_warning = "";
 $ssh_error = "";
-$fw_success = "";
 $fw_warning = "";
 $fw_error = "";
 
@@ -58,15 +55,11 @@ if (isset($_POST['SSH'])) {
 		$ssh_running = (trim(suExec("getSSHstatus")) == "true");
 		if ($ssh_running) {
 			$ssh_error = "Failed to disable SSH.";
-		} else {
-			$ssh_warning = "SSH disabled.";
 		}
 	} else {
 		suExec("enableSSH");
 		$ssh_running = (trim(suExec("getSSHstatus")) == "true");
-		if ($ssh_running) {
-			$ssh_success = "SSH Enabled.";
-		} else {
+		if (!$ssh_running) {
 			$ssh_error = "Failed to enable SSH.";
 		}
 	}
@@ -78,15 +71,11 @@ if (isset($_POST['Firewall'])) {
 		$fw_running = (trim(suExec("getFirewallstatus")) == "true");
 		if ($fw_running) {
 			$fw_error = "Failed to disable Firewall.";
-		} else {
-			$fw_warning = "Firewall disabled.";
 		}
 	} else {
 		suExec("enableFirewall");
 		$fw_running = (trim(suExec("getFirewallstatus")) == "true");
-		if ($fw_running) {
-			$fw_success = "Firewall Enabled.";
-		} else {
+		if (!$fw_running) {
 			$fw_error = "Failed to enable Firewall.";
 		}
 	}
@@ -318,9 +307,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 									<thead>
 										<tr>
 											<th>Interface</th>
-											<!-- <th>Status</th> -->
 											<th>MAC Address</th>
-											<!-- <th>Method</th> -->
 											<th>Address</th>
 											<th>Netmask</th>
 											<th>Gateway</th>
@@ -330,9 +317,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 <?php foreach ($ifaces as $key => $value) { ?>
 										<tr>
 											<td><a data-toggle="modal" data-target="#<?php echo $key; ?>-modal" href=""><?php echo $key; ?></a></td>
-											<!-- <td><?php echo $value['state']; ?></td> -->
 											<td><?php echo $value['hwaddr']; ?></td>
-											<!-- <td><?php echo $value['method']; ?></td> -->
 											<td><?php echo (isset($value['ipaddr']) ? $value['ipaddr'] : ""); ?></td>
 											<td><?php echo (isset($value['netmask']) ? $value['netmask'] : ""); ?></td>
 											<td><?php echo (isset($value['gateway']) ? $value['gateway'] : ""); ?></td>
@@ -445,18 +430,6 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 				<hr>
 
 				<div style="padding: 4px 20px 16px;">
-					<!-- <div style="margin-top: 12px; margin-bottom: 10px; border-color: #4cae4c;" class="panel panel-success <?php echo (empty($ssh_success) ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $ssh_success; ?></div>
-						</div>
-					</div>
-
-					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #eea236;" class="panel panel-warning <?php echo (empty($ssh_warning) ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-warning glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $ssh_warning; ?></div>
-						</div>
-					</div> -->
-
 					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($ssh_danger) ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $ssh_danger; ?></div>
@@ -470,18 +443,6 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 				<hr>
 
 				<div style="padding: 4px 20px 16px; background-color: #f9f9f9;">
-					<!-- <div style="margin-top: 12px; margin-bottom: 10px; border-color: #4cae4c;" class="panel panel-success <?php echo (empty($fw_success) ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $fw_success; ?></div>
-						</div>
-					</div>
-
-					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #eea236;" class="panel panel-warning <?php echo (empty($fw_warning) ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-warning glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $fw_warning; ?></div>
-						</div>
-					</div> -->
-
 					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($fw_danger) ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $fw_danger; ?></div>

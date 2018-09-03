@@ -102,11 +102,6 @@ if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule
 }
 $syncschedule = $conf->getSetting("syncschedule");
 
-// Proxy Details
-$proxy_str = trim(susExec("getProxy"));
-$proxy = explode(":", $proxy_str);
-
-
 // SUS Status
 $sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
 $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
@@ -184,106 +179,6 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 					element.checked = checked;
 				}
 
-				function validProxy(hostId, portId, userId, passId, verifyId) {
-					var host = document.getElementById(hostId);
-					var port = document.getElementById(portId);
-					var user = document.getElementById(userId);
-					var pass = document.getElementById(passId);
-					var verify = document.getElementById(verifyId);
-					var hostLabelId = hostId + "_label";
-					var portLabelId = hostLabelId;
-					var userLabelId = userId + "_label";
-					var passLabelId = passId + "_label";
-					var verifyLabelId = verifyId + "_label";
-					if (host.value == "" && port.value == "") {
-						host.placeholder = "[Optional]";
-						port.placeholder = "[Optional]";
-						user.disabled = true;
-						pass.disabled = true;
-						verify.disabled = true;
-						hideSuccess(user);
-						hideSuccess(pass);
-						hideSuccess(verify);
-						hideError(host, hostLabelId);
-						hideError(port, portLabelId);
-						hideError(user, userLabelId);
-						hideError(pass, passLabelId);
-						hideError(verify, verifyLabelId);
-					} else {
-						host.placeholder = "[Required]";
-						port.placeholder = "[Required]";
-						user.disabled = false;
-						pass.disabled = false;
-						verify.disabled = false;
-						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value)) {
-							hideError(host, hostLabelId);
-						} else {
-							showError(host, hostLabelId);
-						}
-						if (port.value != "" && port.value == parseInt(port.value) && port.value >= 0 && port.value <= 65535) {
-							hideError(port, portLabelId);
-						} else {
-							showError(port, portLabelId);
-						}
-						if (user.value == "" && pass.value == "" && verify.value == "") {
-							user.placeholder = "[Optional]";
-							pass.placeholder = "[Optional]";
-							verify.placeholder = "[Optional]";
-							hideError(user, userLabelId);
-							hideError(pass, passLabelId);
-							hideError(verify, verifyLabelId);
-						} else {
-							user.placeholder = "[Required]";
-							pass.placeholder = "[Required]";
-							verify.placeholder = "[Required]";
-							if (/^.{1,128}$/.test(user.value)) {
-								hideError(user, userLabelId);
-							} else {
-								showError(user, userLabelId);
-							}
-							if (/^.{1,128}$/.test(pass.value)) {
-								hideError(pass, passLabelId);
-							} else {
-								showError(pass, passLabelId);
-							}
-							if (/^.{1,128}$/.test(verify.value) && verify.value == pass.value) {
-								hideError(verify, verifyLabelId);
-							} else {
-								showError(verify, verifyLabelId);
-							}
-						}
-					}
-				}
-
-				function updateProxy(hostId, portId, userId, passId, verifyId) {
-					var host = document.getElementById(hostId);
-					var port = document.getElementById(portId);
-					var user = document.getElementById(userId);
-					var pass = document.getElementById(passId);
-					var verify = document.getElementById(verifyId);
-					if (host.value == "" && port.value == "") {
-						ajaxPost("susCtl.php", "proxy=");
-					}
-					if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(host.value) && port.value != "" && port.value == parseInt(port.value) && port.value >= 0 && port.value <= 65535) {
-						if (user.value == "" && pass.value == "" && verify.value == "") {
-							hideSuccess(host);
-							hideSuccess(port);
-							ajaxPost("susCtl.php", "proxy="+host.value+" "+port.value);
-							showSuccess(host);
-							showSuccess(port);
-						}
-						if (/^.{1,128}$/.test(user.value) && /^.{1,128}$/.test(pass.value) && verify.value == pass.value) {
-							hideSuccess(user);
-							hideSuccess(pass);
-							hideSuccess(verify);
-							ajaxPost("susCtl.php", "proxy="+host.value+" "+port.value+" "+user.value+" "+pass.value);
-							showSuccess(user);
-							showSuccess(pass);
-							showSuccess(verify);
-						}
-					}
-				}
-
 				function validCatalogURL(element, labelId = false) {
 					if (validCatalogURLs.indexOf(element.value) >= 0 && appleCatalogURLs.indexOf(element.value) == -1) {
 						hideError(element, labelId);
@@ -329,10 +224,7 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 						$('#add_other').prop('disabled', false);
 						$('#delete_other').prop('disabled', false);
 						$('[name="syncsch"]').prop('disabled', false);
-						$('#proxyhost').prop('disabled', false);
-						$('#proxyport').prop('disabled', false);
 						ajaxPost('susCtl.php', 'service=enable');
-						// validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');
 					} else {
 						$('#sus').addClass('hidden');
 						$('#baseurl').prop('disabled', true);
@@ -343,11 +235,6 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 						$('[name="syncsch"]').prop('disabled', true);
 						$('[name="syncsch"]').prop('checked', false);
 						ajaxPost('susCtl.php', 'syncschedule=Off');
-						$('#proxyhost').prop('disabled', true);
-						$('#proxyport').prop('disabled', true);
-						$('#proxyuser').prop('disabled', true);
-						$('#proxypass').prop('disabled', true);
-						$('#proxyverify').prop('disabled', true);
 						ajaxPost('susCtl.php', 'service=disable');
 					}
 				}
@@ -523,36 +410,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 			</div>
 
 			<hr>
-<!--
-			<div style="padding: 9px 20px 1px;">
-				<h5 id="proxyhost_label"><strong>Proxy Server</strong> <small>Hostname or IP address, and port number for the proxy server.</small></h5>
-				<div class="row">
-					<div class="col-xs-8" style="padding-right: 0px; width: 73%;">
-						<div class="has-feedback">
-							<input type="text" name="proxyhost" id="proxyhost" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[0]) ? $proxy[0] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" />
-						</div>
-					</div>
-					<div class="col-xs-1 text-center" style="padding-left: 0px; padding-right: 0px; width: 2%;">:</div>
-					<div class="col-xs-3" style="padding-left: 0px;">
-						<div class="has-feedback">
-							<input type="text" name="proxyport" id="proxyport" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[1]) ? $proxy[1] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" />
-						</div>
-					</div>
-				</div>
-				<h5 id="proxyuser_label"><strong>Authentication</strong> <small>Username used to connect to the proxy.</small></h5>
-				<div class="form-group has-feedback">
-					<input type="text" name="proxyuser" id="proxyuser" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[2]) ? $proxy[2] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
-				</div>
-				<h5 id="proxypass_label"><strong>Password</strong> <small>Password used to authenticate with the proxy.</small></h5>
-				<div class="form-group has-feedback">
-					<input type="password" name="proxypass" id="proxypass" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[3]) ? $proxy[3] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); hideSuccess(document.getElementById('proxyverify')); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
-				</div>
-				<h5 id="proxyverify_label"><strong>Verify Password</strong></h5>
-				<div class="form-group has-feedback">
-					<input type="password" name="proxyverify" id="proxyverify" class="form-control input-sm" placeholder="[Optional]" value="<?php echo (isset($proxy[3]) ? $proxy[3] : ""); ?>" onFocus="validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onKeyUp="hideSuccess(this); hideSuccess(document.getElementById('proxypass')); validProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" onChange="updateProxy('proxyhost', 'proxyport', 'proxyuser', 'proxypass', 'proxyverify');" <?php echo (empty($proxy[0]) ? "disabled" : ""); ?>/>
-				</div>
-			</div>
--->
+
 			<!-- Sync Modal -->
 			<div class="modal" id="sync-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 				<div class="modal-dialog" role="document">

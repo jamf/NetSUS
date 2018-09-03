@@ -1,4 +1,4 @@
- <?php
+<?php
 
 include "inc/config.php";
 include "inc/auth.php";

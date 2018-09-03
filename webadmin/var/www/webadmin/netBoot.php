@@ -19,11 +19,6 @@ $nbi_warning = false;
 $netbootdir = "/srv/NetBoot/NetBootSP0";
 $default_image = $conf->getSetting("netbootimage");
 
-/* // Start DHCP
-if (!empty($_POST['startdhcp'])) {
-	netbootExec("startdhcp");
-} */
-
 // Start BSDP
 if (!empty($_POST['startbsdp'])) {
 	netbootExec("startbsdp");
@@ -66,16 +61,6 @@ if (isset($_POST['savenbi'])) {
 // End of GET/POST parsing
 // ####################################################################
 
-// Subnet Check
-/* $subnets = $conf->getSubnets();
-$currentIP = trim(getCurrentIP());
-$currentNetmask = trim(getCurrentNetmask());
-$currentNetwork = trim(getNetAddress($currentIP, $currentNetmask));
-$currentSubnet = array("subnet" => $currentNetwork, "netmask" => $currentNetmask);
-if (!in_array($currentSubnet, $subnets)) {
-	$subnet_error = true;
-} */
-
 // Service Status
 $dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
 if ($dhcp_running) {
@@ -101,8 +86,6 @@ foreach($netbootdirlist as $key) {
 			$nfs_error = true;
 			if ($nbi_list[$key]->IsDefault) {
 				$nbi_list[$key]->IsDefault = false;
-				// netbootExec("stopdhcp");
-				// $dhcp_running = false;
 				netbootExec("setNBIproperty \"".$key."\" IsDefault false");
 				$default_image = "";
 				$conf->deleteSetting("netbootimage");
@@ -118,8 +101,6 @@ foreach($netbootdirlist as $key) {
 if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->IsEnabled != true) {
 	$default_image = "";
 	$conf->deleteSetting("netbootimage");
-	// netbootExec("stopdhcp");
-	// $dhcp_running = false;
 }
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
@@ -139,11 +120,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 			</style>
 
 			<script type="text/javascript">
-				/* function startDHCP() {
-					$('#startdhcp').val('true');
-					$('#NetBoot').submit();
-				} */
-
 				function startBSDP() {
 					$('#startbsdp').val('true');
 					$('#NetBoot').submit();
@@ -184,7 +160,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 						ajaxPost('netbootCtl.php', 'setenabled='+element.value);
 					} else {
 						if ($('input[name="Default"][value="' + element.value + '"]').prop('checked') == true) {
-							// ajaxPost('netbootCtl.php', 'dhcp=stop');
 							$('input[name="Default"][value="' + element.value + '"]').prop('checked', false);
 							ajaxPost('netbootCtl.php', 'setdefaultoff='+element.value);
 							$('#service_info').removeClass('hidden');
@@ -196,7 +171,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 
 				function toggleDefault(element) {
 					var checked = element.checked;
-					// ajaxPost('netbootCtl.php', 'dhcp=stop');
 					elements = document.getElementsByName('Default');
 					for (i = 0; i < elements.length; i++) {
 						elements[i].checked = false;
@@ -205,7 +179,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 					element.checked = checked;
 					if (checked) {
 						ajaxPost('netbootCtl.php', 'setdefault='+element.value);
-						// ajaxPost('netbootCtl.php', 'dhcp=start');
 						$('#service_info').addClass('hidden');
 					} else {
 						$('#service_info').removeClass('hidden');
@@ -288,26 +261,12 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 			<form action="netBoot.php" method="post" name="NetBoot" id="NetBoot">
 
 				<div style="padding: 79px 20px 1px; background-color: #f9f9f9; overflow-x: auto;">
-					<!-- <div id="subnet_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($subnet_error ? ($conf->getSetting("pybsdp") == "true" ? "hidden" : "") : "hidden"); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Ensure you have added a Subnet that includes the IP address of the NetBoot server. <a href="netbootSettings.php">Click here to resolve this</a>.</div>
-						</div>
-					</div> -->
-
-					<!-- <div id="bsdp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($conf->getSetting("pybsdp") == "true" ? ($bsdp_running ? "hidden" : "") : "hidden"); ?>"> -->
 					<div id="bsdp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($bsdp_running ? "hidden" : ""); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="startbsdp" name="startbsdp" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The BSDP service is not running. <a href="" onClick="startBSDP();">Click here to start it</a>.</div>
 						</div>
 					</div>
-
-					<!-- <div id="dhcp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php // echo ($dhcp_running || $default_image == "" || sizeof($subnets) == 0 ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<input type="hidden" id="startdhcp" name="startdhcp" value="">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The DHCP service is not running. <a href="" onClick="startDHCP();">Click here to start it</a>.</div>
-						</div>
-					</div> -->
 
 					<div id="tftp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($tftp_running ? "hidden" : ""); ?>">
 						<div class="panel-body">
@@ -335,12 +294,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Unable to read NBImageInfo.plist. Edit the Image to correct this issue.</div>
 						</div>
 					</div>
-
-					<!-- <div id="service_info" style="margin-top: 0px; margin-bottom: 16px;" class="panel panel-primary <?php echo ($dhcp_running || $default_image != "" || $conf->getSetting("pybsdp") == "true" ? "hidden" : ""); ?>">
-						<div class="panel-body">
-							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>The NetBoot service will start when the default NetBoot Image is set.</div>
-						</div>
-					</div> -->
 
 					<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
 						<div class="row">
