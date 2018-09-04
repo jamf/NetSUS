@@ -11,15 +11,6 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 
 	logNoNewLine "Checking for required Ubuntu binaries..."
 
-	# Checking for policycoreutils
-	if [[ $(dpkg -s policycoreutils 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
-		apt-get -qq -y install policycoreutils >> $logFile
-		if [[ $? -ne 0 ]]; then
-			log "Error: Failed to install policycoreutils."
-			exit 1
-		fi
-	fi
-
 	# Checking for software-properties-common
 	if [[ $(dpkg -s software-properties-common 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
 		apt-get -qq -y install software-properties-common >> $logFile
@@ -29,8 +20,6 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 		fi
 	fi
 
-	# Ensure that the package lists are re-created to avoid installation failure
-	# rm -rf /var/lib/apt/lists/*
 	# Update package lists
 	add-apt-repository universe >> $logFile
 	apt-get -q update >> $logFile 2>&1
@@ -38,6 +27,17 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 		log "Error: Failed to update package index files."
 		exit 1
 	fi
+
+	# Checking for policycoreutils
+	if [[ $(dpkg -s policycoreutils 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
+		apt-get -qq -y install policycoreutils >> $logFile
+		if [[ $? -ne 0 ]]; then
+			log "Error: Failed to install policycoreutils."
+			exit 1
+		fi
+	fi
+
+	# Ensure that the package lists are re-created to avoid installation failure
 
 	log "OK"
 
