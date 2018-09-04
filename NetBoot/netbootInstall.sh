@@ -30,7 +30,6 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install samba
 	unset DEBIAN_FRONTEND
 	apt_install tftpd-hpa
-	# apt_install openbsd-inetd
 	apt_install netatalk
 	apt_install nfs-kernel-server
 	apt_install python-configparser
