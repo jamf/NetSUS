@@ -10,3 +10,5 @@ packer_cache
 output-virtualbox-iso
 
 appliance/iso/ubuntu-16.04.5-server-amd64.iso
+appliance/iso/ubuntu-14.04.5-server-amd64.iso
+appliance/iso/ubuntu-18.04.1-server-amd64.iso
