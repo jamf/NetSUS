@@ -505,11 +505,11 @@ fi
 ;;
 
 restart)
-reboot
+shutdown -r 1 &
 ;;
 
 shutdown)
-poweroff
+shutdown -P 1 &
 ;;
 
 enablegui)
