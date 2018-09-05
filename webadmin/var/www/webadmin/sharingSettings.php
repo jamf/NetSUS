@@ -13,6 +13,18 @@ function shareExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/shareHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
+if (isset($_POST['disable'])) {
+	$conf->setSetting("sharing", "disabled");
+	shareExec("stopsmb");
+	if ($conf->getSetting("netboot") == "disabled") {
+		shareExec("stopafp");
+	}
+}
+
+// ####################################################################
+// End of GET/POST parsing
+// ####################################################################
+
 $smb_running = (trim(shareExec("getsmbstatus")) === "true");
 $smb_conns = trim(shareExec("smbconns"));
 
@@ -26,6 +38,8 @@ $afp_conns = trim(shareExec("afpconns"));
 
 			<script type="text/javascript">
 				var netboot = '<?php echo $conf->getSetting("netboot"); ?>';
+				var smb_users = <?php echo $smb_conns; ?>;
+				var afp_users = <?php echo $afp_conns; ?>;
 
 				function toggleService() {
 					if ($('#sharingenabled').prop('checked')) {
@@ -33,6 +47,7 @@ $afp_conns = trim(shareExec("afpconns"));
 						$('#smbstatus').prop('disabled', false);
 						if (netboot == 'disabled') {
 							$('#afpstatus').prop('disabled', false);
+							$('#afp_conns').text('AFP Sharing: Off');
 						}
 						ajaxPost('sharingCtl.php', 'service=enable');
 						if ($('#smbstatus').prop('checked') == false) {
@@ -41,11 +56,6 @@ $afp_conns = trim(shareExec("afpconns"));
 							toggleSMB(smbstatus);
 						}
 					} else {
-						var smb_users = parseInt(ajaxPost('sharingCtl.php', 'smbconns'));
-						var afp_users = 0;
-						if (netboot == 'disabled') {
-							var afp_users = parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
-						}
 						if (smb_users + afp_users == 0) {
 							disableSharing();
 						} else {
@@ -85,7 +95,6 @@ $afp_conns = trim(shareExec("afpconns"));
 				}
 
 				function toggleSMB(element) {
-					var smb_users = parseInt(ajaxPost('sharingCtl.php', 'smbconns'));
 					if (element.checked) {
 						ajaxPost('sharingCtl.php', 'smb=enable');
 						$('#smb_conns').text('Number of users connected: ' + smb_users);
@@ -101,13 +110,12 @@ $afp_conns = trim(shareExec("afpconns"));
 							element.checked = true;
 						} else {
 							ajaxPost('sharingCtl.php', 'smb=disable');
-							$('#smb_conns').text('File Sharing: Off');
+							$('#smb_conns').text('SMB Sharing: Off');
 						}
 					}
 				}
 
 				function toggleAFP(element) {
-					var afp_users = parseInt(ajaxPost('sharingCtl.php', 'afpconns'));
 					if (element.checked) {
 						ajaxPost('sharingCtl.php', 'afp=enable');
 						$('#afp_conns').text('Number of users connected: ' + afp_users);
@@ -123,7 +131,7 @@ $afp_conns = trim(shareExec("afpconns"));
 							element.checked = true;
 						} else {
 							ajaxPost('sharingCtl.php', 'afp=disable');
-							$('#afp_conns').text('File Sharing: Off');
+							$('#afp_conns').text('AFP Sharing: Off');
 						}
 					}
 				}
@@ -176,6 +184,7 @@ $afp_conns = trim(shareExec("afpconns"));
 
 			<hr>
 
+			<form action="sharingSettings.php" method="POST" name="sharingSettings" id="sharingSettings">
 			<!-- Sharing Warning Modal -->
 			<div class="modal fade" id="sharing-warning" tabindex="-1" role="dialog">
 				<div class="modal-dialog" role="document">
@@ -184,17 +193,22 @@ $afp_conns = trim(shareExec("afpconns"));
 							<h3 class="modal-title">Disable File Sharing</h3>
 						</div>
 						<div class="modal-body">
+							<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <span id="sharing-message">users</span> connected to this server.</div>
+								</div>
+							</div>
 							<div style="padding: 8px 0px;">Are you sure you want to disable File Sharing?</div>
-							<div class="text-muted" style="padding: 8px 0px;"><span class="glyphicon glyphicon-exclamation-sign"></span> There <span id="sharing-message">users</span> connected to this server.</div>
 						</div>
 						<div class="modal-footer">
 							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-							<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="disableSharing(); $('#sharingenabled').bootstrapToggle('off');">Disable</button>
+							<button type="submit" name="disable" class="btn btn-primary btn-sm pull-right" value="disable">Disable</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<!-- /#modal -->
+			</form>
 
 			<!-- SMB Warning Modal -->
 			<div class="modal fade" id="smb-warning" tabindex="-1" role="dialog">
@@ -204,12 +218,16 @@ $afp_conns = trim(shareExec("afpconns"));
 							<h3 class="modal-title">Disable SMB</h3>
 						</div>
 						<div class="modal-body">
+							<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <span id="smb-message">users</span> connected to this server.</div>
+								</div>
+							</div>
 							<div style="padding: 8px 0px;">Are you sure you want to disable SMB?</div>
-							<div class="text-muted" style="padding: 8px 0px;"><span class="glyphicon glyphicon-exclamation-sign"></span> There <span id="smb-message">users</span> connected to this server.</div>
 						</div>
 						<div class="modal-footer">
 							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-							<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'smb=disable'); $('#smbstatus').prop('checked', false); $('#smb_conns').text('File Sharing: Off');">Disable</button>
+							<button type="button" data-dismiss="modal" class="btn btn-primary btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'smb=disable'); $('#smbstatus').prop('checked', false); $('#smb_conns').text('SMB Sharing: Off');">Disable</button>
 						</div>
 					</div>
 				</div>
@@ -224,15 +242,27 @@ $afp_conns = trim(shareExec("afpconns"));
 							<h3 class="modal-title">Disable AFP</h3>
 						</div>
 						<div class="modal-body">
+							<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <span id="afp-message">users</span> connected to this server.</div>
+								</div>
+							</div>
 							<div style="padding: 8px 0px;">Are you sure you want to disable AFP?</div>
-							<div class="text-muted" style="padding: 8px 0px;"><span class="glyphicon glyphicon-exclamation-sign"></span> There <span id="afp-message">users</span> connected to this server.</div>
 						</div>
 						<div class="modal-footer">
 							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-							<button type="button" data-dismiss="modal" class="btn btn-danger btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'afp=disable'); $('#afpstatus').prop('checked', false); $('#afp_conns').text('File Sharing: Off');">Disable</button>
+							<button type="button" data-dismiss="modal" class="btn btn-primary btn-sm pull-right" onClick="ajaxPost('sharingCtl.php', 'afp=disable'); $('#afpstatus').prop('checked', false); $('#afp_conns').text('AFP Sharing: Off');">Disable</button>
 						</div>
 					</div>
 				</div>
 			</div>
 			<!-- /#modal -->
-<?php include "inc/footer.php"; ?>
+
+<?php if (isset($_POST['disable'])) { ?>
+			<script type="text/javascript">
+				$(document).ready(function(){
+					$('#sharing').addClass('hidden');
+				});
+			</script>
+<?php }
+include "inc/footer.php"; ?>
