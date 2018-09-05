@@ -303,7 +303,7 @@ if ($ssl_certificate_str != "") {
 							</div>
 
 							<div class="text-right">
-								<button type="button" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+								<button type="button" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "hidden" : ""); ?>" data-toggle="modal" data-target="#restart-modal">Restart</button>
 								<button type="submit" name="apply-certs" id="apply-certs" class="btn btn-primary btn-sm <?php echo (empty($cert_success) ? "" : "hidden"); ?>" disabled>Apply</button>
 							</div>
 						</div>

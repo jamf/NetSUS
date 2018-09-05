@@ -35,7 +35,7 @@ while (!feof($proc)) {
 
 				<div class="text-right">
 					<button type="button" class="btn btn-default btn-sm" onClick="document.location.href='storage.php'">Done</button>
-					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restart-modal" onClick="restartModal();">Restart</button>
+					<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restart-modal">Restart</button>
 				</div>
 			</div>
 
