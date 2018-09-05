@@ -504,12 +504,16 @@ elif [ "$(which chkconfig 2>&-)" != '' ]; then
 fi
 ;;
 
+getconns)
+echo $(($(ss | grep microsoft-ds | wc | awk '{print $1}') + $(ss | grep afpovertcp | wc | awk '{print $1}')))
+;;
+
 restart)
-shutdown -r 1 &
+shutdown -r 1
 ;;
 
 shutdown)
-shutdown -P 1 &
+shutdown -P 1
 ;;
 
 enablegui)

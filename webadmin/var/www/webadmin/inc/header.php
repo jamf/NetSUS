@@ -18,6 +18,16 @@ $pageURI = $parts[count($parts) - 1];
 
 // to find current user
 $currentUser = getCurrentWebUser();
+
+// connected sharing users
+$connections = trim(suExec("getconns"));
+if ($connections > 0) {
+	if ($connections == 1) {
+		$conns_msg = "is 1 user";
+	} else {
+		$conns_msg = "are ".$connections." users";
+	}
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,22 +53,30 @@ $currentUser = getCurrentWebUser();
 <?php if (!isset($title)) { $title = "NetSUS Management"; } ?>
 <body>
 
+	<form action="<?php echo $_SERVER['SCRIPT_URL']; ?>" method="POST" name="Server" id="Server">
 	<!-- Restart Modal -->
-	<div class="modal fade" id="restart-modal" tabindex="-1" role="dialog">
+	<div class="modal fade" id="restart-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 id="restart-title" class="modal-title">Restart</h3>
 				</div>
 				<div class="modal-body" id="restart-message">
+<?php if (isset($conns_msg)) { ?>
+					<div id="title-disabled-msg" style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <?php echo $conns_msg; ?> connected to this server. If you restart they will be disconnected.</div>
+						</div>
+					</div>
+<?php } ?>
 					<div style="padding: 8px 0px;">Are you sure you want to restart the Server?</div>
 				</div>
 				<div class="modal-body hidden" id="restart-progress">
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
 				</div>
 				<div class="modal-footer">
-					<button id="restart-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-					<button id="restart-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="restartServer();">Restart</button>
+					<button type="button" id="restart-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+					<button type="submit" name="restart-confirm" id="restart-confirm" class="btn btn-primary btn-sm pull-right" value="restart">Restart</button>
 				</div>
 			</div>
 		</div>
@@ -66,21 +84,28 @@ $currentUser = getCurrentWebUser();
 	<!-- /#modal -->
 
 	<!-- Shut Down Modal -->
-	<div class="modal fade" id="shutdown-modal" tabindex="-1" role="dialog">
+	<div class="modal fade" id="shutdown-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<h3 id="shutdown-title" class="modal-title">Shut Down</h3>
 				</div>
 				<div class="modal-body" id="shutdown-message">
+<?php if (isset($conns_msg)) { ?>
+					<div id="title-disabled-msg" style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <?php echo $conns_msg; ?> connected to this server. If you restart they will be disconnected.</div>
+						</div>
+					</div>
+<?php } ?>
 					<div style="padding: 8px 0px;">Are you sure you want to shut down the Server?<br>The Server will need to be restarted manually.</div>
 				</div>
 				<div class="modal-body hidden" id="shutdown-progress">
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
 				</div>
 				<div class="modal-footer">
-					<button id="shutdown-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-					<button id="shutdown-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="shutdownServer();">Shut Down</button>
+					<button type="button" id="shutdown-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+					<button type="submit" name="shutdown-confirm" id="shutdown-confirm" class="btn btn-primary btn-sm pull-right" value="shutdown">Shut Down</button>
 				</div>
 			</div>
 		</div>
@@ -88,7 +113,7 @@ $currentUser = getCurrentWebUser();
 	<!-- /#modal -->
 
 	<!-- Disable GUI Modal -->
-	<div class="modal fade" id="disablegui-modal" tabindex="-1" role="dialog">
+	<div class="modal fade" id="disablegui-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -101,13 +126,14 @@ $currentUser = getCurrentWebUser();
 					<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
 				</div>
 				<div class="modal-footer">
-					<button id="disablegui-cancel" type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
-					<button id="disablegui-confirm" type="button" class="btn btn-primary btn-sm pull-right" onClick="disableGUI();">Disable</button>
+					<button type="button" id="disablegui-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+					<button type="submit" name="disablegui-confirm" id="disablegui-confirm" class="btn btn-primary btn-sm pull-right" value="disablegui">Disable</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<!-- /#modal -->
+	</form>
 
 	<!-- Fixed Top Navbar -->
 	<nav class="navbar navbar-inverse navbar-fixed-top">
@@ -125,7 +151,7 @@ $currentUser = getCurrentWebUser();
 					<div class="btn-group">
 						<button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
 						<ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
-							<li><a data-toggle="modal" href="#disablegui-modal" data-backdrop="static">Disable GUI</a></li>
+							<li><a data-toggle="modal" href="#disablegui-modal">Disable GUI</a></li>
 							<li role="separator" class="divider"></li>
 <?php if ($currentUser == $conf->getSetting("webadminuser")) { ?>
 							<li><a href="accounts.php" onClick="localStorage.setItem('activeAcctsTab', '#webadmin-tab');">Change Password</a></li>
@@ -145,8 +171,8 @@ $currentUser = getCurrentWebUser();
 					<div class="btn-group">
 						<button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-off"></span></button>
 						<ul class="dropdown-menu dropdown-menu-right dropdown-menu-navbar">
-							<li><a data-toggle="modal" href="#restart-modal" data-backdrop="static" onClick="restartModal();">Restart</a></li>
-							<li><a data-toggle="modal" href="#shutdown-modal" data-backdrop="static" onClick="shutdownModal();">Shut Down</a></li>
+							<li><a data-toggle="modal" href="#restart-modal">Restart</a></li>
+							<li><a data-toggle="modal" href="#shutdown-modal">Shut Down</a></li>
 						</ul>
 					</div>
 				</div>
