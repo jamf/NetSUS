@@ -509,11 +509,22 @@ echo $(($(ss | grep microsoft-ds | wc | awk '{print $1}') + $(ss | grep afpovert
 ;;
 
 restart)
+echo "Restarting" > /var/appliance/.applianceShutdown
 shutdown -r 1
 ;;
 
 shutdown)
+echo "Shutting Down" > /var/appliance/.applianceShutdown
 shutdown -P 1
+;;
+
+getshutdownstaus)
+SERVICE=shutdown
+if pgrep -x "$SERVICE" > /dev/null; then
+	echo "true"
+else
+	echo "false"
+fi
 ;;
 
 enablegui)

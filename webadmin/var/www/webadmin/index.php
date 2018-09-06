@@ -1,7 +1,7 @@
 <?php
 // Re-direct to HTTPS if connecting via HTTP
 if (!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on") {
-	header("Location: https://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_URL']);
+	header("Location: https://".$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
 }
 
 session_start();
@@ -106,10 +106,8 @@ if ($isAuth) {
 	if (!($debug)) {
 		header('Location: '. $sURL);
 	}
-}
-elseif ($conf->getSetting("webadmingui") == "Disabled") {
+} elseif ($conf->getSetting("webadmingui") == "Disabled") {
 ?>
-
 <!DOCTYPE html>
 
 <html>
@@ -144,7 +142,47 @@ elseif ($conf->getSetting("webadmingui") == "Disabled") {
 		</div>
 	</body>
 </html>
+<?php
+} elseif (trim(suExec("getshutdownstaus")) == "true") {
+	$shutdowntype = trim(file_get_contents("/var/appliance/.applianceShutdown"));
+	if (empty($shutdowntype)) {
+		$shutdowntype = "Shutting Down";
+	}
+?>
+<!DOCTYPE html>
 
+<html>
+	<head>
+		<title>NetSUS Server</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="pragma" content="no-cache">
+		<!-- Roboto Font CSS -->
+		<link href="theme/roboto.font.css" rel='stylesheet' type='text/css'>
+		<!-- Bootstrap CSS -->
+		<link href="theme/bootstrap.css" rel="stylesheet" media="all">
+		<!-- Project CSS -->
+		<link rel="stylesheet" href="theme/styles.css" type="text/css">
+		<style>
+			body {
+				background-color: #292929;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="login-wrapper">
+			<div class="login-panel panel panel-default">
+				<div class="panel-heading" style="background: #ffffff;">
+					<div class="panel-title text-center"><img src="images/NSUS-color.svg" height="42"></div>
+				</div>
+				<div class="panel-body">
+					<div class="text-center text-muted" style="padding: 4px 0px;">The Server is <?php echo $shutdowntype; ?>...</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
 <?php
 } else {
 
@@ -154,7 +192,6 @@ $ldap_base = $conf->getSetting("ldapbase");
 $ldap_groups = $conf->getAdmins();
 $ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && sizeof($ldap_groups) > 0;
 ?>
-
 <!DOCTYPE html>
 
 <html>
