@@ -14,7 +14,6 @@ $fw_running = (trim(suExec("getFirewallstatus")) == "true");
 
 $iface_msg = "";
 $ssh_error = "";
-$fw_warning = "";
 $fw_error = "";
 
 if (isset($_POST['savehostname'])) {
@@ -430,9 +429,9 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 				<hr>
 
 				<div style="padding: 4px 20px 16px;">
-					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($ssh_danger) ? "hidden" : ""); ?>">
+					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($ssh_error) ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $ssh_danger; ?></div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $ssh_error; ?></div>
 						</div>
 					</div>
 
@@ -443,9 +442,9 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 				<hr>
 
 				<div style="padding: 4px 20px 16px; background-color: #f9f9f9;">
-					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($fw_danger) ? "hidden" : ""); ?>">
+					<div style="margin-top: 12px; margin-bottom: 10px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($fw_error) ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $fw_danger; ?></div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $fw_error; ?></div>
 						</div>
 					</div>
 
