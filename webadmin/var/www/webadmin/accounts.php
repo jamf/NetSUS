@@ -28,7 +28,9 @@ if (isset($_POST['savesysuser'])) {
 	suExec("changeshelluser ".$_POST['sysuserlogin']." \"".$_POST['sysusergecos']."\" ".$_POST['sysuserhome']." ".$_POST['sysusernewlogin']." ".$_POST['sysusershell']." ".$_POST['sysusernewuid']);
 	if ($_POST['sysuserlogin'] == $conf->getSetting("shelluser")) {
 		$conf->setSetting("shelluser", $_POST['sysusernewlogin']);
-		$conf->changedPass("shellaccount");
+		if ($_POST['sysusernewlogin'] != "shelluser") {
+			$conf->changedPass("shellaccount");
+		}
 	} else {
 		if ($_POST['sysuseradmin'] == "true") {
 			suExec("addshelladmin ".$_POST['sysusernewlogin']);
@@ -38,16 +40,18 @@ if (isset($_POST['savesysuser'])) {
 	}
 }
 if (isset($_POST['savesyspass'])) {
-	if ($_POST['syspasslogin'] == "afpuser") {
+	if ($_POST['syspasslogin'] == "afpuser" && $_POST['sysnewpass'] != "afpuser1") {
 		suExec("resetafppw ".$_POST['sysnewpass']);
 		$conf->changedPass("afpaccount");
 	} else {
 		suExec("changeshellpass ".$_POST['syspasslogin']." \"".$_POST['sysnewpass']."\"");
-		if ($_POST['syspasslogin'] == "smbuser") {
+		if ($_POST['syspasslogin'] == "smbuser" && $_POST['sysnewpass'] != "smbuser1") {
 			$conf->changedPass("smbaccount");
 		}
 		if ($_POST['syspasslogin'] == $conf->getSetting("shelluser")) {
-			$conf->changedPass("shellaccount");
+			if ($_POST['sysnewpass'] != "shelluser") {
+				$conf->changedPass("shellaccount");
+			}
 		}
 	}
 }
@@ -263,10 +267,12 @@ foreach(file("/etc/passwd") as $entry) {
 						}
 						$('#webuser_name').text($('#webuser').val());
 						ajaxPost('ajax.php', 'webadminpass='+webnewpass.value);
-						$('#webadmin_warning').addClass('hidden');
-						$('#webuser_warning').addClass('hidden');
-						if (ldap_server == "" && ldap_groups == 0 || ldap_server != "" && ldap_groups > 0) {
-							$('#webadmin-tab-icon').addClass('hidden');
+						if (webuser.value != 'webadmin' || webnewpass != 'webadmin') {
+							$('#webadmin_warning').addClass('hidden');
+							$('#webuser_warning').addClass('hidden');
+							if (ldap_server == "" && ldap_groups == 0 || ldap_server != "" && ldap_groups > 0) {
+								$('#webadmin-tab-icon').addClass('hidden');
+							}
 						}
 						$('#webpass').val('');
 						$('#webnewpass').val('');

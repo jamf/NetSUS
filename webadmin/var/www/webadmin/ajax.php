@@ -18,7 +18,9 @@ if (!($_SESSION['isAuthUser'])) {
 			$_SESSION['username'] = $_POST['webadminuser'];
 		}
 		$conf->setSetting("webadminuser", $_POST['webadminuser']);
-		$conf->changedPass("webaccount");
+		if ($_POST['webadminuser'] != "webadmin") {
+			$conf->changedPass("webaccount");
+		}
 	}
 
 	if (isset($_POST['confirmold'])) {
@@ -31,7 +33,9 @@ if (!($_SESSION['isAuthUser'])) {
 
 	if (isset($_POST['webadminpass'])) {
 		$conf->setSetting("webadminpass", hash("sha256", $_POST['webadminpass']));
-		$conf->changedPass("webaccount");
+		if ($_POST['webadminpass'] != "webadmin") {
+			$conf->changedPass("webaccount");
+		}
 	}
 
 	if (isset($_POST['ldapserver'])) {
