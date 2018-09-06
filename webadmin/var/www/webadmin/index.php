@@ -155,6 +155,11 @@ if ($isAuth) {
 	<head>
 		<title>NetSUS Server</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<?php if ($shutdowntype == "Restarting") { ?>
+		<meta http-equiv="refresh" content="120; url=/webadmin/index.php">
+<?php } else { ?>
+		<meta http-equiv="refresh" content="60; url=https://www.jamf.com/jamf-nation/third-party-products/180/">
+<?php } ?>
 		<meta http-equiv="expires" content="0">
 		<meta http-equiv="pragma" content="no-cache">
 		<!-- Roboto Font CSS -->
