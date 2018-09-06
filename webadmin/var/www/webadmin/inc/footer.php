@@ -12,6 +12,114 @@
 			$('#wrapper').toggleClass('toggled');
 		});
 	</script>
+
+<?php
+// connected sharing users
+$connections = trim(suExec("getconns"));
+if ($connections > 0) {
+	if ($connections == 1) {
+		$conns_msg = "is 1 user";
+	} else {
+		$conns_msg = "are ".$connections." users";
+	}
+}
+
+// ssh status
+$gui_ssh_msg = "";
+$ssh_running = (trim(suExec("getSSHstatus")) == "true");
+if (!$ssh_running) {
+	$gui_ssh_msg = "SSH is disabled. Console access is required to re-enable the web interface.";
+}
+?>
+	<form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="POST" name="Server" id="Server">
+		<!-- Restart Modal -->
+		<div class="modal fade" id="restart-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 id="restart-title" class="modal-title">Restart</h3>
+					</div>
+					<div class="modal-body" id="restart-message">
+<?php if (isset($conns_msg)) { ?>
+						<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+							<div class="panel-body">
+								<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <?php echo $conns_msg; ?> connected to this server. If you restart they will be disconnected.</div>
+							</div>
+						</div>
+<?php } ?>
+						<div style="padding: 8px 0px;">Are you sure you want to restart the Server?</div>
+					</div>
+					<div class="modal-body hidden" id="restart-progress">
+						<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="restart-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+						<button type="submit" name="restart-confirm" id="restart-confirm" class="btn btn-primary btn-sm pull-right" value="restart">Restart</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /#modal -->
+
+		<!-- Shut Down Modal -->
+		<div class="modal fade" id="shutdown-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 id="shutdown-title" class="modal-title">Shut Down</h3>
+					</div>
+					<div class="modal-body" id="shutdown-message">
+<?php if (isset($conns_msg)) { ?>
+						<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+							<div class="panel-body">
+								<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>There <?php echo $conns_msg; ?> connected to this server. If you restart they will be disconnected.</div>
+							</div>
+						</div>
+<?php } ?>
+						<div style="padding: 8px 0px;">Are you sure you want to shut down the Server?<br>The Server will need to be restarted manually.</div>
+					</div>
+					<div class="modal-body hidden" id="shutdown-progress">
+						<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="shutdown-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+						<button type="submit" name="shutdown-confirm" id="shutdown-confirm" class="btn btn-primary btn-sm pull-right" value="shutdown">Shut Down</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /#modal -->
+
+		<!-- Disable GUI Modal -->
+		<div class="modal fade" id="disablegui-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3 id="disablegui-title" class="modal-title">Disable GUI</h3>
+					</div>
+					<div class="modal-body" id="disablegui-message">
+<?php if (!empty($gui_ssh_msg)) { ?>
+						<div style="margin-top: 10px; margin-bottom: 6px; border-color: #eea236;" class="panel panel-warning">
+							<div class="panel-body">
+								<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $gui_ssh_msg; ?></div>
+							</div>
+						</div>
+<?php } ?>
+						<div style="padding: 8px 0px;">Are you sure you want to disable the web interface for the Server?<br>Command line access is required to re-enable the web interface.</div>
+					</div>
+					<div class="modal-body hidden" id="disablegui-progress">
+						<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" id="disablegui-cancel" class="btn btn-default btn-sm pull-left" data-dismiss="modal">Cancel</button>
+						<button type="submit" name="disablegui-confirm" id="disablegui-confirm" class="btn btn-primary btn-sm pull-right" value="disablegui">Disable</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /#modal -->
+	</form>
+
 <?php
 // notifications
 $notifications = array();
@@ -122,7 +230,7 @@ if (isset($_POST['restart-confirm'])) { ?>
 if (isset($_POST['shutdown-confirm'])) { ?>
 	<script>
 		$(window).load(function() {
-			setTimeout('location.href = "https://www.jamf.com/jamf-nation/third-party-products/180/"', 10000);
+			setTimeout('location.href = "https://www.jamf.com/jamf-nation/third-party-products/180/"', 60000);
 			$('#shutdown-title').text('Shutting Down...');
 			$('#shutdown-message').addClass('hidden');
 			$('#shutdown-progress').removeClass('hidden');
