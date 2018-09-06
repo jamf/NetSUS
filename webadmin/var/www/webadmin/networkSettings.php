@@ -157,7 +157,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 						gateway.disabled = false;
 						dns1.disabled = false;
 						dns2.disabled = false;
-						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ipaddr.value)) {
+						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ipaddr.value) && /^(?!127.*$).*/.test(ipaddr.value)) {
 							hideError(ipaddr, 'ipaddr_'+iface+'_label');
 						} else {
 							showError(ipaddr, 'ipaddr_'+iface+'_label');
@@ -190,12 +190,17 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 						} else {
 							showError(dns2, 'dns_'+iface+'_label');
 						}
-						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ipaddr.value) && /^((255|254|252|248|240|224|192|128|0?)\.){3}(255|254|252|248|240|224|192|128|0)$/.test(netmask.value) && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(gateway.value) || gateway.value == '') && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(dns1.value) || dns1.value == '') && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(dns2.value) || dns2.value == '')) {
+						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(ipaddr.value) && /^(?!127.*$).*/.test(ipaddr.value) && /^((255|254|252|248|240|224|192|128|0?)\.){3}(255|254|252|248|240|224|192|128|0)$/.test(netmask.value) && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(gateway.value) || gateway.value == '') && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(dns1.value) || dns1.value == '') && (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/.test(dns2.value) || dns2.value == '')) {
 							savecfg.disabled = false;
 						} else {
 							savecfg.disabled = true;
 						}
 					} else {
+						hideError(ipaddr, 'ipaddr_'+iface+'_label');
+						hideError(netmask, 'netmask_'+iface+'_label');
+						hideError(gateway, 'gateway_'+iface+'_label');
+						hideError(dns1, 'dns_'+iface+'_label');
+						hideError(dns2);
 						ipaddr.disabled = true;
 						netmask.disabled = true;
 						gateway.disabled = true;
@@ -237,7 +242,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 							showError(proxyport, 'proxyhost_label');
 						}
 					}
-					if (proxyhost.value == "" && httpsproxy.value == "") {
+					if (proxyhost.value == "" && proxyport.value == "") {
 						proxyuser.disabled = true;
 						proxypass.disabled = true;
 					} else {
