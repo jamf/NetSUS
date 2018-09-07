@@ -246,7 +246,6 @@ if ($afp_shares > 1 && !$afp_running) {
 					} else {
 						$('#smb_error').addClass('hidden');
 					}
-					console.log('smb_shares: '+smb_shares);
 					if (smb.checked && afp.checked) {
 						smb.disabled = false;
 						afp.disabled = false;
