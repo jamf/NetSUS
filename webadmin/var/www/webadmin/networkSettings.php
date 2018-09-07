@@ -134,7 +134,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 
 				function validHostname() {
 					var hostname = document.getElementById('hostname');
-					if (/^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(hostname.value)) {
+					if (/^(?=.{1,253}$)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(hostname.value)) {
 						hideError(hostname, 'hostname_label');
 						$('#savehostname').prop('disabled', false);
 					} else {
@@ -223,7 +223,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 					} else {
 						proxyhost.placeholder = "[Required]";
 						proxyport.placeholder = "[Required]";
-						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(proxyhost.value)) {
+						if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(proxyhost.value)) {
 							if (proxyport.value != "" && proxyport.value == parseInt(proxyport.value) && proxyport.value >= 0 && proxyport.value <= 65535) {
 								hideError(proxyhost, 'proxyhost_label');
 							} else {
@@ -233,7 +233,7 @@ if (($key = array_search($https_port, $in_use)) !== false) {
 							showError(proxyhost, 'proxyhost_label');
 						}
 						if (proxyport.value != "" && proxyport.value == parseInt(proxyport.value) && proxyport.value >= 0 && proxyport.value <= 65535) {
-							if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(proxyhost.value)) {
+							if (/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(?=.{1,253}$)(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(proxyhost.value)) {
 								hideError(proxyport, 'proxyhost_label');
 							} else {
 								hideError(proxyport);
