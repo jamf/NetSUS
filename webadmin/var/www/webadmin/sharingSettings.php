@@ -163,7 +163,7 @@ $afp_conns = trim(shareExec("afpconns"));
 			<div style="padding: 1px 20px;">
 				<div class="checkbox checkbox-primary" style="padding-top: 6px">
 					<input name="smbstatus" id="smbstatus" class="styled" type="checkbox" value="true" onChange="toggleSMB(this);" <?php echo ($smb_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" ? "" : "disabled"); ?>>
-					<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : "SMB Sharing: Off"); ?></span></label>
+					<label><strong>Share files and folders using SMB</strong><br><span id="smb_conns" style="font-size: 75%; color: #777;"><?php echo ($smb_running ? "Number of users connected: ".$smb_conns : ($conf->getSetting("sharing") == "enabled" ? "SMB Sharing: Off" : "File Sharing: Off")); ?></span></label>
 				</div>
 			</div>
 
@@ -178,7 +178,7 @@ $afp_conns = trim(shareExec("afpconns"));
 
 				<div class="checkbox checkbox-primary"">
 					<input name="afpstatus" id="afpstatus" class="styled" type="checkbox" value="true" onChange="toggleAFP(this);" <?php echo ($afp_running ? "checked" : ""); ?> <?php echo ($conf->getSetting("sharing") == "enabled" && $conf->getSetting("netboot") != "enabled" ? "" : "disabled"); ?>>
-					<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : "AFP Sharing: Off"); ?></span></label>
+					<label><strong>Share files and folders using AFP</strong><br><span id="afp_conns" style="font-size: 75%; color: #777;"><?php echo ($afp_running ? "Number of users connected: ".$afp_conns : ($conf->getSetting("sharing") == "enabled" ? "AFP Sharing: Off" : "File Sharing: Off")); ?></span></label>
 				</div>
 			</div>
 
