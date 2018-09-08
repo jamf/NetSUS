@@ -201,46 +201,16 @@ if (in_array("storage", $notifications)) { ?>
 
 <?php }
 
-if (isset($_POST['restart-confirm'])) { ?>
-	<script>
-		$(window).load(function() {
-			setTimeout('location.href = "index.php"', 120000);
-			$('#restart-title').text('Restarting...');
-			$('#restart-message').addClass('hidden');
-			$('#restart-progress').removeClass('hidden');
-			$('#restart-cancel').prop('disabled', true);
-			$('#restart-confirm').prop('disabled', true);
-			$('#restart-modal').modal('show');
-		});
-	</script>
-<?php
+if (isset($_POST['restart-confirm'])) {
 	shell_exec("sudo /bin/sh scripts/adminHelper.sh restart > /dev/null 2>&1 &");
-	// Unset all of the session variables.
-	$_SESSION = array();
-	// If it's desired to kill the session, also delete the session cookie.
-	// Note: This will destroy the session, and not just the session data!
-	if (ini_get("session.use_cookies")) {
-		$params = session_get_cookie_params();
-		setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-	}
-	// Finally, destroy the session.
-	session_destroy();
 }
-
-if (isset($_POST['shutdown-confirm'])) { ?>
-	<script>
-		$(window).load(function() {
-			setTimeout('location.href = "https://www.jamf.com/jamf-nation/third-party-products/180/"', 60000);
-			$('#shutdown-title').text('Shutting Down...');
-			$('#shutdown-message').addClass('hidden');
-			$('#shutdown-progress').removeClass('hidden');
-			$('#shutdown-cancel').prop('disabled', true);
-			$('#shutdown-confirm').prop('disabled', true);
-			$('#shutdown-modal').modal('show');
-		});
-	</script>
-<?php
+if (isset($_POST['shutdown-confirm'])) {
 	shell_exec("sudo /bin/sh scripts/adminHelper.sh shutdown > /dev/null 2>&1 &");
+}
+if (isset($_POST['disablegui-confirm'])) {
+	$conf->setSetting("webadmingui", "Disabled");
+}
+if (isset($_POST['restart-confirm']) || isset($_POST['shutdown-confirm']) || isset($_POST['disablegui-confirm'])) {
 	// Unset all of the session variables.
 	$_SESSION = array();
 	// If it's desired to kill the session, also delete the session cookie.
@@ -251,33 +221,13 @@ if (isset($_POST['shutdown-confirm'])) { ?>
 	}
 	// Finally, destroy the session.
 	session_destroy();
-}
-
-if (isset($_POST['disablegui-confirm'])) { ?>
+?>
 	<script>
 		$(window).load(function() {
-			setTimeout('location.href = "index.php"', 3000);
-			$('#disablegui-title').text('Disabling GUI...');
-			$('#disablegui-message').addClass('hidden');
-			$('#disablegui-progress').removeClass('hidden');
-			$('#disablegui-cancel').prop('disabled', true);
-			$('#disablegui-confirm').prop('disabled', true);
-			$('#disablegui-modal').modal('show');
+			$(location).attr('href', 'index.php');
 		});
 	</script>
-<?php
-	$conf->setSetting("webadmingui", "Disabled");
-	// Unset all of the session variables.
-	$_SESSION = array();
-	// If it's desired to kill the session, also delete the session cookie.
-	// Note: This will destroy the session, and not just the session data!
-	if (ini_get("session.use_cookies")) {
-		$params = session_get_cookie_params();
-		setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-	}
-	// Finally, destroy the session.
-	session_destroy();
-} ?>
+<?php } ?>
 
 </body>
 
