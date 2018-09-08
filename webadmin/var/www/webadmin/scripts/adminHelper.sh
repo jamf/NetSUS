@@ -18,9 +18,16 @@ echo $(ip link show ${2} | grep -iw ether | awk '{print $2}' | tr '[[:upper:]]' 
 
 getmethod)
 # $2: interface
-if [ -f "/etc/network/interfaces" ]; then
+if [ -f "/etc/netplan/01-netcfg.yaml" ]; then
+	dhcp4=$(sed -n "/^    ${2}:/,/^    [a-z]/p" /etc/netplan/01-netcfg.yaml | grep 'dhcp4:' | awk '{print $NF}')
+	if [ "${dhcp4}" = 'yes' ] || [ "${dhcp4}" = 'true' ]; then
+		echo dhcp
+	else
+		echo static
+	fi
+elif [ -f "/etc/network/interfaces" ]; then
 	echo $(grep -wi "^iface.*${2}.*inet" /etc/network/interfaces | awk '{print $NF}')
-else
+elif [ -f "/etc/sysconfig/network-scripts/ifcfg-${2}" ]; then
 	echo $(grep -i "^BOOTPROTO" /etc/sysconfig/network-scripts/ifcfg-${2} | sed -e 's/[^a-z]//g')
 fi
 ;;
@@ -58,12 +65,19 @@ echo ${netmask}
 
 getgateway)
 # $2: interface
-if [ -f "/etc/network/interfaces" ]; then
+if [ -f "/etc/netplan/01-netcfg.yaml" ]; then
+	dhcp4=$(sed -n "/^    ${2}:/,/^    [a-z]/p" /etc/netplan/01-netcfg.yaml | grep 'dhcp4:' | awk '{print $NF}')
+	if [ "${dhcp4}" = 'yes' ] || [ "${dhcp4}" = 'true' ]; then
+		gateway=$(netplan ip leases ${2} | grep ROUTER | cut -d = -f 2)
+	else
+		gateway=$(sed -n "/^    ${2}:/,/^    [a-z]/p" /etc/netplan/01-netcfg.yaml | grep 'gateway4:' | awk '{print $NF}')
+	fi
+elif [ -f "/etc/network/interfaces" ]; then
 	gateway=$(sed -n "/^iface ${2}/,/^iface/p" /etc/network/interfaces | grep gateway | awk '{print $NF}')
 	if [ "${gateway}" = '' ]; then
 		gateway=$(grep 'routers' /var/lib/dhcp/dhclient.${2}.leases | tail -1 | awk '{print $NF}' | sed -e 's/;//g')
 	fi		
-else
+elif [ -f "/etc/sysconfig/network-scripts/ifcfg-${2}" ]; then
 	gateway=$(grep -i "^GATEWAY" /etc/sysconfig/network-scripts/ifcfg-${2} | cut -d = -f 2)
 	if [ "${gateway}" = '' ]; then
 		gateway=$(grep 'routers' $(ls -1 -t /var/lib/dhclient/dhclient*${2}*.lease* | head -1) | tail -1 | awk '{print $NF}' | sed -e 's/;//g')
@@ -73,12 +87,19 @@ echo ${gateway}
 ;;
 
 getnameservers)
-if [ -f "/etc/network/interfaces" ]; then
+if [ -f "/etc/netplan/01-netcfg.yaml" ]; then
+	dhcp4=$(sed -n "/^    ${2}:/,/^    [a-z]/p" /etc/netplan/01-netcfg.yaml | grep 'dhcp4:' | awk '{print $NF}')
+	if [ "${dhcp4}" = 'yes' ] || [ "${dhcp4}" = 'true' ]; then
+		nameservers=$(netplan ip leases ${2} | grep DNS | cut -d = -f 2| sed -e 's/,/ /g')
+	else
+		nameservers=$(sed -n "/^    ${2}:/,/^    [a-z]/p" /etc/netplan/01-netcfg.yaml | sed -e "1,/nameservers:/d" | grep 'addresses:' | sed -e 's/.*\[//' -e 's/\].*//' -e 's/,/ /g')
+	fi
+elif [ -f "/etc/network/interfaces" ]; then
 	nameservers=$(sed -n "/^iface ${2}/,/^iface/p" /etc/network/interfaces | grep nameservers | awk -F 'nameservers' '{print $NF}')
 	if [ "${nameservers}" = '' ]; then
 		nameservers=$(grep 'domain-name-servers' /var/lib/dhcp/dhclient.${2}.leases | tail -1 | awk -F 'servers' '{print $NF}' | sed -e 's/[;,]/ /g')
 	fi		
-else
+elif [ -f "/etc/sysconfig/network-scripts/ifcfg-${2}" ]; then
 	nameservers=$(grep -i "^DNS" /etc/sysconfig/network-scripts/ifcfg-${2} | cut -d = -f 2)
 	if [ "${nameservers}" = '' ]; then
 		nameservers=$(grep 'domain-name-servers' $(ls -1 -t /var/lib/dhclient/dhclient*${2}*.lease* | head -1) | tail -1 | awk -F 'servers' '{print $NF}' | sed -e 's/[;,]/ /g')
@@ -95,7 +116,46 @@ setiface)
 # $6: gateway
 # $7: dns1
 # $8: dns2
-if [ -f "/etc/network/interfaces" ]; then
+if [ -f "/etc/netplan/01-netcfg.yaml" ]; then
+	if grep -q "^    ${2}:" /etc/netplan/01-netcfg.yaml; then
+		sed -i '/^    '${2}:'/,/^    [a-z]/ {/^    '${2}'/n;/^    [a-z]/!d}' /etc/netplan/01-netcfg.yaml
+	else
+		echo "    ${2}:" >> /etc/netplan/01-netcfg.yaml
+	fi
+	if [ "${3}" = 'static' ]; then
+		if [ "${8}" != '' ]; then
+			sed -i '/^    '${2}'/a\          addresses: \['${7}','${8}'\]' /etc/netplan/01-netcfg.yaml
+		elif [ "${7}" != '' ]; then
+			sed -i '/^    '${2}'/a\          addresses: \['${7}'\]' /etc/netplan/01-netcfg.yaml
+		fi
+		if [ "${7}" != '' ]; then
+			sed -i '/^    '${2}'/a\      nameservers:' /etc/netplan/01-netcfg.yaml
+		fi
+		if [ "${6}" != '0.0.0.0' ]; then
+			sed -i '/^    '${2}'/a\      gateway4: '${6}'' /etc/netplan/01-netcfg.yaml
+		fi
+		p=0
+		for i in $(echo ${5} | sed -e "s/\./ /g"); do
+			case $i in
+				255) p=$((${p}+8));;
+				254) p=$((${p}+7));;
+				252) p=$((${p}+6));;
+				248) p=$((${p}+5));;
+				240) p=$((${p}+4));;
+				224) p=$((${p}+3));;
+				192) p=$((${p}+2));;
+				128) p=$((${p}+1));;
+				0);;
+			esac
+		done
+		sed -i '/^    '${2}'/a\        - '${4}'/'${p}'' /etc/netplan/01-netcfg.yaml
+		sed -i '/^    '${2}'/a\      addresses:' /etc/netplan/01-netcfg.yaml
+	else
+		sed -i '/^    '${2}'/a\      dhcp4: yes' /etc/netplan/01-netcfg.yaml
+	fi
+	netplan apply
+	sleep 1
+elif [ -f "/etc/network/interfaces" ]; then
 	sed -i '/^iface '${2}'/,/^auto/ {/^iface '${2}'/n;/^auto/!d}' /etc/network/interfaces
 	if grep -q "^iface ${2}" /etc/network/interfaces; then
 		sed -i "s/^iface ${2}.*/iface ${2} inet ${3}/" /etc/network/interfaces
@@ -119,7 +179,7 @@ if [ -f "/etc/network/interfaces" ]; then
 		sed -i "/^iface ${2}/a\	netmask ${5}" /etc/network/interfaces
 		sed -i "/^iface ${2}/a\	address ${4}" /etc/network/interfaces
 	fi
-else
+elif [ -d "/etc/sysconfig/network-scripts" ]; then
 	echo "DEVICE=${2}" > /etc/sysconfig/network-scripts/ifcfg-${2}
 	echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-${2}
 	echo "NM_CONTROLLED=no" >> /etc/sysconfig/network-scripts/ifcfg-${2}
@@ -520,7 +580,7 @@ shutdown -P 1
 
 getshutdownstaus)
 SERVICE=shutdown
-if pgrep -x "$SERVICE" > /dev/null; then
+if pgrep -x "$SERVICE" > /dev/null || [ -f "/run/nologin" ]; then
 	echo "true"
 else
 	echo "false"
