@@ -267,7 +267,7 @@ foreach(file("/etc/passwd") as $entry) {
 						}
 						$('#webuser_name').text($('#webuser').val());
 						ajaxPost('ajax.php', 'webadminpass='+webnewpass.value);
-						if (webuser.value != 'webadmin' || webnewpass != 'webadmin') {
+						if (webuser.value != 'webadmin' || webnewpass.value != 'webadmin') {
 							$('#webadmin_warning').addClass('hidden');
 							$('#webuser_warning').addClass('hidden');
 							if (ldap_server == "" && ldap_groups == 0 || ldap_server != "" && ldap_groups > 0) {
