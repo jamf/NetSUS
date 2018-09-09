@@ -664,6 +664,11 @@ if ! parted $device --script unit s print | grep -Pq "^\s$partition\s+.+?[^,]+?l
 	echo "ERROR: $pvname has additional flags set."
 	exit
 fi
+start=$(fdisk -u -l $device | grep $pvname | awk '{print $2}')
+if [ "$(echo $start | sed -e 's/[0-9]//g')" != '' ]; then
+	echo "ERROR: Unable to determine start block."
+	exit
+fi
 total=$(parted $device --script unit B print | grep $device | awk '{print $NF}' | tr -d 'B')
 end=$(parted $device --script unit B print | grep -P "^\s$partition\s+.+?[^,]+?lvm\s*$" | awk '{print $3}' | tr -d 'B')
 free=$(($total-$end))
@@ -706,6 +711,10 @@ echo "Current partition layout of $device:"
 echo
 parted $device --script unit GB print
 start=$(fdisk -u -l $device | grep $pvname | awk '{print $2}')
+if [ "$(echo $start | sed -e 's/[0-9]//g')" != '' ]; then
+	echo "Unable to determine start block."
+	exit 1
+fi
 if parted $device --script unit s print | grep -qP "^\s$partition\s+.+?logical.+$"; then
 	echo "Detected LVM residing on a logical partition."
 	echo
