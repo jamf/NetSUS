@@ -107,23 +107,25 @@ if (strpos($lv_result, 'ERROR') === false) {
 <?php } ?>
 			</div>
 
-			<!-- Expand Volume Modal -->
-			<div class="modal fade" id="confirmExpand" tabindex="-1" role="dialog">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h3 class="modal-title">Expand Volume</h3>
-						</div>
-						<div class="modal-body">
-							<div class="text-muted">Are you sure you want to expand the volume? The system will require a restart.</div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
-							<button type="button" class="btn btn-primary btn-sm" onClick="document.location.href='storageCtl.php?resize=true';">Continue</button>
+			<form action="storageCtl.php" method="POST" name="Storage" id="Storage">
+				<!-- Expand Volume Modal -->
+				<div class="modal fade" id="confirmExpand" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title">Expand Volume</h3>
+							</div>
+							<div class="modal-body">
+								<div class="text-muted">Are you sure you want to expand the volume? The system will require a restart.</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left">Cancel</button>
+								<button type="submit" name="resize-confirm" class="btn btn-primary btn-sm">Continue</button>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<!-- /.modal -->
+				<!-- /.modal -->
+			</form>
 
 <?php include "inc/footer.php"; ?>
