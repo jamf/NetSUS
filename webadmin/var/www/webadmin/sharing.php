@@ -48,10 +48,11 @@ $smb_error = "";
 $afp_error = "";
 
 // Users & Groups
-$uid_min = preg_split("/\s+/", implode(preg_grep("/\bUID_MIN\b/i", file("/etc/login.defs"))))[1];
-$uid_max = preg_split("/\s+/", implode(preg_grep("/\bUID_MAX\b/i", file("/etc/login.defs"))))[1];
+$uid_min = trim(suExec("getUidMin"));
+$uid_max = trim(suExec("getUidMax"));
 $users = array();
-foreach(file("/etc/passwd") as $entry) {
+$users_str = trim(suExec("listUsers"));
+foreach(explode("\n", $users_str) as $entry) {
 	$entry_arr = explode(":", $entry);
 	$user = array();
 	$user['name'] = $entry_arr[0];

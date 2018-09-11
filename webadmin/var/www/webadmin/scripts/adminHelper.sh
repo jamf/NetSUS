@@ -430,6 +430,22 @@ else
 fi
 ;;
 
+getUidMin)
+echo $(grep -w UID_MIN /etc/login.defs 2>/dev/null | awk '{print $NF}')
+;;
+
+getUidMax)
+echo $(grep -w UID_MAX /etc/login.defs 2>/dev/null | awk '{print $NF}')
+;;
+
+listUsers)
+cat /etc/passwd 2>/dev/null
+;;
+
+listGroups)
+cat /etc/group 2>/dev/null
+;;
+
 getShellList)
 echo $(which bash 2>/dev/null) $(which tcsh 2>/dev/null) $(which sh 2>/dev/null) $(which csh 2>/dev/null) $(which zsh 2>/dev/null) $(which ksh 2>/dev/null) $(which nologin 2>/dev/null) $(which false 2>/dev/null)
 ;;

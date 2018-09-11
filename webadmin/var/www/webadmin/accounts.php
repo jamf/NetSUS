@@ -85,17 +85,18 @@ $ldap_admins = $conf->getAdmins();
 if ($conf->getSetting("shelluser") != "shelluser") {
 	$conf->changedPass("shellaccount");
 }
-$uid_min = preg_split("/\s+/", implode(preg_grep("/\bUID_MIN\b/i", file("/etc/login.defs"))))[1];
-$uid_max = preg_split("/\s+/", implode(preg_grep("/\bUID_MAX\b/i", file("/etc/login.defs"))))[1];
+$uid_min = trim(suExec("getUidMin"));
+$uid_max = trim(suExec("getUidMax"));
 $user_shells_str = trim(suExec("getShellList"));
 $user_shells = explode(" ", $user_shells_str);
 $sys_groups = array();
-foreach(file("/etc/group") as $entry) {
+$groups_str = trim(suExec("listGroups"));
+foreach(explode("\n", $groups_str) as $entry) {
 	$entry_arr = explode(":", $entry);
 	$sys_group = array();
 	$sys_group['name'] = $entry_arr[0];
 	$sys_group['gid'] = $entry_arr[2];
-	if (empty(trim($entry_arr[3]))) {
+	if (empty($entry_arr[3])) {
 		$sys_group['users'] = array();
 	} else {
 		$sys_group['users'] = explode(",", trim($entry_arr[3]));
@@ -103,7 +104,8 @@ foreach(file("/etc/group") as $entry) {
 	array_push($sys_groups, $sys_group);
 }
 $sys_users = array();
-foreach(file("/etc/passwd") as $entry) {
+$users_str = trim(suExec("listUsers"));
+foreach(explode("\n", $users_str) as $entry) {
 	$entry_arr = explode(":", $entry);
 	$sys_user = array();
 	$sys_user['name'] = $entry_arr[0];
@@ -111,7 +113,7 @@ foreach(file("/etc/passwd") as $entry) {
 	$sys_user['gid'] = $entry_arr[3];
 	$sys_user['gecos'] = $entry_arr[4];
 	$sys_user['home'] = $entry_arr[5];
-	$sys_user['shell'] = basename(trim($entry_arr[6]));
+	$sys_user['shell'] = basename($entry_arr[6]);
 	$sys_user['groups'] = array();
 	foreach($sys_groups as $sys_group) {
 		if (in_array($sys_user['name'], $sys_group['users'])) {
