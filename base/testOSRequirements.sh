@@ -8,6 +8,9 @@ elif [ -e "/etc/system-release" ]; then
 	NAME=$(sed -e 's/ release.*//' /etc/system-release)
 	PRETTY_NAME=$(sed -e 's/ release//' /etc/system-release)
 	VERSION_ID=$(sed -e 's/.*release //;s/ .*//' /etc/system-release)
+	IFS='.'
+	VERSION_ARR=( $VERSION_ID )
+	unset IFS
 fi
 if [[ -z "$NAME" ]]; then
 	NAME=$(uname -s)
@@ -27,7 +30,7 @@ case $NAME in
 	fi
 ;;
 "Red Hat Enterprise Linux"*|"CentOS"*)
-	if [[ "$VERSION_ID" > "6.3" ]] ; then
+	if [[ ${VERSION_ARR[0]} -eq 6 ]] && [[ ${VERSION_ARR[1]} -gt 3 ]] || [[ ${VERSION_ARR[0]} -gt 6 ]] ; then
 		log "$PRETTY_NAME found"
 		exit 0
 	else
@@ -42,7 +45,7 @@ case $NAME in
 *)
 	release=$(rpm -q --queryformat '%{RELEASE}' rpm | cut -d '.' -f 2)
 	if [[ $release == "el6" ]] || [[ $release == "el7" ]] ; then
-		if [[ "$VERSION_ID" > "6.3" ]] ; then
+		if [[ ${VERSION_ARR[0]} -eq 6 ]] && [[ ${VERSION_ARR[1]} -gt 3 ]] || [[ ${VERSION_ARR[0]} -gt 6 ]] ; then
 			log "$PRETTY_NAME found"
 			log "Warning: $NAME is a Red Hat Enterprise Linux variant, proceed with caution."
 			exit 0
