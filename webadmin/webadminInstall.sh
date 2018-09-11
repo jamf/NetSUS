@@ -267,6 +267,14 @@ if ! grep -q 'scripts/ldapHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
 	chmod 0440 /etc/sudoers.d/webadmin
 fi
 
+# Disable directory listing for webadmin
+if [ -f "/etc/apache2/apache2.conf" ]; then
+	sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' /etc/apache2/apache2.conf
+fi
+if [ -f "/etc/httpd/conf/httpd.conf" ]; then
+	sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' /etc/httpd/conf/httpd.conf
+fi
+
 # Enable apache on SSL, dav and dav_fs, only needed on Ubuntu
 if [[ $(which a2enmod 2>&-) != "" ]]; then
 	# Previous NetSUS versions created a file where it should be a symlink
@@ -276,8 +284,8 @@ if [[ $(which a2enmod 2>&-) != "" ]]; then
 	sed -i 's/SSLProtocol all/SSLProtocol all -SSLv3/' /etc/apache2/mods-available/ssl.conf
 	a2enmod ssl >> $logFile
 	a2ensite default-ssl >> $logFile
-	a2enmod dav >> $logFile
-	a2enmod dav_fs >> $logFile
+	# a2enmod dav >> $logFile
+	# a2enmod dav_fs >> $logFile
 fi
 
 if [ -f "/etc/httpd/conf.d/ssl.conf" ]; then
