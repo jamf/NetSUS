@@ -152,7 +152,7 @@ fi
 sed -i '/TERM/d' $rc_local
 sed -i '/dialog.sh/d' $rc_local
 sed -i '/exit 0/d' $rc_local
-echo 'rm -f /var/appliance/.applianceShutdown
+echo 'rm -f /var/appliance/.shutdownMessage
 TERM=linux
 export TERM
 openvt -s -c 8 /var/appliance/dialog.sh

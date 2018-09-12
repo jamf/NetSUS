@@ -585,12 +585,12 @@ echo $(($(ss | grep microsoft-ds | wc | awk '{print $1}') + $(ss | grep afpovert
 ;;
 
 restart)
-echo "Restarting" > /var/appliance/.applianceShutdown
+echo "Restarting" > /var/appliance/.shutdownMessage
 shutdown -r 1
 ;;
 
 shutdown)
-echo "Shutting Down" > /var/appliance/.applianceShutdown
+echo "Shutting Down" > /var/appliance/.shutdownMessage
 shutdown -P 1
 ;;
 
