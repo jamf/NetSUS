@@ -92,7 +92,7 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 					<div id="slapd_error" style="margin-top: 9px; margin-bottom: 17px; border-color: #d43f3a;" class="panel panel-danger <?php echo (isset($slapd_error) ? "" : "hidden"); ?>">
 						<div class="panel-body">
 							<input type="hidden" id="enableproxy" name="enableproxy" value="">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo (isset($slapd_error) ? $slapd_error : ""); ?></div>
 						</div>
 					</div>
 
