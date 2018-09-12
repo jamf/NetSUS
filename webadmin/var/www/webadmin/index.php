@@ -144,7 +144,7 @@ if ($isAuth) {
 </html>
 <?php
 } elseif (trim(suExec("getshutdownstaus")) == "true") {
-	$shutdowntype = trim(file_get_contents("/var/appliance/.applianceShutdown"));
+	$shutdowntype = trim(file_get_contents("/var/appliance/.shutdownMessage"));
 	if (empty($shutdowntype)) {
 		$shutdowntype = "Shutting Down";
 	}
