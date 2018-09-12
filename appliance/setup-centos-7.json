@@ -1,0 +1,97 @@
+{
+	"variables": {
+        "ssh_name": "shelluser",
+        "ssh_pass": "shelluser"
+	},
+	"provisioners": [
+        {
+            "type": "file",
+            "source": "../NetSUSLPInstaller.run",
+            "destination": "/home/shelluser/NetSUSLPInstaller.run"
+		},
+		{
+			"type": "shell",
+			"inline": [ "echo {{user `ssh_pass`}} | sudo -S /home/shelluser/NetSUSLPInstaller.run -- -y" ]
+		},
+		{
+			"type": "shell",
+			"inline": [ "rm -f /home/shelluser/NetSUSLPInstaller.run" ]
+		},
+        {
+            "type": "file",
+            "source": "scripts/firstBoot",
+            "destination": "/home/shelluser/firstBoot"
+        },
+		{
+			"type": "shell",
+			"inline": [ "echo {{user `ssh_pass`}} | sudo -S mv /home/shelluser/firstBoot /var/appliance/firstBoot" ]
+		},
+		{
+			"type": "shell",
+			"inline": [ "echo {{user `ssh_pass`}} | sudo -S chown root:root /var/appliance/firstBoot" ]
+		},
+		{
+			"type": "shell",
+			"inline": [ "echo {{user `ssh_pass`}} | sudo -S sed -i '/^TERM/i\/var/appliance/firstBoot' /etc/rc.d/rc.local" ]
+		}
+	],
+	"builders": [
+		{
+			"type": "virtualbox-iso",
+			"guest_os_type": "RedHat_64",
+			"boot_command": [
+				"<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-7/ks.cfg<enter><wait>"
+			],
+			"vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--vram",
+                    "16"
+                ],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--cpus",
+					"2"
+				],
+				[
+					"modifyvm",
+					"{{.Name}}",
+					"--memory",
+					"2048"
+				],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--nic1",
+                    "nat"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--nictype1",
+                    "82545EM"
+                ]
+			],
+            "vm_name": "NetSUSLP",
+            "format": "ovf",
+			"headless": true,
+            "disk_size": 512000,
+            "guest_additions_mode": "disable",
+			"iso_urls": [
+				"iso/CentOS-7-x86_64-Everything-1804.iso",
+				"http://mirror.optus.net/centos/7.5.1804/isos/x86_64/CentOS-7-x86_64-Everything-1804.iso"
+			],
+			"iso_checksum_type": "sha256",
+			"iso_checksum": "99723c8b87dcec21df8aed23de1eb810346d42cfd2a3fafafe70a68296053417",
+			"http_directory": "http",
+            "http_port_min": 9001,
+            "http_port_max": 9001,
+            "ssh_username": "{{user `ssh_name`}}",
+            "ssh_password": "{{user `ssh_pass`}}",
+            "ssh_wait_timeout": "10000s",
+            "shutdown_command": "echo {{user `ssh_pass`}} | sudo -S shutdown -P now"
+		}
+	]
+}
