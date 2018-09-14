@@ -25,17 +25,19 @@ if (isset($_POST['addsysuser'])) {
 	suExec("changeshellpass ".$_POST['addsysuserlogin']." \"".$_POST['addsysuserpass']."\"");
 }
 if (isset($_POST['savesysuser'])) {
-	suExec("changeshelluser ".$_POST['sysuserlogin']." \"".$_POST['sysusergecos']."\" ".$_POST['sysuserhome']." ".$_POST['sysusernewlogin']." ".$_POST['sysusershell']." ".$_POST['sysusernewuid']);
-	if ($_POST['sysuserlogin'] == $conf->getSetting("shelluser")) {
-		$conf->setSetting("shelluser", $_POST['sysusernewlogin']);
-		if ($_POST['sysusernewlogin'] != "shelluser") {
-			$conf->changedPass("shellaccount");
-		}
-	} else {
-		if ($_POST['sysuseradmin'] == "true") {
-			suExec("addshelladmin ".$_POST['sysusernewlogin']);
+	$usermod_result = trim(suExec("changeshelluser ".$_POST['sysuserlogin']." \"".$_POST['sysusergecos']."\" ".$_POST['sysuserhome']." ".$_POST['sysusernewlogin']." ".$_POST['sysusershell']." ".$_POST['sysusernewuid']));
+	if (strpos($usermod_result, 'usermod:') === false) {
+		if ($_POST['sysuserlogin'] == $conf->getSetting("shelluser")) {
+			$conf->setSetting("shelluser", $_POST['sysusernewlogin']);
+			if ($_POST['sysusernewlogin'] != "shelluser") {
+				$conf->changedPass("shellaccount");
+			}
 		} else {
-			suExec("remshelladmin ".$_POST['sysusernewlogin']);
+			if ($_POST['sysuseradmin'] == "true") {
+				suExec("addshelladmin ".$_POST['sysusernewlogin']);
+			} else {
+				suExec("remshelladmin ".$_POST['sysusernewlogin']);
+			}
 		}
 	}
 }
@@ -791,7 +793,14 @@ foreach(explode("\n", $users_str) as $entry) {
 					<form method="POST" name="system-form" id="system-form">
 
 						<div style="padding: 16px 20px 1px;">
-							<div id="webadmin_warning" style="margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>">
+<?php if (strpos($usermod_result,'usermod:') !== false) { ?>
+							<div id="usermod_error" style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger">
+								<div class="panel-body">
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo str_replace('usermod: ', '', $usermod_result); ?></div>
+								</div>
+							</div>
+<?php } ?>
+							<div id="system_warning" style="margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($conf->needsToChangePass("shellaccount") || $conf->needsToChangePass("smbaccount") || $conf->needsToChangePass("afpaccount") ? "" : "hidden"); ?>">
 								<div class="panel-body">
 									<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Credentials have not been changed for these user accounts.</div>
 								</div>

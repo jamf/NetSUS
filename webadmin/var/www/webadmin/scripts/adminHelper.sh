@@ -274,7 +274,11 @@ if [ -f "/etc/ntp/step-tickers" ]; then
 elif [ -f "/etc/ntp.conf" ]; then
 	sed -i "0,/^server/{s/^server.*/server $2/}" /etc/ntp.conf
 	sed -i "0,/^pool/{s/^pool.*/pool $2 iburst/}" /etc/ntp.conf
-	service ntp restart 2>&-
+	service ntp stop 2>&-
+	if [ "$(which ntpdate 2>&-)" != '' ]; then
+		ntpdate $2
+	fi
+	service ntp start 2>&-
 elif [ -f "/etc/systemd/timesyncd.conf" ]; then
 	sed -i "s/^NTP=.*/NTP=$2/" /etc/systemd/timesyncd.conf
 	systemctl restart systemd-timesyncd
@@ -381,15 +385,18 @@ changeshelluser)
 # $6: Login Shell
 # $7: User ID
 if [ "$4" != '/dev/null' ]; then
-	usermod -c "$3" -d $4 -l $5 -m -s $(which $6) -u $7 $2
+	result=$(usermod -c "$3" -d $4 -l $5 -m -s $(which $6) -u $7 $2 2>&1 | grep -v 'no changes')
 else
-	usermod -c "$3" -l $5 -s $(which $6) -u $7 $2
+	result=$(usermod -c "$3" -l $5 -s $(which $6) -u $7 $2 2>&1 | grep -v 'no changes')
 fi
-groupmod -n $5 $2 2>/dev/null
-if [ ! -e $4 ]; then
-	mkdir -p $4
-	chown $5:$5 $4
+if [ $? -eq 0 ]; then
+	groupmod -n $5 $2 2>/dev/null
+	if [ ! -e $4 ]; then
+		mkdir -p $4
+		chown $5:$5 $4
+	fi
 fi
+echo "$result"
 ;;
 
 addshelladmin)
