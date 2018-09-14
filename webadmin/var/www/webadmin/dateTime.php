@@ -21,7 +21,7 @@ if (isset($_POST['savetimeserver'])) {
  	suExec("settimeserver ".$_POST['timeserver']);
 }
 if (isset($_POST['savetime'])) {
- 	suExec("setlocaltime ".$_POST['localtime']);
+ 	suExec("setlocaltime \"".$_POST['localtime']."\"");
 }
 if (isset($_POST['savetimezone'])) {
  	suExec("settimezone ".$_POST['timezone']);
