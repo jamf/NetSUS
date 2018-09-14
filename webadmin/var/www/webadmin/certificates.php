@@ -245,7 +245,7 @@ if ($ssl_certificate_str != "") {
 								<input type="text" name="organizational_unit" id="organizational_unit" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
 							</div>
 
-							<h5 id="organization_label"><strong>Organization</strong> <small>Name of the organization (e.g. "JAMF Software").</small></h5>
+							<h5 id="organization_label"><strong>Organization</strong> <small>Name of the organization (e.g. "Jamf").</small></h5>
 							<div class="form-group has-feedback">
 								<input type="text" name="organization" id="organization" class="form-control input-sm" placeholder="[Optional]" value="" onFocus="validCSR();" onKeyUp="validCSR();" onBlur="validCSR();"/>
 							</div>
