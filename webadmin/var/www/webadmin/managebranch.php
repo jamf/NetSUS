@@ -166,7 +166,7 @@ foreach($products as $productobj) {
 				<div style="padding: 63px 20px 1px; background-color: #f9f9f9;">
 					<div style="margin-top: 16px; margin-bottom: 0px; border-color: #4cae4c;" class="panel panel-success <?php echo (isset($status_msg) ? "" : "hidden"); ?>">
 						<div class="panel-body">
-							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo $status_msg; ?></div>
+							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo (isset($status_msg) ? $status_msg : ""); ?></div>
 						</div>
 					</div>
 
