@@ -23,12 +23,12 @@ if (isset($_POST['savehostname'])) {
 if (isset($_POST['savecfg'])) {
 	$iface = implode($_POST['savecfg']);
 	$method = $_POST['method'][$iface];
-	$ipaddr = $_POST['ipaddr'][$iface];
-	$netmask = $_POST['netmask'][$iface];
-	$gateway = (empty($_POST['gateway'][$iface]) ? "0.0.0.0" : $_POST['gateway'][$iface]);
-	$dns1 = $_POST['dns1'][$iface];
-	$dns2 = $_POST['dns2'][$iface];
 	if ($method == "static") {
+		$ipaddr = $_POST['ipaddr'][$iface];
+		$netmask = $_POST['netmask'][$iface];
+		$gateway = (empty($_POST['gateway'][$iface]) ? "0.0.0.0" : $_POST['gateway'][$iface]);
+		$dns1 = $_POST['dns1'][$iface];
+		$dns2 = $_POST['dns2'][$iface];
 		suExec("setiface ".$iface." static ".$ipaddr." ".$netmask." ".$gateway." ".$dns1." ".$dns2);
 	} else {
 		suExec("setiface ".$iface." dhcp");
