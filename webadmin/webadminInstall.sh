@@ -27,6 +27,7 @@ yum_install() {
 if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install gawk
 	apt_install ufw
+	apt_install openssh-server
 	apt_install parted
 	apt_install whois
 	apt_install dialog
