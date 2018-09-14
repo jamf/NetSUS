@@ -8,14 +8,12 @@ $title = "LDAP Proxy";
 
 include "inc/header.php";
 
-$slapd_error = "";
-
 // Helper Function
 function ldapExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/ldapHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-if (!empty($_POST['enableproxy'])) {
+if (isset($_POST['enableproxy'])) {
 	ldapExec("enableproxy");
 }
 
@@ -238,14 +236,14 @@ if ($conf->getSetting("ldapproxy") == "enabled" && sizeof($conf->getProxies()) >
 							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>The LDAP service will start when a proxy configuration is added.</div>
 						</div>
 					</div>
-
-					<div id="slapd_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo (empty($slapd_error) ? "hidden" : ""); ?>">
+<?php if (isset($slapd_error)) { ?>
+					<div id="slapd_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger">
 						<div class="panel-body">
 							<input type="hidden" id="enableproxy" name="enableproxy" value="">
 							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span><?php echo $slapd_error; ?></div>
 						</div>
 					</div>
-
+<?php } ?>
 					<table id="proxy-table" class="table table-hover" style="border-bottom: 1px solid #eee;">
 						<thead>
 							<tr>

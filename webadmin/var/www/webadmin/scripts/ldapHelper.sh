@@ -17,7 +17,7 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig slapd off > /dev/null 2>&1
 fi
-service slapd stop 2>&-
+service slapd stop
 ;;
 
 enableproxy)
@@ -26,7 +26,7 @@ if [ "$(which update-rc.d 2>&-)" != '' ]; then
 elif [ "$(which chkconfig 2>&-)" != '' ]; then
 	chkconfig slapd on > /dev/null 2>&1
 fi
-service slapd start 2>&-
+service slapd start
 ;;
 
 touchconf)
