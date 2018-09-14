@@ -11,7 +11,11 @@ include "inc/header.php";
 function formatSize($size, $precision = 1) {
 	$base = log($size, 1024);
 	$suffixes = array('B', 'kB', 'MB', 'GB', 'TB');
-	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+	if ($size == 0) {
+		return "0 B";
+	} else {
+		return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
+	}
 }
 
 $df_result_str = trim(suExec("diskusage"));
@@ -21,7 +25,11 @@ $df_used = formatSize($df_result[1]*1024);
 $df_used_percent = ceil(100*$df_result[1]/$df_result[0]);
 $df_free = formatSize($df_result[2]*1024);
 $df_reserved = formatSize(($df_result[0]-$df_result[1]-$df_result[2])*1024);
-$df_reserved_percent = ceil(100*($df_result[0]-$df_result[1]-$df_result[2])/$df_result[0]);
+if ($df_result[0]-$df_result[1]-$df_result[2] == 0) {
+	$df_reserved_percent = 0;
+} else {
+	$df_reserved_percent = ceil(100*($df_result[0]-$df_result[1]-$df_result[2])/$df_result[0]);
+}
 
 $lv_result = trim(suExec("resizeStatus"));
 if (strpos($lv_result, 'ERROR') === false) {
