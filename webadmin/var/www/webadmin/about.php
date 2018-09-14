@@ -87,6 +87,7 @@ if ($install_type == 'apt-get') { ?>
 							<li>netatalk</li>
 							<li>nfs-kernel-server</li>
 							<li>ntp</li>
+							<li>openssh-server</li>
 							<li>parted</li>
 							<?php if (version_compare(phpversion(), "7.0") < 0) {
 								echo "<li>php5-ldap</li>";
@@ -95,11 +96,13 @@ if ($install_type == 'apt-get') { ?>
 								echo "<li>php-xml</li>";
 								echo "<li>php-zip</li>";
 							} ?>
+							<li>policycoreutils</li>
 							<li>python-configparser</li>
 							<li>python-m2crypto</li>
 							<li>python-pycurl</li>
 							<li>samba</li>
 							<li>slapd</li>
+							<li>software-properties-common</li>
 							<li>tftpd-hpa</li>
 							<li>ufw</li>
 							<li>whois</li>
@@ -141,7 +144,7 @@ if ($install_type == 'yum') { ?>
 				<h3 align="left">Support</h3>
 
 				<div class="about">
-					<p>The NetBoot/SUS/LDAP Proxy server is distributed "as is" by JAMF Software, LLC.  For support, please use the following resource:<br/><br/>
+					<p>The NetBoot/SUS/LDAP Proxy server is distributed "as is" by the Jamf Open Source Community. For support, please use the following resource:<br/><br/>
 						<a href="https://www.jamf.com/jamf-nation/" target="_blank">https://www.jamf.com/jamf-nation/</a><br/><br/>
 					</p>
 				</div>
@@ -152,7 +155,7 @@ if ($install_type == 'yum') { ?>
 			<div style="padding: 6px 20px 1px; background-color: #f9f9f9;">
 				<div class="about">
 					<p>
-						Copyright (C) 2017, JAMF Software, LLC<br/>
+						Copyright (C) 2018, Jamf Open Source Community<br/>
 						All rights reserved.<br/><br/>
 
 						Redistribution and use in source and binary forms, with or without modification,
@@ -168,22 +171,22 @@ if ($install_type == 'yum') { ?>
 							this list of conditions and the following disclaimer in the documentation
 							and/or other materials provided with the distribution.</li>
 						<br>
-						<li>Neither the name of the JAMF Software, LLC nor the names of its contributors
-							may be used to endorse or promote products derived from this software without
-							specific prior written permission.</li>
+						<li>Neither the name of the Jamf nor the names of its contributors may be used to endorse
+							or promote products derived from this software without specific prior written
+							permission.</li>
 					</ul>
 					<br>
 
 					<p>
-						THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY EXPRESS OR IMPLIED
-						WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-						AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC
-						BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-						DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-						LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-						THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-						OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-						POSSIBILITY OF SUCH DAMAGE.
+						THIS SOFTWARE IS PROVIDED BY THE JAMF OPEN SOURCE COMMUNITY "AS IS" AND ANY EXPRESS OR
+						IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+						MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+						THE JAMF OPEN SOURCE COMMUNITY BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+						EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+						SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+						HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+						TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+						EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					</p>
 				</div>
 			</div>
