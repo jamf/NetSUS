@@ -299,7 +299,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 						<div class="row">
 							<div class="col-sm-10">
 								<div class="dataTables_filter">
-									<h5><strong>Netboot Images</strong> <small>Refresh this page after uploading a NetBoot image.<br><strong>Note:</strong> The NetBoot folder name cannot contain spaces.</small></h5>
+									<h5><strong>NetBoot Images</strong> <small>Refresh this page after uploading a NetBoot image.<br><strong>Note:</strong> The NetBoot folder name cannot contain spaces.</small></h5>
 								</div>
 							</div>
 							<div class="col-sm-2">
