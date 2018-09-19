@@ -38,10 +38,10 @@ if (isset($_POST['savecfg'])) {
 
 if (isset($_POST['saveproxy'])) {
 	$proxy_auth = "";
-	if (isset($_POST['proxyuser']) && isset($_POST['proxypass'])) {
+	if (isset($_POST['proxyuser']) && !empty($_POST['proxyuser']) && isset($_POST['proxypass']) && !empty($_POST['proxypass'])) {
 		$proxy_auth = $_POST['proxyuser'].":".$_POST['proxypass']."@";
 	}
-	if (isset($_POST['proxyhost']) && isset($_POST['proxyport'])) {
+	if (isset($_POST['proxyhost']) && !empty($_POST['proxyhost']) && isset($_POST['proxyport']) && !empty($_POST['proxyport'])) {
 		suExec("setproxy \"".$proxy_auth.$_POST['proxyhost'].":".$_POST['proxyport']."\"");
 	} else {
 		suExec("setproxy");

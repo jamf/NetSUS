@@ -223,7 +223,7 @@ if [ "${2}" != '' ]; then
 	echo "http_proxy=http://${2}/" >> /etc/environment
 	echo "https_proxy=https://${2}/" >> /etc/environment
 	echo "ftp_proxy=ftp://${2}/" >> /etc/environment
-	if [ -f "/etc/apt/apt.conf" ]; then
+	if [ -d "/etc/apt/" ]; then
 		echo "Acquire::http::proxy \"http://${2}/\";" >> /etc/apt/apt.conf
 		echo "Acquire::https::proxy \"https://${2}/\";" >> /etc/apt/apt.conf
 		echo "Acquire::ftp::proxy \"ftp://${2}/\";" >> /etc/apt/apt.conf
