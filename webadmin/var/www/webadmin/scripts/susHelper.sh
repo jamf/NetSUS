@@ -126,6 +126,20 @@ echo $(/var/appliance/sus_prefs.py read AppleCatalogURLs)
 setCatalogURLs)
 # $2: Catalog URLs
 /var/appliance/sus_prefs.py write AppleCatalogURLs ${2}
+if ! grep -q "index.sucatalog" /var/lib/reposado/preferences.plist; then
+	rm -f /srv/SUS/html/content/catalogs/index.sucatalog*
+	rm -f /srv/SUS/html/content/catalogs/index_*.sucatalog
+fi
+if ! grep -q "index-1.sucatalog" /var/lib/reposado/preferences.plist; then
+	rm -f /srv/SUS/html/content/catalogs/index-1.sucatalog*
+	rm -f /srv/SUS/html/content/catalogs/index-1_*.sucatalog
+fi
+otherCatalogs=$(find /srv/SUS/html/content/catalogs/others -name index*.sucatalog -a \! -name index*_*.sucatalog -exec basename {} ".sucatalog" \; 2>/dev/null)
+for i in ${otherCatalogs}; do
+	if ! grep -q "${i}" /var/lib/reposado/preferences.plist; then
+		rm -f /srv/SUS/html/content/catalogs/others/${i}*
+	fi
+done
 ;;
 
 setLogFile)
