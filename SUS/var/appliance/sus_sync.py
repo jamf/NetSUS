@@ -85,8 +85,9 @@ def sync_sus():
     	catalogname = str.replace(str(i), "_" + str(strRootBranch), "")
     	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
     	os.system("ln -fs " + i + " /var/www/html/" + catalogname)
-
-    os.system("ln -fs /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /var/www/html/index.sucatalog")
+	
+	if os.path.isfile("/srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog"):
+	    os.system("ln -fs /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /var/www/html/index.sucatalog")
 
 def enable_all_sus():
     print "Enabling new updates"
@@ -99,7 +100,8 @@ def enable_all_sus():
     	catalogname = str.replace(str(catalogname), "/srv/SUS/html/content/catalogs/others/", "")
     	os.system("ln -fs " + i + " /var/www/html/" + catalogname)
 
-    os.system("ln -fs /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /var/www/html/index.sucatalog")
+	if os.path.isfile("/srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog"):
+	    os.system("ln -fs /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /var/www/html/index.sucatalog")
 
 def sync_time():
 	XML = xml.dom.minidom.parse('/var/appliance/conf/appliance.conf.xml')
