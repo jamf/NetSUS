@@ -6,7 +6,8 @@
 * Added notifications for recommended actions
 * Improved Active Directory (LDAP) integration for web administration
 * Added ability to create/manage local system accounts
-* Added support for multiple network interfaces.  Note: Bonded interfaces are not supported in the UI
+* Added support for multiple network interfaces.\
+  Note: Bonded interfaces are not supported in the UI
 * Added ability to configure global proxy
 * Improved ntp syncronization in Date/Time
 * Added timezone picker map in Date/Time
