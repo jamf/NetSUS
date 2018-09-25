@@ -18,7 +18,7 @@
 * New storage management interface for expanding LVM volumes
 * Improved log viewer
 * Added ability to download contents of log viewer
-* Added dedicated settings page for services
+* Added dedicated settings pages for services
 * Settings gear is contextually aware of service
 * Added ability to enable/disable services
 * Added avility to show/hide services in Dashboard
