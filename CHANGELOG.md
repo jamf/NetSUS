@@ -3,6 +3,8 @@
 ## 5.0
 
 * Updated user interface to align with Jamf Pro UI
+* Appliance Operating System is now Ubuntu 16.04.5
+* Added (experimental) support for Ubuntu 18.04 LTS
 * Added notifications for recommended actions
 * Improved Active Directory (LDAP) integration for web administration
 * Added ability to create/manage local system accounts
@@ -31,7 +33,6 @@
 * Added File Sharing service
 * Added ability to create smb/afp/http shares
 * Added ability to manage users for shares
-* Added (experimental) support for Ubuntu 18.04 LTS
 
 ## 4.2.1
 
