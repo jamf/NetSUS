@@ -124,7 +124,7 @@ if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 	sed -i 'N;N;s/\n[[:space:]]*<IfModule mod_rewrite.c>\n[[:space:]]*RewriteEngine On\n[[:space:]]*<\/IfModule>//;P;D' /etc/httpd/conf/httpd.conf
 	# Add SUS configuration
     if httpd -v 2>/dev/null | grep version | grep -q '2.2'; then
-    	sed -e '/<Directory "\/var\/www\/html">/,/<\/Directory>/{s/AllowOverride None/AllowOverride All/g}' /etc/httpd/conf/httpd.conf
+    	sed -i '/<Directory "\/var\/www\/html">/,/<\/Directory>/{s/AllowOverride None/AllowOverride All/g}' /etc/httpd/conf/httpd.conf
     	echo 'Alias /content/ "/srv/SUS/html/content/"
 <Directory /srv/SUS/html/content/>
 	Options Indexes FollowSymLinks MultiViews
