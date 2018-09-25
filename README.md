@@ -12,7 +12,7 @@ OVA:
 
 The NetBoot/SUS/LP server allows you to host an internal software update server (SUS), a NetBoot server, file shares, and a LDAP Proxy server **all on the same Linux system**. For a list of supported Linux distributions see [Requirements](#requirements).
 
-<p align="center"><img src="docs/images/attachments/dashboard.png" height="270"></p>
+<p align="center"><img src="docs/images/attachments/dashboard.png" height="400"></p>
 
 * **Software Update Server** - Unlike a standard SUS, the SUS hosted by the NetBoot/SUS/LP server allows you to control which software updates should be installed on each computer in your organization.
 
