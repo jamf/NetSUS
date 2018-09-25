@@ -95,7 +95,6 @@ if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
 	# Remove any entries from old installations
 	sed -i "s:DocumentRoot.*:DocumentRoot /var/www/html:g" /etc/apache2/sites-enabled/000-default.conf
 	sed -i '/[[:space:]]*<Directory \/srv\/SUS\//,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
-	sed -i "s|</VirtualHost>||" /etc/apache2/sites-enabled/000-default.conf
 	sed -i '/{HTTP_USER_AGENT} Darwin/d' /etc/apache2/sites-enabled/000-default.conf
 	sed -i '/sucatalog/d' /etc/apache2/sites-enabled/000-default.conf
 	# Remove empty <IfModule mod_rewrite.c> sections
