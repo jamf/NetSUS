@@ -30,7 +30,7 @@ rootBranch)
 # $2: Branch
 rm -f /var/www/html/*.sucatalog
 if [ "${2}" != '' ]; then
-	catalogArray="/srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog"
+	catalogArray=$(ls /srv/SUS/html/content/catalogs/others/index*_${2}.sucatalog 2>/dev/null)
 	for i in ${catalogArray}; do
 		catalogName="$(basename "${i}" "_${2}.sucatalog")"
 		ln -fs "/srv/SUS/html/content/catalogs/others/${catalogName}_${2}.sucatalog" "/var/www/html/${catalogName}.sucatalog"
