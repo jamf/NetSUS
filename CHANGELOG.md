@@ -1,5 +1,38 @@
 # NetSUS Changelog
 
+## 5.0
+
+* Updated user interface to align with Jamf Pro UI
+* Added notifications for recommended actions
+* Improved Active Directory (LDAP) integration for web administration
+* Added ability to create/manage local system accounts
+* Added support for multiple network interfaces
+  Note: Bonded interfaces are not supported in the UI
+* Added ability to configure global proxy
+* Improved ntp syncronization in Date/Time
+* Added timezone picker map in Date/Time
+* Improved SSL certificate interface
+* Added full chain validation checks for SSL certificates
+* New storage management interface for expanding LVM volumes
+* Improved log viewer
+* Added ability to download contents of log viewer
+* Added dedicated settings page for services
+* Settings gear is contextually aware of service
+* Added ability to enable/disable services
+* Added avility to show/hide services in Dashboard
+* Added ability to select SUS catalogs to sync
+* Added ability to add custom SUS catalogs (beta/seed)
+* Added ability to publish SUS catalogs over https
+* Improved URL re-write functionality for SUS catalogs
+* Added support for multiple NetBoot images
+* Improved NetBoot image property editing
+* Improved validation checks for LDAP proxy configuration
+* Added service status messages to LDAP proxy
+* Added File Sharing service
+* Added ability to create smb/afp/http shares
+* Added ability to manage users for shares
+* Added (experimental) support for Ubuntu 18.04 LTS
+
 ## 4.2.1
 
 * Added High Sierra support for SUS
