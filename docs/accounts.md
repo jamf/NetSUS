@@ -3,8 +3,8 @@ The following table lists the default credentials for all accounts associated wi
 
 Account  | Username | Password
 -------  | -------- | --------
-Web Interface | webadmin | webadmin
-Shell User (used to administer the NetSUSLP from the command line)  | shelluser | shelluser
+Web Interface (used to administer the NetSUSLP from a browser) | webadmin | webadmin
+Shell User (used to administer the NetSUSLP from the command line) | shelluser | shelluser
 NetBoot User (used by NetBoot for diskless support) | afpuser | afpuser1
 NetBoot Admin (used to upload NetBoot images) | smbuser | smbuser1
 
