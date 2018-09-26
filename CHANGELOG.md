@@ -99,11 +99,11 @@
 
 ## 3.0
 
-* The NetBoot/SUS/LP Server can now be installed on RHEL and CentOS
+* The NetSUS Server can now be installed on RHEL and CentOS
 
 ## 2.0
 
-* Added the option to install the NetBoot/SUS/LP server using an installer
-* Updated the NetBoot/SUS/LP server web application GUI to match the JSS v9.0 and later
-* The NetBoot server hosted by the NetBoot/SUS/LP server now uses HTTP instead of NFS
-* Updated the version of Reposado that is used by the NetBoot/SUS/LP server
+* Added the option to install the NetSUS server using an installer
+* Updated the NetSUS server web application GUI to match the JSS v9.0 and later
+* The NetBoot server hosted by the NetSUS server now uses HTTP instead of NFS
+* Updated the version of Reposado that is used by the NetSUS server

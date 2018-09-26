@@ -6,7 +6,7 @@ The LDAP Proxy Server is a proxy server that allows you to expose an access poin
 
 <img height="140" src="images/attachments/proxy_diagram.png">
 
-1. Log in to the NetBoot/SUS/LP server web application.
+1. Log in to the NetSUS server web application.
 
 2. Click **LDAP Proxy** in the side navigation menu or in the mobile dropdown menu.
 
@@ -30,7 +30,7 @@ This is the distinguished name of name of your proxy, which will serve as your e
 
 You want to name your Proxy as `proxy.company.com`, you would enter `DC=proxy,DC=company,DC=com`
 
-**Note**: Pointing multipile Real Distinguished Names and URL's to the same Exposed Distinguished Name is currently not supported on the NetBoot/SUS/LP. However this is possible by editing the  `slapd.conf` configuration file on your server device commonly located here: `/etc/ldap/slapd.conf`. This file is re-written each time you activate the NetBoot/SUS/LP LDAP proxy. For more information on this topic, see the [OpenLDAP Documentation](http://www.openldap.org/doc/admin24/slapdconfig.html)
+**Note**: Pointing multipile Real Distinguished Names and URL's to the same Exposed Distinguished Name is currently not supported on the NetSUS. However this is possible by editing the  `slapd.conf` configuration file on your server device commonly located here: `/etc/ldap/slapd.conf`. This file is re-written each time you activate the NetSUS LDAP proxy. For more information on this topic, see the [OpenLDAP Documentation](http://www.openldap.org/doc/admin24/slapdconfig.html)
 
 ## <a name="rdn"></a>Real Distinguished Name
 

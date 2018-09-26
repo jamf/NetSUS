@@ -1,5 +1,5 @@
 # Accounts
-The following table lists the default credentials for all accounts associated with the NetBoot/SUS/LP server:
+The following table lists the default credentials for all accounts associated with the NetSUS server:
 
 Account  | Username | Password
 -------  | -------- | --------
@@ -14,7 +14,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 1. Log in to the NetSUS server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .
 
@@ -30,7 +30,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 1. Log in to the NetSUS server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .
 
@@ -48,7 +48,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 1. Log in to the NetSUS server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .
 
@@ -66,7 +66,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 1. Log in to the NetSUS server web application.
 
-2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .
 
