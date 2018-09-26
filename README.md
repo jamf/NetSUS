@@ -33,8 +33,8 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 #### Supported Linux distributions:
 
 * Ubuntu 14.04 LTS Server
-* Ubuntu 16.04 LTS Server
-* Ubuntu 18.04 LTS Server (Experimental)
+* Ubuntu 16.04 LTS Server (Recommended)
+* Ubuntu 18.04 LTS Server
 * Red Hat Enterprise Linux (RHEL) 6.4 or later
 * CentOS 6.4 or later
 
