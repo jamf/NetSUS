@@ -4,7 +4,7 @@ The following table lists the default credentials for all accounts associated wi
 Account  | Username | Password
 -------  | -------- | --------
 Web Interface | webadmin | webadmin
-Shell User (used to administer the NetBoot/SUS/LP server from the command line)  | shelluser | shelluser
+Shell User (used to administer the NetSUS server from the command line)  | shelluser | shelluser
 NetBoot User (used by NetBoot for diskless support) | afpuser | afpuser1
 NetBoot Admin (used to upload NetBoot images) | smbuser | smbuser1
 
@@ -12,7 +12,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 ## Changing the Web Interface Credentials
 
-1. Log in to the NetBoot/SUS/LP server web application.
+1. Log in to the NetSUS server web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
@@ -28,7 +28,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 ## Changing Passwords for System Users
 
-1. Log in to the NetBoot/SUS/LP server web application.
+1. Log in to the NetSUS server web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
@@ -46,7 +46,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 ## Changing Credentials for System Users
 
-1. Log in to the NetBoot/SUS/LP server web application.
+1. Log in to the NetSUS server web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
@@ -64,7 +64,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 ## Adding System Users
 
-1. Log in to the NetBoot/SUS/LP server web application.
+1. Log in to the NetSUS server web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_icon.png"> .
 
