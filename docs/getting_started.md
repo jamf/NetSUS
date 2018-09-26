@@ -6,7 +6,8 @@ To install the NetBoot/SUS/LP server using an installer, you need:
 <https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * One of the following operating systems:
 	* Ubuntu 14.04 LTS Server
-	* Ubuntu 16.04 LTS Server
+	* Ubuntu 16.04 LTS Server (Recommended)
+	* Ubuntu 18.04 LTS Server
 	* Red Hat Enterprise Linux (RHEL) 6.4 or later
 	* CentOS 6.4 or later
 * 500 GB of disk space available 
@@ -32,17 +33,26 @@ Depending on how your network infrastructure is setup, you may need to configure
 
 **For NetBoot:**
 
-* DHCP/BOOTP (for discovery of NetBoot server and images) listens on UDP ports 67 and 68
+* BSDP (for discovery of NetBoot server and images) listens on UDP ports 67 and 68
 * TFTP (used to download the initial booter/kernel of the selected NetBoot set) listens on UDP port 69
 * HTTP (alternative to NFS - used to serve the NetBoot disk image itself once the client has booted) listens on TCP port 80
-* NFS (alternative to HTTP - used to serve the NetBoot disk image itself once the client has booted) listens on ports 111 and 2049 over TCP and UDP for both
+* NFS (alternative to HTTP - used to serve the NetBoot disk image itself once the client has booted) listens on ports 111, 892 and 2049 over TCP and UDP for both. On CentOS/RHEL the NFS server also uses TCP port 32803 and UDP port 32769 for the lockd Daemon
 * AFP (used as shadow storage for diskless NetBoot sets) listens on TCP port 548
+* SMB (used to provide a network share for you to upload your NetBoot sets) listens on TCP ports 139 and 445
 
 Note that to NetBoot across different subnets on your network, you'll need to set up IP Helpers on your managed switches to pass the required DHCP traffic over the client and server's subnets.
+
+**For File Sharing:**
+
+* AFP listens on TCP port 548
+* SMB listens on TCP ports 139 and 445
+* HTTP listens on TCP port 80
+* HTTPS listens on TCP port 443
 
 **For Software Update Server:**
 
 * HTTP listens on TCP port 80
+* HTTPS listens on TCP port 443
 
 The Software Update Server uses Reposado to sync content from Apple, so it must connect to Apple's software update services - Apple provide some guidance here: https://support.apple.com/en-us/HT202943.
 
@@ -54,7 +64,6 @@ The Software Update Server uses Reposado to sync content from Apple, so it must 
 
 * HTTPS (web based administration interface) listens on TCP port 443
 * SSH (secure shell console login) listens on TCP port 22
-* SMB (used to provide a network share for you to upload your NetBoot sets) listens on TCP ports 139 and 445
 
 ## Installing the NetBoot/SUS/LP Server Using an Installer
 1. Copy the NetBoot/SUS/LP Installer (.run) to the server on which you plan to install the NetBoot/SUS /LP server.
@@ -70,6 +79,6 @@ The Software Update Server uses Reposado to sync content from Apple, so it must 
 5. Go to `https://myhostname.local/webadmin` to access the NetBoot/SUS/LP server web application. Once the NetBoot/SUS/LP server is installed, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).
 
 ## Setting Up the NetBoot/SUS/LP Server as an Appliance
-To set up the NetBoot/SUS/LP server as an appliance, import the OVA file for the NetBoot/SUS/LP server into a virtualization software product. This creates an Ubuntu VM with running SMB and AFP shares. The first time you power on the VM, a page displaying the URL for the NetBoot/SUS/LP server web application appears.
+To set up the NetBoot/SUS/LP server as an appliance, import the OVA file for the NetBoot/SUS/LP server into a virtualization software product. This creates an Ubuntu VM with no services configured. The first time you power on the VM, the URL for the NetBoot/SUS/LP server web application appears in the console.
 
 Once the NetBoot/SUS/LP server is set up as an appliance, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).
