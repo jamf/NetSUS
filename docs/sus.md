@@ -1,11 +1,11 @@
 # Managing a Software Update Server (SUS)
 
-The SUS hosted by the NetSUS server uses Reposado, an open source software update application.
-Unlike a standard SUS, you can divide the SUS hosted by the NetSUS server into branches and enable different software updates on each branch. This gives you more control over which updates should be installed on each computer in your organization.
+The SUS hosted by the NetSUSLP uses Reposado, an open source software update application.
+Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branches and enable different software updates on each branch. This gives you more control over which updates should be installed on each computer in your organization.
 
 ## Setting Up the SUS
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
 
@@ -19,7 +19,7 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUS server into b
 
 You can sync the list of available software updates with Apple’s Software Update server manually or on a schedule.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
 
@@ -29,12 +29,12 @@ You can sync the list of available software updates with Apple’s Software Upda
 	
 ## Configuring SUS Branches
 
-The NetSUS server web application allows you to do the following for each branch:
+The NetSUSLP web application allows you to do the following for each branch:
 
 * Make the branch the root.
 * Manually enable or disable software updates. 
 * Automatically enable new software updates.
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
 
@@ -48,7 +48,7 @@ The NetSUS server web application allows you to do the following for each branch
 
 # Using the SUS with Jamf Pro
 
-Like a standard SUS, you can use the SUS hosted by the NetSUS server to run Software Update on computers that are enrolled with Jamf Pro. This involves pointing computers at a branch, and then using a policy or Jamf Remote to run Software Update on the computers.
+Like a standard SUS, you can use the SUS hosted by the NetSUSLP to run Software Update on computers that are enrolled with Jamf Pro. This involves pointing computers at a branch, and then using a policy or Jamf Remote to run Software Update on the computers.
 
 ## Pointing Computers at a SUS Branch
 **Note:** The instructions in this section are for Jamf Pro v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.

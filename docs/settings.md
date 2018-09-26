@@ -7,7 +7,7 @@ On a mobile device these options are available from the navigation drop down men
 ## Restarting the AFP or SMB Share
 You may need to restart the AFP or SMB share for troubleshooting purposes.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -19,7 +19,7 @@ You may need to restart the AFP or SMB share for troubleshooting purposes.
 ## Disabling the GUI
 The User Menu now adds additional functionality to be able to Disable GUI.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click the username drop down.
 
@@ -27,11 +27,11 @@ The User Menu now adds additional functionality to be able to Disable GUI.
 
 4. Click **Disable** to continue with Disable GUI.
 
-5. Reload the NetSUS server in your browser.
+5. Reload the NetSUSLP in your browser.
 
 
 ## Enabling the GUI
-The NetSUS server allows you to enable a disabled GUI by modifying the configuration file on the NetSUS Server.
+The NetSUSLP allows you to enable a disabled GUI by modifying the configuration file on the NetSUSLP.
 
 1. Log in to the server as a user with superuser privileges.
 
@@ -45,7 +45,7 @@ The NetSUS server allows you to enable a disabled GUI by modifying the configura
 
 4. Save the appliance.conf.xml file.
 
-5. Reload the NetSUS server in your browser
+5. Reload the NetSUSLP in your browser
 
 
 ## Network Settings
@@ -60,7 +60,7 @@ The Network settings allow you to configure the following:
 * Enabling/Disabling SSH
 * Enabling/Disabling Firewall
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -74,11 +74,11 @@ The Network settings allow you to configure the following:
 ## Date/Time Settings
 The Date/Time settings allow you to do the following:
 
-* View the current time on the NetSUS server. 
-* Change the current time zone on the NetSUS server. 
+* View the current time on the NetSUSLP. 
+* Change the current time zone on the NetSUSLP. 
 * Use a network time server to synchronize the date/time.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -90,9 +90,9 @@ The Date/Time settings allow you to do the following:
 
 
 ## Certificates Settings
-Certificates Settings allows you to modify the server settings with either a Tomcat or Slapd certificate to be used for communication with the NetSUSLP Server.
+Certificates Settings allows you to modify the server settings with either a Tomcat or Slapd certificate to be used for communication with the NetSUSLP.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -106,13 +106,13 @@ Certificates Settings allows you to modify the server settings with either a Tom
 
 6. Click **Save**.
 
-7. Restart NetSUS Server.
+7. Restart the NetSUSLP.
 
 
 ## Logs Settings
-The Logs settings allows you to select and view the system log files on the NetSUS Server.
+The Logs settings allows you to select and view the system log files on the NetSUSLP.
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -126,15 +126,15 @@ The Logs settings allows you to select and view the system log files on the NetS
 
 
 ## Storage Settings
-The Storage settings allows you to expand the logical disk volume on NetSUS Server, if the VMDK has been expanded.
+The Storage settings allows you to expand the logical disk volume on the NetSUSLP, if the VMDK has been expanded.
 
-1. Shut down the NetSUS Server.
+1. Shut down the NetSUSLP.
 
-2. Expand the VMDK of the NetSUS Server from within the hypervisor.
+2. Expand the VMDK of the NetSUSLP from within the hypervisor.
 
-3. Start up the NetSUS Server.
+3. Start up the NetSUSLP.
 
-4. Log in to the NetSUS server web application.
+4. Log in to the NetSUSLP web application.
 
 5. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
@@ -142,4 +142,4 @@ The Storage settings allows you to expand the logical disk volume on NetSUS Serv
 
 7. If there is sufficient space available, the Resize button will be enabled, click **Resize**.
 
-8. Restart the NetSUS Server for the additional storage to become available.
+8. Restart the NetSUSLP for the additional storage to become available.

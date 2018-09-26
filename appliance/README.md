@@ -4,7 +4,7 @@
 
 The following instructions describe how to use VirtualBox and Packer (utilizing the files contained in the 'appliance' directory) to create an appliance (ova file) of the NetSUSLP application. 
 
-The purpose of the appliance file is to give users an easy to setup virtual machine that already has the NetSUSLP application installed. With the appliance the user can simply import the ova file into their preferred virtualization software and have a running NetSUSLP server. 
+The purpose of the appliance file is to give users an easy to setup virtual machine that already has the NetSUSLP application installed. With the appliance the user can simply import the ova file into their preferred virtualization software and have a running NetSUSLP. 
 
 ## Requirements
 

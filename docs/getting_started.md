@@ -1,8 +1,8 @@
 ## Requirements
 
-To install the NetSUS server using an installer, you need:
+To install the NetSUSLP using an installer, you need:
 
-* The NetSUS Server Installer (.run), available at:
+* The NetSUSLP Installer (.run), available at:
 <https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * One of the following operating systems:
 	* Ubuntu 14.04 LTS Server
@@ -13,23 +13,23 @@ To install the NetSUS server using an installer, you need:
 * 500 GB of disk space available 
 * 1 GB of RAM
 
-To set up the NetSUS server as an appliance, you need:
+To set up the NetSUSLP as an appliance, you need:
 
-* The OVA file for the NetSUS server, available at:
+* The OVA file for the NetSUSLP, available at:
 <https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
 * Virtualization software that supports Open Virtualization Format 
 * 500 GB of disk space available
 * 2 GB of RAM
 
-To host a NetBoot server using the NetSUS server, you need a NetBoot image (.nbi folder). For more information, see the following Knowledge Base article:
+To host a NetBoot server using the NetSUSLP, you need a NetBoot image (.nbi folder). For more information, see the following Knowledge Base article:
 
 [Creating a NetBoot Image and Setting Up a NetBoot Server](https://www.jamf.com/jamf-nation/articles/307/creating-a-netboot-image-and-setting-up-a-netboot-server)
 
-**Only Intel-based Macs can use a NetBoot server hosted by the NetSUS server.**
+**Only Intel-based Macs can use a NetBoot server hosted by the NetSUSLP.**
 
-## Service Ports (TCP/UDP) Used by the NetSUS Server
+## Service Ports (TCP/UDP) Used by the NetSUSLP
 
-Depending on how your network infrastructure is setup, you may need to configure your firewalls/switches to allow your Mac clients access to various service ports on the NetSUS server.
+Depending on how your network infrastructure is setup, you may need to configure your firewalls/switches to allow your Mac clients access to various service ports on the NetSUSLP.
 
 **For NetBoot:**
 
@@ -65,8 +65,8 @@ The Software Update Server uses Reposado to sync content from Apple, so it must 
 * HTTPS (web based administration interface) listens on TCP port 443
 * SSH (secure shell console login) listens on TCP port 22
 
-## Installing the NetSUS Server Using an Installer
-1. Copy the NetSUS Installer (.run) to the server on which you plan to install the NetSUS server.
+## Installing the NetSUSLP Using an Installer
+1. Copy the NetSUS Installer (.run) to the server on which you plan to install the NetSUSLP.
 
 2. Log in to the server as a user with superuser privileges.
 
@@ -76,9 +76,9 @@ The Software Update Server uses Reposado to sync content from Apple, so it must 
 	
 4. Type "y" to proceed.
 
-5. Go to `https://myhostname.local/webadmin` to access the NetSUS server web application. Once the NetSUS server is installed, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).
+5. Go to `https://myhostname.local/webadmin` to access the NetSUSLP web application. Once the NetSUSLP is installed, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).
 
-## Setting Up the NetSUS Server as an Appliance
-To set up the NetSUS server as an appliance, import the OVA file for the NetSUS server into a virtualization software product. This creates an Ubuntu VM with no services configured. The first time you power on the VM, the URL for the NetSUS server web application appears in the console.
+## Setting Up the NetSUSLP as an Appliance
+To set up the NetSUSLP as an appliance, import the OVA file for the NetSUSLP into a virtualization software product. This creates an Ubuntu VM with no services configured. The first time you power on the VM, the URL for the NetSUSLP web application appears in the console.
 
-Once the NetSUS server is set up as an appliance, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).
+Once the NetSUSLP is set up as an appliance, it is recommended that you log in to the web application and change all usernames and passwords associated with the server. For more information, see [Accounts](accounts.md).

@@ -6,7 +6,7 @@ The LDAP Proxy Server is a proxy server that allows you to expose an access poin
 
 <img height="140" src="images/attachments/proxy_diagram.png">
 
-1. Log in to the NetSUS server web application.
+1. Log in to the NetSUSLP web application.
 
 2. Click **LDAP Proxy** in the side navigation menu or in the mobile dropdown menu.
 
