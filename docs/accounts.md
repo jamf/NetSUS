@@ -72,7 +72,7 @@ You can change the usernames and passwords for the web application and shell acc
 
 4. Click the "System Users" tab.
 
-5. Click the "+ Add" button in the upper-right of the table.
+5. Click the <img height="20" src="images/thumbnails/add_button.png"> button in the upper-right of the table.
 
 6. Enter the user information in the modal dialog.
 
