@@ -207,11 +207,11 @@ The Certificates settings allows you to modify the server settings with a SSL ce
 
 4. Enter the "Private Key", "Certificate", and "CA Bundle" fields with the appropriate unencrypted certificate information.
 
-<p align="center"><img src="images/attachments/certificates.png" height="400"></p>
+	<img height="400" src="images/attachments/certificates.png">
 
 6. Click **Apply**.
 
-7. Restart the NetSUSLP.
+7. Click **Restart** to apply the changes.
 
 
 ## Logs Settings
