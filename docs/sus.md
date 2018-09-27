@@ -59,7 +59,8 @@ Note: The branch URLs displayed provide the appropriate re-directs to the correc
 4. Enter the Branch Name in the modal dialog.\
    Note: You can clone an existing branch, if there is one.
 
-5. Click **Save**.
+5. Click **Save**.\
+   Note: The branch catalog will not be populated until either an update is enabled or a Sync is performed.
 
 6. Optionally, you may set the branch as the default, which makes it available at:
 
@@ -137,8 +138,13 @@ Substitute `<Branch URL>` with the branch URL. For more information, see the “
 You can execute a command from the Advanced pane in Jamf Remote, or from the Files and Processes payload in a policy.
 
 ### Branch URLs
-Branch URLs vary depending on the operating system of enrolled computers. Example branch URLs are listed below.
+The default branch URL shown in the web interface will re-direct the client system(s) to the appropriate catalog URL for the operating system.
+The actual Branch URLs vary depending on the operating system of enrolled computers. For reference example branch URLs are listed below.
 
+**OS X v10.4**
+
+	http://sus.mycompany.corp/content/catalogs/index_<Branch Name>.sucatalog
+		
 **OS X v10.5**
 
 	http://sus.mycompany.corp/content/catalogs/others/index-leopard.merged-1_<Branch Name>.sucatalog
@@ -174,6 +180,10 @@ Branch URLs vary depending on the operating system of enrolled computers. Exampl
 **macOS v10.13**
 
 	http://sus.mycompany.corp/content/catalogs/others/index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
+	
+**macOS v10.14**
+
+	http://sus.mycompany.corp/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
 	
 ### Running Software Update on Computers
 
