@@ -63,7 +63,7 @@ Note: The branch URLs displayed provide the appropriate re-directs to the correc
 
 6. Optionally, you may set the branch as the default, which makes it available at:
 
-	&lt;Base URL&gt;/index.sucatalog
+	<Base URL>/index.sucatalog
 
 7. Optionally, you may set the branch to automatically enable new updates, which is useful if you are simply caching updates.
 
@@ -78,13 +78,15 @@ The NetSUSLP web application allows you to manage the available updates in each 
 
 2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
 
-3. Click the branch you want to configure.
+3. Click the name of branch you want to configure.
 
-4. Configure the branch using the settings on the pane.
+4. Select (or clear) the updates you wish to enable.\
+   Note: the **Select All / Clear All** buttons apply to only updates visible in the table. If you wish to Select / Clear all updates in the branch, select **All** in the "Show" menu at the bottom-left of the table.
 
-    <img src="images/attachments/sus_branch_upper.png" width="500">
+    <img width="750" src="images/attachments/sus_branch.png">
     
-5. Click **Apply** below the list of software updates or at the top of the page.
+5. Click **Apply**.
+
 
 # Using the SUS with Jamf Pro
 
