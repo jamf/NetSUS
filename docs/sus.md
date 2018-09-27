@@ -93,6 +93,7 @@ The NetSUSLP web application allows you to manage the available updates in each 
 
 Like a standard SUS, you can use the SUS hosted by the NetSUSLP to run Software Update on computers that are enrolled with Jamf Pro. This involves pointing computers at a branch, and then using a policy or Jamf Remote to run Software Update on the computers.
 
+
 ## Pointing Computers at a SUS Branch
 **Note:** The instructions in this section are for Jamf Pro v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
 
@@ -103,6 +104,7 @@ There are several ways to point computers at a SUS branch:
 * Use Managed Preferences
 * Use a policy or Jamf Remote
 
+
 ### Pointing Computers at a SUS Branch Using Network Segments
 
 This method is available for the root branch only. It involves adding the root branch to Jamf Pro as a software update server, and then using network segments to set a default software update server for computers.
@@ -110,7 +112,8 @@ This method is available for the root branch only. It involves adding the root b
 For more information, see the “Software Update Servers” and “Network Segments” sections in the Jamf Pro Administrator’s Guide.
 
 When adding the root branch to Jamf Pro as a software update server, be sure to enter “80” for the port.
-    
+
+
 ### Pointing Computers at a SUS Branch Using a Configuration Profile
 
 Create a configuration profile with the branch URL entered in the **Software Update Server** field in the Software Update payload.
@@ -119,6 +122,7 @@ For more information on creating configuration profiles, see the “OS X Configu
 
 For more information on branch URLs, see the “Branch URLs” section below.
 
+
 ### Pointing Computers at a SUS Branch Using Managed Preferences
 
 Create a Managed Preference profile with the branch URL entered in the **Software Update Server** field in the Software Update payload.
@@ -126,6 +130,7 @@ Create a Managed Preference profile with the branch URL entered in the **Softwar
 For more information on creating Managed Preference profiles, see the “Managed Preferences” section in the Jamf Pro Administrator’s Guide.
 
 For more information on branch URLs, see the “Branch URLs” section below.
+
 
 ### Pointing Computers at a SUS Branch by Executing a Command
 
@@ -137,8 +142,9 @@ Substitute `<Branch URL>` with the branch URL. For more information, see the “
 
 You can execute a command from the Advanced pane in Jamf Remote, or from the Files and Processes payload in a policy.
 
+
 ### Branch URLs
-The default branch URL shown in the web interface will re-direct the client system(s) to the appropriate catalog URL for the operating system.
+The default branch URL shown in the web interface will re-direct the client system(s) to the appropriate catalog URL for the operating system.\
 The actual Branch URLs vary depending on the operating system of enrolled computers. For reference example branch URLs are listed below.
 
 **OS X v10.4**
@@ -183,10 +189,20 @@ The actual Branch URLs vary depending on the operating system of enrolled comput
 	
 **macOS v10.14**
 
-	http://sus.mycompany.corp/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
+	https://sus.mycompany.corp/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
 	
 ### Running Software Update on Computers
 
 For instructions on using Jamf Pro to run Software Update on computers that are managed by the Jamf Pro Server, see the “Running Software Update” section in the Jamf Pro Administrator’s Guide.
 
 
+### macOS Mojave
+
+macOS Mojave's softwareupdate by default requires the use of https. It also performs extended validation of TLS certificates.\
+To disable this, use a policy or Jamf Remote to execute the following command on managed computers:
+
+	sudo defaults write /Library/Preferences/com.apple.SoftwareUpdate SUDisableEVCheck -bool TRUE
+
+This preference may also be set using a Configuration Profile.
+
+Note: For macOS Mojave clients the Base URL should be set to https.
