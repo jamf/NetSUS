@@ -1,51 +1,29 @@
 # Settings
 Walkthroughs for options on the **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> page.
 
-On a mobile device these options are available from the navigation drop down menu.
-
-
-## Restarting the AFP or SMB Share
-You may need to restart the AFP or SMB share for troubleshooting purposes.
-
-1. Log in to the NetSUSLP web application.
-
-2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
-
-3. In the "Shares" section, click **AFP** or **SMB** <img height="20" src="images/thumbnails/categories_icon.png">.
-
-4. Click **Restart**.
-
 
 ## Disabling the GUI
-The User Menu now adds additional functionality to be able to Disable GUI.
+The User Menu has the functionality to disable the web interface.
 
 1. Log in to the NetSUSLP web application.
 
-2. In the side navigation menu or in the mobile dropdown menu, click the username drop down.
+2. In the top-right corner of the page, click **Users** <img height="20" src="images/thumbnails/user_menu.png"> .
 
-3. In the drop down list select Disable GUI.
+3. In the drop down list select "Disable GUI".
 
-4. Click **Disable** to continue with Disable GUI.
-
-5. Reload the NetSUSLP in your browser.
+4. Click **Disable** in the confirmation prompt. You will be immediately logged out and the "WebAdmin GUI is disabled" status message will be displayed.
 
 
 ## Enabling the GUI
-The NetSUSLP allows you to enable a disabled GUI by modifying the configuration file on the NetSUSLP.
+The NetSUSLP allows you to enable the WebAdmin GUI from the command line.
 
-1. Log in to the server as a user with superuser privileges.
+1. Log in to the NetSUSLP as a user with sudo privileges, using ssh or via the console.
 
-2. Modify the file at the following location:
+2. Execute the following command:
 
-		/var/appliance/conf/appliance.conf.xml
+		sudo /var/www/html/webadmin/scripts/adminHelper.sh enablegui
 
-3. Remove the following elements from the file:
-
-		<webadmingui>disabled</webadmingui>
-
-4. Save the appliance.conf.xml file.
-
-5. Reload the NetSUSLP in your browser
+3. Refresh the NetSUSLP in your browser.
 
 
 ## Network Settings
