@@ -41,7 +41,7 @@ You can sync the list of available software updates with Apple’s Software Upda
 3. Click the **Sync** button under Manual Sync.\
    Note: the Sync Schedule is now located in the Software Update Server settings.
 
-    <img height="400" src="images/attachments/sus_sync.png">
+    <img height="305" src="images/attachments/sus_sync.png">
 
 
 ## Configuring SUS Branches
