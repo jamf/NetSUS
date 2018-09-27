@@ -168,22 +168,48 @@ The Date/Time settings allow you to set the time zone on the NetSUSLP.
 6. Click the **Save** button next to the time zone menu.
 
 
-## Certificates Settings
-Certificates Settings allows you to modify the server settings with either a Tomcat or Slapd certificate to be used for communication with the NetSUSLP.
+## View SSL Certificate
+The Certificates settings allows you view the currently installed SSL certificate used for communication with the NetSUSLP.
 
 1. Log in to the NetSUSLP web application.
 
-2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
 
-4. If you wish to create a CSR, update the Common Name field and click "Create". A zip archive will download containing a new private key and related signing request.
+4. Click the "SSL Certificate" tab to view the certificate information.
 
-5. Enter the "Private Key", "Certificate", and "Chain" fields with the appropriate unencrypted certificate information.
-	
-    <img src="images/attachments/certificates.png" width="500">
 
-6. Click **Save**.
+## Create CSR
+The Certificates settings allows you to create a new private key and a certificate signing request for a new SSL certificate.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
+
+4. Click the "Certificate Signing Request" tab.
+
+5. Enter the certificate information in the appropriate fields.
+
+6. Click **Create**. A zip archive will download containing a new private key and the related csr.
+
+
+## Changing SSL Certificates 
+The Certificates settings allows you to modify the server settings with a SSL certificate to be used for communication with the NetSUSLP.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
+
+4. Enter the "Private Key", "Certificate", and "CA Bundle" fields with the appropriate unencrypted certificate information.
+
+<p align="center"><img src="images/attachments/certificates.png" height="400"></p>
+
+6. Click **Apply**.
 
 7. Restart the NetSUSLP.
 
