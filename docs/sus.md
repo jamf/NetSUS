@@ -11,7 +11,7 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 
 3. In the "Services" section, click **Software Update Server** <img height="20" src="images/thumbnails/sus_icon.png"> .
 
-4. In the top-right corner of the page, click the "Off" <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays "On" <img height="20" src="images/thumbnails/toggle_on.png"> .
+4. In the top-right corner of the page, click the <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays <img height="20" src="images/thumbnails/toggle_on.png"> .
 
 5. The URL for the software update service and tab out of the field.
 
