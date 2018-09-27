@@ -207,7 +207,7 @@ The Certificates settings allows you to modify the server settings with a SSL ce
 
 4. Enter the "Private Key", "Certificate", and "CA Bundle" fields with the appropriate unencrypted certificate information.
 
-	<img width="750"" src="images/attachments/certificates.png">
+	<img width="750" src="images/attachments/certificates.png">
 
 6. Click **Apply**.
 
