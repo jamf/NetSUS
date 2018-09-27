@@ -63,7 +63,7 @@ Note: The branch URLs displayed provide the appropriate re-directs to the correc
 
 6. Optionally, you may set the branch as the default, which makes it available at:
 
-	<Base URL>/index.sucatalog
+	http(s)://sus.yourdomain/index.sucatalog
 
 7. Optionally, you may set the branch to automatically enable new updates, which is useful if you are simply caching updates.
 
