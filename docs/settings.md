@@ -26,6 +26,31 @@ The NetSUSLP allows you to enable the WebAdmin GUI from the command line.
 3. Refresh the NetSUSLP in your browser.
 
 
+## Active Directory Login
+The NetSUSLP allows you to configure the web interface to authenticate using Active Directory LDAP.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Accounts** <img height="20" src="images/thumbnails/user_icon.png"> .
+
+4. Click the "Web Interface" tab.
+
+5. Click the link for the Active Directory domain.
+
+6. Enter the Active Directory LDAP information in the modal dialog.\
+   Note: Checking the **Use SSL** checkbox will automatically change the port to the default value.
+
+7. Click **Save**. A notification will appear regarding groups.
+
+8. Click the **+ Add** button in the upper-right of the table.
+
+9. Enter the Active Directory group name for NetSUSLP administration in the modal dialog.
+
+10. Click **Save**.
+
+
 ## Network Settings
 The Network settings allow you to configure the following:
 
