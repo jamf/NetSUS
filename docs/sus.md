@@ -13,9 +13,10 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 
 4. In the top-right corner of the page, click the <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays <img height="20" src="images/thumbnails/toggle_on.png"> .
 
-5. The URL for the software update service and tab out of the field.
+5. Enter the Base URL for the software update service and tab out of the field.\
+   Note: NetSUSLP 5.0 allows for HTTPS to be used for the Base URL.
 
-    <img height="400" src="images/attachments/sus_settings_default.png">
+    <img width="750" src="images/attachments/sus_settings_default.png">
 
 6. Optionally, check "Store Updates on this Server" to cache updates on the NetSUSLP.\
    Note: this will use a significant amount of disk space.
@@ -25,7 +26,7 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 8. Optionally, select the Apple Catalog URLs you wish to replicate.\
    Tip: Select only the Catalogs that are relevant to your environment to reduce the disk space required, if caching updates.
 
-    <img height="400" src="images/attachments/sus_settings_catalogs.png">
+    <img width="750" src="images/attachments/sus_settings_catalogs.png">
 
 9. Optionally, specify any additional Catalog URLs you would like to sync. e.g. beta or seed.
 
@@ -41,16 +42,38 @@ You can sync the list of available software updates with Apple’s Software Upda
 3. Click the **Sync** button under Manual Sync.\
    Note: the Sync Schedule is now located in the Software Update Server settings.
 
-    <img height="305" src="images/attachments/sus_sync.png">
+    <img width="750" src="images/attachments/sus_sync.png">
 
 
-## Configuring SUS Branches
+## Creating a Branch
 
-The NetSUSLP web application allows you to do the following for each branch:
+Once the initial sync has been performed you can create braches for the Software Update catalogs.
+Note: The branch URLs displayed provide the appropriate re-directs to the correct catalog for the detected user agent.
 
-* Make the branch the root.
-* Manually enable or disable software updates. 
-* Automatically enable new software updates.
+1. Log in to the NetSUSLP web application.
+
+2. Click **Software Update Server** in the side navigation menu.
+
+3. Click the **+ Add** button in the upper-right of the table.
+
+4. Enter the Branch Name in the modal dialog.\
+   Note: You can clone an existing branch, if there is one.
+
+5. Click **Save**.
+
+6. Optionally, you may set the branch as the default, which makes it available at:
+
+	&lt;Base URL&gt;/index.sucatalog
+
+7. Optionally, you may set the branch to automatically enable new updates, which is useful if you are simply caching updates.
+
+    <img width="750" src="images/attachments/sus_branches.png">
+
+
+## Managing Branches
+
+The NetSUSLP web application allows you to manage the available updates in each branch:
+
 1. Log in to the NetSUSLP web application.
 
 2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
