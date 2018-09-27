@@ -7,13 +7,28 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 
 1. Log in to the NetSUSLP web application.
 
-2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
-3. Enter a base URL and click Change URL.
+3. In the "Services" section, click **Software Update Server** <img height="20" src="images/thumbnails/sus_icon.png"> .
 
-    <img src="images/attachments/sus_no_branch.png" width="500">
+4. In the top-right corner of the page, click the "Off" <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays "On" <img height="20" src="images/thumbnails/toggle_on.png"> .
 
-4. Create at least one branch by typing a branch name in the New Branch field and clicking Add. Repeat as needed for each branch.
+5. The URL for the software update service and tab out of the field.
+
+    <img height="400" src="images/attachments/sus_settings_default.png">
+
+6. Optionally, check "Store Updates on this Server" to cache updates on the NetSUSLP.\
+   Note: this will use a significant amount of disk space.
+
+7. Optionally, select a scheduled time for the server to perform a daily sync.
+
+8. Optionally, select the Apple Catalog URLs you wish to replicate.\
+   Tip: Select only the Catalogs that are relevant to your environment to reduce the disk space required, if caching updates.
+
+    <img height="400" src="images/attachments/sus_settings_catalogs.png">
+
+9. Optionally, specify any additional Catalog URLs you would like to sync. e.g. beta or seed.
+
 
 ## Syncing with Apple's Software Update Server
 
