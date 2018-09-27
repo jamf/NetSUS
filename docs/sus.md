@@ -30,18 +30,20 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 9. Optionally, specify any additional Catalog URLs you would like to sync. e.g. beta or seed.
 
 
-## Syncing with Apple's Software Update Server
+## Syncing with Apple's Software Update Servers
 
-You can sync the list of available software updates with Apple’s Software Update server manually or on a schedule.
+You can sync the list of available software updates with Apple’s Software Update servers manually or on a schedule.
 
 1. Log in to the NetSUSLP web application.
 
-2. Click **Software Update Server** in the side navigation menu or in the mobile dropdown menu.
+2. Click **Software Update Server** in the side navigation menu.
 
-3. Sync the list of available software updates manually, or choose a time to sync the list each day.
+3. Click the **Sync** button under Manual Sync.\
+   Note: the Sync Schedule is now located in the Software Update Server settings.
 
-    <img src="images/attachments/sus_sync.png" width="500">
-	
+    <img height="400" src="images/attachments/sus_sync.png">
+
+
 ## Configuring SUS Branches
 
 The NetSUSLP web application allows you to do the following for each branch:
