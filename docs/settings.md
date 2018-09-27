@@ -137,7 +137,7 @@ The Date/Time settings allow you to set the network time server for the NetSUSLP
 5. Click the **Save** button next to the "Network Time Server" field.
 
 
-## Network Time Server
+## Current Time
 The Date/Time settings allow you to set the date/time on the NetSUSLP.\
 Note: If using a network time server, the date may immediately change to the value provided by the server.
 
@@ -154,7 +154,7 @@ Note: If using a network time server, the date may immediately change to the val
 6. Click the **Save** button next to the "Current Time" field.
 
 
-##Current Time Zone
+## Time Zone
 The Date/Time settings allow you to set the time zone on the NetSUSLP.
 
 1. Log in to the NetSUSLP web application.
