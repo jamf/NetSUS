@@ -51,27 +51,73 @@ The NetSUSLP allows you to configure the web interface to authenticate using Act
 10. Click **Save**.
 
 
-## Network Settings
-The Network settings allow you to configure the following:
-
-* Hostname
-* Network type (DHCP or static) 
-* IP address
-* Netmask
-* Gateway
-* DNS servers 
-* Enabling/Disabling SSH
-* Enabling/Disabling Firewall
+## Hostname
+The Network settings allow you to configure the hostname for the NetSUSLP.
 
 1. Log in to the NetSUSLP web application.
 
-2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
 
-4. Configure the settings on the pane.
+4. Enter the new hostname for the NetSUSLP.
 
 5. Click **Save**.
+
+
+## Network Interfaces
+The Network settings allow you to configure the IPv4 information for detected network interfaces.\
+Note: Currently bonded interfaces are not supported.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
+
+4. Click the link for the interface name you wish to configure.
+
+5. Provide the configuration information in the modal dialog
+
+6. Click **Save**. A message displays, reporting the success or failure of the change.
+
+7. Click **Restart** to apply the changes.
+
+## Network Proxy
+The Network settings allow you to configure the global proxy for the NetSUSLP.
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
+
+5. Click the link for the Network Proxy.
+
+6. Enter the Proxy information in the modal dialog.
+
+7. Click **Save**.
+
+
+## SSH Server
+The Network settings allow you to enable/disable ssh access for the NetSUSLP.
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
+
+4. Click the **Enable / Disable** button under SSH Server.
+
+
+## SSH Server
+The Network settings allow you to enable/disable the firewall for the NetSUSLP.
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Network** <img height="20" src="images/thumbnails/network_icon.png">.
+
+4. Click the **Enable / Disable** button under Firewall.
 
 
 ## Date/Time Settings
