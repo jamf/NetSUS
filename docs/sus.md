@@ -81,12 +81,12 @@ The NetSUSLP web application allows you to manage the available updates in each 
 3. Click the name of branch you want to configure.
 
 4. Select (or clear) the updates you wish to enable.\
-   Note: the **Select All / Clear All** buttons apply to only updates visible in the table. If you wish to Select / Clear all updates in the branch, select **All** in the "Show" menu at the bottom-left of the table.
+   Note: The **Select All** and **Clear All** buttons apply to only updates visible in the table. If you wish to select or clear all updates in the branch, select **All** from the "Show" menu at the bottom-left of the table.
+
+5. Click **Apply**.
 
     <img width="750" src="images/attachments/sus_branch.png">
     
-5. Click **Apply**.
-
 
 # Using the SUS with Jamf Pro
 
