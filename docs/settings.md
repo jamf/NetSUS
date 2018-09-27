@@ -175,7 +175,7 @@ The Certificates settings allows you view the currently installed SSL certificat
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
-3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
+3. In the "System" section, click **Certificates** <img height="20" src="images/thumbnails/certificates_icon.png"> .
 
 4. Click the "SSL Certificate" tab to view the certificate information.
 
@@ -187,7 +187,7 @@ The Certificates settings allows you to create a new private key and a certifica
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
-3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
+3. In the "System" section, click **Certificates** <img height="20" src="images/thumbnails/certificates_icon.png"> .
 
 4. Click the "Certificate Signing Request" tab.
 
@@ -203,7 +203,7 @@ The Certificates settings allows you to modify the server settings with a SSL ce
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
-3. In the "System" section, click **Certificates** <img height="30" src="images/thumbnails/certificates_icon.png"> .
+3. In the "System" section, click **Certificates** <img height="20" src="images/thumbnails/certificates_icon.png"> .
 
 4. Enter the "Private Key", "Certificate", and "CA Bundle" fields with the appropriate unencrypted certificate information.
 
