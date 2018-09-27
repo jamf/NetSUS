@@ -14,12 +14,12 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 4. In the top-right corner of the page, click the <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays <img height="20" src="images/thumbnails/toggle_on.png"> .
 
 5. Enter the Base URL for the software update service and tab out of the field.\
-   Note: NetSUSLP 5.0 allows for HTTPS to be used for the Base URL.
+   **Note**: NetSUSLP 5.0 allows for HTTPS to be used for the Base URL.
 
     <img width="750" src="images/attachments/sus_settings_default.png">
 
 6. Optionally, check "Store Updates on this Server" to cache updates on the NetSUSLP.\
-   Note: this will use a significant amount of disk space.
+   **Note**: this will use a significant amount of disk space.
 
 7. Optionally, select a scheduled time for the server to perform a daily sync.
 
@@ -40,7 +40,7 @@ You can sync the list of available software updates with Apple’s Software Upda
 2. Click **Software Update Server** in the side navigation menu.
 
 3. Click the **Sync** button under Manual Sync.\
-   Note: the Sync Schedule is now located in the Software Update Server settings.
+   **Note**: the Sync Schedule is now located in the Software Update Server settings.
 
     <img width="750" src="images/attachments/sus_sync.png">
 
@@ -48,7 +48,7 @@ You can sync the list of available software updates with Apple’s Software Upda
 ## Creating a Branch
 
 Once the initial sync has been performed you can create braches for the Software Update catalogs.
-Note: The branch URLs displayed provide the appropriate re-directs to the correct catalog for the detected user agent.
+**Note**: The branch URLs displayed provide the appropriate re-directs to the correct catalog for the detected user agent.
 
 1. Log in to the NetSUSLP web application.
 
@@ -57,10 +57,10 @@ Note: The branch URLs displayed provide the appropriate re-directs to the correc
 3. Click the **+ Add** button in the upper-right of the table.
 
 4. Enter the Branch Name in the modal dialog.\
-   Note: You can clone an existing branch, if there is one.
+   **Note**: You can clone an existing branch, if there is one.
 
 5. Click **Save**.\
-   Note: The branch catalog will not be populated until either an update is enabled or a Sync is performed.
+   **Note**: The branch catalog will not be populated until either an update is enabled or a Sync is performed.
 
 6. Optionally, you may set the branch as the default, which makes it available at:
 
@@ -82,7 +82,7 @@ The NetSUSLP web application allows you to manage the available updates in each 
 3. Click the name of branch you want to configure.
 
 4. Select (or clear) the updates you wish to enable.\
-   Note: The **Select All** and **Clear All** buttons apply to only updates visible in the table. If you wish to select or clear all updates in the branch, select **All** from the "Show" menu at the bottom-left of the table.
+   **Note**: The **Select All** and **Clear All** buttons apply to only updates visible in the table. If you wish to select or clear all updates in the branch, select **All** from the "Show" menu at the bottom-left of the table.
 
 5. Click **Apply**.
 
@@ -95,7 +95,7 @@ Like a standard SUS, you can use the SUS hosted by the NetSUSLP to run Software 
 
 
 ## Pointing Computers at a SUS Branch
-**Note:** The instructions in this section are for Jamf Pro v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
+**Note**: The instructions in this section are for Jamf Pro v9.0 or later. However, if you are using the Casper Suite v8.x, these instructions can still be followed loosely.
 
 There are several ways to point computers at a SUS branch:
 
@@ -205,4 +205,4 @@ To disable this, use a policy or Jamf Remote to execute the following command on
 
 This preference may also be set using a Configuration Profile.
 
-Note: For macOS Mojave clients the Base URL should be set to https.
+**Note**: For macOS Mojave clients the Base URL should be set to https.

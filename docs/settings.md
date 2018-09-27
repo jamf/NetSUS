@@ -40,7 +40,7 @@ The NetSUSLP allows you to configure the web interface to authenticate using Act
 5. Click the link for the Active Directory domain.
 
 6. Enter the Active Directory LDAP information in the modal dialog.\
-   Note: Checking the **Use SSL** checkbox will automatically change the port to the default value.
+   **Note**: Checking the **Use SSL** checkbox will automatically change the port to the default value.
 
 7. Click **Save**. A notification will appear regarding groups.
 
@@ -67,7 +67,7 @@ The Network settings allow you to configure the hostname for the NetSUSLP.
 
 ## Network Interfaces
 The Network settings allow you to configure the IPv4 information for detected network interfaces.\
-Note: Currently bonded interfaces are not supported.
+**Note**: Currently bonded interfaces are not supported.
 
 1. Log in to the NetSUSLP web application.
 
@@ -139,7 +139,7 @@ The Date/Time settings allow you to set the network time server for the NetSUSLP
 
 ## Current Time
 The Date/Time settings allow you to set the date/time on the NetSUSLP.\
-Note: If using a network time server, the date may immediately change to the value provided by the server.
+**Note**: If using a network time server, the date may immediately change to the value provided by the server.
 
 1. Log in to the NetSUSLP web application.
 
