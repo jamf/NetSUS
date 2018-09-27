@@ -207,31 +207,15 @@ The Certificates settings allows you to modify the server settings with a SSL ce
 
 4. Enter the "Private Key", "Certificate", and "CA Bundle" fields with the appropriate unencrypted certificate information.
 
-<p align="center"><img src="images/attachments/certificates.png" height="400"></p>
+	<img height="400" src="images/attachments/certificates.png">
 
 6. Click **Apply**.
 
-7. Restart the NetSUSLP.
+7. Click **Restart** to apply the changes.
 
 
-## Logs Settings
-The Logs settings allows you to select and view the system log files on the NetSUSLP.
-
-1. Log in to the NetSUSLP web application.
-
-2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
-
-3. In the "System" section, click **Logs** <img height="20" src="images/thumbnails/logs_icon.png">.
-
-4. Select the log file you wish to view.
-
-5. Enter the number of lines (from the end) of the log file you wish to see. If this is left blank, the entire log is displayed.
-
-5. Click **Display**.
-
-
-## Storage Settings
-The Storage settings allows you to expand the logical disk volume on the NetSUSLP, if the VMDK has been expanded.
+## Storage
+The Storage settings allows you to expand the disk's logical volume on the NetSUSLP, if the VMDK has been expanded.
 
 1. Shut down the NetSUSLP.
 
@@ -241,10 +225,29 @@ The Storage settings allows you to expand the logical disk volume on the NetSUSL
 
 4. Log in to the NetSUSLP web application.
 
-5. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+5. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 6. In the "System" section, click **Storage** <img height="20" src="images/thumbnails/storage_icon.png">.
 
-7. If there is sufficient space available, the Resize button will be enabled, click **Resize**.
+7. If a suitable LVM is found with sufficient space available, the Expand button will be enabled, click **Expand**.
 
-8. Restart the NetSUSLP for the additional storage to become available.
+8. Click **Restart** for the additional storage to become available.
+
+
+## Logs
+The Logs page allows you to select, view and download log files on the NetSUSLP.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "Information" section, click **Logs** <img height="20" src="images/thumbnails/logs_icon.png">.
+
+4. Select the log file you wish to view.
+
+5. Optionally enter the number of lines (from the end) of the log file you wish to see. If this is left blank, the entire log is displayed.
+
+6. Click **Display**.
+
+7. To download the log click **Download**, or click **Done** to return to the Log selection.
+
