@@ -85,6 +85,7 @@ Note: Currently bonded interfaces are not supported.
 
 ## Network Proxy
 The Network settings allow you to configure the global proxy for the NetSUSLP.
+
 1. Log in to the NetSUSLP web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
@@ -100,6 +101,7 @@ The Network settings allow you to configure the global proxy for the NetSUSLP.
 
 ## SSH Server
 The Network settings allow you to enable/disable ssh access for the NetSUSLP.
+
 1. Log in to the NetSUSLP web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
@@ -109,8 +111,9 @@ The Network settings allow you to enable/disable ssh access for the NetSUSLP.
 4. Click the **Enable / Disable** button under SSH Server.
 
 
-## SSH Server
+## Firewall
 The Network settings allow you to enable/disable the firewall for the NetSUSLP.
+
 1. Log in to the NetSUSLP web application.
 
 2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
@@ -120,22 +123,49 @@ The Network settings allow you to enable/disable the firewall for the NetSUSLP.
 4. Click the **Enable / Disable** button under Firewall.
 
 
-## Date/Time Settings
-The Date/Time settings allow you to do the following:
-
-* View the current time on the NetSUSLP. 
-* Change the current time zone on the NetSUSLP. 
-* Use a network time server to synchronize the date/time.
+## Network Time Server
+The Date/Time settings allow you to set the network time server for the NetSUSLP.
 
 1. Log in to the NetSUSLP web application.
 
-2. In the side navigation menu or in the mobile dropdown menu, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
 
 3. In the "System" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .
 
-4. Configure the settings on the pane.
+4. Enter the ntp server hostname or IP address in the "Network Time Server" field.
 
-5. Click **Save**.
+5. Click the **Save** button next to the "Network Time Server" field.
+
+
+## Network Time Server
+The Date/Time settings allow you to set the date/time on the NetSUSLP.\
+Note: If using a network time server, the date may immediately change to the value provided by the server.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .
+
+4. Click the calendar icon to access the date/time picker.
+
+5. Select the date/time using the picker.
+
+6. Click the **Save** button next to the "Current Time" field.
+
+
+##Current Time Zone
+The Date/Time settings allow you to set the time zone on the NetSUSLP.
+
+1. Log in to the NetSUSLP web application.
+
+2. In the top-right corner of the page, click **Settings** <img height="20" src="images/thumbnails/settings_menu.png"> .
+
+3. In the "System" section, click **Date/Time** <img height="20" src="images/thumbnails/clock_icon.png"> .
+
+4. Click the appropriate location on the time zone map or select the time zone from the menu.
+
+6. Click the **Save** button next to the time zone menu.
 
 
 ## Certificates Settings
