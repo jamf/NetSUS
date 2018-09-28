@@ -40,8 +40,8 @@ if (!empty($_POST['startafp'])) {
 }
 
 // Delete Image
-if (isset($_POST['deletenbi'])) {
-	netbootExec("deleteNBI \"".$netbootdir."/".$_POST['deletenbi']."\"");
+if (isset($_POST['deletenbi']) && $_POST['deletenbi'] != "") {
+	netbootExec("deleteNBI \"".$_POST['deletenbi']."\"");
 }
 
 // Save Image Settings

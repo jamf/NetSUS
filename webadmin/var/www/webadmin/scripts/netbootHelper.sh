@@ -22,6 +22,13 @@ setNBIproperty)
 /var/appliance/nbi_settings.py "${nbdir}/${2}" write "${3}" "${4}"
 ;;
 
+deleteNBI)
+# $2: NBI
+if [ "${2}" != '' ]; then
+	rm -rf "${nbdir}/${2}"
+fi
+;;
+
 installdhcpdconf)
 mv /etc/dhcpd.conf /etc/dhcpd.conf.bak
 mv /var/appliance/conf/dhcpd.conf.new /etc/dhcpd.conf
