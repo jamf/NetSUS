@@ -32,7 +32,7 @@ To set up a NetBoot server, you need a NetBoot image (.nbi folder). For more inf
 	* Enter credentials for the SMB share and click **Connect**.
 	* Copy a NetBoot image folder (.nbi extension) to the SMB share. The nbi folder must contain a .plist file and .dmg file to function properly.
 
-	**Note**: The name of the folder cannot contain any spaces.
+		**Note**: The name of the folder cannot contain any spaces.
 
 4. Return to the NetSUSLP web application and refresh the page.
 
