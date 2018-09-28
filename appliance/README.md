@@ -55,13 +55,13 @@ On a Debian host machine (Ubuntu). For packer you will need to use the downloade
 
 3. Do not spin up the imported VM you will want to add some network settings that will allow the VM to gain access to the internet. You can access the settings by right clicking on the NetSUSLP VM and selecting 'Settings', then enter the 'Network' tab. The settings that will depend on your host machine's hardware and network environment are 'Attach' and 'Name'. The 'Advanced' section must be set as depicted here:
 	
- 	<img src="../docs/images/attachments/vbox_network.png" width="400">
+ 	<img src="../docs/images/attachments/vbox_network.png" width="600">
 	
 4. In VirtualBox manager, select `File -> Export Appliance -> NetSUSLP -> Continue`
 
 5. Now select a location to put the exported ova file. Be sure to name the the file `NetSUSLP_<release_version> and select the OVF 1.0 format.
 
-	<img src="../docs/images/attachments/vbox_export.png" width="400">
+	<img src="../docs/images/attachments/vbox_export.png" width="750">
 	
 ## 3. Test the Exported VM
 	
