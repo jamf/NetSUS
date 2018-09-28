@@ -2,10 +2,10 @@
 # NetSUS Downloads
 
 Installer:
-[https://www.dropbox.com/s/c3aeii38qh6c05y/NetSUSLPInstaller_4.2.1.run?dl=0](https://www.dropbox.com/s/c3aeii38qh6c05y/NetSUSLPInstaller_4.2.1.run?dl=0)
+[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLPInstaller_4.2.1.run](https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLPInstaller_4.2.1.run)
 
 OVA:
-[https://www.dropbox.com/s/zfkmsqx1cuope79/NetSUSLP_4.2.1.ova?dl=0](https://www.dropbox.com/s/zfkmsqx1cuope79/NetSUSLP_4.2.1.ova?dl=0)
+[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLP_4.2.1.ova](https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLP_4.2.1.ova)
 
 
 # What is NetSUS?
