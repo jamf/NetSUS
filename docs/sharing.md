@@ -45,3 +45,6 @@
 4. Check the appropriate permissions for the users.
    **Note**: See [Accounts](accounts.md) for notes about adding additional users.
 
+	<img width="595" src="images/attachments/sharing_permissions.png">
+
+5. Click **Done**.
