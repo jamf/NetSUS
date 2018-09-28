@@ -26,7 +26,7 @@ To set up a NetBoot server, you need a NetBoot image (.nbi folder). For more inf
 3. Upload a NetBoot image:
 	* Click **Upload NetBoot Image**.
 
-		<img src="images/attachments/netboot.png" width="500">
+		<img width="750" src="images/attachments/netboot.png">
 		
 	* You will be prompted to connect to the SMB share where NetBoot images are stored.
 	* Enter credentials for the SMB share and click **Connect**.
@@ -47,6 +47,8 @@ To set up a NetBoot server, you need a NetBoot image (.nbi folder). For more inf
 3. Click the check boxes for the images you wish to enable.
 
 4. Optionally, click the checkbox for the image you wish to set as the default (when holding the 'N' key during client startup).
+
+	<img width="750" src="images/attachments/netboot_images.png">
 
 
 ## Changing Image Properties
