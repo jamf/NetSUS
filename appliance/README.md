@@ -40,13 +40,17 @@ On a Debian host machine (Ubuntu). For packer you will need to use the downloade
 
 		$ sudo ./CreateNetSUSInstaller.sh
 		
-3. You will now utilize packer to create a base VM with the necessary virtual hardware specifications. The created VM will not have the correct network settings. This process will may take some time if it is downloading an iso image and installing it onto a VM. If you already have the appropriate installation media, you may place it in the `NetSUS/appliance/iso/` directory, to avoid downloading during the build process. Ensure the filename and checksums match for the media in the setup-<base os>.json file before starting. You can observe the installation by starting VirtualBox and opening the 'NetSUSLP' VM. Packer will take care of the input necessary to install the operating system and NetSUSLP.\
+3. You will now utilize packer to create a base VM with the necessary virtual hardware specifications. The created VM will not have the correct network settings. This process will may take some time if it is downloading an iso image and installing it onto a VM.\
+   If you already have the appropriate installation media, you may place it in the `NetSUS/appliance/iso/` directory, to avoid downloading during the build process. Ensure the filename and checksums match for the media in the setup-<base os>.json file before starting.\
+   You can observe the installation by starting VirtualBox and opening the 'NetSUSLP' VM. Packer will take care of the input necessary to install the operating system and NetSUSLP.\
    To proceed run this command in the `NetSUS/appliance/` directory:
 
 		$ packer build setup-<base os>.json
 	
-   Where <base-os> is the appropriate operating system, e.g. `setup-ubuntu-16.04.json`
+   Where <base-os> is the appropriate operating system, e.g.
    
+		$ packer build setup-ubuntu-16.04.json
+	
 ## 2. Configure and Convert the OVF to OVA
 
 1. Once the packer build is finished the created ovf file will be located in `NetSUS/appliance/output-virtualbox-iso/`
@@ -59,7 +63,7 @@ On a Debian host machine (Ubuntu). For packer you will need to use the downloade
 	
 4. In VirtualBox manager, select `File -> Export Appliance -> NetSUSLP -> Continue`
 
-5. Now select a location to put the exported ova file. Be sure to name the the file `NetSUSLP_<release_version> and select the OVF 1.0 format.
+5. Now select a location to put the exported ova file. Be sure to name the the file `NetSUSLP_<release_version>` and select the OVF 1.0 format.
 
 	<img src="../docs/images/attachments/vbox_export.png" width="750">
 	
