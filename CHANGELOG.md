@@ -21,7 +21,7 @@
 * Added dedicated settings pages for services
 * Settings gear is contextually aware of service
 * Added ability to enable/disable services
-* Added avility to show/hide services in Dashboard
+* Added ability to show/hide services in Dashboard
 * Added ability to select SUS catalogs to sync
 * Added ability to add custom SUS catalogs (beta/seed)
 * Added ability to publish SUS catalogs over https
