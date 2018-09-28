@@ -1,0 +1,57 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          pybsdp
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: BSDP NetBoot Service
+# Description:       pybsdp provides the Boot Service Discovery Protocol (BSDP)
+#                    server.
+### END INIT INFO
+
+EXEC=/usr/local/sbin/pybsdp
+NAME=pybsdp
+
+# Add any command line options for your daemon here
+OPTS=""
+
+# This next line determines what user the script runs as.
+USER=root
+
+# The process ID of the script when it runs is stored here:
+PIDFILE=/var/run/$NAME.pid
+
+. /lib/lsb/init-functions
+
+case "$1" in
+
+    start)
+		log_daemon_msg "Starting $NAME daemon"
+		start-stop-daemon --start --background --pidfile $PIDFILE --make-pidfile --user $USER --chuid $USER --startas $EXEC -- $OPTS
+		log_end_msg $?
+        ;;
+
+    stop)
+		log_daemon_msg "Stopping $NAME daemon"
+		start-stop-daemon --stop --pidfile $PIDFILE --retry 10
+		log_end_msg $?
+		;;
+
+    restart|reload|force-reload)
+        $0 stop
+        $0 start
+        ;;
+
+    status)
+        status_of_proc "$NAME" "$EXEC" && exit 0 || exit $?
+        ;;
+
+    *)
+        echo "Usage: /etc/init.d/$NAME {start|stop|restart|status}"
+        exit 1
+        ;;
+
+esac
+exit 0

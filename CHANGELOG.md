@@ -1,5 +1,39 @@
 # NetSUS Changelog
 
+## 5.0
+
+* Updated user interface to align with Jamf Pro UI
+* Appliance Operating System is now Ubuntu 16.04.5
+* Added (experimental) support for Ubuntu 18.04 LTS
+* Added notifications for recommended actions
+* Improved Active Directory (LDAP) integration for web administration
+* Added ability to create/manage local system accounts
+* Added support for multiple network interfaces.\
+  Note: Bonded interfaces are not supported in the UI
+* Added ability to configure global proxy
+* Improved ntp syncronization in Date/Time
+* Added timezone picker map in Date/Time
+* Improved SSL certificate interface
+* Added full chain validation checks for SSL certificates
+* New storage management interface for expanding LVM volumes
+* Improved log viewer
+* Added ability to download contents of log viewer
+* Added dedicated settings pages for services
+* Settings gear is contextually aware of service
+* Added ability to enable/disable services
+* Added ability to show/hide services in Dashboard
+* Added ability to select SUS catalogs to sync
+* Added ability to add custom SUS catalogs (beta/seed)
+* Added ability to publish SUS catalogs over https
+* Improved URL re-write functionality for SUS catalogs
+* Added support for multiple NetBoot images
+* Improved NetBoot image property editing
+* Improved validation checks for LDAP proxy configuration
+* Added service status messages to LDAP proxy
+* Added File Sharing service
+* Added ability to create smb/afp/http shares
+* Added ability to manage users for shares
+
 ## 4.2.1
 
 * Added High Sierra support for SUS
@@ -65,11 +99,11 @@
 
 ## 3.0
 
-* The NetBoot/SUS/LP Server can now be installed on RHEL and CentOS
+* The NetSUS can now be installed on RHEL and CentOS
 
 ## 2.0
 
-* Added the option to install the NetBoot/SUS/LP server using an installer
-* Updated the NetBoot/SUS/LP server web application GUI to match the JSS v9.0 and later
-* The NetBoot server hosted by the NetBoot/SUS/LP server now uses HTTP instead of NFS
-* Updated the version of Reposado that is used by the NetBoot/SUS/LP server
+* Added the option to install the NetSUS using an installer
+* Updated the NetSUS web application GUI to match the JSS v9.0 and later
+* The NetBoot server hosted by the NetSUS now uses HTTP instead of NFS
+* Updated the version of Reposado that is used by the NetSUS

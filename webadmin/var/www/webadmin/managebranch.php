@@ -1,340 +1,232 @@
- <?php
+<?php
 
 include "inc/config.php";
 include "inc/auth.php";
 include "inc/functions.php";
 
-$errorMessage = "";
-$statusMessage = "";
+$sURL="SUS.php";
 
-$currentBranch = "";
-if (isset($_GET['branch']) && $_GET['branch'] != "")
-{
-	$currentBranch = $_GET['branch'];
+function susExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-$title = "Manage packages for branch: $currentBranch";
+$branchstr = trim(susExec("getBranchlist"));
+if (empty($branchstr)) {
+	$branches = array();
+} else {
+	$branches = explode(" ", $branchstr);
+}
+
+if (isset($_GET['branch']) && in_array($_GET['branch'], $branches)) {
+	$currentBranch = $_GET['branch'];
+} else {
+	header("Location: ". $sURL);
+}
+
+$title = "Manage Branch: ".$currentBranch;
 
 include "inc/header.php";
 
-if(isset($_POST['removePackages']))
-{
-	foreach($_POST['packages'] as $value)
-	{
-		$status = suExec("removefrombranch $value $currentBranch")."<br/>\n";
-		if (strpos($status, "doesn't exist!") !== FALSE) // There was an error
-		{
-			echo $status."<br/>\n";
-		}
+if (isset($_POST['applyPackages'])) {
+	susExec("deleteBranch ".$currentBranch);
+	susExec("createBranch ".$currentBranch);
+	susExec("addProducts \"".$_POST['packages']."\" ".$currentBranch);
+	if ($conf->getSetting("rootbranch") == $currentBranch) {
+		susExec("rootBranch ".$currentBranch);
 	}
+	$status_msg = sizeof(explode(' ', $_POST['packages']))." updates enabled in '".$currentBranch."' branch.";
 }
 
-if(isset($_POST['applyPackages']))
-{
-	suExec("deleteBranch \"$currentBranch\"");
-	suExec("createBranch \"$currentBranch\"");
-	$num = 0;
-	$packages = "";
-	foreach($_POST['packages'] as $value)
-	{
-		$packages .= "$value ";
-		$num++;
+// ####################################################################
+// End of GET/POST parsing
+// ####################################################################
+
+$productstr = trim(susExec("productList"));
+$products = json_decode($productstr);
+
+$prods_checked = array();
+foreach($products as $productobj) {
+	if (in_array($currentBranch, $productobj->BranchList)) {
+		array_push($prods_checked, $productobj->id);
 	}
-	$status = suExec("addtobranch \"$packages\"".$currentBranch)."<br/>\n";
-	$statusMessage = "Added $num packages to &quot;$currentBranch&quot;";
-
-	if (isset($_POST['autosync']))
-	{
-		$conf->addAutosyncBranch($currentBranch);
-	}
-	else
-	{
-		$conf->deleteAutosyncBranch($currentBranch);
-	}
-	
-	if (isset($_POST['rootbranch'])) {
-        $conf->setSetting("rootbranch", $currentBranch);
-        suExec("rootBranch \"$currentBranch\"");
-	}
-}
-
-
-
-/*
- * Do the package list look-up now so we can generate the array in JavaScript:
- */
-
-$packagestr = trim(suExec("getSUSlist"));
-$packages = explode("\n", $packagestr);
-$formattedpackages = array();
-foreach ($packages as $key => $value)
-{
-	if ($value == "") continue;
-
-	$packagearr = formatPackage($value);
-
-	$parts = explode("%", $value);
-	$checked = "";
-	$pkgbranchlist = str_replace("'", "", str_replace("]", "", str_replace("[", "", $packagearr[4])));
-	foreach(explode(",",$pkgbranchlist) as $pkgbranchname)
-	{
-		if ($pkgbranchname == $currentBranch)
-		{
-			$checked = "checked=\\\"checked\\\"";
-		}
-	}
-	
-	$formattedpackages[$packagearr[0]] = $packagearr[1]."%".$packagearr[2]."%".$packagearr[3]."%".$checked;
-}
-uksort($formattedpackages);
-$formattedpackages = array_reverse($formattedpackages, TRUE);
-
-/*
- * Done with package list retrieval
- */
-
-
-?>
-
-<script type="text/javascript">
-var pkgCheckedList = new Array();
-<?php
-foreach($formattedpackages as $key => $value)
-{
-	$parts = explode("%", $value);
-	echo "pkgCheckedList[\"$key\"] = ".($parts[3] != "" ? "true" : "false").";\n";
 }
 ?>
+			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
+			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 
-var pkgDeprecatedList = new Array();
-<?php
-foreach($formattedpackages as $key => $value)
-{
-	$parts = explode("%", $value);
-	echo "pkgDeprecatedList[\"$key\"] = ".(strpos($parts[1],'Deprecated') !== false ? "true" : "false").";\n";
-}
-?>
+			<script type="text/javascript" src="scripts/dataTables/jquery.dataTables.min.js"></script>
+			<script type="text/javascript" src="scripts/dataTables/dataTables.bootstrap.min.js"></script>
+			<script type="text/javascript" src="scripts/Buttons/dataTables.buttons.min.js"></script>
+			<script type="text/javascript" src="scripts/Buttons/buttons.bootstrap.min.js"></script>
 
-function selectAllVisible()
-{
-	var boxes = document.branchPackages;
-	for (i = 0; i < boxes.length; i++)
-	{
-		if (boxes.elements[i].name != "rootbranch" && boxes.elements[i].name != "autosync")
-		{
-			boxes.elements[i].checked = true;
-			checkBox(boxes.elements[i].value, boxes.elements[i].checked);
-		}
-	}
-}
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#package_table').DataTable( {
+						buttons: [
+							{
+								text: 'Select All',
+								className: 'btn-sm',
+								action: function ( e, dt, node, config ) {
+									selectAllVisible();
+								}
+							},
+							{
+								text: 'Clear All',
+								className: 'btn-sm',
+								action: function ( e, dt, node, config ) {
+									clearAllVisible();
+								}
+							}
+						],
+						"dom": "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-3'l><'col-sm-9'p>>",
+						"order": [ 3, 'desc' ],
+						"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+						"columns": [
+							{ "orderable": false },
+							null,
+							null,
+							null
+						]
+					});
+				} );
+			</script>
 
-function clearAllVisible()
-{
-	var boxes = document.branchPackages;
-	for (i = 0; i < boxes.length; i++)
-	{
-		if (boxes.elements[i].name != "rootbranch" && boxes.elements[i].name != "autosync")
-		{
-			boxes.elements[i].checked = false;
-			checkBox(boxes.elements[i].value, boxes.elements[i].checked);
-		}
-	}
-}
+			<script type="text/javascript">
+				var pkgEnabledList = ["<?php echo implode('", "', $prods_checked); ?>"];
+				pkgEnabledList.sort();
+				var pkgCheckedList = ["<?php echo implode('", "', $prods_checked); ?>"];
+				pkgCheckedList.sort();
 
-function clearAllDeprecated()
-{
-	var boxes = document.branchPackages;
-	for (i = 0; i < boxes.length; i++)
-	{
-		if (boxes.elements[i].className == "deprecated")
-		{
-			boxes.elements[i].checked = false;
-			checkBox(boxes.elements[i].value, boxes.elements[i].checked);
-		}
-	}
-}
-
-function checkBox(id, checked)
-{
-	pkgCheckedList[id] = checked;
-}
-
-function filterPackages()
-{
-	try
-	{
-		var pkgList = new Array();
-		var search = document.getElementById("filterBy").value;
-		var pattern = new RegExp(search, "mi");
-		var num = 0;
-		var tableHTML = "";
-		var tableContents = "";
-<?php
-		foreach($formattedpackages as $key => $value)
-		{
-			echo "		pkgList[\"$key\"] = \"".$value."\";\n";
-		}
-?>
-
-		for (key in pkgList)
-		{
-			var value = pkgList[key].replace("%", " ");
-			var checked = "";
-			var deprecated = "";
-			if (search == "" || pattern.test(value))
-			{
-				var pieces = pkgList[key].split("%");
-				checked = (pkgCheckedList[key] ? "checked=\"checked\"" : "");
-				deprecated = (pkgDeprecatedList[key] ? " class=\"deprecated\"" : "");
-				tableContents += "<tr id=\"tr_"+key+"\" class=\""+(num % 2 == 0 ? "object0" : "object1")+"\">";
-				tableContents += "<td nowrap class=\"table-center\"><input type=\"checkbox\" name=\"packages[]\" id=\""+key+"\" value=\""+key+"\" "+checked+deprecated+" onClick=\"javascript:checkBox(this.value, this.checked);\"/></td>";
-				tableContents += "<td id= \"titletd_"+key+"\" >"+pieces[0]+"</td>";
-				tableContents += "<td class=\"table-center\"><a class=\"s-info\" id=\""+num+"\" type=\"button\" onMouseOver=\"javascript:CustomOver(getPackageInfo('"+key+"'), document.getElementById('titletd_"+key+"').innerText, '1', '1');\"><span class=\"glyphicon glyphicon-info-sign\"></span></a></td>";
-				tableContents += "<td nowrap>"+pieces[1]+"</td>";
-				tableContents += "<td nowrap>"+pieces[2]+"</td>";
-				tableContents += "</tr>";
-				num++;
-			}
-		}
-
-		if (num > 0)
-		{
-			tableHTML += "<table id=\"packageTable\" border=\"1\">";
-			tableHTML += "<thead>";
-			tableHTML += "<tr>";
-			tableHTML += "<th>&nbsp;</th>";
-			tableHTML += "<th>Name</th>";
-			tableHTML += "<th>&nbsp;</th>";
-			tableHTML += "<th>Version</th>";
-			tableHTML += "<th>Date</th>";
-			tableHTML += "</tr>";
-			tableHTML += "</thead>";
-			tableHTML += "<tbody>";
-			tableHTML += tableContents;
-			tableHTML += "</tbody>";
-			tableHTML += "</table>";
-		}
-		else
-		{
-			tableHTML += "No matches";
-		}
-
-		document.getElementById("packageTable").innerHTML = tableHTML;
-	}
-	catch (err)
-	{
-		//alert(err);
-	}
-}
-</script>
-
-<?php 
-if ($errorMessage != "")
-{
-	echo "<div class=\"alert alert-warning\">$errorMessage</div>";
-}
-else if ($statusMessage != "")
-{
-	echo "<div class=\"alert alert-success\">$statusMessage</div>";
-}
-?>
-
-<div class="row">
-	<div class="col-xs-12 col-sm-10 col-lg-8">
-
-		<h2><?php echo $currentBranch; ?> Branch</h2>
-
-		<hr>
-
-		<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
-
-			<input type="hidden" name="userAction" value="branchPackages">
-
-			<span class="label label-default">Choose Branch</span>
-
-			<select name="chooseBranch" id="chooseBranch" class="form-control input-sm" onChange="javascript:location.href='managebranch.php?branch='+this.value">
-				<?php
-				$branchstr = trim(suExec("getBranchlist"));
-				$branches = explode(" ",$branchstr);
-				if (count($branches) == 0)
-					echo "<tr><td>No branches</td></tr>\n";
-				else
-				{
-					sort($branches);
+				function selectAllVisible() {
+					var boxes = document.getElementsByTagName('input');
+					for (i = 0; i < boxes.length; i++) {
+						if ( boxes[i].type === 'checkbox' ) {
+							boxes[i].checked = true;
+							checkBox(boxes[i].value, true);
+						}
+					}
 				}
-				foreach($branches as $branch)
-				{
-					?>
-					<option value="<?php echo $branch?>" <?php echo ($currentBranch == $branch ? "selected=\"selected\"" : "")?>><?php echo $branch?></option>
-					<?php
+
+				function clearAllVisible() {
+					var boxes = document.getElementsByTagName('input');
+					for (i = 0; i < boxes.length; i++) {
+						if ( boxes[i].type === 'checkbox' ) {
+							boxes[i].checked = false;
+							checkBox(boxes[i].value, false);
+						}
+					}
 				}
-				?>
-			</select>
 
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" name="autosync" value="autosync"
-						<?php if ($conf->containsAutosyncBranch($currentBranch))
-						{
-							echo "checked=\"checked\"";
-						}?> />
-					 Automatically Enable New Updates
-				</label>
-			</div>
-			<div class="checkbox">
-				<label>
-					<input type="checkbox" name="rootbranch" value="rootbranch"
-						<?php if ($conf->getSetting("rootbranch") == $currentBranch)
-						{
-							echo "checked=\"checked\"";
-						}?> />
-					 Use as Root Branch
-				</label>
-			</div>
+				function checkBox(id, checked) {
+					index = pkgCheckedList.indexOf(id);
+					if (checked) {
+						if (index == -1) {
+							pkgCheckedList.push(id)
+						}
+					} else {
+						if (index > -1) {
+							pkgCheckedList.splice(index, 1);
+						}
+					}
+					pkgCheckedList.sort();
+					document.getElementById('packages').value = pkgCheckedList.join(' ');
+					document.getElementById('applyPackages').disabled = pkgEnabledList.join(' ') == pkgCheckedList.join(' ');
+				}
 
-			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
+				function getProductInfo(id) {
+					http = getHTTPObj();
+					http.open("GET", "susCtl.php?prodinfo="+id, false);
+					http.send();
+					return http.responseText;
+				}
 
-			<br><br>
+				function updateModalContent(title, id) {
+					document.getElementById('modalTitle').innerHTML = title;
+					document.getElementById('modalBody').innerHTML = getProductInfo(id);
+				}
+			</script>
 
-			<div class="input-group input-group-sm">
-				<span class="input-group-addon">Filter Updates <span class="glyphicon glyphicon-search"></span></span>
-				<input type="text" name="filterBy" id="filterBy" class="form-control input-sm" onKeyUp="javascript:filterPackages();"/>
-			</div>
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#settings').attr('onclick', 'document.location.href="susSettings.php"');
+				});
+			</script>
 
-			<br>
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description"><a href="SUS.php">Software Update Server</a> <span class="glyphicon glyphicon-chevron-right"></span> Manage Branch <span class="glyphicon glyphicon-chevron-right"></span></div>
+					<h2 id="heading"><?php echo $currentBranch; ?></h2>
+				</div>
+			</nav>
 
-			<div class="btn-group">
-				<button type="button" name="selectAll" id="selectAll" class="btn btn-default btn-sm" onClick="javascript:selectAllVisible();">Select All</button>
-				<button type="button" name="clearAll" id="clearAll" class="btn btn-default btn-sm" onClick="javascript:clearAllVisible();">Clear All</button>
-				<button type="button" name="clearDeprecated" id="clearDeprecated" class="btn btn-default btn-sm" onClick="javascript:clearAllDeprecated();">Clear All Deprecated</button>
-			</div>
-			<br><br>
+			<form action="managebranch.php?branch=<?php echo $currentBranch?>" method="post" name="branchPackages" id="branchPackages">
 
-			<div class="table-responsive panel panel-default">
-				<table id="packageTable" class="table table-striped table-bordered table-condensed">
-					<?php /* Auto-filled by JavaScript */ ?>
-				</table>
-			</div>
+				<input id="packages" name="packages" type="hidden" value="<?php echo implode(' ', $prods_checked); ?>"/>
 
-			<br>
+				<div style="padding: 63px 20px 1px; background-color: #f9f9f9;">
+					<div style="margin-top: 16px; margin-bottom: 0px; border-color: #4cae4c;" class="panel panel-success <?php echo (isset($status_msg) ? "" : "hidden"); ?>">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-success glyphicon glyphicon-ok-sign" style="padding-right: 12px;"></span><?php echo (isset($status_msg) ? $status_msg : ""); ?></div>
+						</div>
+					</div>
 
-			<input type="submit" value=" Apply " name="applyPackages" id="applyPackages" class="btn btn-primary" onClick="javascript:document.getElementById('filterBy').value=''; filterPackages(); return true;"/>
-		</form>
+					<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">Select Apple Software Updates to be enabled in this branch. Click the <em>Apply</em> button to save changes.<br><strong>Note:</strong> The <em>Select All</em> and <em>Clear All</em> buttons apply to only updates visible in the table.</div>
+				</div>
 
-		<br>
-		<hr>
-		<br>
-		<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='SUS.php'">
+				<hr>
 
-	</div>
-</div>
+				<div style="padding: 15px 20px 1px; overflow-x: auto;">
+					<table id="package_table" class="table table-hover" style="border-bottom: 1px solid #eee;">
+						<thead>
+							<tr>
+								<th>Enable</th>
+								<th>Name</th>
+								<th>Version</th>
+								<th>Date</th>
+							</tr>
+						</thead>
+						<tbody>
+<?php $i=0;
+foreach ($products as $productobj) { ?>
+							<tr>
+								<td>
+									<div class="checkbox checkbox-primary checkbox-inline">
+										<input type="checkbox" id="<?php echo $productobj->id; ?>" value="<?php echo $productobj->id; ?>" onChange="checkBox(this.value, this.checked);"<?php echo (in_array($currentBranch, $productobj->BranchList) ? " checked" : ""); ?>/>
+										<label/>
+									</div>
+								</td>
+								<td><a data-toggle="modal" href="#Description" onClick="updateModalContent('<?php echo $productobj->title; ?><?php echo ($productobj->Deprecated == "(Deprecated)" ? " <small>(Deprecated)</small>" : "") ?>', '<?php echo $productobj->id; ?>');"><?php echo $productobj->title; ?></a> <?php echo $productobj->Deprecated; ?></td>
+								<td><?php echo $productobj->version; ?></td>
+								<td><?php echo $productobj->PostDate; ?></td>
+							</tr>
+<?php $i++;
+} ?>
+						</tbody>
+					</table>
+				</div>
 
-<script>
-filterPackages();
-</script>
+				<!-- Description Modal -->
+				<div class="modal fade" id="Description" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title" id="modalTitle"></h3>
+							</div>
+							<div class="modal-body" id="modalBody">
 
-<?php
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /#modal -->
 
-include "inc/footer.php";        
+				<nav id="nav-footer" class="navbar navbar-default navbar-fixed-bottom">
+					<button type="submit" id="applyPackages" name="applyPackages" class="btn btn-primary btn-sm btn-footer pull-right" disabled>Apply</button>
+					<button type="button" class="btn btn-default btn-sm btn-footer pull-right" onClick="document.location.href='SUS.php'">Done</button>
+				</nav>
 
-?>
+			</form> <!-- end form branchPackages -->
+<?php include "inc/footer.php"; ?>

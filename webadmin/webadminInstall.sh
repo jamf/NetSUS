@@ -7,6 +7,7 @@ apt_install() {
 	if [[ $(apt-cache -n search ^${1}$ | awk '{print $1}' | grep ^${1}$) == "$1" ]] && [[ $(dpkg -s $1 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
 		apt-get -qq -y install $1 >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -16,6 +17,7 @@ yum_install() {
 	if yum -q list $1 &>- && [[ $(rpm -qa $1) == "" ]] ; then
 		yum install $1 -y -q >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -25,6 +27,7 @@ yum_install() {
 if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install gawk
 	apt_install ufw
+	apt_install openssh-server
 	apt_install parted
 	apt_install whois
 	apt_install dialog
@@ -32,10 +35,15 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install python-pycurl
 	apt_install libapache2-mod-php5
 	apt_install libapache2-mod-php
+	apt_install lvm2
 	apt_install apache2-utils
 	apt_install php5-ldap
 	apt_install php-ldap
 	apt_install php-xml
+	apt_install php-zip
+	if [ ! -f "/etc/systemd/timesyncd.conf" ]; then
+		apt_install ntp
+	fi
 	www_user=www-data
 	www_service=apache2
 elif [[ $(which yum 2>&-) != "" ]]; then
@@ -44,6 +52,8 @@ elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install dmidecode
 	yum_install psmisc
 	yum_install dialog
+	yum_install lsof
+	yum_install lvm2
 	yum_install m2crypto
 	yum_install ntpdate
 	yum_install mod_ssl
@@ -77,25 +87,54 @@ else
 	service iptables save >> $logFile 2>&1
 fi
 
-# Initial configuration of the network time server
-if [ -f "/etc/ntp/step-tickers" ]; then
-	currentTimeServer=$(cat /etc/ntp/step-tickers | grep -v "^$" | grep -m 1 -v '#')
-	if [[ $currentTimeServer == "" ]]; then
-		if [[ $(readlink /etc/system-release) == "centos-release" ]]; then
-			currentTimeServer=0.centos.pool.ntp.org
-		else
-			currentTimeServer=0.rhel.pool.ntp.org
-		fi
-		echo $currentTimeServer >> /etc/ntp/step-tickers
-	fi
-else
-	currentTimeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $NF}')
-	if [[ $currentTimeServer == "" ]]; then
-		echo "server 0.ubuntu.pool.ntp.org" > /etc/cron.daily/ntpdate
+# Initial configuration of time zone
+if [[ $(which timedatectl 2>&-) != "" ]]; then
+	if ! timedatectl --no-pager list-timezones | grep -q "$(timedatectl | grep 'Time.*zone' | cut -d : -f 2 | awk '{print $1}')"; then
+		timedatectl set-timezone "America/New_York"
 	fi
 fi
-if [[ $currentTimeServer != "" ]]; then
-	ntpdate $currentTimeServer >> $logFile 2>&1
+
+# Initial configuration of the network time server
+if [ -f "/etc/ntp/step-tickers" ]; then
+	timeServer=$(grep -v "^$" /etc/ntp/step-tickers | grep -m 1 -v '#')
+	if [[ $timeServer == "" ]]; then
+		if [[ $(readlink /etc/system-release) == "centos-release" ]]; then
+			timeServer=0.centos.pool.ntp.org
+		else
+			timeServer=0.rhel.pool.ntp.org
+		fi
+		echo $timeServer >> /etc/ntp/step-tickers
+	fi
+else
+	timeServer=$(cat /etc/cron.daily/ntpdate 2>/dev/null | awk '{print $NF}')
+	if [ -f "/etc/ntp.conf" ]; then
+		i=0
+		for j in $(sed -e '/fallback/q' /etc/ntp.conf | grep '^server\|^pool' | awk '{print $2}'); do
+			if [ $i -gt 0 ]; then
+				sed -i "/$j/d" /etc/ntp.conf
+			fi
+			let i++
+		done
+		if [[ $timeServer != "" ]]; then
+			sed -i "0,/^server/{s/^server.*/server $timeServer/}" /etc/ntp.conf
+			sed -i "0,/^pool/{s/^pool.*/pool $timeServer iburst/}" /etc/ntp.conf
+			rm -f /etc/cron.daily/ntpdate
+		fi
+		service ntp restart >> $logFile 2>&1
+	else
+		sed -i 's/#NTP=/NTP=/' /etc/systemd/timesyncd.conf
+		if [[ $timeServer == "" ]]; then
+			timeServer=$(grep '^NTP=' /etc/systemd/timesyncd.conf | cut -d = -f 2 | awk '{print $1}')
+		fi
+		if [[ $timeServer == "" ]]; then
+			timeServer=0.ubuntu.pool.ntp.org
+		fi
+		sed -i "s/^NTP=.*/NTP=$timeServer/" /etc/systemd/timesyncd.conf
+		systemctl restart systemd-timesyncd
+	fi
+fi
+if [[ $(which ntpdate 2>&-) != "" ]]; then
+	ntpdate $timeServer >> $logFile 2>&1
 fi
 
 # Enable console dialog
@@ -105,18 +144,26 @@ if [ -f "/etc/rc.d/rc.local" ]; then
 	rc_local=/etc/rc.d/rc.local
 else
 	rc_local=/etc/rc.local
+	if [ ! -f "/etc/rc.local" ]; then
+		echo '#!/bin/sh -e' > /etc/rc.local
+		echo >> /etc/rc.local
+		chmod +x /etc/rc.local
+	fi
 fi
 sed -i '/TERM/d' $rc_local
 sed -i '/dialog.sh/d' $rc_local
 sed -i '/exit 0/d' $rc_local
-echo 'TERM=linux
+echo 'rm -f /var/appliance/.shutdownMessage
+TERM=linux
 export TERM
 openvt -s -c 8 /var/appliance/dialog.sh
 exit 0' >> $rc_local
 chmod +x $rc_local
 
 # Configure php
-if [ -f "/etc/php/7.0/apache2/php.ini" ]; then
+if [ -f "/etc/php/7.2/apache2/php.ini" ]; then
+	php_ini=/etc/php/7.2/apache2/php.ini
+elif [ -f "/etc/php/7.0/apache2/php.ini" ]; then
 	php_ini=/etc/php/7.0/apache2/php.ini
 elif [ -f "/etc/php5/apache2/php.ini" ]; then
 	php_ini=/etc/php5/apache2/php.ini
@@ -172,8 +219,62 @@ sed -i 's/^\(Defaults *requiretty\)/#\1/' /etc/sudoers
 if [[ $(grep "^#includedir /etc/sudoers.d" /etc/sudoers) == "" ]] ; then
 	echo "#includedir /etc/sudoers.d" >> /etc/sudoers
 fi
-echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" > /etc/sudoers.d/webadmin
-chmod 0440 /etc/sudoers.d/webadmin
+if ! grep -q 'scripts/adminHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/adminHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's sus helper script
+chown root:root /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/susHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the sus helper script
+if ! grep -q 'scripts/susHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/susHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's netboot helper script
+chown root:root /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/netbootHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the netboot helper script
+if ! grep -q 'scripts/netbootHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/netbootHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's share helper script
+chown root:root /var/www/html/webadmin/scripts/shareHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/shareHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/shareHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the share helper script
+if ! grep -q 'scripts/shareHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/shareHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Prevent writes to the webadmin's LDAP helper script
+chown root:root /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+chmod a-wr /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+chmod u+rx /var/www/html/webadmin/scripts/ldapHelper.sh >> $logFile
+
+# Allow the webadmin from webadmin to invoke the LDAP helper script
+if ! grep -q 'scripts/ldapHelper.sh' /etc/sudoers.d/webadmin 2>/dev/null; then
+	echo "$www_user ALL=(ALL) NOPASSWD: /bin/sh scripts/ldapHelper.sh *" >> /etc/sudoers.d/webadmin
+	chmod 0440 /etc/sudoers.d/webadmin
+fi
+
+# Disable directory listing for webadmin
+if [ -f "/etc/apache2/apache2.conf" ]; then
+	sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' /etc/apache2/apache2.conf
+fi
+if [ -f "/etc/httpd/conf/httpd.conf" ]; then
+	sed -i 's/Options Indexes FollowSymLinks/Options FollowSymLinks/' /etc/httpd/conf/httpd.conf
+fi
 
 # Enable apache on SSL, dav and dav_fs, only needed on Ubuntu
 if [[ $(which a2enmod 2>&-) != "" ]]; then
@@ -184,8 +285,8 @@ if [[ $(which a2enmod 2>&-) != "" ]]; then
 	sed -i 's/SSLProtocol all/SSLProtocol all -SSLv3/' /etc/apache2/mods-available/ssl.conf
 	a2enmod ssl >> $logFile
 	a2ensite default-ssl >> $logFile
-	a2enmod dav >> $logFile
-	a2enmod dav_fs >> $logFile
+	# a2enmod dav >> $logFile
+	# a2enmod dav_fs >> $logFile
 fi
 
 if [ -f "/etc/httpd/conf.d/ssl.conf" ]; then
@@ -196,6 +297,16 @@ if [ -f "/etc/httpd/conf.d/ssl.conf" ]; then
 	sed -i 's/\(^.*SSL_PROTOCOL.*$\)/#\1/' /etc/httpd/conf.d/ssl.conf
 	sed -i '/\(^.*SSL_PROTOCOL.*$\)/ a\CustomLog logs/ssl_access_log \\\
           "%h %l %u %t \\\"%r\\\" %>s %b \\\"%{Referer}i\\\" \\\"%{User-Agent}i\\\""' /etc/httpd/conf.d/ssl.conf
+fi
+
+# Enable SSL for LDAP
+if [ -f "/etc/ldap/ldap.conf" ]; then
+	sed -i '/^TLS_REQCERT/d' /etc/ldap/ldap.conf
+	sed -i '/TLS_CACERT/a TLS_REQCERT	allow' /etc/ldap/ldap.conf
+fi
+if [ -f "/etc/openldap/ldap.conf" ]; then
+	sed -i '/^TLS_REQCERT/d' /etc/openldap/ldap.conf
+	sed -i '/TLS_CACERTDIR/a TLS_REQCERT	allow' /etc/openldap/ldap.conf
 fi
 
 # Restart apache

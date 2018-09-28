@@ -1,5 +1,5 @@
 <?php
 
-header('Location: /webadmin');
+header("Location: https://".$_SERVER['SERVER_NAME']."/webadmin");
 
 ?>

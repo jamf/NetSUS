@@ -1,19 +1,32 @@
 <?php
 
-include "inc/config.php";
-include "inc/auth.php";
-include "inc/functions.php";
+session_start();
 
-$title = "Backup";
-?>
+if (!($_SESSION['isAuthUser'])) {
 
-<?php
-header('Content-Type: application/x-gzip');
-$content_disp = ( ereg('MSIE ([0-9].[0-9]{1,2})', $HTTP_USER_AGENT) == 'IE') ? 'inline' : 'attachment';
-header('Content-Disposition: ' . $content_disp . '; filename="backup.tar.gz"');
-header('Pragma: no-cache');
-header('Expires: 0');
+	echo "Not authorized - please log in";
 
-// create the gzipped tarfile.
-passthru( "tar cz /srv/SUS/ /srv/NetBoot/NetBootSP0/ /var/appliance/conf/ /var/lib/reposado/preferences.plist");
+} else {
+
+	include "inc/config.php";
+	include "inc/auth.php";
+	include "inc/functions.php";
+
+	suExec("backupConf");
+	if (file_exists('/tmp/backup.tar.gz')) {
+		if (ob_get_level()) ob_end_clean();
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment; filename="backup.tar.gz"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: '.filesize('/tmp/backup.tar.gz'));
+		ob_clean();
+		flush();
+		readfile('/tmp/backup.tar.gz');
+		exit;
+	}
+
+}
 ?>

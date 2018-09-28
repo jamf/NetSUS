@@ -1,320 +1,362 @@
 <?php
+
 include "inc/config.php";
 include "inc/auth.php";
 include "inc/functions.php";
+
 $title = "Software Update Server";
+
 include "inc/header.php";
-if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") == "")
-{
-	if ($_SERVER['HTTP_HOST'] != "")
-	{
+
+function susExec($cmd) {
+	return shell_exec("sudo /bin/sh scripts/susHelper.sh ".escapeshellcmd($cmd)." 2>&1");
+}
+
+// Base URL
+if ($conf->getSetting("susbaseurl") == NULL || $conf->getSetting("susbaseurl") == "") {
+	if ($_SERVER['HTTP_HOST'] != "") {
 		$conf->setSetting("susbaseurl", "http://".$_SERVER['HTTP_HOST']."/");
-	}
-	elseif ($_SERVER['SERVER_NAME'] != "")
-	{
+	} elseif ($_SERVER['SERVER_NAME'] != "") {
 		$conf->setSetting("susbaseurl", "http://".$_SERVER['SERVER_NAME']."/");
-	}
-	else {
+	} else {
 		$conf->setSetting("susbaseurl", "http://".getCurrentHostname()."/");
 	}
 }
-if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule") == "")
-{
-	$conf->setSetting("syncschedule", "Off");
-}
-$syncschedule = $conf->getSetting("syncschedule");
+$susbaseurl = $conf->getSetting("susbaseurl");
 
-if (isset($_POST['addbranch']))
-{
-	if(isset($_POST['branchname']) && $_POST['branchname'] != "")
-	{
-		$branchname = $_POST['branchname'];
-		$res = trim(suExec("createBranch $branchname"));
-		if ($res != "")
-		{
-			echo "<div class=\"alert alert-warning\">ERROR: Unable to create the SUS branch &quot;$branchname&quot; ($res).</div>\n";
-		}
-		else
-		{
-			echo "<div class=\"alert alert-success\">Created SUS branch &quot;$branchname&quot;.</div>\n";
-		}
-	}
-	else
-	{
-		echo "<div class=\"alert alert-warning\">ERROR: Specify a SUS branch name.\n";
-	}
-}
-if (isset($_GET['deletebranch']) && $_GET['deletebranch'] != "")
-{
-	suExec("deleteBranch \"".$_GET['deletebranch']."\"");
-}
-if (isset($_POST['setbaseurl']) && $_POST['baseurl'] != "")
-{
-	$baseurl = $_POST['baseurl'];
-	$conf->setSetting("susbaseurl", $_POST['baseurl']);
-	if ($conf->getSetting("mirrorpkgs") == "true")
-	{
-		suExec("setbaseurl ".$conf->getSetting("susbaseurl"));
-	}
+// Reposado Log
+if (trim(susExec("getPref RepoSyncLogFile")) == "") {
+	susExec("setLogFile /var/log/reposado_sync.log");
 }
 
-if (isset($_POST['apply_proxy']))
-{
-	if (empty($_POST['proxy_host']) && empty($_POST['proxy_user']))
-	{
-		suExec("setsusproxy");
-	}
-	if (!empty($_POST['proxy_host']) && empty($_POST['proxy_user']))
-	{
-		suExec("setsusproxy ".$_POST['proxy_host']." ".$_POST['proxy_port']);
-	}
-	if (!empty($_POST['proxy_host']) && !empty($_POST['proxy_user']))
-	{
-		suExec("setsusproxy ".$_POST['proxy_host']." ".$_POST['proxy_port']." ".$_POST['proxy_user']." ".$_POST['proxy_pass']);
+// Add Branch Catalog
+if (isset($_POST['addbranch'])) {
+	if ($_POST["srcbranch"] != "" && $_POST["branchname"] != "") {
+		susExec("copyBranch ".$_POST["srcbranch"]." ".$_POST["branchname"]);
+	} elseif ($_POST["branchname"] != "") {
+		susExec("createBranch ".$_POST["branchname"]);
 	}
 }
-
-$susProxyHost = trim(suExec("getsusproxyhost"));
-$susProxyPort = trim(suExec("getsusproxyport"));
-$susProxyUser = trim(suExec("getsusproxyuser"));
-$susProxyPassword = trim(suExec("getsusproxypass"));
+// Delete Branch Catalog
+if (isset($_POST['deletebranch']) && $_POST['deletebranch'] != "") {
+	if ($conf->getSetting("rootbranch") == $_POST['deletebranch']) {
+		$conf->deleteSetting("rootbranch");
+		susExec("rootBranch");
+	}
+	$conf->deleteAutosyncBranch($_POST['deletebranch']);
+	susExec("deleteBranch ".$_POST['deletebranch']);
+}
 
 // ####################################################################
 // End of GET/POST parsing
 // ####################################################################
+
+// Branch Catalogs
+$branchstr = trim(susExec("getBranchlist"));
+if (empty($branchstr)) {
+	$branches = array();
+} else {
+	$branches = explode(" ", $branchstr);
+	sort($branches);
+}
+
+// SUS Status
+$sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
+$util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
+
+// Last Sync
+$last_sync = $conf->getSetting("lastsussync");
+if (empty($last_sync)) {
+	$last_sync = trim(susExec("getLastSync"));
+}
+if (empty($last_sync)) {
+	$last_sync = "Never";
+} else {
+	$last_sync = date("Y-m-d H:i:s", $last_sync);
+}
 ?>
 
-<script>
-function showErr(id, valid)
-{
-	if (valid || document.getElementById(id).value == "")
-	{
-		document.getElementById(id).style.borderColor = "";
-		document.getElementById(id).style.backgroundColor = "";
-	}
-	else
-	{
-		document.getElementById(id).style.borderColor = "#a94442";
-		document.getElementById(id).style.backgroundColor = "#f2dede";
-	}
-}
-function enableButton(id, enable)
-{
-	document.getElementById(id).disabled = !enable;
-}
+			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
+			<link rel="stylesheet" href="theme/dataTables.bootstrap.css" />
 
-function validateBaseURL()
-{
-	var validBaseURL = /^http:\/\/(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[0-9][\/]|[1-9][0-9]|[1-9][0-9][\/]|1[0-9]{2}|1[0-9]{2}[\/]|2[0-4][0-9]|2[0-4][0-9][\/]|25[0-5]|25[0-5][\/])$|^http:\/\/(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][\/]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9][\/])$/.test(document.getElementById("baseurl").value);
-	showErr("baseurl", validBaseURL);
-	enableButton("setbaseurl", validBaseURL);
-}
+			<script type="text/javascript">
+				function showError(element, labelId = false) {
+					element.parentElement.classList.add("has-error");
+					if (labelId) {
+						document.getElementById(labelId).classList.add("text-danger");
+					}
+				}
 
-function validateBranch()
-{
-	var validBranch = /^[A-Za-z0-9._+\-]{1,128}$/.test(document.getElementById("branchname").value);
-	showErr("branchname", validBranch);
-	enableButton("addbranch", validBranch);
-}
+				function hideError(element, labelId = false) {
+					element.parentElement.classList.remove("has-error");
+					if (labelId) {
+						document.getElementById(labelId).classList.remove("text-danger");
+					}
+				}
 
-function toggleHttpProxy()
-{
-	document.getElementById('proxy_host').disabled = !document.getElementById('http_proxy').checked;
-	document.getElementById('proxy_port').disabled = !document.getElementById('http_proxy').checked;
-}
-function toggleProxyAuth()
-{
-	document.getElementById('proxy_auth').disabled = !document.getElementById('http_proxy').checked;
-	document.getElementById('proxy_user').disabled = !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
-	document.getElementById('proxy_pass').disabled = !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
-}
-function validateProxy()
-{
-	var validHttpProxy = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$|^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$/.test(document.getElementById("proxy_host").value) || !document.getElementById('http_proxy').checked;
-	var validHttpPort = /^\d+$/.test(document.getElementById("proxy_port").value) && document.getElementById("proxy_port").value != "" && !(parseInt(document.getElementById("proxy_port").value) < 0) && !(parseInt(document.getElementById("proxy_port").value) > 65535) || !document.getElementById('http_proxy').checked;
-	var validProxyUser = document.getElementById('http_proxy').checked && document.getElementById("proxy_user").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
-	var validProxyPass = document.getElementById("proxy_user").value != "" && document.getElementById("proxy_pass").value != "" || !document.getElementById('proxy_auth').checked || document.getElementById('proxy_auth').disabled;
-	showErr("proxy_host", validHttpProxy);
-	showErr("proxy_port", validHttpPort);
-	enableButton("apply_proxy", validHttpProxy && validHttpPort && validProxyUser && validProxyPass);
-}
-window.onload = function()
-{
-	document.getElementById('proxy_host').disabled = !document.getElementById('http_proxy').checked;
-	document.getElementById('proxy_port').disabled = !document.getElementById('http_proxy').checked;
-	document.getElementById('proxy_auth').disabled = !document.getElementById('http_proxy').checked;
-	document.getElementById('proxy_user').disabled = !document.getElementById('proxy_auth').checked;
-	document.getElementById('proxy_pass').disabled = !document.getElementById('proxy_auth').checked;
-}
-</script>
+				function validBranch() {
+					var existingBranches = [<?php echo (empty($branches) ? "" : "\"".implode('", "', $branches)."\""); ?>];
+					var branchname = document.getElementById('branchname');
+					if (existingBranches.indexOf(branchname.value) == -1 && /^[A-Za-z0-9._+\-]{1,128}$/.test(branchname.value)) {
+						hideError(branchname, 'branchname_label');
+						$('#addbranch').prop('disabled', false);
+					} else {
+						showError(branchname, 'branchname_label');
+						$('#addbranch').prop('disabled', true);
+					}
+				}
 
-<h2>Software Update Server</h2>
+				function defaultBranch(element) {
+					checked = element.checked;
+					elements = document.getElementsByName('rootbranch');
+					for (i = 0; i < elements.length; i++) {
+						elements[i].checked = false;
+					}
+					ajaxPost('susCtl.php?branch='+element.value, 'rootbranch='+checked);
+					element.checked = checked;
+				}
 
+				function manSync() {
+					$("#sync-modal").addClass('fade');
+					$('#sync-modal').modal('show');
+					setTimeout('window.location.reload()', 5000);
+					ajaxPost('susCtl.php', 'sync=true');
+				}
 
-<div class="row">
-	<div class="col-xs-12 col-sm-10 col-lg-8">
+				function purgeModal() {
+					$("#purge-modal").addClass('fade');
+					$("#purge-progress").addClass('hidden');
+					$("#purge-refresh").addClass('hidden');
+					$("#purge-warning").removeClass('hidden');
+					$("#purge-confirm").removeClass('hidden');
+				}
 
-		<form action="SUS.php" method="post" name="SUS" id="SUS">
+				function purgeDep() {
+					$("#purge-warning").addClass('hidden');
+					$("#purge-confirm").addClass('hidden');
+					$("#purge-progress").removeClass('hidden');
+					$("#purge-refresh").removeClass('hidden');
+					setTimeout('window.location.reload()', 5000);
+					ajaxPost('susCtl.php', 'purge=true');
+				}
+			</script>
+
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$('#settings').attr('onclick', 'document.location.href="susSettings.php"');
+				});
+			</script>
+
+			<nav id="nav-title" class="navbar navbar-default navbar-fixed-top">
+				<div style="padding: 19px 20px 1px;">
+					<div class="description">&nbsp;</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<h2>Software Update Server</h2>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<div style="padding: 72px 20px 3px; background-color: #f9f9f9;">
+				<h5><strong>Last Sync</strong> <small><span id="last_sync"><?php echo $last_sync; ?></span></small></h5>
+			</div>
 
 			<hr>
 
-			<?php if ($conf->getSetting("todoenrolled") != "true") { ?>
-
-			<span class="label label-default">Base URL</span>
-
-			<span class ="description">Base URL for the software update server (e.g. "http://sus.mycompany.corp")</span>
-
-			<div class="input-group">
-				<input type="text" name="baseurl" id="baseurl" class="form-control input-sm long-text-input" value="<?php echo $conf->getSetting("susbaseurl")?>" onClick="validateBaseURL();" onKeyUp="validateBaseURL();" onChange="validateBaseURL();"/>
-				<span class="input-group-btn">
-					<input type="submit" name="setbaseurl" id="setbaseurl" class="btn btn-primary btn-sm" value="Change URL" disabled="disabled" />
-				</span>
-			</div>
-
-			<br>
-
-			<div class="table-responsive panel panel-default">
-				<div class="panel-heading">
-					<strong>Branches</strong>
-				</div>
-				<table class="table table-striped table-bordered table-condensed">
-					<?php
-					$branchstr = trim(suExec("getBranchlist"));
-					$branches = explode(" ",$branchstr);
-					?>
-					<thead>
-					<tr>
-						<th>Root</th>
-						<th>Name</th>
-						<th>URL</th>
-						<th></th>
-					</tr>
-					</thead>
-					<tobdy>
-						<?php foreach ($branches as $key => $value) {
-							if ($value != "") {?>
-								<tr>
-									<td class="table-center"><?php if ($conf->getSetting("rootbranch") == $value) { echo "<span class=\"glyphicon glyphicon-ok\"></span>"; }?></td>
-									<td><a href="managebranch.php?branch=<?php echo $value?>" title="Manage branch: <?php echo $value?>"><?php echo $value?></a></td>
-									<td nowrap><?php echo $conf->getSetting("susbaseurl")."content/catalogs/index_".$value.".sucatalog"?></a></td>
-									<td><a href="SUS.php?service=SUS&deletebranch=<?php echo $value?>" onClick="javascript: return yesnoprompt('Are you sure you want to delete the branch?');">Delete</a></td>
-								</tr>
-							<?php } } ?>
-					</tobdy>
-				</table>
-			</div>
-
-			<span class="label label-default">New Branch</span>
-
-			<div class="input-group">
-				<input type="text" name="branchname" id="branchname" class="form-control input-sm" value="" onClick="validateBranch();" onKeyUp="validateBranch();" onChange="validateBranch();"/>
-				<span class="input-group-btn">
-					<input type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" value="Add Branch" disabled="disabled"/>
-				</span>
-			</div>
-
-			<?php
-			}
-			else { ?>
-				<h3>Managed by the JSS</h3>
-			<?php }?>
-
-			<span class="label label-default">Store Updates on the NetBoot/SUS/LDAP Proxy Server</span>
-			<div class="checkbox">
-				<label>
-					<input class="checkbox" type="checkbox" name="mirrorpkgs" id="mirrorpkgs" value="mirrorpkgs"
-						<?php if ($conf->getSetting("mirrorpkgs") == "true")
-						{
-							echo "checked=\"checked\"";
-						}?>
-						   onChange="javascript:ajaxPost('ajax.php?service=SUS', 'mirrorpkgs=' + this.checked);"/>
-					Ensure that computers install software updates from the NetBoot/SUS/LDAP Proxy server instead of downloading and installing them from Apple's software update server
-				</label>
-			</div>
-
-			<span class="label label-default">Purge Deprecated Updates</span>
-			<span class="description">Removes all deprecated products that are not in any branch catalogs</span>
-			<input type="button" value="Purge Deprecated" class="btn btn-primary btn-sm" onClick="javascript: return goTo(true, 'susCtl.php?purge=true');"/>
-
-			<span class="label label-default">Manual Sync</span>
-
-			<span class="description">Manual method for syncing the list of available updates with Apple's Software Update server</span>
-			<input type="button" value="Sync Manually" class="btn btn-sm btn-primary" onClick="javascript: return goTo(true, 'susCtl.php?sync=true');"/>
-
-			<span class="label label-default">Daily Sync Time</span>
-
-			<span class="description">Time at which to sync the list of available updates with Apple's Software Update server each day</span>
-			<select id="syncsch" class="form-control input-sm" onChange="javascript:ajaxPost('ajax.php?service=SUS', 'enablesyncsch=' + this.value);">
-				<option value="Off"<?php echo ($syncschedule == "Off" ? " selected=\"selected\"" : "")?>>None</option>
-				<option value="0"<?php echo ($syncschedule == "0" ? " selected=\"selected\"" : "")?>>12 a.m.</option>
-				<option value="3"<?php echo ($syncschedule == "3" ? " selected=\"selected\"" : "")?>>3 a.m.</option>
-				<option value="6"<?php echo ($syncschedule == "6" ? " selected=\"selected\"" : "")?>>6 a.m.</option>
-				<!-- 2017-04-27: NetSUS Update added (missing) 9am option -->
-				<option value="9"<?php echo ($syncschedule == "9" ? " selected=\"selected\"" : "")?>>9 a.m.</option>
-				<option value="12"<?php echo ($syncschedule == "12" ? " selected=\"selected\"" : "")?>>12 p.m.</option>
-				<option value="15"<?php echo ($syncschedule == "15" ? " selected=\"selected\"" : "")?>>3 p.m.</option>
-				<option value="18"<?php echo ($syncschedule == "18" ? " selected=\"selected\"" : "")?>>6 p.m.</option>
-				<option value="21"<?php echo ($syncschedule == "21" ? " selected=\"selected\"" : "")?>>9 p.m.</option>
-			</select>
-
-			<br>
-
-			<span style="font-weight:bold;">Last Sync: </span><span><?php if (trim(suExec("lastsussync")) != "") { print suExec("lastsussync"); } else { echo "Never"; } ?></span>
-
-			<br>
-			<br>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<strong>Proxy Configuration</strong>
-				</div>
-
-				<div class="panel-body">
-
-					<div class="checkbox">
-						<label><input class="checkbox" type="checkbox" name="http_proxy" id="http_proxy" value="http_proxy" <?php if ($susProxyHost != "") { echo "checked=\"checked\""; } ?> onChange="toggleHttpProxy(); toggleProxyAuth(); validateProxy();" />Proxy Server</label>
+			<div style="padding: 8px 20px 1px; overflow-x: auto;">
+				<div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+					<div class="row">
+						<div class="col-sm-10">
+							<div class="dataTables_filter">
+								<h5><strong>Branch Catalogs</strong> <small>Control the availability of updates for clients.</small></h5>
+							</div>
+						</div>
+						<div class="col-sm-2">
+							<div class="dataTables_paginate">
+								<div class="btn-group">
+									<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#createBranch" <?php echo ($last_sync == "Never" ? "disabled " : ""); ?>><span class="glyphicon glyphicon-plus"></span> Add</button>
+								</div>
+							</div>
+						</div>
 					</div>
-
-					<div class="input-group">
-						<div class="input-group-addon no-background">Host</div>
-						<input type="text" name="proxy_host" id="proxy_host" class="form-control input-sm" value="<?php echo $susProxyHost; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
+					<div class="row">
+						<div class="col-sm-12">
+							<table id="branchTable" class="table table-hover">
+								<thead>
+									<tr>
+										<th>Default</th>
+										<th>Auto Enable</th>
+										<th>Name</th>
+										<th>URL</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+<?php $i = 0;
+foreach ($branches as $branch) {
+if ($branch != "") { ?>
+									<tr>
+										<td>
+											<div class="checkbox checkbox-primary checkbox-inline">
+												<input type="checkbox" name="rootbranch" id="rootbranch<?php echo $i; ?>" value="<?php echo $branch; ?>" onChange="defaultBranch(this);" <?php echo ($conf->getSetting("rootbranch") == $branch ? "checked" : ""); ?>/>
+												<label/>
+											</div>
+										</td>
+										<td>
+											<div class="checkbox checkbox-primary checkbox-inline">
+												<input type="checkbox" id="autosync[<?php echo $branch; ?>]" value="<?php echo $branch; ?>" onChange="javascript:ajaxPost('susCtl.php?branch='+this.value, 'autosync='+this.checked);" <?php echo ($conf->containsAutosyncBranch($branch) ? "checked" : ""); ?>/>
+												<label/>
+											</div>
+										</td>
+										<td><a href="managebranch.php?branch=<?php echo $branch?>" title="Manage branch: <?php echo $branch?>"><?php echo $branch?></a></td>
+										<td><?php echo $susbaseurl."content/catalogs/index_".$branch.".sucatalog"?></td>
+										<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#delete_branch" onClick="$('#delete_title').text('Delete Branch \'<?php echo $branch?>\'?'); $('#deletebranch').val('<?php echo $branch?>');">Delete</button></td>
+									</tr>
+<?php $i++;
+}
+}
+if (empty($branches)) { ?>
+									<tr>
+										<td align="center" valign="top" colspan="5" class="dataTables_empty">No data available in table</td>
+									</tr>
+<?php } ?>
+								</tbody>
+							</table>
+						</div>
 					</div>
-
-					<br>
-
-					<div class="input-group">
-						<div class="input-group-addon no-background">Port</div>
-						<input type="text" name="proxy_port" id="proxy_port" class="form-control input-sm" value="<?php echo $susProxyPort; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
-					</div>
-
-					<br>
-
-					<div class="checkbox">
-						<label><input class="checkbox" type="checkbox" name="proxy_auth" id="proxy_auth" value="proxy_auth" <?php if ($susProxyUser != "") { echo "checked=\"checked\""; } ?> onChange="toggleProxyAuth(); validateProxy();" />Proxy Requires Authentication</label>
-					</div>
-
-					<div class="input-group">
-						<div class="input-group-addon no-background">Username</div>
-						<input type="text" name="proxy_user" id="proxy_user" class="form-control input-sm" value="<?php echo $susProxyUser; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
-					</div>
-
-					<br>
-
-					<div class="input-group">
-						<div class="input-group-addon no-background">Password</div>
-						<input type="password" name="proxy_pass" id="proxy_pass" class="form-control input-sm" value="<?php echo $susProxyPassword; ?>" onClick="validateProxy();" onKeyUp="validateProxy();" onChange="validateProxy();" />
-					</div>
-
-				</div>
-
-				<div class="panel-footer">
-					<input type="submit" name="apply_proxy" id="apply_proxy" class="btn btn-primary btn-sm" value="Apply" disabled="disabled" />
 				</div>
 			</div>
 
+			<hr>
 
-		</form> <!-- end form SUS -->
-	</div><!-- /.col -->
-</div><!-- /.row -->
+			<div style="padding: 4px 20px 16px; background-color: #f9f9f9;">
+				<h5><strong>Manual Sync</strong> <small>Manual method for syncing the list of available updates with Apple's Software Update server.</small></h5>
+				<button type="button" id="manual_sync" class="btn btn-primary btn-sm" style="width: 53px;" onClick="manSync();">Sync</button>
+			</div>
 
-<?php include "inc/footer.php"; ?>
+			<hr>
+
+			<div style="padding: 9px 20px 1px;">
+				<h5><strong>Purge Deprecated</strong> <small>Removes all deprecated products that are not in any branch catalogs.</small></h5>
+				<button type="button" id="purge_dep" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#purge-modal" onClick="purgeModal();"; "<?php echo ($last_sync == "Never" ? "disabled " : ""); ?>>Purge</button>
+			</div>
+
+			<!-- Sync Modal -->
+			<div class="modal" id="sync-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h3 class="modal-title">Sync Running</h3>
+						</div>
+						<div class="modal-body">
+							<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /#modal -->
+
+			<!-- Purge Modal -->
+			<div class="modal" id="purge-modal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header" id="purge-title">
+							<h3 class="modal-title">Purge Deprecated</h3>
+						</div>
+						<div class="modal-body hidden" id="purge-warning">
+							<div class="text-muted">This action is permanent and cannot be undone.</div>
+						</div>
+						<div class="modal-body" id="purge-progress">
+							<div class="text-center" style="padding: 8px 0px;"><img src="images/progress.gif"></div>
+						</div>
+						<div class="modal-footer hidden" id="purge-confirm">
+							<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+							<button type="button" class="btn btn-danger btn-sm" onClick="purgeDep();">Purge</button>
+						</div>
+						<div class="modal-footer" id="purge-refresh">
+							<button type="button" class="btn btn-default btn-sm pull-right" onClick="document.location.href='dashboard.php';">Home</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- /#modal -->
+
+			<form action="SUS.php" method="post" name="SUS" id="SUS">
+
+				<!-- Add Branch Modal -->
+				<div class="modal fade" id="createBranch" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 class="modal-title" id="new_title">Add Branch Catalog</h3>
+							</div>
+							<div class="modal-body">
+
+								<h5 id="branchname_label"><strong>Branch Name</strong> <small>This name is appended to the apple catalog names.</small></h5>
+								<div class="form-group">
+									<input type="text" name="branchname" id="branchname" class="form-control input-sm" onFocus="validBranch();" onKeyUp="validBranch();" onBlur="validBranch();" placeholder="[Required]" />
+								</div>
+
+								<h5><strong>Copy Branch</strong> <small>Copies all items from this branch to the new branch.</small></h5>
+								<select id="srcbranch" name="srcbranch" class="form-control input-sm">
+									<option value="" selected>None</option>
+<?php
+foreach ($branches as $branch) {
+if ($branch != "") { ?>
+									<option value="<?php echo $branch; ?>"><?php echo $branch; ?></option>
+<?php }
+} ?>
+								</select>
+
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+								<button type="submit" name="addbranch" id="addbranch" class="btn btn-primary btn-sm" disabled >Save</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /#modal -->
+
+				<!-- Delete Branch Modal -->
+				<div class="modal fade" id="delete_branch" tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h3 id="delete_title" class="modal-title">Delete Branch Catalog?</h3>
+							</div>
+							<div class="modal-body">
+								<div class="text-muted">This action is permanent and cannot be undone.</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" data-dismiss="modal" class="btn btn-default btn-sm pull-left" >Cancel</button>
+								<button type="submit" name="deletebranch" id="deletebranch" class="btn btn-danger btn-sm" value="">Delete</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /#modal -->
+
+			</form> <!-- end form SUS -->
+
+<?php if ($sync_status) { ?>
+		<script>
+			$(window).load(function() {
+				setTimeout('window.location.reload()', 5000);
+				$('#sync-modal').modal('show');
+			});
+		</script>
+<?php }
+if ($util_status) { ?>
+		<script>
+			$(window).load(function() {
+				setTimeout('window.location.reload()', 5000);
+				$('#purge-modal').modal('show');
+			});
+		</script>
+<?php }
+include "inc/footer.php"; ?>

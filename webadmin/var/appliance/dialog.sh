@@ -1,12 +1,12 @@
-#!/bin/sh 
+#!/bin/sh
 
-detectedOS=`lsb_release -s -d 2>/dev/null | sed -e 's/"//g'`
+detectedOS=$(lsb_release -s -d 2>/dev/null | sed -e 's/"//g')
 if [ -z "$detectedOS" ]
 then
-	detectedOS=`cat /etc/system-release`
+	detectedOS=$(cat /etc/system-release)
 fi
 
-ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
+ip=$(ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }' | head -1)
 if [ -z "$ip" ]
 then
 	ip="0.0.0.0"
@@ -19,7 +19,7 @@ message="\n
 | Welcome to the NetSUS Appliance.\n
 | OS: $detectedOS\n
 | To Login to the NetSUS Appliance:\n
-| https://$ip/webadmin\n 
+| https://$ip/webadmin\n
 | Username: webadmin\n
 | Password: webadmin\n
 +-----------oOO-------------------------------+\n

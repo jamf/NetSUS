@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if [ ! -f "/var/appliance/.setupDone" ]; then
+	active=0
+	for i in $(ip link | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | grep -w 'BROADCAST' | awk -F ': ' '{print $2}'); do
+		if grep -q "^    ${i}:" /etc/netplan/01-netcfg.yaml 2>/dev/null || grep -q "^iface ${i} inet" /etc/network/interfaces 2>/dev/null || grep -q "^DEVICE.*${i}" /etc/sysconfig/network-scripts/ifcfg-${i} 2>/dev/null; then
+			active=1
+		fi
+	done
+	if [ ${active} -eq 0 ]; then
+		iface=$(ip link | sed -e :a -e '$!N;s/\n[[:blank:]]/ /;ta' -e 'P;D' | grep -w 'BROADCAST' | head -1 | awk -F ': ' '{print $2}')
+		if [ -f "/etc/netplan/01-netcfg.yaml" ]; then
+			cfg=$(grep -m 1 "^    [a-z]" /etc/netplan/01-netcfg.yaml | sed -e 's/[[:space:]]//g' -e 's/://g')
+			if [ "${cfg}" != "${iface}" ]; then
+				sed -i "s/${cfg}/${iface}/g" /etc/netplan/01-netcfg.yaml
+				netplan apply
+			fi
+		elif [ -f "/etc/network/interfaces" ]; then
+			cfg=$(grep 'iface' /etc/network/interfaces | grep -v loopback | head -1 | awk '{print $2}')
+			if [ "${cfg}" != "${iface}" ]; then
+				sed -i "s/${cfg}/${iface}/g" /etc/network/interfaces
+				service networking restart
+			fi
+		elif [ -d "/etc/sysconfig/network-scripts" ]; then
+			rm -f /etc/sysconfig/network-scripts/ifcfg-e*
+			echo "DEVICE=${iface}" > /etc/sysconfig/network-scripts/ifcfg-${iface}
+			echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-${iface}
+			echo "NM_CONTROLLED=no" >> /etc/sysconfig/network-scripts/ifcfg-${iface}
+			echo "BOOTPROTO=dhcp" >> /etc/sysconfig/network-scripts/ifcfg-${iface}
+			ifup ${iface}
+		fi
+	fi
+	touch /var/appliance/.setupDone
+	if [ -f "/etc/rc.d/rc.local" ]; then
+		rc_local=/etc/rc.d/rc.local
+	else
+		rc_local=/etc/rc.local
+	fi
+	sed -i '/firstBoot/d' ${rc_local}
+	rm -f "${0}"
+fi
+
+exit 0

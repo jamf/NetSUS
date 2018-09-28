@@ -9,3 +9,4 @@ motd.legal-displayed
 packer_cache
 output-virtualbox-iso
 
+*.iso

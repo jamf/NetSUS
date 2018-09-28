@@ -15,8 +15,11 @@ fi
 
 case $NAME in
 "Ubuntu")
-	if [[ "$VERSION_ID" == "14.04" ]] || [[ "$VERSION_ID" == "16.04" ]] ; then
+	if [[ "$VERSION_ID" == "14.04" ]] || [[ "$VERSION_ID" == "16.04" ]] || [[ "$VERSION_ID" == "18.04" ]] ; then
 		log "$PRETTY_NAME found"
+		if [[ "$VERSION_ID" == "18.04" ]] ; then
+			log "Warning: $NAME $VERSION_ID support is currently experimental, proceed with caution."
+		fi
 		exit 0
 	else
 		log "Error: $NAME version must be 14.04 or 16.04 (Detected $VERSION_ID)."
@@ -24,14 +27,17 @@ case $NAME in
 	fi
 ;;
 "Red Hat Enterprise Linux"*|"CentOS"*)
-	if [[ "$VERSION_ID" > "6.3" ]] ; then
+	IFS='.'
+	VERSION_ARR=( $VERSION_ID )
+	unset IFS
+	if [[ ${VERSION_ARR[0]} -eq 6 ]] && [[ ${VERSION_ARR[1]} -gt 3 ]] || [[ ${VERSION_ARR[0]} -gt 6 ]] ; then
 		log "$PRETTY_NAME found"
 		exit 0
 	else
 		log "Error: $NAME version must be 6.4 or later (Detected $VERSION_ID)."
 		exit 1
 	fi
-	if yum repolist | grep repolist | grep -q ': 0'; then 
+	if yum repolist | grep repolist | grep -q ': 0'; then
         log "Error: This system is does not have any available repositories."
 		exit 1
     fi
@@ -39,7 +45,10 @@ case $NAME in
 *)
 	release=$(rpm -q --queryformat '%{RELEASE}' rpm | cut -d '.' -f 2)
 	if [[ $release == "el6" ]] || [[ $release == "el7" ]] ; then
-		if [[ "$VERSION_ID" > "6.3" ]] ; then
+		IFS='.'
+		VERSION_ARR=( $VERSION_ID )
+		unset IFS
+		if [[ ${VERSION_ARR[0]} -eq 6 ]] && [[ ${VERSION_ARR[1]} -gt 3 ]] || [[ ${VERSION_ARR[0]} -gt 6 ]] ; then
 			log "$PRETTY_NAME found"
 			log "Warning: $NAME is a Red Hat Enterprise Linux variant, proceed with caution."
 			exit 0

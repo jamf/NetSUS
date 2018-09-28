@@ -1,47 +1,44 @@
 <?php
 
-include "inc/config.php";
-include "inc/auth.php";
-include "inc/functions.php";
+session_start();
 
-$sURL="logs.php";
-$title = "Logs";
+if (!($_SESSION['isAuthUser'])) {
 
-if (isset($_GET['log']) && $_GET['log'] != '')
-{
-	$logcontent = suExec("displayLog ".$_GET['log']." ".$_GET['lines']);
-	include "inc/header.php";
-	?>
-	<h2>Display Log</h2>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-				<hr>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-	<?php
-	echo "<span class=\"label label-default\">".$_GET['log']."</span>";
-	print "<pre>".$logcontent."</pre>";
-	?>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-10 col-lg-8">
-				<br>
-				<hr>
-				<br>
-				<input type="button" id="back-button" name="action" class="btn btn-sm btn-default" value="Back" onclick="document.location.href='logs.php'">
-			</div>
-		</div>
-<?php
+	echo "Not authorized - please log in";
+
+} else {
+
+	include "inc/config.php";
+	include "inc/dbConnect.php";
+	include "inc/functions.php";
+
+	// Download Log
+	if (isset($_GET['download'])) {
+		$logname = basename($_GET['download']);
+		$tmp_file = "/tmp/".$logname.".zip";
+		$logcontent = suExec("displayLog ".$_GET['download']." ".$_GET['lines']);
+		file_put_contents("/tmp/".$logname, $logcontent);
+		$zip = new ZipArchive();
+		$zip->open($tmp_file, ZipArchive::CREATE);
+		$zip->addFile("/tmp/".$logname, $logname);
+		$zip->close();
+		unlink("/tmp/".$logname);
+		if (file_exists($tmp_file)) {
+			if (ob_get_level()) ob_end_clean();
+			header('Content-Description: File Transfer');
+			header('Content-Type: application/octet-stream');
+			header('Content-Disposition: attachment; filename="'.$logname.'.zip"');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate');
+			header('Pragma: public');
+			header('Content-Length: '.filesize($tmp_file));
+			ob_clean();
+			flush();
+			readfile($tmp_file);
+			unlink($tmp_file);
+			exit;
+		}
+	}
 }
-
-if (!isset($_GET['log']))
-{
-	header('Location: '. $sURL);
-}
-
-include "inc/footer.php";
 
 ?>

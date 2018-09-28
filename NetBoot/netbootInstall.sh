@@ -7,6 +7,7 @@ apt_install() {
 	if [[ $(apt-cache -n search ^${1}$ | awk '{print $1}' | grep ^${1}$) == "$1" ]] && [[ $(dpkg -s $1 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
 		apt-get -qq -y install $1 >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -16,6 +17,7 @@ yum_install() {
 	if yum -q list $1 &>- && [[ $(rpm -qa $1) == "" ]] ; then
 		yum install $1 -y -q >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -28,7 +30,6 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install samba
 	unset DEBIAN_FRONTEND
 	apt_install tftpd-hpa
-	# apt_install openbsd-inetd
 	apt_install netatalk
 	apt_install nfs-kernel-server
 	apt_install python-configparser
@@ -219,7 +220,7 @@ fi
 # Configure tftp
 if [ -f "/etc/default/tftpd-hpa" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/default/tftpd-hpa
-	sed -i 's:TFTP_OPTIONS=.*:TFTP_OPTIONS="--secure --blocksize 1460":' /etc/default/tftpd-hpa
+	sed -i 's:TFTP_OPTIONS=.*:TFTP_OPTIONS="-4 --secure --blocksize 1460":' /etc/default/tftpd-hpa
 fi
 if [ -f "/etc/xinetd.d/tftp" ]; then
 	sed -i 's:/var/lib/tftpboot:/srv/NetBoot/NetBootSP0:' /etc/xinetd.d/tftp
@@ -244,19 +245,25 @@ if [ ! -d "/srv/NetBootClients" ]; then
     mkdir /srv/NetBootClients
 fi
 
-# Install and configure dhcp
-killall dhcpd >> $logFile 2>&1
-if [ ! -d "/var/appliance/conf" ]; then
-	mkdir -p /var/appliance/conf
+# Install helper script
+if [ ! -d "/var/appliance" ]; then
+	mkdir -p /var/appliance
 fi
-cp ./resources/dhcpd.conf /var/appliance/conf/ >> $logFile
-cp ./resources/configurefornetboot /var/appliance/ >> $logFile
+cp ./resources/nbi_settings.py /var/appliance/ >> $logFile
 
-if [ ! -d "/var/db"  ]; then
-    mkdir /var/db
-fi
-touch /var/db/dhcpd.leases
-cp ./resources/dhcp/* /usr/local/sbin/ >> $logFile
+# Install and configure dhcp
+# killall dhcpd >> $logFile 2>&1
+# if [ ! -d "/var/appliance/conf" ]; then
+#	mkdir -p /var/appliance/conf
+# fi
+# cp ./resources/dhcpd.conf /var/appliance/conf/ >> $logFile
+# cp ./resources/configurefornetboot /var/appliance/ >> $logFile
+
+# if [ ! -d "/var/db"  ]; then
+#    mkdir /var/db
+# fi
+# touch /var/db/dhcpd.leases
+# cp ./resources/dhcp/* /usr/local/sbin/ >> $logFile
 
 # Update netatalk configuration
 if [ -f "/etc/default/netatalk" ]; then
@@ -269,10 +276,9 @@ if [ -f "/etc/default/netatalk" ]; then
 	sed -i 's:.*A2BOOT_RUN=.*:A2BOOT_RUN=yes:' /etc/default/netatalk
 	sed -i 's:.*ATALK_BGROUND=.*:ATALK_BGROUND=no:' /etc/default/netatalk
 	sed -i '/"NetBoot"/d' /etc/netatalk/AppleVolumes.default
-	sed -i '/End of File/d' /etc/netatalk/AppleVolumes.default
-	echo '# End of File' >> /etc/netatalk/AppleVolumes.default
-	sed -i '/End of File/ i\
-/srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' /etc/netatalk/AppleVolumes.default
+	# sed -i '/End of File/d' /etc/netatalk/AppleVolumes.default
+	# echo '# End of File' >> /etc/netatalk/AppleVolumes.default
+	# sed -i '/End of File/ i\/srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' /etc/netatalk/AppleVolumes.default
 fi
 if [ -f "/etc/netatalk/netatalk.conf" ]; then
 	if ! grep -q '\- \-setuplog "default log_info /var/log/afpd.log"' /etc/netatalk/afpd.conf; then
@@ -287,40 +293,43 @@ if [ -f "/etc/netatalk/netatalk.conf" ]; then
 	sed -i 's:.*A2BOOT_RUN=.*:A2BOOT_RUN=yes:' /etc/netatalk/netatalk.conf
 	sed -i 's:.*ATALK_BGROUND=.*:ATALK_BGROUND=no:' /etc/netatalk/netatalk.conf
 	sed -i '/"NetBoot"/d' /etc/netatalk/AppleVolumes.default
-	sed -i '/End of File/d' /etc/netatalk/AppleVolumes.default
-	echo '# End of File' >> /etc/netatalk/AppleVolumes.default
-	sed -i '/End of File/ i\
-/srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv cnidscheme:dbd ea:sys preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' /etc/netatalk/AppleVolumes.default
+	# sed -i '/End of File/d' /etc/netatalk/AppleVolumes.default
+	# echo '# End of File' >> /etc/netatalk/AppleVolumes.default
+	# sed -i '/End of File/ i\/srv/NetBootClients/$i "NetBoot" allow:afpuser rwlist:afpuser options:upriv cnidscheme:dbd ea:sys preexec:"mkdir -p /srv/NetBootClients/$i/NetBoot001" postexec:"rm -rf /srv/NetBootClients/$i"' /etc/netatalk/AppleVolumes.default
 fi
 
 # Create Apache Share for NetBoot
 if [ -f "/etc/apache2/sites-enabled/000-default.conf" ]; then
 	# Remove any entries from old installations
 	sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/apache2/sites-enabled/000-default.conf
-	sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	# sed -i "s'</VirtualHost>'\tAlias /NetBoot/ \"/srv/NetBoot/\"\n\t<Directory /srv/NetBoot/>\n\t\tOptions Indexes FollowSymLinks MultiViews\n\t\tAllowOverride None\n\t\tRequire all granted\n\t</Directory>\n</VirtualHost>'g" /etc/apache2/sites-enabled/000-default.conf
+	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/apache2/sites-enabled/000-netboot.conf
 fi
 if [ -f "/etc/httpd/conf/httpd.conf" ]; then
 	# Remove any entries from old installations
     sed -i '/[[:space:]]*Alias \/NetBoot\/ "\/srv\/NetBoot\/"/,/[[:space:]]*<\/Directory>/d' /etc/httpd/conf/httpd.conf
-    if httpd -v | grep version | grep -q '2.2'; then 
-    	echo '
-    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    	echo '
-    	<Directory "/srv/NetBoot">
-    	Options Indexes FollowSymLinks MultiViews
-    	AllowOverride None
-    	Order allow,deny
-    	Allow from all
-    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    if httpd -v 2>/dev/null | grep version | grep -q '2.2'; then
+    	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Order allow,deny
+	Allow from all
+</Directory>' > /etc/httpd/conf.d/netboot.conf
     else
-    	echo '
-    	Alias /NetBoot/ "/srv/NetBoot/"' >> /etc/httpd/conf/httpd.conf
-    	echo '
-    	<Directory "/srv/NetBoot">
-    	Options Indexes FollowSymLinks MultiViews
-    	AllowOverride None
-    	Require all granted
-    	</Directory>' >> /etc/httpd/conf/httpd.conf
+    	echo 'Alias /NetBoot/ "/srv/NetBoot/"
+
+<Directory /srv/NetBoot/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride None
+	Require all granted
+</Directory>' > /etc/httpd/conf.d/netboot.conf
     fi
 fi
 
@@ -368,7 +377,7 @@ if [ -f "/etc/modprobe.d/lockd.conf" ]; then
 	sed -i 's/.*nlm_tcpport.*/options lockd nlm_tcpport=32803/' /etc/modprobe.d/lockd.conf
 	if ! grep -q nlm_udpport /etc/modprobe.d/lockd.conf; then
 		echo "options lockd nlm_udpport=32769" >> /etc/modprobe.d/lockd.conf
-	fi 
+	fi
 	sed -i 's/.*nlm_udpport.*/options lockd nlm_udpport=32769/' /etc/modprobe.d/lockd.conf
 fi
 sed -i "/NetBootSP0/d" /etc/exports
@@ -406,6 +415,39 @@ printf '
 # NetBoot Share
 \tinclude = /etc/samba/conf.d/netboot.conf
 ' >> /etc/samba/smb.conf
+fi
+
+# BSDP Support
+if service pybsdp status 2>&- | grep -q running; then
+	service pybsdp stop >> $logFile 2>&1
+fi
+mkdir -p /usr/local/lib/pybsdp
+cp -R ./resources/pybsdp /usr/local/sbin/ >> $logFile
+cp -R ./resources/lib/pybsdp/* /usr/local/lib/pybsdp/ >> $logFile
+if [ ! -f "/etc/pybsdp.conf" ]; then
+	NBPASS=$(for i in $(grep "01:01:02:08:04:.*.:80" /var/appliance/conf/dhcpd.conf 2>/dev/null | sed 's/.*option.*01:01:02:08:04:.*.:80:.*:61:66:70:75:73:65:72:3A://g' | awk -F40 '{print $1}' | sed 's/\(.*\)./\1/;s/:/ /g') ; do printf "\x$i" ; done)
+	if [[ $NBPASS == "" ]]; then
+		NBPASS=afpuser1
+	fi
+	echo "[pybsdp]
+netbootuser = afpuser
+netbootpass = ${NBPASS}
+imagepath = /srv/NetBoot/NetBootSP0
+clientpath = /srv/NetBootClients" > /etc/pybsdp.conf
+fi
+sed -i '/"NetBootClients"/d' /etc/netatalk/AppleVolumes.default
+sed -i '/End of File/d' /etc/netatalk/AppleVolumes.default
+echo '# End of File' >> /etc/netatalk/AppleVolumes.default
+sed -i '/End of File/ i\/srv/NetBootClients "NetBootClients" allow:afpuser rwlist:afpuser options:upriv' /etc/netatalk/AppleVolumes.default
+if [[ $(which update-rc.d 2>&-) != "" ]]; then
+	cp ./resources/pybsdp.ubuntu /etc/init.d/pybsdp
+	chmod +x /etc/init.d/pybsdp
+	update-rc.d pybsdp defaults >> $logFile 2>&1
+elif [[ $(which chkconfig 2>&-) != "" ]]; then
+	cp ./resources/pybsdp.rhel /etc/rc.d/init.d/pybsdp
+	chmod +x /etc/rc.d/init.d/pybsdp
+	chkconfig --add pybsdp >> $logFile 2>&1
+	chkconfig pybsdp off >> $logFile 2>&1
 fi
 
 # Make the smbuser the owner of the NetBootSP0 share

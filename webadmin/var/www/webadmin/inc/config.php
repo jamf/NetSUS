@@ -3,7 +3,7 @@ define("CONF_FILE_PATH", "/var/appliance/conf/appliance.conf.xml");
 define("TOP_ELEMENT_NAME", "webadminSettings");
 
 
-$isAdmin        = false;
+$isAdmin		= false;
 $debug 			= false;
 
 /*

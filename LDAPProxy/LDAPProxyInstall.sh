@@ -7,6 +7,7 @@ apt_install() {
 	if [[ $(apt-cache -n search ^${1}$ | awk '{print $1}' | grep ^${1}$) == "$1" ]] && [[ $(dpkg -s $1 2>&- | awk '/Status: / {print $NF}') != "installed" ]]; then
 		apt-get -qq -y install $1 >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -16,6 +17,7 @@ yum_install() {
 	if yum -q list $1 &>- && [[ $(rpm -qa $1) == "" ]] ; then
 		yum install $1 -y -q >> $logFile 2>&1
 		if [[ $? -ne 0 ]]; then
+			log "Failed to install ${1}"
 			exit 1
 		fi
 	fi
@@ -90,7 +92,7 @@ if [ -d "/etc/openldap" ]; then
 	modutil -create -dbdir /etc/openldap/certs -force
 	openssl pkcs12 -inkey /var/appliance/conf/appliance.private.key -in /var/appliance/conf/appliance.certificate.pem -export -out /tmp/openldap.p12 -nodes -name 'LDAP-Certificate' -password pass:
 	certutil -A -d /etc/openldap/certs -n "CA Chain" -t CT,, -a -i /var/appliance/conf/appliance.chain.pem
-	expect -c 'log_user 0; spawn pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""; expect "Enter new password: "; send "netsuslp\r"; expect "Re-enter password: "; send "netsuslp\r"'
+	expect -c 'log_user 0; spawn pk12util -i /tmp/openldap.p12 -d /etc/openldap/certs -W ""; expect "Enter new password: "; send "netsuslp\r"; expect "Re-enter password: "; send "netsuslp\r"' 2>/dev/null
 	rm -f /tmp/openldap.p12
 	chown -R ldap:ldap /etc/openldap/certs/
 fi

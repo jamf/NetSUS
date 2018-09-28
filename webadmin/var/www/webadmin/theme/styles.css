@@ -3,6 +3,7 @@ Miscellaneous
 ------------------------------------------------*/
 
 body {
+    overflow-x: hidden;
     font-family: 'Roboto', sans-serif;
 }
 .table {
@@ -54,11 +55,59 @@ h2 {
     float: none;
     margin: 0 auto;
 }
+.service-settings {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 17px;
+    margin-left: 8px;
+    border-left: 1px solid #eee;
+}
 
+/*----------------------------------------------
+NetSUS Icons
+------------------------------------------------*/
+@font-face {
+  font-family: 'netsus-icons';
+  src:  url('../fonts/netsus-icons.eot?yva3hb');
+  src:  url('../fonts/netsus-icons.eot?yva3hb#iefix') format('embedded-opentype'),
+    url('../fonts/netsus-icons.ttf?yva3hb') format('truetype'),
+    url('../fonts/netsus-icons.woff?yva3hb') format('woff'),
+    url('../fonts/netsus-icons.svg?yva3hb#netsus-icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.netsus-icon {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'netsus-icons';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.icon-netinstall:before {
+  content: "\e903";
+}
+.icon-netboot:before {
+  content: "\e900";
+}
+.icon-sus:before {
+  content: "\e901";
+}
+.icon-patch:before {
+  content: "\e902";
+}
 
 /*----------------------------------------------
 bs-callout for Dashboard
 ------------------------------------------------*/
+.dashboard-item img {
+    width: 84px;
+    margin-left: 12px;
+}
 .bs-callout {
     padding: 10px;
     height: 90px;
@@ -78,21 +127,103 @@ bs-callout for Dashboard
 /*----------------------------------------------
 Upper Navigation
 ------------------------------------------------*/
-.navbar {
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
-    -moz-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
-    -webkit-box-shadow: 0px 1px 3px 0px rgba(199, 199, 199, 0.3);
-    z-index: 100;
+.navbar-toggle.navbar-left {
+    float: left;
+    margin-left: 10px;
+    margin-right: 0px;
+}
+.navbar-user {
+    position: absolute;
+    top: 0px;
+    right: 160px;
+    height: 50px;
+}
+.navbar-flash {
+    position: absolute;
+    top: 0px;
+    right: 110px;
+    height: 50px;
+}
+.navbar-gear {
+    position: absolute;
+    top: 0px;
+    right: 60px;
+    height: 50px;
+}
+.navbar-off {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+    height: 50px;
+}
+.navbar-btn-icon {
+    height: 50px;
+    width: 50px;
+    padding: 10px;
+    margin-bottom: -2px;
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+.navbar-btn-icon:focus {
+    outline: 0;
+}
+.navbar-default .navbar-btn-icon {
+    color: #777;
+}
+.navbar-default .navbar-btn-icon:hover,
+.navbar-default .navbar-btn-icon:focus {
+    color: #333;
+}
+.navbar-default .navbar-btn-icon:focus {
+    color: #555;
+    background-color: #e7e7e7;
+}
+.navbar-inverse .navbar-btn-icon {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-btn-icon:hover,
+.navbar-inverse .navbar-btn-icon:focus {
+    color: #fff;
+}
+.navbar-inverse .navbar-btn-icon.disabled:hover,
+.navbar-inverse .navbar-btn-icon[disabled]:hover,
+.navbar-inverse .navbar-btn-icon.disabled:focus,
+.navbar-inverse .navbar-btn-icon[disabled]:focus {
+    color: #9d9d9d;
+}
+.navbar-inverse .navbar-btn-icon:focus {
+    background-color: #080808;
+}
+.navbar-inverse .navbar-btn-icon.disabled:focus,
+.navbar-inverse .navbar-btn-icon[disabled]:focus {
+    background-color: none;
+}
+.navbar-btn-icon .badge {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background-color: #d9534f;
+}
+.dropdown-menu.dropdown-menu-navbar {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    font-size: 12px;
 }
 /*----------------------------------------------
 Side Navigation
 ------------------------------------------------*/
 .navbar-inverse {
     background-color: #212121;
+}
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+#wrapper.toggled {
+    padding-left: 220px;
 }
 #sidebar-wrapper {
     z-index: 1000;
@@ -110,22 +241,16 @@ Side Navigation
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-#logo-wrapper {
-    background-color: #1c1c1c;
-    margin-top: 0;
-    padding-bottom: 15px;
-    padding-top: 12px;
+#wrapper.toggled #sidebar-wrapper {
     width: 220px;
-    text-align: center;
-    margin-right: auto;
-    margin-left: auto;
-    box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
-    -moz-box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
-    -webkit-box-shadow: 0px 1px 3px 0px rgba(20, 20, 20, 0.3);
 }
-#logo-wrapper > a > img {
-    max-width: 80%;
-    max-height: 100%;
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: 220px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .sidebar-nav li {
@@ -160,11 +285,29 @@ Side Navigation
 }
 
 /*----------------------------------------------
+Lower Navigation
+------------------------------------------------*/
+#nav-footer {
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+.btn-footer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 20px;
+}
+#wrapper.toggled #nav-footer {
+    margin-left: 220px;
+}
+
+/*----------------------------------------------
 Page Content Wrapper
 ------------------------------------------------*/
 #page-content-wrapper {
     position: absolute;
-    padding: 20px;
+    padding: 20px 0px;
     margin-top: 50px;
     width: 100%;
     -webkit-transition: all 0.5s ease;
@@ -172,6 +315,29 @@ Page Content Wrapper
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     padding-bottom: 50px;
+}
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -220px;
+}
+
+/*----------------------------------------------
+Page Title Navigation
+------------------------------------------------*/
+#nav-title {
+    top: 51px;
+    height: 83px;
+    border-bottom: 1px solid #eee;
+    background: #fff;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    z-index: 90;
+}
+#wrapper.toggled #nav-title {
+    margin-left: 220px;
+    margin-right: -220px;
 }
 
 /*----------------------------------------------
@@ -348,12 +514,27 @@ Settings Page
     text-align: center;
 }
 .settings-item img {
-    width: 75px;
+    width: 54px;
 }
 
 /*----------------------------------------------
 Login Page
 ------------------------------------------------*/
+.login-wrapper {
+    float: right;
+    position: relative;
+    left: -50%;
+    text-align: left;
+}
+.login-wrapper > .login-panel {
+    position: relative;
+    left: 50%;
+    width: 300px;
+    margin-top: 70px;
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    -moz-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
 .panel-login {
     background-image: none;
     background-color: #f5f5f5;
@@ -383,22 +564,45 @@ Login Page
 Responsive Design
 ------------------------------------------------*/
 @media(min-width:768px) {
+    #wrapper {
+        padding-left: 220px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 220px;
+    }
 
     #sidebar-wrapper {
         width: 220px;
     }
 
-    #page-content-wrapper {
-        padding-left: 240px;
+    #wrapper.toggled #sidebar-wrapper {
+        width: 220px;
     }
 
-    .navbar {
+    #page-content-wrapper {
+        position: relative;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+
+    #wrapper.toggled #nav-title {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #wrapper.toggled #nav-footer {
+        margin-left: 0;
+    }
+
+    #nav-title {
+        left: 220px;
+    }
+
+    #nav-footer {
         left: 220px;
     }
 }
-
-
-
-
-
-
