@@ -40,15 +40,13 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 #### To install the NetSUSLP using an installer, you need:
 
-* The NetSUSLP Installer (.run), available at:  
-<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
+* The NetSUSLP Installer (.run), available from the [Releases](https://github.com/jamf/NetSUS/releases) page.
 * 500 GB of disk space available 
 * 1 GB of RAM
 
 #### To set up the NetSUSLP as an appliance, you need:
 
-* The OVA file for the NetSUSLP, available at:
-<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
+* The OVA file for the NetSUSLP, available from the [Releases](https://github.com/jamf/NetSUS/releases) page.
 * Virtualization software that supports Open Virtualization Format 
 * 500 GB of disk space available
 * 2 GB of RAM
