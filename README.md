@@ -55,7 +55,7 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 #### If you are running a Kinobi Patch Server:
 
-* You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available at:
+* Kinobi 1.0 is incompatible with NetSUS 5.0. You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available from:
 <https://github.com/mondada/kinobi/releases/download/1.1/KinobiInstaller_1.1.run>
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetSUSLP.**
