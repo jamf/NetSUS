@@ -2,10 +2,10 @@
 # NetSUS Downloads
 
 Installer:
-[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLPInstaller_4.2.1.run](https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLPInstaller_4.2.1.run)
+[https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLPInstaller_5.0.run](https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLPInstaller_5.0.run)
 
 OVA:
-[https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLP_4.2.1.ova](https://github.com/jamf/NetSUS/releases/download/4.2.1/NetSUSLP_4.2.1.ova)
+[https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLP_5.0.ova](https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLP_5.0.ova)
 
 
 # What is NetSUS?
@@ -52,5 +52,10 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 * Virtualization software that supports Open Virtualization Format 
 * 500 GB of disk space available
 * 2 GB of RAM
+
+#### If you are running a Kinobi Patch Server:
+
+* You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available at:
+<https://github.com/mondada/kinobi/releases/download/1.1/KinobiInstaller_1.1.run>
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetSUSLP.**
