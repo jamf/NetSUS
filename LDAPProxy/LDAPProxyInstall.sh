@@ -64,7 +64,7 @@ if [ ! -d "/var/appliance/conf" ]; then
 fi
 
 # Configure slapd
-if [ -d "/etc/ldap" ]; then
+if [ -d "/etc/ldap" ] && [ "$(getent passwd openldap)" != "" ]; then
 	rm -rf /etc/ldap/slapd.d/ >> $logFile
 	cp ./resources/slapd.conf /etc/ldap/slapd.conf >> $logFile
 	cp ./resources/slapd.conf /var/appliance/conf/slapd.conf >> $logFile
@@ -76,7 +76,7 @@ if [ -d "/etc/ldap" ]; then
 	cp /etc/ssl/private/ssl-cert-snakeoil.key /var/appliance/conf/appliance.private.key
 	chown openldap /var/appliance/conf/appliance.private.key
 fi
-if [ -d "/etc/openldap" ]; then
+if [ -d "/etc/openldap" ] && [ "$(getent passwd ldap)" != "" ]; then
 	rm -rf /etc/openldap/slapd.d/ >> $logFile
 	cp ./resources/slapdyum.conf /etc/openldap/slapd.conf >> $logFile
 	cp ./resources/slapdyum.conf /var/appliance/conf/slapd.conf >> $logFile
