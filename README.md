@@ -40,22 +40,20 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 #### To install the NetSUSLP using an installer, you need:
 
-* The NetSUSLP Installer (.run), available at:  
-<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
+* The NetSUSLP Installer (.run), available from the [Releases](https://github.com/jamf/NetSUS/releases) page.
 * 500 GB of disk space available 
 * 1 GB of RAM
 
 #### To set up the NetSUSLP as an appliance, you need:
 
-* The OVA file for the NetSUSLP, available at:
-<https://www.jamf.com/jamf-nation/third-party-products/180/netboot-sus-appliance?view=info>
+* The OVA file for the NetSUSLP, available from the [Releases](https://github.com/jamf/NetSUS/releases) page.
 * Virtualization software that supports Open Virtualization Format 
 * 500 GB of disk space available
 * 2 GB of RAM
 
 #### If you are running a Kinobi Patch Server:
 
-* You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available at:
+* Kinobi 1.0 is incompatible with NetSUS 5.0. You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available from:
 <https://github.com/mondada/kinobi/releases/download/1.1/KinobiInstaller_1.1.run>
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetSUSLP.**
