@@ -401,7 +401,7 @@ if ! grep -q '\[NetBoot\]' /etc/samba/smb.conf ; then
 	printf '\t[NetBoot]
 \tcomment = NetBoot
 \tpath = /srv/NetBoot/NetBootSP0
-\tbrowseable = no
+\tbrowseable = yes
 \tguest ok = no
 \tread only = yes
 \tcreate mask = 0755
