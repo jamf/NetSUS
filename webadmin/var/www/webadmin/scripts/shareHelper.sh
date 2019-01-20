@@ -134,7 +134,7 @@ rolist=$(echo $5 | sed -e 's/,/ /g')
 echo "[${2}]
     comment = ${2}
     path = ${3}
-    browseable = no
+    browseable = yes
     guest ok = no
     read only = yes
     create mask = 0755
