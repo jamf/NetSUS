@@ -351,6 +351,9 @@ def rewriteURLsForProduct(product):
         if 'MetadataURL' in package:
             package['MetadataURL'] = rewriteOneURL(
                 package['MetadataURL'])
+        if 'IntegrityDataURL' in package:
+            package['IntegrityDataURL'] = rewriteOneURL(
+                package['IntegrityDataURL'])
         # workaround for 10.8.2 issue where client ignores local pkg
         # and prefers Apple's URL. Need to revisit as we better understand this
         # issue
@@ -416,9 +419,9 @@ def writeBranchCatalogs(localcatalogpath):
                 catalog['Products'][product_key] = \
                     downloaded_products[product_key]
             elif pref('LocalCatalogURLBase') and product_key in product_info:
-                # Product has probably been deprecated by Apple,
-                # so we're using cached product info
-                # First check to see if this product was ever in this
+                # Product might have been deprecated by Apple,
+                # so we check cached product info
+                # Check to see if this product was ever in this
                 # catalog
                 original_catalogs = product_info[product_key].get(
                     'OriginalAppleCatalogs', [])
@@ -440,17 +443,11 @@ def writeBranchCatalogs(localcatalogpath):
                             catalog['Products'][product_key] = catalog_entry
                             continue
             else:
-                if pref('LocalCatalogURLBase'):
-                    print_stderr(
-                        'WARNING: Product %s not added to branch %s of %s. '
-                        'It is not in the corresponding Apple catalogs '
-                        'and is not in the ProductInfo cache.',
-                        product_key, branch, localcatalogname)
-                else:
-                    print_stderr(
-                        'WARNING: Product %s not added to branch %s of %s. '
-                        'It is not in the corresponding Apple catalog.',
-                        product_key, branch, localcatalogname)
+                # item is not listed in the main catalog and we don't have a
+                # local cache of product info. It either was never in this
+                # catalog or has been removed by Apple. In either case, we just
+                # skip the item -- we can't add it to the catalog.
+                pass
 
         plistlib.writePlist(catalog, branchcatalogpath)
 
