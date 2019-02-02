@@ -208,6 +208,222 @@ rm -f /var/www/html/index.html
 # Install the webadmin interface
 cp -R ./resources/html/* /var/www/html/ >> $logFile
 
+# Add Patch Server Components, if detected
+if [ -f '/var/www/html/webadmin/patchTitles.php' ]; then
+	# Menu
+	sed -i '/$pageURI == "sharing.php"/i\
+				<li id="patch" class="<?php echo ($conf->getSetting("patch") == "enabled" ? ($pageURI == "patchTitles.php" ? "active" : "") : "hidden"); ?>"><a href="patchTitles.php"><span class="netsus-icon icon-patch marg-right"></span>Patch Definitions</a></li>' /var/www/html/webadmin/inc/header.php
+
+	# Dashboard
+	if [ -f '/var/www/html/webadmin/scripts/patchHelper.sh' ]; then
+		sed -i '1,/panel panel-default panel-main/ {/panel panel-default panel-main/i\
+				<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showpatch") == "false" ? "hidden" : ""); ?>">\
+					<div class="panel-heading">\
+						<strong>Patch Definitions</strong>\
+					</div>\
+<?php\
+include "inc/dbConnect.php";\
+if (isset($pdo)) {\
+	$title_count = $pdo->query("SELECT COUNT(id) FROM titles")->fetchColumn();\
+}\
+\
+function patchExec($cmd) {\
+	return shell_exec("sudo /bin/sh scripts/patchHelper.sh ".escapeshellcmd($cmd)." 2>&1");\
+}\
+\
+if ($conf->getSetting("kinobi_url") != "" && $conf->getSetting("kinobi_token") != "") {\
+	$ch = curl_init();\
+	curl_setopt($ch, CURLOPT_URL, $conf->getSetting("kinobi_url"));\
+	curl_setopt($ch, CURLOPT_POST, true);\
+	curl_setopt($ch, CURLOPT_POSTFIELDS, "token=".$conf->getSetting("kinobi_token"));\
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);\
+	$result = curl_exec($ch);\
+	curl_close ($ch);\
+	$token = json_decode($result, true);\
+}\
+?>\
+\
+					<div class="panel-body">\
+						<div class="row">\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2 dashboard-item">\
+								<a href="patchTitles.php">\
+									<p><img src="images/settings/PatchManagement.png" alt="Patch Management"></p>\
+								</a>\
+							</div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>SSL Enabled</strong></h5>\
+									<span class="text-muted"><?php echo (trim(patchExec("getSSLstatus")) == "true" ? "Yes" : "No") ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Hostname</strong></h5>\
+									<span class="text-muted" style="word-break: break-all;"><?php echo $_SERVER["HTTP_HOST"]."/v1.php"; ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+\
+							<div class="clearfix visible-xs-block visible-sm-block"></div>\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2 visible-xs-block visible-sm-block"></div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Number of Titles</strong></h5>\
+									<span class="text-muted"><?php echo $title_count; ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+<?php if (isset($token["expires"])) { ?>\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Subscription Expires</strong></h5>\
+									<span class="text-muted"><?php echo date("Y-m-d H:i:s", $token["expires"]); ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+<?php } ?>\
+						</div>\
+						<!-- /Row -->\
+					</div>\
+				</div>\
+
+}' /var/www/html/webadmin/dashboard.php
+	else
+		sed -i '1,/panel panel-default panel-main/ {/panel panel-default panel-main/i\
+				<div class="panel panel-default panel-main <?php echo ($conf->getSetting("showpatch") == "false" ? "hidden" : ""); ?>">\
+					<div class="panel-heading">\
+						<strong>Patch Definitions</strong>\
+					</div>\
+<?php\
+// SSL Enabled\
+$ch = curl_init();\
+curl_setopt($ch, CURLOPT_URL, "https://".$_SERVER["HTTP_HOST"]);\
+curl_setopt($ch, CURLOPT_CERTINFO, true);\
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);\
+curl_exec($ch);\
+$certinfo = curl_getinfo($ch);\
+curl_close ($ch);\
+\
+// Patch Titles\
+include "inc/patch/functions.php";\
+include "inc/patch/database.php";\
+if (isset($pdo)) {\
+	$title_count = $pdo->query("SELECT COUNT(id) FROM titles WHERE enabled = 1")->fetchColumn();\
+}\
+\
+// Suscription\
+$subs = $kinobi->getSetting("subscription");\
+if (!empty($subs["url"]) && !empty($subs["token"])) {\
+	$subs_resp = fetchJsonArray($subs["url"], $subs["token"]);\
+}\
+?>\
+\
+					<div class="panel-body">\
+						<div class="row">\
+<?php if ($conf->getSetting("patch") == "enabled") { ?>\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2 dashboard-item">\
+								<a href="patchTitles.php">\
+									<p><img src="images/settings/PatchManagement.png" alt="Patch Management"></p>\
+								</a>\
+							</div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>SSL Enabled</strong></h5>\
+									<span class="text-muted"><?php echo (empty($certinfo["certinfo"]) ? "No" : "Yes"); ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Hostname</strong></h5>\
+									<span class="text-muted" style="word-break: break-all;"><?php echo $_SERVER["HTTP_HOST"]."/v1.php"; ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+\
+							<div class="clearfix visible-xs-block visible-sm-block"></div>\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2 visible-xs-block visible-sm-block"></div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Number of Titles</strong></h5>\
+									<span class="text-muted"><?php echo $title_count; ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+<?php if (isset($subs_resp["expires"])) { ?>\
+\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Subscription Expires</strong></h5>\
+									<span class="text-muted"><?php echo date("Y-m-d H:i:s", $subs_resp["expires"]); ?></span>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+<?php }\
+} else { ?>\
+							<!-- Column -->\
+							<div class="col-xs-4 col-md-2 dashboard-item">\
+								<a href="patchSettings.php">\
+									<p><img src="images/settings/PatchManagement.png" alt="Patch Management"></p>\
+								</a>\
+							</div>\
+							<!-- /Column -->\
+\
+							<!-- Column -->\
+							<div class="col-xs-8 col-md-10">\
+								<div class="bs-callout bs-callout-default">\
+									<h5><strong>Configure Patch Definitions</strong> <small>to provide an external patch source for Jamf Pro.</small></h5>\
+									<button type="button" class="btn btn-default btn-sm" onClick="document.location.href=patchSettings.php">Patch Definitions Settings</button>\
+								</div>\
+							</div>\
+							<!-- /Column -->\
+<?php } ?>\
+						</div>\
+						<!-- /Row -->\
+					</div>\
+				</div>\
+
+}' /var/www/html/webadmin/dashboard.php
+	fi
+
+	# Settings
+	sed -i '/<a href="sharingSettings.php">/i\
+					<a href="patchSettings.php">\
+						<p><img src="images/settings/PatchManagement.png" alt="Patch Definitions"></p>\
+						<p>Patch Definitions</p>\
+					</a>\
+				</div>\
+				<!-- /Column -->\
+				<!-- Column -->\
+				<div class="col-xs-3 col-sm-2 settings-item">' /var/www/html/webadmin/settings.php
+fi
+
 # Prevent writes to the webadmin's helper script
 chown root:root /var/www/html/webadmin/scripts/adminHelper.sh >> $logFile
 chmod a-wr /var/www/html/webadmin/scripts/adminHelper.sh >> $logFile
