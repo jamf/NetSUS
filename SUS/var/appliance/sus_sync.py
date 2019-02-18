@@ -29,12 +29,12 @@ if os.access("/var/run/lockfile.sus_sync.lock", os.F_OK):
     pidfile.seek(0)
     old_pid = pidfile.readline()
     if os.path.exists("/proc/%s" % old_pid):
-        print "You already have an instance of the program running"
-        print "It is running as process %s," % old_pid
+        print("You already have an instance of the program running")
+        print("It is running as process %s," % old_pid)
         sys.exit(1)
     else:
-        print "File is there but the program is not running"
-        print "Removing lock file for the: %s as it can be there because of the program last time it was run" % old_pid
+        print("File is there but the program is not running")
+        print("Removing lock file for the: %s as it can be there because of the program last time it was run" % old_pid)
         os.remove("/var/run/lockfile.sus_sync.lock")
 
 
@@ -77,7 +77,7 @@ def getText(nodelist):
     return ''.join(rc)
 
 def sync_sus():
-    print "Syncing SUS"
+    print("Syncing SUS")
     os.system("/var/lib/reposado/repo_sync")
 
     catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
@@ -90,9 +90,9 @@ def sync_sus():
 	    os.system("ln -fs /srv/SUS/html/content/catalogs/index_" + strRootBranch + ".sucatalog /var/www/html/index.sucatalog")
 
 def enable_all_sus():
-    print "Enabling new updates"
+    print("Enabling new updates")
     for inst in instarr:
-        print "Adding all updates to: " + inst
+        print("Adding all updates to: " + inst)
         os.system("/var/lib/reposado/repoutil --add-product all " + inst)
     catalogArray=glob.glob("/srv/SUS/html/content/catalogs/others/index*_" + strRootBranch + ".sucatalog")
     for i in catalogArray:
@@ -119,24 +119,24 @@ try:
     handleXML(dom)
     handleRootBranch(dom)
 except Exception:
-    print "Oops!  We bailed while processing the XML.  Try again..."
+    print("Oops!  We bailed while processing the XML.  Try again...")
     os.unlink("/var/run/lockfile.sus_sync.lock")
     sys.exit(1603)
 
 try:
     sync_sus()
     sync_time()
-    print "Finished SUS Sync"
+    print("Finished SUS Sync")
 except Exception:
-    print "Unable to sync, what did you do!"
+    print("Unable to sync, what did you do!")
     os.unlink("/var/run/lockfile.sus_sync.lock")
     sys.exit(1603)
 
 try:
     enable_all_sus()
-    print "Finished enabling all updates for marked branches"
+    print("Finished enabling all updates for marked branches")
     os.unlink("/var/run/lockfile.sus_sync.lock")
 except Exception:
-    print "Unable to enable updates, what did you do!"    
+    print("Unable to enable updates, what did you do!")
     os.unlink("/var/run/lockfile.sus_sync.lock")
     sys.exit(1603)
