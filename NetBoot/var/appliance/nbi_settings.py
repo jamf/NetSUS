@@ -46,7 +46,7 @@ except:
 	}
 
 if (action == "json"):
-	print dumps(plistObj)
+	print(dumps(plistObj))
 else:
 	keys = [
 		"Architectures",
@@ -84,9 +84,9 @@ else:
 		except KeyError:
 			value = ""
 		if (type(value) is list):
-			for string in value: print string
+			for string in value: print(string)
 		else:
-			print value
+			print(value)
 
 
 	if (action == "write"):
