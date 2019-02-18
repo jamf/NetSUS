@@ -47,7 +47,7 @@ def list_products():
 
 	product_list.sort()
 
-	print dumps(product_list)
+	print(dumps(product_list))
 
 
 def product_detail(key):
@@ -86,7 +86,7 @@ def product_detail(key):
 			'Deprecated': deprecated
 		}
 
-		print dumps(product)
+		print(dumps(product))
 
 
 def main():

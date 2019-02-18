@@ -224,7 +224,7 @@ def print_stdout(msg, *args):
     if LOGFILE:
         log(output)
     else:
-        print output
+        print(output)
         sys.stdout.flush()
 
 
@@ -236,7 +236,7 @@ def print_stderr(msg, *args):
     if LOGFILE:
         log(output)
     else:
-        print >> sys.stderr, concat_message(msg, *args)
+        print_stderr(concat_message(msg, *args))
 
 
 def humanReadable(size_in_bytes):
