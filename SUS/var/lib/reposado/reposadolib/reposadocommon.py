@@ -236,7 +236,7 @@ def print_stderr(msg, *args):
     if LOGFILE:
         log(output)
     else:
-        print_stderr(concat_message(msg, *args))
+        print >> sys.stderr, concat_message(msg, *args)
 
 
 def humanReadable(size_in_bytes):
