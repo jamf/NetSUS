@@ -29,11 +29,11 @@ cp -R NetBoot/netbootInstall.sh temp/installer/install-netboot.sh
 cp -R NetBoot/etc/init.d/pybsdp temp/installer/resources/pybsdp.ubuntu
 cp -R NetBoot/etc/rc.d/init.d/pybsdp temp/installer/resources/pybsdp.rhel
 cp -R NetBoot/usr/local/lib temp/installer/resources/lib
-# cp -R NetBoot/usr/local/sbin temp/installer/resources/dhcp
-# rm -f NetBoot/usr/local/sbin temp/installer/resources/dhcp/pybsdp
+cp -R NetBoot/usr/local/sbin temp/installer/resources/dhcp
+rm -f temp/installer/resources/dhcp/pybsdp
 cp -R NetBoot/usr/local/sbin/pybsdp temp/installer/resources/pybsdp
-# cp -R NetBoot/var/appliance/conf/dhcpd.conf temp/installer/resources/dhcpd.conf
-# cp -R NetBoot/var/appliance/configurefornetboot temp/installer/resources/configurefornetboot
+cp -R NetBoot/var/appliance/conf/dhcpd.conf temp/installer/resources/dhcpd.conf
+cp -R NetBoot/var/appliance/configurefornetboot temp/installer/resources/configurefornetboot
 cp -R NetBoot/var/appliance/libdb4-4.8.30-21.fc26.x86_64.rpm temp/installer/resources/libdb4-4.8.30-21.fc26.x86_64.rpm
 cp -R NetBoot/var/appliance/nbi_settings.py temp/installer/resources/nbi_settings.py
 cp -R NetBoot/var/appliance/netatalk-2.2.0-2.el6.x86_64.rpm temp/installer/resources/netatalk-2.2.0-2.el6.x86_64.rpm

@@ -20,7 +20,13 @@ if (!($_SESSION['isAuthUser'])) {
 	if (isset($_POST['service'])) {
 		if ($_POST['service'] == "enable") {
 			$conf->setSetting("netboot", "enabled");
-			netbootExec("startbsdp");
+			if ($conf->getSetting("netbootengine") == "pybsdp") {
+				netbootExec("startbsdp");
+			} else {
+				if ($conf->getSetting("netbootimage") != "" && sizeof($conf->getSubnets() > 0)) {
+					netbootExec("startdhcp");
+				}
+			}
 			netbootExec("starttftp");
 			netbootExec("startnfs");
 			netbootExec("startafp");
@@ -45,6 +51,20 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
+	if (isset($_POST['engine'])) {
+		if ($_POST['engine'] == "pybsdp") {
+			netbootExec("stopdhcp");
+			netbootExec("startbsdp");
+			$conf->setSetting("netbootengine", "pybsdp");
+		} else {
+			netbootExec("stopbsdp");
+			if ($conf->getSetting("netbootimage") != "" && sizeof($conf->getSubnets() > 0)) {
+				netbootExec("startdhcp");
+			}
+			$conf->setSetting("netbootengine", "dhcpd");
+		}
+	}
+
 	if (isset($_POST['setnbimage'])) {
 		netbootExec("setnbimage \"".$_POST['setnbimage']."\"");
 	}
@@ -54,6 +74,14 @@ if (!($_SESSION['isAuthUser'])) {
 			netbootExec("startbsdp");
 		} else {
 			netbootExec("stopbsdp");
+		}
+	}
+
+	if (isset($_POST['dhcp'])) {
+		if ($_POST['dhcp'] == "start") {
+			netbootExec("startdhcp");
+		} else {
+			netbootExec("stopdhcp");
 		}
 	}
 

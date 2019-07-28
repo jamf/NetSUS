@@ -33,6 +33,7 @@ if [[ $(which apt-get 2>&-) != "" ]]; then
 	apt_install netatalk
 	apt_install nfs-kernel-server
 	apt_install python-configparser
+	apt_install libxml-xpath-perl
 elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install avahi
 	yum_install samba
@@ -58,6 +59,7 @@ elif [[ $(which yum 2>&-) != "" ]]; then
 	fi
 	yum_install nfs-utils
 	yum_install vim-common
+	yum_install perl-XML-XPath
 	chkconfig messagebus on >> $logFile 2>&1
 	chkconfig avahi-daemon on >> $logFile 2>&1
 	chkconfig rpcbind on >> $logFile 2>&1
@@ -252,18 +254,18 @@ fi
 cp ./resources/nbi_settings.py /var/appliance/ >> $logFile
 
 # Install and configure dhcp
-# killall dhcpd >> $logFile 2>&1
-# if [ ! -d "/var/appliance/conf" ]; then
-#	mkdir -p /var/appliance/conf
-# fi
-# cp ./resources/dhcpd.conf /var/appliance/conf/ >> $logFile
-# cp ./resources/configurefornetboot /var/appliance/ >> $logFile
+killall dhcpd >> $logFile 2>&1
+if [ ! -d "/var/appliance/conf" ]; then
+mkdir -p /var/appliance/conf
+fi
+cp ./resources/dhcpd.conf /var/appliance/conf/ >> $logFile
+cp ./resources/configurefornetboot /var/appliance/ >> $logFile
 
-# if [ ! -d "/var/db"  ]; then
-#    mkdir /var/db
-# fi
-# touch /var/db/dhcpd.leases
-# cp ./resources/dhcp/* /usr/local/sbin/ >> $logFile
+if [ ! -d "/var/db"  ]; then
+   mkdir /var/db
+fi
+touch /var/db/dhcpd.leases
+cp ./resources/dhcp/* /usr/local/sbin/ >> $logFile
 
 # Update netatalk configuration
 if [ -f "/etc/default/netatalk" ]; then

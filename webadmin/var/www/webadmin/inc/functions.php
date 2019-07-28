@@ -21,6 +21,11 @@ function getCurrentWebUser() {
 	return $admin_username;
 }
 
+function getNetAddress($ip, $mask)
+{
+	return long2ip(ip2long($ip) & ip2long($mask));
+}
+
 function getSSHstatus() {
 	if (trim(suExec("getSSHstatus")) == "true") {
 		return true;

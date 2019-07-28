@@ -1,0 +1,72 @@
+--- /Users/eric.krause/Desktop/dhcp/dhcp-4.2.4-P1/server/dhcp.c	2012-07-13 01:18:05.000000000 -0500
++++ /Users/eric.krause/Desktop/dhcp/dhcp-4.2.4-P1 patched/server/dhcp.c	2012-08-01 13:41:56.000000000 -0500
+@@ -624,10 +624,9 @@
+ 	   RENEWING client, so we can punt on this issue. */
+ 
+ 	if (!packet -> shared_network ||
+-	    (packet -> raw -> ciaddr.s_addr &&
++        (packet -> raw -> ciaddr.s_addr &&
+ 	     packet -> raw -> giaddr.s_addr) ||
+ 	    (have_requested_addr && !packet -> raw -> ciaddr.s_addr)) {
+-		
+ 		/* If we don't know where it came from but we do know
+ 		   where it claims to have come from, it didn't come
+ 		   from there. */
+@@ -1024,7 +1023,7 @@
+ 			return;
+ 		}
+ 	}
+-
++#if 0
+ 	/* We don't respond to DHCPINFORM packets if we're not authoritative.
+ 	   It would be nice if a per-host value could override this, but
+ 	   there's overhead involved in checking this, so let's see how people
+@@ -1049,7 +1048,7 @@
+ 		subnet_dereference (&subnet, MDL);
+ 		return;
+ 	}
+-
++#endif
+ 	option_state_allocate (&options, MDL);
+ 	memset (&outgoing, 0, sizeof outgoing);
+ 	memset (&raw, 0, sizeof raw);
+@@ -1301,7 +1300,16 @@
+ 	} else {
+ 		gip.len = 0;
+ 		memcpy(&to.sin_addr, cip.iabuf, 4);
+-		to.sin_port = remote_port;
++        log_info ("JAMF-DHCP change");
++	if (ntohs(packet->client_port) != 68 && ntohs(packet->client_port) != 67) {
++	log_info ("System Prefs Port");
++	log_info ("%d", ntohs(packet->client_port));
++	to.sin_port = packet->client_port;
++	} else {
++	log_info ("N Key or encapsulated");
++	log_info ("%d", ntohs(remote_port));
++	to.sin_port = remote_port;
++	}
+ 	}
+ 
+ 	/* Report what we're sending. */
+@@ -1466,7 +1474,6 @@
+ 			to.sin_port = local_port;
+ 		else
+ 			to.sin_port = remote_port; /* for testing. */
+-
+ 		if (fallback_interface) {
+ 			result = send_packet(fallback_interface, packet, &raw,
+ 					     outgoing.packet_length, from, &to,
+@@ -1482,7 +1489,7 @@
+ 		}
+ 	} else {
+ 		to.sin_addr = limited_broadcast;
+-		to.sin_port = remote_port;
++                to.sin_port = remote_port;
+ 	}
+ 
+ 	errno = 0;
+@@ -4506,3 +4513,4 @@
+ 			options->universe_count = agent_universe.index + 1;
+ 	}
+ }
++

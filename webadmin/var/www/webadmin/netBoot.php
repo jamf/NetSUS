@@ -13,29 +13,41 @@ function netbootExec($cmd) {
 	return shell_exec("sudo /bin/sh scripts/netbootHelper.sh ".escapeshellcmd($cmd)." 2>&1");
 }
 
-$subnet_error = false;
 $nfs_error = false;
 $nbi_warning = false;
 $netbootdir = "/srv/NetBoot/NetBootSP0";
-$default_image = $conf->getSetting("netbootimage");
+
+// NetBoot Engine
+$nbengine = $conf->getSetting("netbootengine");
+if (empty($nbengine)) {
+	$nbengine = "pybsdp";
+	$conf->setSetting("netbootengine", $nbengine);
+}
+
+// Start DHCP
+if (isset($_POST['startdhcp'])) {
+	netbootExec("stopbsdp");
+	netbootExec("startdhcp");
+}
 
 // Start BSDP
-if (!empty($_POST['startbsdp'])) {
+if (isset($_POST['startbsdp'])) {
+	netbootExec("stopdhcp");
 	netbootExec("startbsdp");
 }
 
 // Start TFTP
-if (!empty($_POST['starttftp'])) {
+if (isset($_POST['starttftp'])) {
 	netbootExec("starttftp");
 }
 
 // Start NFS
-if (!empty($_POST['startnfs'])) {
+if (isset($_POST['startnfs'])) {
 	netbootExec("startnfs");
 }
 
 // Start AFP
-if (!empty($_POST['startafp'])) {
+if (isset($_POST['startafp'])) {
 	netbootExec("startafp");
 }
 
@@ -63,14 +75,21 @@ if (isset($_POST['savenbi'])) {
 
 // Service Status
 $dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
-if ($dhcp_running) {
-	netbootExec("stopdhcp");
-	netbootExec("startbsdp");
-}
 $bsdp_running = (trim(netbootExec("getbsdpstatus")) === "true");
 $tftp_running = (trim(netbootExec("gettftpstatus")) === "true");
 $nfs_running = (trim(netbootExec("getnfsstatus")) === "true");
 $afp_running = (trim(netbootExec("getafpstatus")) === "true");
+// if ($dhcp_running && $nbengine == "pybsdp") {
+// 	netbootExec("stopdhcp");
+// 	netbootExec("startbsdp");
+// }
+// if ($bsdp_running && $nbengine == "dhcpd") {
+// 	netbootExec("stopbsdp");
+// 	netbootExec("startdhcp");
+// }
+
+// Default Image
+$default_image = $conf->getSetting("netbootimage");
 
 // Image List
 $nbi_list = array();
@@ -84,12 +103,14 @@ foreach($netbootdirlist as $key) {
 		}
 		if ($nbi_list[$key]->Type == "NFS" && !$nfs_running) {
 			$nfs_error = true;
-			if ($nbi_list[$key]->IsDefault) {
-				$nbi_list[$key]->IsDefault = false;
-				netbootExec("setNBIproperty \"".$key."\" IsDefault false");
-				$default_image = "";
-				$conf->deleteSetting("netbootimage");
-			}
+// 			if ($nbi_list[$key]->IsDefault) {
+// 				$nbi_list[$key]->IsDefault = false;
+// 				netbootExec("stopdhcp");
+// 				$dhcp_running = false;
+// 				netbootExec("setNBIproperty \"".$key."\" IsDefault false");
+// 				$default_image = "";
+// 				$conf->deleteSetting("netbootimage");
+// 			}
 		}
 		if (isset($nbi_list[$key]->SupportsDiskless)) {
 			array_push($nbi_indexes, $nbi_list[$key]->Index);
@@ -98,9 +119,12 @@ foreach($netbootdirlist as $key) {
 		}
 	}
 }
+
 if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->IsEnabled != true) {
 	$default_image = "";
 	$conf->deleteSetting("netbootimage");
+	netbootExec("stopdhcp");
+	$dhcp_running = false;
 }
 ?>
 			<link rel="stylesheet" href="theme/awesome-bootstrap-checkbox.css"/>
@@ -120,26 +144,6 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 			</style>
 
 			<script type="text/javascript">
-				function startBSDP() {
-					$('#startbsdp').val('true');
-					$('#NetBoot').submit();
-				}
-
-				function startTFTP() {
-					$('#starttftp').val('true');
-					$('#NetBoot').submit();
-				}
-
-				function startNFS() {
-					$('#startnfs').val('true');
-					$('#NetBoot').submit();
-				}
-
-				function startAFP() {
-					$('#startafp').val('true');
-					$('#NetBoot').submit();
-				}
-
 				function showError(element, labelId = false) {
 					element.parentElement.classList.add("has-error");
 					if (labelId) {
@@ -160,6 +164,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 						ajaxPost('netbootCtl.php', 'setenabled='+element.value);
 					} else {
 						if ($('input[name="Default"][value="' + element.value + '"]').prop('checked') == true) {
+							// ajaxPost('netbootCtl.php', 'dhcp=stop');
 							$('input[name="Default"][value="' + element.value + '"]').prop('checked', false);
 							ajaxPost('netbootCtl.php', 'setdefaultoff='+element.value);
 							$('#service_info').removeClass('hidden');
@@ -171,6 +176,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 
 				function toggleDefault(element) {
 					var checked = element.checked;
+					// ajaxPost('netbootCtl.php', 'dhcp=stop');
 					elements = document.getElementsByName('Default');
 					for (i = 0; i < elements.length; i++) {
 						elements[i].checked = false;
@@ -179,6 +185,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 					element.checked = checked;
 					if (checked) {
 						ajaxPost('netbootCtl.php', 'setdefault='+element.value);
+						// ajaxPost('netbootCtl.php', 'dhcp=start');
 						$('#service_info').addClass('hidden');
 					} else {
 						$('#service_info').removeClass('hidden');
@@ -199,7 +206,7 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 				}
 
 				function validSettings() {
-					var existingIndexes = [<?php echo (empty($nbi_list) ? "" : implode(', ', $nbi_indexes)); ?>];
+					var existingIndexes = [<?php echo (empty($nbi_list) ? "" : implode(", ", $nbi_indexes)); ?>];
 					var ExistingIndex = document.getElementById('ExistingIndex');
 					var Name = document.getElementById('Name');
 					var Description = document.getElementById('Description');
@@ -261,37 +268,45 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 			<form action="netBoot.php" method="post" name="NetBoot" id="NetBoot">
 
 				<div style="padding: 79px 20px 1px; background-color: #f9f9f9; overflow-x: auto;">
-					<div id="bsdp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($bsdp_running ? "hidden" : ""); ?>">
+					<div id="bsdp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($nbengine == "pybsdp" ? ($bsdp_running ? "hidden" : "") : "hidden"); ?>">
 						<div class="panel-body">
-							<input type="hidden" id="startbsdp" name="startbsdp" value="">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The BSDP service is not running. <a href="" onClick="startBSDP();">Click here to start it</a>.</div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The BSDP service is not running. <button type="submit" id="startbsdp" name="startbsdp" class="btn btn-link" style="padding: 0px; margin-top: -2px;" value="true">Click here to start it</button>.</div>
+						</div>
+					</div>
+
+					<div id="dhcp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($nbengine == "dhcpd" ? ($dhcp_running || $default_image == "" ? "hidden" : "") : "hidden"); ?>">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The DHCP service is not running. <button type="submit" id="startdhcp" name="startdhcp" class="btn btn-link" style="padding: 0px; margin-top: -2px;" value="true">Click here to start it</button>.</div>
 						</div>
 					</div>
 
 					<div id="tftp_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($tftp_running ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<input type="hidden" id="starttftp" name="starttftp" value="">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The TFTP service is not running. <a href="" onClick="startTFTP();">Click here to start it</a>.</div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The TFTP service is not running. <button type="submit" id="starttftp" name="starttftp" class="btn btn-link" style="padding: 0px; margin-top: -2px;" value="true">Click here to start it</button>.</div>
 						</div>
 					</div>
 
 					<div id="nfs_error" style="margin-top: 0px; margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($nfs_error ? "" : "hidden"); ?>">
 						<div class="panel-body">
-							<input type="hidden" id="startnfs" name="startnfs" value="">
-							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The NFS service is not running. <a href="" onClick="startNFS();">Click here to start it</a>.</div>
+							<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The NFS service is not running. <button type="submit" id="startnfs" name="startnfs" class="btn btn-link" style="padding: 0px; margin-top: -2px;" value="true">Click here to start it</button>.</div>
 						</div>
 					</div>
 
 					<div id="afp_warning" style="margin-top: 0px; margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($afp_running ? "hidden" : ""); ?>">
 						<div class="panel-body">
-							<input type="hidden" id="startafp" name="startafp" value="">
-							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The AFP service is not running, diskless functionality is unavailable. <a href="" onClick="startAFP();">Click here to start it</a>.</div>
+							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>The AFP service is not running, diskless functionality is unavailable. <button type="submit" id="startafp" name="startafp" class="btn btn-link" style="padding: 0px; margin-top: -2px;" value="true">Click here to start it</button>.</div>
 						</div>
 					</div>
 
 					<div id="nbi_warning" style="margin-top: 0px; margin-bottom: 16px; border-color: #eea236;" class="panel panel-warning <?php echo ($nbi_warning ? "" : "hidden"); ?>">
 						<div class="panel-body">
 							<div class="text-muted"><span class="text-warning glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Unable to read NBImageInfo.plist. Edit the Image to correct this issue.</div>
+						</div>
+					</div>
+
+					<div id="service_info" style="margin-top: 0px; margin-bottom: 16px;" class="panel panel-primary <?php echo ($nbengine == "pybsdp" || $default_image != "" ? "hidden" : ""); ?>">
+						<div class="panel-body">
+							<div class="text-muted"><span class="text-info glyphicon glyphicon-info-sign" style="padding-right: 12px;"></span>The NetBoot service will start when the default NetBoot Image is set.</div>
 						</div>
 					</div>
 
@@ -327,11 +342,12 @@ if (!array_key_exists($default_image, $nbi_list) || $nbi_list[$default_image]->I
 foreach($nbi_list as $key => $value) { ?>
 										<tr>
 											<td>
-<?php if ($nbi_list[$key]->Type == "NFS" && !$nfs_running) { ?>
-												<div class="checkbox checkbox-danger checkbox-inline">
+<?php // if ($nbi_list[$key]->Type == "NFS" && !$nfs_running) { ?>
+												<!-- div class="checkbox checkbox-danger checkbox-inline">
 													<span class="text-danger glyphicon glyphicon-exclamation-sign checkbox-error"></span>
-												</div>
-<?php } elseif (isset($value->SupportsDiskless)) { ?>
+												</div -->
+<?php // } elseif (isset($value->SupportsDiskless)) { ?>
+<?php if (isset($value->SupportsDiskless)) { ?>
 												<div class="checkbox checkbox-primary checkbox-inline">
 													<input type="checkbox" name="Enabled" id="Enabled[<?php echo $i; ?>]" value="<?php echo $key ?>" onChange="toggleEnabled(this);" <?php echo ($value->IsEnabled == "1" ? "checked" : ""); ?>/>
 													<label/>
@@ -344,7 +360,7 @@ foreach($nbi_list as $key => $value) { ?>
 											</td>
 											<td>
 												<div class="checkbox checkbox-primary checkbox-inline">
-													<input type="checkbox" name="Default" id="Default[<?php echo $i; ?>]" value="<?php echo $key ?>" onChange="toggleDefault(this);" <?php echo ($value->IsEnabled == "1" ? ($value->IsDefault == "1" ? "checked" : ($nbi_list[$key]->Type == "NFS" && !$nfs_running ? "disabled" : "")) : "disabled"); ?>/>
+													<input type="checkbox" name="Default" id="Default[<?php echo $i; ?>]" value="<?php echo $key ?>" onChange="toggleDefault(this);" <?php echo ($value->IsEnabled == "1" ? ($value->IsDefault == "1" ? "checked" : "") : "disabled"); ?>/>
 													<label/>
 												</div>
 											</td>
