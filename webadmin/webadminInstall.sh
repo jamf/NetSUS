@@ -58,6 +58,7 @@ elif [[ $(which yum 2>&-) != "" ]]; then
 	yum_install ntpdate
 	yum_install mod_ssl
 	yum_install php
+	yum_install php-json
 	yum_install php-xml
 	yum_install php-ldap
 	chkconfig httpd on >> $logFile 2>&1
