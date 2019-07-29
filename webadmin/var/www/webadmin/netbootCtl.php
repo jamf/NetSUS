@@ -133,11 +133,18 @@ if (!($_SESSION['isAuthUser'])) {
 		netbootExec("setNBIproperty \"".$_POST['setdefault']."\" IsDefault true");
 		$conf->setSetting("netbootimage", $_POST['setdefault']);
 		netbootExec("setnbimage \"".$_POST['setdefault']."\"");
+		if ($conf->getSetting("netbootengine") == "dhcpd") {
+			netbootExec("stopdhcp");
+			netbootExec("startdhcp");
+		}
 	}
 
 	if (isset($_POST['setdefaultoff'])) {
 		netbootExec("setNBIproperty \"".$_POST['setdefaultoff']."\" IsDefault false");
 		$conf->deleteSetting("netbootimage");
+		if ($conf->getSetting("netbootengine") == "dhcpd") {
+			netbootExec("stopdhcp");
+		}
 	}
 
 }
