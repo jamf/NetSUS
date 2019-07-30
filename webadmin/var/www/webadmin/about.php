@@ -51,6 +51,9 @@ $install_type = trim(suExec("getInstallType"));
 						<p class="bold">DataTables</p>
 						<p><a href="https://datatables.net/" target="_blank">https://datatables.net/</a></p>
 
+						<p class="bold">ISC DHCP</p>
+						<p><a href="https://www.isc.org/dhcp/" target="_blank">https://www.isc.org/dhcp/</a></p>
+
 						<p class="bold">jQuery</p>
 						<p><a href="https://jquery.com/" target="_blank">https://jquery.com/</a></p>
 
