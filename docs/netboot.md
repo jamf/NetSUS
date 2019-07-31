@@ -16,11 +16,11 @@ To set up a NetBoot server, you need a NetBoot image (.nbi folder). For more inf
 4. In the top-right corner of the page, click the <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays <img height="20" src="images/thumbnails/toggle_on.png"> .\
    All related services will automatically start.
 
-5. Select the engine (BSDP/DHCP) you wish to use to broadcast the NetBoot image information.
-	**Note**: BSDP supports multiple images, but will not broadcast across subnets.
+5. Select the engine (BSDP/DHCP) you wish to use to broadcast the NetBoot image information.\
+	**Note**: BSDP supports multiple images, but will not broadcast across subnets.\
 	**Note**: DHCP broadcasts across subnets, but only supports a single image.
 
-6. **Optional**: If using DHCP, specify the network interface you wish to use to broadcast the NetBoot image information.
+6. **Optional**: If using DHCP, specify the network interface you wish to use to broadcast the NetBoot image information.\
 	**Note**: The subnet definition for the selected network interface is automatically added.
 
 6. **Optional**: If using DHCP, add additional subnet definitions for the networks you wish to enable NetBoot on.
