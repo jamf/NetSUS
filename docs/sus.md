@@ -2,6 +2,7 @@
 
 The SUS hosted by the NetSUSLP uses Reposado, an open source software update application.
 Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branches and enable different software updates on each branch. This gives you more control over which updates should be installed on each computer in your organization.
+NetSUS uses [reposado](https://github.com/wdas/reposado) to provide software updates, refer to the [Reposado Wiki](https://github.com/wdas/reposado/wiki) for detailed documentation.
 
 ## Setting Up the SUS
 
@@ -190,6 +191,10 @@ The actual Branch URLs vary depending on the operating system of enrolled comput
 **macOS v10.14**
 
 	https://sus.mycompany.corp/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
+	
+**macOS v10.15**
+
+	https://sus.mycompany.corp/content/catalogs/others/index-10.15-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1_<Branch Name>.sucatalog
 	
 ### Running Software Update on Computers
 
