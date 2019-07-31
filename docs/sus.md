@@ -16,7 +16,7 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 4. In the top-right corner of the page, click the <img height="20" src="images/thumbnails/toggle_off.png"> toggle so it displays <img height="20" src="images/thumbnails/toggle_on.png"> .
 
 5. Enter the Base URL for the software update service and tab out of the field.\
-   **Note**: NetSUSLP 5.0 allows for HTTPS to be used for the Base URL.
+   **Note**: NetSUSLP 5.0.1 allows for HTTPS to be used for the Base URL.
 
     <img width="750" src="images/attachments/sus_settings_default.png">
 
