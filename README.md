@@ -2,10 +2,10 @@
 # NetSUS Downloads
 
 Installer:
-[https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLPInstaller_5.0.run](https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLPInstaller_5.0.run)
+[https://github.com/jamf/NetSUS/releases/download/5.0.1/NetSUSLPInstaller_5.0.1.run](https://github.com/jamf/NetSUS/releases/download/5.0.1/NetSUSLPInstaller_5.0.1.run)
 
 OVA:
-[https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLP_5.0.ova](https://github.com/jamf/NetSUS/releases/download/5.0/NetSUSLP_5.0.ova)
+[https://github.com/jamf/NetSUS/releases/download/5.0.1/NetSUSLP_5.0.1.ova](https://github.com/jamf/NetSUS/releases/download/5.0.1/NetSUSLP_5.0.1.ova)
 
 
 # What is NetSUS?
@@ -53,7 +53,7 @@ For a getting started guide and step-by-step walkthroughs check out the **[docum
 
 #### If you are running a Kinobi Patch Server:
 
-* Kinobi 1.0 is incompatible with NetSUS 5.0. You will need to install Kinobi 1.1 after upgrading to NetSUS 5.0, available from:
-<https://github.com/mondada/kinobi/releases/download/1.1/KinobiInstaller_1.1.run>
+* Kinobi 1.0 is incompatible with NetSUS 5.0.1. You will need to install Kinobi 1.1 or later (1.2 is recommended) after upgrading to NetSUS 5.0.1, available from:
+<https://github.com/mondada/kinobi/releases/download/1.2/KinobiInstaller_1.2.run>
 
 **Only Intel-based Macs can use a NetBoot server hosted by the NetSUSLP.**
