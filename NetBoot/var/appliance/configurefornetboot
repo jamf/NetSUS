@@ -7,7 +7,7 @@
 # 
 # This program is distributed "as is" by JAMF Software, LLC.  For more information or support for the appliance, please utilize the following resources:
 # 
-# 	https://jamfnation.jamfsoftware.com/
+#	https://jamfnation.jamfsoftware.com/
 # 
 # Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 # 
@@ -20,7 +20,16 @@
 # THIS SOFTWARE IS PROVIDED BY JAMF SOFTWARE, LLC "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL JAMF SOFTWARE, LLC BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
+if [ "$(xpath 2>&1 | grep options)" != '' ]; then
+	iface=`xpath -e "//netbootiface/text()" /var/appliance/conf/appliance.conf.xml 2>/dev/null`
+else
+	iface=`xpath /var/appliance/conf/appliance.conf.xml "//netbootiface/text()" 2>/dev/null`
+fi
+if [ "${iface}" != '' ]; then
+	ip=`ip addr show ${iface} | grep -w inet | awk '{print $2}' | cut -d / -f 1`
+else
+	ip=`ip addr show to 0.0.0.0/0 scope global | awk '/[[:space:]]inet / { print gensub("/.*","","g",$2) }'`
+fi
 ipdec=`awk -v dec=${ip} 'BEGIN{n=split(dec,d,".");for(i=1;i<=n;i++) printf ":%02X",d[i];print ""}'`
 imageid=`grep 'FF:FF:07:04' /etc/dhcpd.conf | sed 's/.*FF:FF:07:04://g' | cut -c1-11`
 curafp=`grep "01:01:02:08:04:.*.:80" /etc/dhcpd.conf | sed 's/option vendor-encapsulated-options 01:01:02:08:04:.*.:80:.*:61:66:70:75:73:65:72:3A://g' | awk -F40 '{print $1}' | tr -d ' ' | sed 's/\(.*\)./\1/'`

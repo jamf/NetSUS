@@ -260,10 +260,6 @@ function netbootExec($cmd) {
 }
 
 $dhcp_running = (trim(netbootExec("getdhcpstatus")) === "true");
-if ($dhcp_running) {
-	netbootExec("stopdhcp");
-	netbootExec("startbsdp");
-}
 $bsdp_running = (trim(netbootExec("getbsdpstatus")) === "true");
 
 $netbootusage = trim(suExec("getDirSize /srv/NetBoot/NetBootSP0"));
@@ -273,11 +269,21 @@ $shadowusage = trim(suExec("getDirSize /srv/NetBootClients"));
 $shadowusage = (formatSize($shadowusage*1024, 0));
 
 if ($conf->getSetting("netboot") == "") {
-	if ($dhcp_running) {
+	if ($dhcp_running || $bsdp_running) {
 		$conf->setSetting("netboot", "enabled");
 	} else {
 		$conf->setSetting("netboot", "disabled");
 	}
+}
+
+$nbengine = $conf->getSetting("netbootengine");
+if (empty($nbengine)) {
+	if ($dhcp_running) {
+		$nbengine = "dhcpd";
+	} else {
+		$nbengine = "pybsdp";
+	}
+	$conf->setSetting("netbootengine", $nbengine);
 }
 ?>
 					<div class="panel-body">
@@ -293,9 +299,13 @@ if ($conf->getSetting("netboot") == "") {
 
 							<!-- Column -->
 							<div class="col-xs-4 col-md-2">
-								<div class="bs-callout bs-callout-default">
+								<div class="bs-callout bs-callout-default <?php echo ($nbengine == "pybsdp" ? "" : "hidden"); ?>">
 									<h5><strong>BSDP Status</strong></h5>
 									<span class="text-muted"><?php echo ($bsdp_running ? "Running" : "Not Running"); ?></span>
+								</div>
+								<div class="bs-callout bs-callout-default <?php echo ($nbengine == "dhcpd" ? "" : "hidden"); ?>">
+									<h5><strong>DHCP Status</strong></h5>
+									<span class="text-muted"><?php echo ($dhcp_running ? "Running" : "Not Running"); ?></span>
 								</div>
 							</div>
 							<!-- /Column -->

@@ -1,5 +1,19 @@
 # NetSUS Changelog
 
+## 5.0.1
+* Fixed a bug with SUS URL validation, when using SSL
+* Fixed an issue with LDAP proxy install in some RHEL-based installations
+* Fixed a bug with NetBoot shares not being browsable on macOS 10.14
+* Updated to the latest version of Reposado
+* Updated appliance build scripts for latest Operating Systems
+* Fixed a security issue, relating to a LFI vulnerability from the Logs page
+* Added macOS 10.15 SUS catalog options
+* Added the ability to select the NetBoot engine (pybsdp/DHCP)
+* Added (experimental) support for RHEL 8
+* Defaults to Active Directory login, if it is configured
+* Appliance Operating System is now Ubuntu 16.04.6
+* Will preserve a Kinobi installation if detected during the Installation
+
 ## 5.0
 
 * Updated user interface to align with Jamf Pro UI

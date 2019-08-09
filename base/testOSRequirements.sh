@@ -22,7 +22,7 @@ case $NAME in
 		fi
 		exit 0
 	else
-		log "Error: $NAME version must be 14.04 or 16.04 (Detected $VERSION_ID)."
+		log "Error: $NAME version must be 14.04, 16.04 or 18.04 (Detected $VERSION_ID)."
 		exit 1
 	fi
 ;;
@@ -32,6 +32,9 @@ case $NAME in
 	unset IFS
 	if [[ ${VERSION_ARR[0]} -eq 6 ]] && [[ ${VERSION_ARR[1]} -gt 3 ]] || [[ ${VERSION_ARR[0]} -gt 6 ]] ; then
 		log "$PRETTY_NAME found"
+		if [[ ${VERSION_ARR[0]} -eq 8 ]] ; then
+			log "Warning: $NAME $VERSION_ID support is currently experimental, proceed with caution."
+		fi
 		exit 0
 	else
 		log "Error: $NAME version must be 6.4 or later (Detected $VERSION_ID)."
@@ -44,7 +47,7 @@ case $NAME in
 ;;
 *)
 	release=$(rpm -q --queryformat '%{RELEASE}' rpm | cut -d '.' -f 2)
-	if [[ $release == "el6" ]] || [[ $release == "el7" ]] ; then
+	if [[ $release == "el6" ]] || [[ $release == "el7" ]] || [[ $release == "el8" ]] ; then
 		IFS='.'
 		VERSION_ARR=( $VERSION_ID )
 		unset IFS

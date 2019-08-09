@@ -14,8 +14,15 @@ function formatSize($size, $precision = 1) {
 	return round(pow(1024, $base - floor($base)), $precision) .' '. $suffixes[floor($base)];
 }
 
+$display_log_str = trim(suExec("displayLogList"));
+$display_log_list = explode(" ", $display_log_str);
+/*
+$flush_log_str = trim(suExec("flushLogList"));
+$flush_log_list = explode(" ", $flush_log_str);
+*/
+
 $log_content = "";
-if (isset($_POST['display_log'])) {
+if (isset($_POST['display_log']) && in_array($_POST['display_file'], $display_log_list, TRUE)) {
 	$log_content = suExec("displayLog ".$_POST['display_file']." ".$_POST['display_lines']);
 	$log_size = formatSize(strlen($log_content));
 }
@@ -29,12 +36,6 @@ if (isset($_POST['flush_log']) && $_POST['flush_file'] != '') {
 // ####################################################################
 
 if (empty($log_content)) {
-	$display_log_str = trim(suExec("displayLogList"));
-	$display_log_list = explode(" ", $display_log_str);
-/*
-	$flush_log_str = trim(suExec("flushLogList"));
-	$flush_log_list = explode(" ", $flush_log_str);
-*/
 ?>
 			<script type="text/javascript">
 				function showError(element, labelId = false) {

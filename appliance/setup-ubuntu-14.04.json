@@ -111,11 +111,11 @@
             "disk_size": 512000,
             "guest_additions_mode": "disable",
             "iso_urls": [
-                "iso/ubuntu-14.04.5-server-amd64.iso",
-                "http://releases.ubuntu.com/trusty/ubuntu-14.04.5-server-amd64.iso"
+                "iso/ubuntu-14.04.6-server-amd64.iso",
+                "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-server-amd64.iso"
             ],
             "iso_checksum_type": "sha256",
-            "iso_checksum": "dde07d37647a1d2d9247e33f14e91acb10445a97578384896b4e1d985f754cc1",
+            "iso_checksum": "b17d7c1e9d0321ad5810ba77b69aef43f0f29a5422b08120e6ee0576c4527c0e",
             "http_directory": "http",
             "http_port_min": 9001,
             "http_port_max": 9001,

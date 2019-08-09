@@ -14,13 +14,13 @@ if (isset($_SESSION['isAuthUser'])) {
 
 $isAuth = FALSE;
 
-$type = "suslogin";
-
 if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 	$username = $_POST['username'];
 	$_SESSION['username'] = $username;
 
 	if ($_POST['loginwith'] == 'suslogin') {
+
+		$type = "suslogin";
 
 		// encrypted password
 		$password = hash("sha256", $_POST['password']);
@@ -196,6 +196,9 @@ $ldap_domain = $conf->getSetting("ldapdomain");
 $ldap_base = $conf->getSetting("ldapbase");
 $ldap_groups = $conf->getAdmins();
 $ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && sizeof($ldap_groups) > 0;
+if (!isset($type)) {
+	$type = ($ldap_enabled ? "adlogin" : "suslogin");
+}
 ?>
 <!DOCTYPE html>
 
@@ -240,7 +243,7 @@ $ldap_enabled = $ldap_url != "" && $ldap_domain != "" && $ldap_base != "" && siz
 								<label for="suslogin">Built-In Account</label>
 							</div>
 							<div class="radio radio-inline radio-primary">
-								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type == "adlogin" && $ldap_enabled ? "checked" : ""); ?> <?php echo ($ldap_enabled ? "" : "disabled"); ?>>
+								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type == "adlogin" ? "checked" : ""); ?> <?php echo ($ldap_enabled ? "" : "disabled"); ?>>
 								<label for="adlogin">Active Directory</label>
 							</div>
 						</div>
