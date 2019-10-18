@@ -62,5 +62,13 @@ if (!($_SESSION['isAuthUser'])) {
 		}
 	}
 
+	if (isset($_POST['ldapuserbase'])) {
+		if ($_POST['ldapuserbase'] == "") {
+			$conf->deleteSetting("ldapuserbase");
+		} else {
+			$conf->setSetting("ldapuserbase", $_POST['ldapuserbase']);
+		}
+	}
+
 }
 ?>

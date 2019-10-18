@@ -81,6 +81,7 @@ if (sizeof($ldap_server_arr) > 1) {
 }
 $ldap_domain = $conf->getSetting("ldapdomain");
 $ldap_base = $conf->getSetting("ldapbase");
+$ldap_user_base = $conf->getSetting("ldapuserbase");
 $ldap_admins = $conf->getAdmins();
 
 // System Users
@@ -377,11 +378,13 @@ foreach(explode("\n", $users_str) as $entry) {
 					var ldaphost = document.getElementById('ldaphost');
 					var ldapport = document.getElementById('ldapport');
 					var ldapbase = document.getElementById('ldapbase');
+					var ldapuserbase = document.getElementById('ldapuserbase');
 					hideWarning(ldapport);
 					if (ldapdomain.value == '' && ldaphost.value == '' && ldapbase.value == '') {
 						ajaxPost('ajax.php', 'ldapdomain=');
 						ajaxPost('ajax.php', 'ldapserver=');
 						ajaxPost('ajax.php', 'ldapbase=');
+						ajaxPost('ajax.php', 'ldapuserbase=');
 						$('#ldapstatus').text('Not Configured');
 						$('#addldapgroup').prop('disabled', true);
 						ldap_server = "";
@@ -389,6 +392,7 @@ foreach(explode("\n", $users_str) as $entry) {
 						ajaxPost('ajax.php', 'ldapdomain='+ldapdomain.value);
 						ajaxPost('ajax.php', 'ldapserver='+ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value);
 						ajaxPost('ajax.php', 'ldapbase='+ldapbase.value);
+						ajaxPost('ajax.php', 'ldapuserbase='+ldapuserbase.value);
 						$('#ldapstatus').text($('#ldapdomain').val());
 						$('#addldapgroup').prop('disabled', false);
 						ldap_server = ldapscheme.value+'://'+ldaphost.value+':'+ldapport.value;
@@ -773,6 +777,10 @@ foreach(explode("\n", $users_str) as $entry) {
 										<h5 id="ldapbase_label"><strong>Search Base</strong> <small>Distinguished name of the LDAP search base.</small></h5>
 										<div class="form-group has-feedback">
 											<input type="text" name="ldapbase" id="ldapbase" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+										</div>
+										<h5 id="ldapuserdn_label"><strong>User Search Base</strong> <small>Distinguished name of the LDAP search base containing user objects.</small></h5>
+										<div class="form-group has-feedback">
+											<input type="text" name="ldapuserbase" id="ldapuserbase" class="form-control input-sm" placeholder="[Not Required for AD. Required for OpenLDAP]" value="<?php echo $ldap_user_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
 										</div>
 									</div>
 									<div class="modal-footer">
