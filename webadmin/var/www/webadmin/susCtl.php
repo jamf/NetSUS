@@ -205,11 +205,11 @@ if (!($_SESSION["isAuthUser"])) {
 		echo $conf->getSetting("susfilters");
 	}
 
-	if(isset($_GET['criticalupdates'])){
-		$criticalProductstr = trim(susExec("criticalProductList"));
+	if(isset($_GET['configdataupdates'])){
+		$configdataProductstr = trim(susExec("configdataProductList"));
 
 		$update_ids = array();
-		foreach(preg_split("/((\r?\n)|(\r\n?))/", $criticalProductstr) as $line){
+		foreach(preg_split("/((\r?\n)|(\r\n?))/", $configdataProductstr) as $line){
 			$end = strpos($line, ' ');
 			if($end !== false){
 				$upd_id = substr($line, 0, $end);

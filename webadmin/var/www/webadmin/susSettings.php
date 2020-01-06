@@ -470,11 +470,11 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 				<div class="row">
 					<div class="col-xs-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
-							<input name="update-filter" id="update-filter-critical" class="styled" type="checkbox" onChange="setFilter(this);" value="critical" 
-									<?php echo (array_key_exists("critical", $settingfilters) && $settingfilters["critical"] == "true") ? "checked" : "" ?>
+							<input name="update-filter" id="update-filter-configdata" class="styled" type="checkbox" onChange="setFilter(this);" value="configdata" 
+									<?php echo (array_key_exists("configdata", $settingfilters) && $settingfilters["configdata"] == "true") ? "checked" : "" ?>
 									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
 							>
-							<label class="text-nowrap"> Critical </label>
+							<label class="text-nowrap"> Config-Data </label>
 						</div>
 					</div>
 					<div class="col-xs-2 col-md-2">

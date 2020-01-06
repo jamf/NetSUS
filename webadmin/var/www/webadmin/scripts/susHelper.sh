@@ -151,7 +151,7 @@ productList)
 /var/appliance/sus_info.py --products
 ;;
 
-criticalProductList)
+configdataProductList)
 /var/lib/reposado/repoutil --config-data
 ;;
 

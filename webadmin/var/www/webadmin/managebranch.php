@@ -112,16 +112,16 @@ foreach($products as $productobj) {
 						table.column(2).visible(true);
 						
 						initFilters();
-						criticalUpdates();
+						configdataUpdates();
 					}
 					
 				});	
 
-				function criticalUpdates(){
+				function configdataUpdates(){
 					$('#loading-info-banner').removeClass('hidden');
 					$('#loading-info-text').html("Config-Data");
 
-					$.get("susCtl.php?criticalupdates")
+					$.get("susCtl.php?configdataupdates")
 						.done(function(data){
 							let json = JSON.parse(data);
 
@@ -172,12 +172,12 @@ foreach($products as $productobj) {
 					htmlFilter += '<span class="caret" style="margin-left: 8px;"></span>';
 					htmlFilter += '</button>';
 					htmlFilter += '<ul class="dropdown-menu" id="drop-menu-filter" aria-labelledby="dropdownMenu1">';
-					htmlFilter += '<li><a><input data-filter="others" class="checkbox-filter" type="checkbox" checked>Others</a></li>';
-					htmlFilter += '<li><a><input data-filter="configdata" class="checkbox-filter" type="checkbox"' + ((susfilters["critical"] != undefined && susfilters["critical"] == "true") ? ' checked'  : '') + '>Critical</a></li>';
-					htmlFilter += '<li><a><input data-filter="deprecated" class="checkbox-filter" type="checkbox"' + ((susfilters["deprecated"] != undefined && susfilters["deprecated"] == "true") ? ' checked'  : '') + '>Deprecated</a></li>';
-					htmlFilter += '<li><a><input data-filter="printer" class="checkbox-filter" type="checkbox"' + ((susfilters["printer"] != undefined && susfilters["printer"] == "true") ? ' checked'  : '') + '>Printer</a></li>';
-					htmlFilter += '<li><a><input data-filter="voice" class="checkbox-filter" type="checkbox"' + ((susfilters["voice"] != undefined && susfilters["voice"] == "true") ? ' checked'  : '') + '>Voice</a></li>';
-					htmlFilter += '<li><a><input data-filter="word" class="checkbox-filter" type="checkbox"' + ((susfilters["word"] != undefined && susfilters["word"] == "true") ? ' checked'  : '') + '>Word</a></li>';
+					htmlFilter += '<li><a><input data-filter="others" class="checkbox-filter" type="checkbox" checked> Others</a></li>';
+					htmlFilter += '<li><a><input data-filter="configdata" class="checkbox-filter" type="checkbox"' + ((susfilters["configdata"] != undefined && susfilters["configdata"] == "true") ? ' checked'  : '') + '> Config-Data</a></li>';
+					htmlFilter += '<li><a><input data-filter="deprecated" class="checkbox-filter" type="checkbox"' + ((susfilters["deprecated"] != undefined && susfilters["deprecated"] == "true") ? ' checked'  : '') + '> Deprecated</a></li>';
+					htmlFilter += '<li><a><input data-filter="printer" class="checkbox-filter" type="checkbox"' + ((susfilters["printer"] != undefined && susfilters["printer"] == "true") ? ' checked'  : '') + '> Printer</a></li>';
+					htmlFilter += '<li><a><input data-filter="voice" class="checkbox-filter" type="checkbox"' + ((susfilters["voice"] != undefined && susfilters["voice"] == "true") ? ' checked'  : '') + '> Voice</a></li>';
+					htmlFilter += '<li><a><input data-filter="word" class="checkbox-filter" type="checkbox"' + ((susfilters["word"] != undefined && susfilters["word"] == "true") ? ' checked'  : '') + '> Word</a></li>';
 					htmlFilter += '</ul>';
 					htmlFilter += '</div>';
 
