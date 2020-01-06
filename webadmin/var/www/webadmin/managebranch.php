@@ -189,22 +189,24 @@ foreach($products as $productobj) {
 					var matchToFilter = [];
 					$.fn.dataTable.ext.search.push(
 						function( settings, data, dataIndex, row ){
-							let ret = true;
+							let ret = null;
 							if(row[2] != null && row[2] != ""){
-								//console.log(row[2]);
 								$(row[2] + " span").each(function(i, elem){
 									let filter = $(elem).data('filter');
 
-									//console.log(filter);
-
-									if(matchToFilter[filter] == false){
+									if(matchToFilter[filter] == false && ret !== true){
 										ret = false;
+									}else if(ret == null){
+										ret = true;
 									}
 								});
 							}else{
 								if(matchToFilter["others"] == false)
 									ret = false;
 							}
+
+							if(ret == null)
+								ret = true;
 
 							return ret;
 						}
