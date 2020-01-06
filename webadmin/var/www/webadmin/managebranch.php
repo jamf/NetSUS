@@ -92,7 +92,7 @@ foreach($products as $productobj) {
 							],
 							"dom": "<'row'<'#table-left-component.col-sm-4'f <'#filter-category'>><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-3'l><'col-sm-9'p>>",
 							"order": [ 5, 'desc' ],
-							"lengthMenu": [ [10, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+							"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
 							"columns": [
 								{ "orderable": false },
 								null,
