@@ -468,7 +468,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 				<hr style="margin-top: 2rem; margin-bottom: 2rem;">
 
 				<div class="row">
-					<div class="col-xs-2 col-md-1">
+					<div class="col-sm-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
 							<input name="update-filter" id="update-filter-configdata" class="styled" type="checkbox" onChange="setFilter(this);" value="configdata" 
 									<?php echo (array_key_exists("configdata", $settingfilters) && $settingfilters["configdata"] == "true") ? "checked" : "" ?>
@@ -477,7 +477,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 							<label class="text-nowrap"> Config-Data </label>
 						</div>
 					</div>
-					<div class="col-xs-2 col-md-2">
+					<div class="col-sm-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
 							<input name="update-filter" id="update-filter-critical" class="styled" type="checkbox" onChange="setFilter(this);" value="deprecated" 
 									<?php echo (array_key_exists("deprecated", $settingfilters) && $settingfilters["deprecated"] == "true") ? "checked" : "" ?>
@@ -486,7 +486,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 							<label class="text-nowrap"> Deprecated </label>
 						</div>
 					</div>
-					<div class="col-xs-2 col-md-1">
+					<div class="col-sm-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
 							<input name="update-filter" id="update-filter-printer" class="styled" type="checkbox" onChange="setFilter(this);" value="printer" 
 									<?php echo (array_key_exists("printer", $settingfilters) && $settingfilters["printer"] == "true") ? "checked" : "" ?>
@@ -495,7 +495,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 							<label class="text-nowrap"> Printer </label>
 						</div>
 					</div>
-					<div class="col-xs-2 col-md-1">
+					<div class="col-sm-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
 							<input name="update-filter" id="update-filter-voices" class="styled" type="checkbox" onChange="setFilter(this);" value="voices" 
 									<?php echo (array_key_exists("voices", $settingfilters) && $settingfilters["voices"] == "true") ? "checked" : "" ?>
@@ -504,7 +504,7 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 							<label class="text-nowrap"> Voices </label>
 						</div>
 					</div>
-					<div class="col-xs-2 col-md-1">
+					<div class="col-sm-2 col-md-1">
 						<div class="checkbox checkbox-primary checkbox-inline">
 							<input name="update-filter" id="update-filter-word" class="styled" type="checkbox" onChange="setFilter(this);" value="word" 
 									<?php echo (array_key_exists("word", $settingfilters) && $settingfilters["word"] == "true") ? "checked" : "" ?>
