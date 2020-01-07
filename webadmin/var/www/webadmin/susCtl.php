@@ -206,6 +206,9 @@ if (!($_SESSION["isAuthUser"])) {
 	}
 
 	if(isset($_GET['configdataupdates'])){
+		// Improve loading time
+		session_write_close();
+
 		$configdataProductstr = trim(susExec("configdataProductList"));
 
 		$update_ids = array();
