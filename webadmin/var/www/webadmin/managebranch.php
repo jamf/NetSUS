@@ -139,6 +139,9 @@ foreach($products as $productobj) {
 									}
 								});
 
+								// Redraw after config-data added
+								table.draw();
+
 								$('#loading-info-banner').addClass('hidden');
 							}else{
 								$('#loading-info-text').html("Failed to load : Config-Data");
