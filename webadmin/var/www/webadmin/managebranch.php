@@ -336,7 +336,7 @@ foreach($products as $productobj) {
 						<thead>
 							<tr>
 								<th>Enable</th>
-								<th>Mac OSx</th>
+								<th>macOS</th>
 								<?php echo ($filtersEnabled == true) ? "<th>Category Update</th>" : "<th></th>"; ?>
 								<th>Name</th>
 								<th>Version</th>

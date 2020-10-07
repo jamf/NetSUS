@@ -97,7 +97,7 @@ if (!($_SESSION["isAuthUser"])) {
 		} else {
 			echo "<table>";
 			echo "<tr>";
-			echo "<td align=\"right\"><strong>Mac OSx:</strong></td>";
+			echo "<td align=\"right\"><strong>macOS:</strong></td>";
 			echo "<td>&nbsp;</td>";
 			echo "<td align=\"left\">";
 			foreach($details->oscatalogs as $oscatalog){
