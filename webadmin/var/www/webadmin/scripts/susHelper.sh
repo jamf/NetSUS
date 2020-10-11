@@ -151,6 +151,10 @@ productList)
 /var/appliance/sus_info.py --products
 ;;
 
+configdataProductList)
+/var/lib/reposado/repoutil --config-data
+;;
+
 productInfo)
 # $2: Product ID
 /var/appliance/sus_info.py --details=${2}

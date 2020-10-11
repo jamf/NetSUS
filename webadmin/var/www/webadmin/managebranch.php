@@ -41,6 +41,15 @@ if (isset($_POST['applyPackages'])) {
 // End of GET/POST parsing
 // ####################################################################
 
+// Filters
+$filtersEnabled = $conf->getSetting("filterEnable");
+if($filtersEnabled != "true"){
+	$filtersEnabled = false;
+}else{
+	$filtersEnabled = true;
+}
+
+// Products
 $productstr = trim(susExec("productList"));
 $products = json_decode($productstr);
 
@@ -60,35 +69,175 @@ foreach($products as $productobj) {
 			<script type="text/javascript" src="scripts/Buttons/buttons.bootstrap.min.js"></script>
 
 			<script type="text/javascript">
+				var table = null;
+
 				$(document).ready(function() {
-					$('#package_table').DataTable( {
-						buttons: [
-							{
-								text: 'Select All',
-								className: 'btn-sm',
-								action: function ( e, dt, node, config ) {
-									selectAllVisible();
+					// Init DataTable
+					table = $('#package_table').DataTable( {
+							buttons: [
+								{
+									text: 'Select All',
+									className: 'btn-sm',
+									action: function ( e, dt, node, config ) {
+										selectAllVisible();
+									}
+								},
+								{
+									text: 'Clear All',
+									className: 'btn-sm',
+									action: function ( e, dt, node, config ) {
+										clearAllVisible();
+									}
 								}
-							},
-							{
-								text: 'Clear All',
-								className: 'btn-sm',
-								action: function ( e, dt, node, config ) {
-									clearAllVisible();
-								}
+							],
+							"dom": "<'row'<'#table-left-component.col-sm-4'f <'#filter-category'>><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-3'l><'col-sm-9'p>>",
+							"order": [ 5, 'desc' ],
+							"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+							"columns": [
+								{ "orderable": false },
+								null,
+								{ "visible" : false },
+								null,
+								null,
+								null
+							]
+						});
+
+					http = getHTTPObj();
+					http.open("GET", "susCtl.php?susEnableFilters", false);
+					http.send();
+
+					let filtersEnable = http.responseText;
+					if(filtersEnable == "true"){
+						table.column(2).visible(true);
+						
+						initFilters();
+						configdataUpdates();
+					}
+					
+				});	
+
+				function configdataUpdates(){
+					$('#loading-info-banner').removeClass('hidden');
+					$('#loading-info-text').html("Config-Data");
+
+					$.get("susCtl.php?configdataupdates")
+						.done(function(data){
+							let json = JSON.parse(data);
+
+							if(json != null && json != undefined){
+								table.rows().every(function(idx, tableLoop, rowLoop){
+									let node = $(this.node());
+									let elem = $(node).find('.update-category');
+									let updateCode = $(elem).data('update-code');
+
+									let row = table.row(idx).data();
+									
+									if(json[updateCode] !== undefined){
+										row[2] += ' <span data-filter="configdata" class="badge badge-info">Config-Data</span>';
+										table.row(idx).data(row).invalidate();
+									}
+								});
+
+								// Redraw after config-data added
+								table.draw();
+
+								$('#loading-info-banner').addClass('hidden');
+							}else{
+								$('#loading-info-text').html("Failed to load : Config-Data");
+								
+								setTimeout(() => {
+									$('#loading-info-banner').removeClass('hidden');	
+								}, 3000);
 							}
-						],
-						"dom": "<'row'<'col-sm-4'f><'col-sm-4'i><'col-sm-4'<'dataTables_paginate'B>>>" + "<'row'<'col-sm-12'tr>>" + "<'row'<'col-sm-3'l><'col-sm-9'p>>",
-						"order": [ 3, 'desc' ],
-						"lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
-						"columns": [
-							{ "orderable": false },
-							null,
-							null,
-							null
-						]
+						});
+				}
+
+				function initFilters(){
+					http = getHTTPObj();
+					http.open("GET", "susCtl.php?susfilters", false);
+					http.send();
+
+					let filters = http.responseText.split(';');
+					let susfilters = {};
+					$.each(filters, function(i, filter){
+						let arf = filter.split('=');
+						if(arf.length == 2){
+							susfilters[arf[0]] = arf[1];
+						}
 					});
-				} );
+
+					// Filter buttons
+					let htmlFilter = '';
+					htmlFilter += '<div class="dropdown" style="margin-left: 10px;">';
+					htmlFilter += '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">';
+					htmlFilter += 'Filter';
+					htmlFilter += '<span class="caret" style="margin-left: 8px;"></span>';
+					htmlFilter += '</button>';
+					htmlFilter += '<ul class="dropdown-menu" id="drop-menu-filter" aria-labelledby="dropdownMenu1">';
+					htmlFilter += '<li><a><input data-filter="others" class="checkbox-filter" type="checkbox" checked> Others</a></li>';
+					htmlFilter += '<li><a><input data-filter="configdata" class="checkbox-filter" type="checkbox"' + ((susfilters["configdata"] != undefined && susfilters["configdata"] == "true") ? ' checked'  : '') + '> Config-Data</a></li>';
+					htmlFilter += '<li><a><input data-filter="deprecated" class="checkbox-filter" type="checkbox"' + ((susfilters["deprecated"] != undefined && susfilters["deprecated"] == "true") ? ' checked'  : '') + '> Deprecated</a></li>';
+					htmlFilter += '<li><a><input data-filter="printer" class="checkbox-filter" type="checkbox"' + ((susfilters["printer"] != undefined && susfilters["printer"] == "true") ? ' checked'  : '') + '> Printer</a></li>';
+					htmlFilter += '<li><a><input data-filter="voice" class="checkbox-filter" type="checkbox"' + ((susfilters["voice"] != undefined && susfilters["voice"] == "true") ? ' checked'  : '') + '> Voice</a></li>';
+					htmlFilter += '<li><a><input data-filter="word" class="checkbox-filter" type="checkbox"' + ((susfilters["word"] != undefined && susfilters["word"] == "true") ? ' checked'  : '') + '> Word</a></li>';
+					htmlFilter += '</ul>';
+					htmlFilter += '</div>';
+
+					// Add component
+					$('#filter-category').html(htmlFilter);
+					$('#table-left-component').css('display', 'flex');
+
+					// Extend search function with filter
+					var matchToFilter = [];
+					$.fn.dataTable.ext.search.push(
+						function( settings, data, dataIndex, row ){
+							let ret = null;
+							if(row[2] != null && row[2] != ""){
+								$(row[2] + " span").each(function(i, elem){
+									let filter = $(elem).data('filter');
+
+									if(matchToFilter[filter] == false && ret !== true){
+										ret = false;
+									}else if(ret == null){
+										ret = true;
+									}
+								});
+							}else{
+								if(matchToFilter["others"] == false)
+									ret = false;
+							}
+
+							if(ret == null)
+								ret = true;
+
+							return ret;
+						}
+					);
+
+					// Filter event
+					$('.checkbox-filter').on('change', function(){
+						match = $(this).data('filter');
+
+						// Vérifie si contenu dans le tableau
+						if(matchToFilter[match] === undefined){
+							matchToFilter[match] = false;
+						}
+						// Set la valeurs si coché
+						if($(this).is(':checked')){
+							matchToFilter[match] = true;
+						}else{
+							matchToFilter[match] = false;
+						}
+
+						// Redraw table
+						table.draw();
+					});
+
+					// Init filter event
+					$('.checkbox-filter').change();
+				}
+
 			</script>
 
 			<script type="text/javascript">
@@ -100,7 +249,7 @@ foreach($products as $productobj) {
 				function selectAllVisible() {
 					var boxes = document.getElementsByTagName('input');
 					for (i = 0; i < boxes.length; i++) {
-						if ( boxes[i].type === 'checkbox' ) {
+						if($(boxes[i]).hasClass("product-checked")){
 							boxes[i].checked = true;
 							checkBox(boxes[i].value, true);
 						}
@@ -110,7 +259,7 @@ foreach($products as $productobj) {
 				function clearAllVisible() {
 					var boxes = document.getElementsByTagName('input');
 					for (i = 0; i < boxes.length; i++) {
-						if ( boxes[i].type === 'checkbox' ) {
+						if($(boxes[i]).hasClass("product-checked")){
 							boxes[i].checked = false;
 							checkBox(boxes[i].value, false);
 						}
@@ -170,8 +319,15 @@ foreach($products as $productobj) {
 						</div>
 					</div>
 
-					<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">Select Apple Software Updates to be enabled in this branch. Click the <em>Apply</em> button to save changes.<br><strong>Note:</strong> The <em>Select All</em> and <em>Clear All</em> buttons apply to only updates visible in the table.</div>
-				</div>
+					<div class="text-muted" style="font-size: 12px; padding: 16px 0px;">
+						Select Apple Software Updates to be enabled in this branch. Click the <em>Apply</em> button to save changes.<br>
+						<strong>Note:</strong> The <em>Select All</em> and <em>Clear All</em> buttons apply to only updates visible in the table.
+
+						<div id="loading-info-banner" class="pull-right hidden" style="position: relative; bottom: 12px; right: 10px;">
+							<em>Loading </em><em id="loading-info-text"></em> <img style="height: 30px; width: 30px;" src="images/progress.gif">
+						</div>
+					</div>
+				</div> 
 
 				<hr>
 
@@ -180,6 +336,8 @@ foreach($products as $productobj) {
 						<thead>
 							<tr>
 								<th>Enable</th>
+								<th>macOS</th>
+								<?php echo ($filtersEnabled == true) ? "<th>Category Update</th>" : "<th></th>"; ?>
 								<th>Name</th>
 								<th>Version</th>
 								<th>Date</th>
@@ -191,9 +349,45 @@ foreach ($products as $productobj) { ?>
 							<tr>
 								<td>
 									<div class="checkbox checkbox-primary checkbox-inline">
-										<input type="checkbox" id="<?php echo $productobj->id; ?>" value="<?php echo $productobj->id; ?>" onChange="checkBox(this.value, this.checked);"<?php echo (in_array($currentBranch, $productobj->BranchList) ? " checked" : ""); ?>/>
+										<input type="checkbox" class="product-checked" id="<?php echo $productobj->id; ?>" value="<?php echo $productobj->id; ?>" onChange="checkBox(this.value, this.checked);"<?php echo (in_array($currentBranch, $productobj->BranchList) ? " checked" : ""); ?>/>
 										<label/>
 									</div>
+								</td>
+								<td>
+									<?php
+										if(count($productobj->oscatalogs) <= 2){
+											foreach($productobj->oscatalogs as $oscatalog){
+												echo '<span class="badge badge-info" style="background-color:#337ab7 !important;">'.$oscatalog.'</span> ';
+											}
+										}else{
+											echo '<span class="badge badge-info" style="background-color:#337ab7 !important;">'.$productobj->oscatalogs[0].' / '.$productobj->oscatalogs[count($productobj->oscatalogs) - 1].'</span>';
+										}
+									?>
+								</td>
+								<td class="update-category" data-update-code="<?php echo $productobj->id; ?>">
+									<?php
+
+										if($filtersEnabled == true){
+											if((strlen($productobj->title) > 12 && substr(trim($productobj->title), 0, 12) === "Voice Update") ||
+												(strlen($productobj->title) > 6 && substr($productobj->title, (strlen($productobj->title) - 6), 6) == "Voices"))
+											{
+												echo '<span data-filter="voice" class="badge badge-info">Voices</span>';
+											}
+											else if(strlen($productobj->title) > 13 && strpos($productobj->title, "Printer") !== false && strpos($productobj->title, "Update") !== false)
+											{
+												echo '<span data-filter="printer" class="badge badge-info">Printer</span>';
+											}
+											else if(strlen($productobj->title) > 10 && strpos($productobj->title, "Word") !== false && strpos($productobj->title, "Update") !== false)
+											{
+												echo '<span data-filter="word" class="badge badge-info">Word</span>';
+											}
+											else if($productobj->Deprecated == "(Deprecated)")
+											{
+												echo '<span data-filter="deprecated" class="badge badge-info" style="background-color:#f0ad4e !important;">Deprecated</span>';
+											}	
+										}
+										
+									?>
 								</td>
 								<td><a data-toggle="modal" href="#Description" onClick="updateModalContent('<?php echo $productobj->title; ?><?php echo ($productobj->Deprecated == "(Deprecated)" ? " <small>(Deprecated)</small>" : "") ?>', '<?php echo $productobj->id; ?>');"><?php echo $productobj->title; ?></a> <?php echo $productobj->Deprecated; ?></td>
 								<td><?php echo $productobj->version; ?></td>

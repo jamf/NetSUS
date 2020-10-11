@@ -32,6 +32,10 @@ Unlike a standard SUS, you can divide the SUS hosted by the NetSUSLP into branch
 
 9. Optionally, specify any additional Catalog URLs you would like to sync. e.g. beta or seed.
 
+10. Optionnaly, enable filters categories (Config-Data, Deprecated, ...) and select which filter is enabled by default.
+
+	<img width="750" src="images/attachments/sus_settings_filters.png">
+
 
 ## Syncing with Apple's Software Update Servers
 

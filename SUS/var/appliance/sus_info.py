@@ -4,6 +4,31 @@ from optparse import OptionParser
 from plistlib import readPlist
 from json import dumps
 
+apple_catalog_version_map = {
+	'index-10.15-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.15',
+	'index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.14',
+	'index-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.13',
+	'index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.12',
+	'index-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.11',
+	'index-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.10',
+	'index-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.9',
+	'index-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog': '10.8',
+	'index-lion-snowleopard-leopard.merged-1.sucatalog': '10.7',
+	'index-leopard-snowleopard.merged-1.sucatalog': '10.6',
+	'index-leopard.merged-1.sucatalog': '10.5',
+	'index-1.sucatalog': '10.4',
+	'index.sucatalog': '10.4',
+}
+
+def versions_from_catalogs(cats):
+	versions = []
+	for cat in cats:
+		# End of URL
+		short_cat = cat.split('/')[-1]
+		if short_cat in apple_catalog_version_map.keys():
+			versions.append(apple_catalog_version_map[short_cat])
+	return versions
+	
 
 def list_products():
 	try:
@@ -38,6 +63,7 @@ def list_products():
 				'id': key,
 				'title': product_info[key]['title'],
 				'version': product_info[key]['version'],
+				'oscatalogs': versions_from_catalogs(product_info[key]['OriginalAppleCatalogs']),
 				'PostDate': post_date,
 				'BranchList': branch_list,
 				'Deprecated': deprecated
@@ -83,6 +109,8 @@ def product_detail(key):
 			'size': size,
 			'PostDate': post_date,
 			'description': product_dict['description'],
+			'oscatalogs': versions_from_catalogs(product_dict['OriginalAppleCatalogs']),
+			'packages': product_dict['CatalogEntry']['Packages'],
 			'Deprecated': deprecated
 		}
 

@@ -105,6 +105,25 @@ if ($conf->getSetting("syncschedule") == NULL || $conf->getSetting("syncschedule
 }
 $syncschedule = $conf->getSetting("syncschedule");
 
+// Filters
+$filtersEnabled = $conf->getSetting("filterEnable");
+if($filtersEnabled != "true"){
+	$filtersEnabled = false;
+}else{
+	$filtersEnabled = true;
+}	
+
+$settingfilters = $conf->getSetting("susfilters");
+$exp_fs = explode(';', $settingfilters);
+$settingfilters = array();
+foreach($exp_fs as $filter){
+	$exp_f = explode('=', $filter);
+	if(count($exp_f) != 2)
+		continue;
+
+	$settingfilters[$exp_f[0]] = $exp_f[1];
+}
+
 // SUS Status
 $sync_status = trim(susExec("getSyncStatus")) == "true" ? true : false;
 $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
@@ -249,6 +268,27 @@ $util_status = trim(susExec("getUtilStatus")) == "true" ? true : false;
 						ajaxPost('susCtl.php', 'dashboard=false');
 					}
 				}
+
+				function setFilter(elem){
+					let value = $(elem).val();
+					
+					if($(elem).is(':checked')){
+						ajaxPost('susCtl.php', 'susfilters=' + value + ';true');
+					}else{
+						ajaxPost('susCtl.php', 'susfilters=' + value + ';false');
+					}
+				}
+
+				function enableFilters(filtersEnabled){
+					if($(filtersEnabled).is(':checked')){
+						ajaxPost('susCtl.php', 'susEnableFilters=true');
+						$('input[name="update-filter"]').prop('disabled', '');
+					}else{
+						ajaxPost('susCtl.php', 'susEnableFilters=false');
+						$('input[name="update-filter"]').prop('disabled', 'disabled');
+					}
+				}
+
 			</script>
 
 			<script type="text/javascript">
@@ -407,6 +447,70 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 <?php } ?>
 								</tbody>
 							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr>
+
+			<div style="padding: 9px 20px 16px;">
+				<h5><strong>Filter</strong> <small>Define which filter is enable by default</small></h5>
+				<div class="row">
+					<div class="col-xs-3 col-md-2">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="enable-filters" id="enable-filters" class="styled" type="checkbox" onChange="enableFilters(this);" <?php echo ($filtersEnabled == true) ? "checked" : "" ?>>
+							<label class="text-nowrap">Enable filters</label>
+						</div>
+					</div>
+				</div>
+
+				<hr style="margin-top: 2rem; margin-bottom: 2rem;">
+
+				<div class="row">
+					<div class="col-sm-2 col-md-1">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="update-filter" id="update-filter-configdata" class="styled" type="checkbox" onChange="setFilter(this);" value="configdata" 
+									<?php echo (array_key_exists("configdata", $settingfilters) && $settingfilters["configdata"] == "true") ? "checked" : "" ?>
+									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
+							>
+							<label class="text-nowrap"> Config-Data </label>
+						</div>
+					</div>
+					<div class="col-sm-2 col-md-1">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="update-filter" id="update-filter-critical" class="styled" type="checkbox" onChange="setFilter(this);" value="deprecated" 
+									<?php echo (array_key_exists("deprecated", $settingfilters) && $settingfilters["deprecated"] == "true") ? "checked" : "" ?>
+									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
+							>
+							<label class="text-nowrap"> Deprecated </label>
+						</div>
+					</div>
+					<div class="col-sm-2 col-md-1">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="update-filter" id="update-filter-printer" class="styled" type="checkbox" onChange="setFilter(this);" value="printer" 
+									<?php echo (array_key_exists("printer", $settingfilters) && $settingfilters["printer"] == "true") ? "checked" : "" ?>
+									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
+							>
+							<label class="text-nowrap"> Printer </label>
+						</div>
+					</div>
+					<div class="col-sm-2 col-md-1">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="update-filter" id="update-filter-voices" class="styled" type="checkbox" onChange="setFilter(this);" value="voices" 
+									<?php echo (array_key_exists("voices", $settingfilters) && $settingfilters["voices"] == "true") ? "checked" : "" ?>
+									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
+							>
+							<label class="text-nowrap"> Voices </label>
+						</div>
+					</div>
+					<div class="col-sm-2 col-md-1">
+						<div class="checkbox checkbox-primary checkbox-inline">
+							<input name="update-filter" id="update-filter-word" class="styled" type="checkbox" onChange="setFilter(this);" value="word" 
+									<?php echo (array_key_exists("word", $settingfilters) && $settingfilters["word"] == "true") ? "checked" : "" ?>
+									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
+							>
+							<label class="text-nowrap"> Word </label>
 						</div>
 					</div>
 				</div>
