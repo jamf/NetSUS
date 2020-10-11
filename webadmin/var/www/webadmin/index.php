@@ -34,7 +34,8 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 		}
 	}
 
-	if ($_POST['loginwith'] == 'adlogin') {
+	// This is all the same for both generic LDAP and AD
+	if ($_POST['loginwith'] == 'ldaplogin' || $_POST['loginwith'] == 'adlogin' ) {
 
 		define(LDAP_OPT_DIAGNOSTIC_MESSAGE, 0x0032);
 		$type="adlogin";
@@ -61,24 +62,34 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 		ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
 		ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
+	}
+
+	if ($_POST['loginwith'] == 'ldaplogin' ) {
+
+		// Get the base that contains user objects so we can build a DN with the username.
+		$ldap_user_base = $conf->getSetting("ldapuserbase");
+
+		// Make this a valid DN
+		$userdn = "uid=$username,$ldap_user_base";
+
 		// verify user and password
-		if($bind = @ldap_bind($ldap, $username.$domain, $password)) {
+		if($bind = ldap_bind($ldap, $userdn, $password)) {
 			// valid
 			// check presence in groups
-			$filter = "(sAMAccountName=".$username.")";
-			$attr = array("memberof");
-			$result = ldap_search($ldap, $ldap_dn, $filter, $attr);
+			$filter = "(memberUid=$username)";
+			$attr = array("memberUid");
 
+			$result = ldap_search($ldap, $ldap_dn, $filter, $attr);
 			$entries = ldap_get_entries($ldap, $result);
 			ldap_unbind($ldap);
 
 			// check groups
 			$access = 0;
-			foreach ($entries[0]['memberof'] as $grps) {
+			foreach ($entries as $grps) {
 				// check group membership
 				foreach ($admin_grps as $key => $value) {
 					// is admin, break loop
-					if(strpos($grps, $value['cn'])) { $isAuth = TRUE; break 2; }
+					if(strpos($grps['dn'], $value['cn'])) { $isAuth = TRUE; break 2; }
 				}
 			}
 			if (!$isAuth) {
@@ -91,6 +102,42 @@ if ((isset($_POST['username'])) && (isset($_POST['password']))) {
 			} else {
 				// invalid user or password
 				$loginerror = "Invalid Username or Password";
+			}
+		}
+	}
+
+	if ($_POST['loginwith'] == 'adlogin' ) {
+
+                // verify user and password
+                if($bind = @ldap_bind($ldap, $username.$domain, $password)) {
+                        // valid
+                        // check presence in groups
+                        $filter = "(sAMAccountName=".$username.")";
+                        $attr = array("memberof");
+                        $result = ldap_search($ldap, $ldap_dn, $filter, $attr);
+
+                        $entries = ldap_get_entries($ldap, $result);
+                        ldap_unbind($ldap);
+
+                        // check groups
+                        $access = 0;
+                        foreach ($entries[0]['memberof'] as $grps) {
+
+                                foreach ($admin_grps as $key => $value) {
+                                        // is admin, break loop
+                                        if(strpos($grps, $value['cn'])) { $isAuth = TRUE; break 2; }
+                                }
+                        }
+                        if (!$isAuth) {
+                                $loginerror = "Access Denied for ".$username;
+                        }
+                } else {
+                        if (ldap_get_option($handle, LDAP_OPT_DIAGNOSTIC_MESSAGE, $extended_error)) {
+                                // get error msg
+                                $loginerror = $extended_error;
+                        } else {
+                                // invalid user or password
+                                $loginerror = "Invalid Username or Password";
 			}
 		}
 	}
@@ -241,10 +288,14 @@ if (!isset($type)) {
 							<div class="radio radio-inline radio-primary">
 								<input type="radio" id="suslogin" name="loginwith" value="suslogin" <?php echo ($type == "suslogin" ? "checked" : ""); ?>>
 								<label for="suslogin">Built-In Account</label>
-							</div>
+							</div></br>
 							<div class="radio radio-inline radio-primary">
 								<input type="radio" id="adlogin" name="loginwith" value="adlogin" <?php echo ($type == "adlogin" ? "checked" : ""); ?> <?php echo ($ldap_enabled ? "" : "disabled"); ?>>
 								<label for="adlogin">Active Directory</label>
+							</div>
+							<div class="radio radio-inline radio-primary">
+								<input type="radio" id="ldaplogin" name="loginwith" value="ldaplogin" <?php echo ($type == "adlogin" ? "checked" : ""); ?> <?php echo ($ldap_enabled ? "" : "disabled"); ?>>
+								<label for="ldaplogin">LDAP</label>
 							</div>
 						</div>
 						<div class="username">
