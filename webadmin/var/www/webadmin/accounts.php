@@ -598,13 +598,13 @@ foreach(explode("\n", $users_str) as $entry) {
 
 							<div id="group_error" style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server != "" && sizeof($ldap_admins) == 0 ? "" : "hidden"); ?>">
 								<div class="panel-body">
-									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>At least one group is required for Active Directory login.</div>
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>At least one group is required for Active Directory / LDAP login.</div>
 								</div>
 							</div>
 
 							<div id="ldap_error" style="margin-bottom: 16px; border-color: #d43f3a;" class="panel panel-danger <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>">
 								<div class="panel-body">
-									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Active Directory must be configured for group members to login.</div>
+									<div class="text-muted"><span class="text-danger glyphicon glyphicon-exclamation-sign" style="padding-right: 12px;"></span>Active Directory / LDAP must be configured for group members to login.</div>
 								</div>
 							</div>
 
@@ -645,7 +645,7 @@ foreach(explode("\n", $users_str) as $entry) {
 												<tr>
 													<td><span name="group_warning" class="text-danger glyphicon glyphicon-exclamation-sign <?php echo ($ldap_server == "" && sizeof($ldap_admins) > 0 ? "" : "hidden"); ?>"></span></td>
 													<td><a data-toggle="modal" href="#ldapgroup-modal" onClick="$('#renameldapgroup').val('<?php echo $value["cn"]; ?>'); $('#newldapgroup').val('<?php echo $value["cn"]; ?>');"><?php echo $value["cn"]; ?></a></td>
-													<td>Active Directory group.</td>
+													<td>Active Directory / LDAP group.</td>
 													<td align="right"><button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#deleteldap-modal" onClick="$('#deleteldap-title').text('Delete \'<?php echo $value["cn"]; ?>\'?'); $('#deleteldapgroup').val('<?php echo $value["cn"]; ?>');">Delete</button></td>
 												</tr>
 <?php } ?>
@@ -659,7 +659,7 @@ foreach(explode("\n", $users_str) as $entry) {
 						<hr>
 
 						<div style="padding: 4px 20px 16px; background-color: #f9f9f9;">
-							<h5><strong>Active Directory</strong> <small>Allow login to the web interface using Active Directory.</small></h5>
+							<h5><strong>Active Directory / LDAP</strong> <small>Allow login to the web interface using Active Directory or OpenLDAP.</small></h5>
 							<div style="padding-bottom: 12px;">Domain: <a data-toggle="modal" data-target="#ldap-modal" href=""><span id="ldapstatus"><?php echo (empty($ldap_server) || empty($ldap_domain) || empty($ldap_base) ? "Not Configured" : $ldap_domain); ?></span></a></div>
 						</div>
 
@@ -707,10 +707,10 @@ foreach(explode("\n", $users_str) as $entry) {
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3 class="modal-title">Active Directory Group</h3>
+										<h3 class="modal-title">Active Directory / LDAP Group</h3>
 									</div>
 									<div class="modal-body">
-										<h5 id="newldapgroup_label"><strong>Group Name</strong> <small>Active Directory group name.</small></h5>
+										<h5 id="newldapgroup_label"><strong>Group Name</strong> <small>Active Directory / LDAP group name.</small></h5>
 										<div class="form-group has-feedback">
 											<input type="text" id="newldapgroup" name="newldapgroup" class="form-control input-sm" placeholder="[Required]" value="" onFocus="validLdapGroup();" onKeyUp="validLdapGroup();" onBlur="validLdapGroup();"/>
 										</div>
@@ -749,10 +749,10 @@ foreach(explode("\n", $users_str) as $entry) {
 							<div class="modal-dialog" role="document">
 								<div class="modal-content">
 									<div class="modal-header">
-										<h3 class="modal-title">Active Directory</h3>
+										<h3 class="modal-title">Active Directory / LDAP</h3>
 									</div>
 									<div class="modal-body">
-										<h5 id="ldapdomain_label"><strong>Domain</strong> <small>Active Directory fully qualified domain name.</small></h5>
+										<h5 id="ldapdomain_label"><strong>Domain</strong> <small>Active Directory / LDAP fully qualified domain name.</small></h5>
 										<div class="form-group has-feedback">
 											<input type="text" name="ldapdomain" id="ldapdomain" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_domain; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
 										</div>
@@ -778,9 +778,9 @@ foreach(explode("\n", $users_str) as $entry) {
 										<div class="form-group has-feedback">
 											<input type="text" name="ldapbase" id="ldapbase" class="form-control input-sm" placeholder="[Required]" value="<?php echo $ldap_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
 										</div>
-										<h5 id="ldapuserdn_label"><strong>User Search Base</strong> <small>Distinguished name of the LDAP search base containing user objects.</small></h5>
+										<h5 id="ldapuserbase_label"><strong>User Search Base</strong> <small>Distinguished name of the LDAP search base containing user objects (Required for OpenLDAP).</small></h5>
 										<div class="form-group has-feedback">
-											<input type="text" name="ldapuserbase" id="ldapuserbase" class="form-control input-sm" placeholder="[Not Required for AD. Required for OpenLDAP]" value="<?php echo $ldap_user_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
+											<input type="text" name="ldapuserbase" id="ldapuserbase" class="form-control input-sm" placeholder="[Optional]" value="<?php echo $ldap_user_base; ?>" onFocus="validLdap();" onKeyUp="validLdap();" onBlur="validLdap();"/>
 										</div>
 									</div>
 									<div class="modal-footer">
