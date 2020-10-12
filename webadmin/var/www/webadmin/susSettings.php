@@ -496,8 +496,8 @@ if (sizeof($other_catalog_urls) == 0) { ?>
 					</div>
 					<div class="col-xs-4 col-md-2">
 						<div class="checkbox checkbox-primary checkbox-inline">
-							<input name="update-filter" id="update-filter-voices" class="styled" type="checkbox" onChange="setFilter(this);" value="voices" 
-									<?php echo (array_key_exists("voices", $settingfilters) && $settingfilters["voices"] == "true") ? "checked" : "" ?>
+							<input name="update-filter" id="update-filter-voices" class="styled" type="checkbox" onChange="setFilter(this);" value="voice" 
+									<?php echo (array_key_exists("voice", $settingfilters) && $settingfilters["voice"] == "true") ? "checked" : "" ?>
 									<?php echo ($filtersEnabled != true) ? " disabled" : "" ?>
 							>
 							<label class="text-nowrap"> Voices </label>
