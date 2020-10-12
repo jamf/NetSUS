@@ -80,11 +80,11 @@
             "disk_size": 512000,
             "guest_additions_mode": "disable",
 			"iso_urls": [
-				"iso/CentOS-7-x86_64-Everything-1810.iso",
-				"http://mirror.optus.net/centos/7.6.1810/isos/x86_64/CentOS-7-x86_64-Everything-1810.iso"
+				"iso/CentOS-7-x86_64-Everything-2003.iso",
+				"http://mirror.aarnet.edu.au/pub/centos/7.8.2003/isos/x86_64/CentOS-7-x86_64-Everything-2003.iso"
 			],
 			"iso_checksum_type": "sha256",
-			"iso_checksum": "918975cdf947e858c9a0c77d6b90a9a56d9977f3a4496a56437f46f46200cf71",
+			"iso_checksum": "4120aff542c2f9a30bcf90d4d79e39511e5d9eabdf202566a94ff24ea7f0974c",
 			"http_directory": "http",
             "http_port_min": 9001,
             "http_port_max": 9001,

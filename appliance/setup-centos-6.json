@@ -81,7 +81,7 @@
             "guest_additions_mode": "disable",
 			"iso_urls": [
 				"iso/CentOS-6.10-x86_64-bin-DVD1.iso",
-				"http://mirror.optus.net/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-bin-DVD1.iso"
+				"http://mirror.aarnet.edu.au/pub/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-bin-DVD1.iso"
 			],
 			"iso_checksum_type": "sha256",
 			"iso_checksum": "a68e46970678d4d297d46086ae2efdd3e994322d6d862ff51dcce25a0759e41c",

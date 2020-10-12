@@ -122,11 +122,11 @@
             "disk_size": 512000,
             "guest_additions_mode": "disable",
             "iso_urls": [
-                "iso/ubuntu-18.04.2-server-amd64.iso",
-                "http://cdimage.ubuntu.com/ubuntu/releases/bionic/release/ubuntu-18.04.2-server-amd64.iso"
+                "iso/ubuntu-18.04.5-server-amd64.iso",
+                "http://cdimage.ubuntu.com/ubuntu/releases/18.04/release/ubuntu-18.04.5-server-amd64.iso"
             ],
             "iso_checksum_type": "sha256",
-            "iso_checksum": "a2cb36dc010d98ad9253ea5ad5a07fd6b409e3412c48f1860536970b073c98f5",
+            "iso_checksum": "8c5fc24894394035402f66f3824beb7234b757dd2b5531379cb310cedfdf0996",
             "http_directory": "http",
             "http_port_min": 9001,
             "http_port_max": 9001,
