@@ -1,6 +1,16 @@
 # NetSUS Changelog
 
+## 5.0.2
+
+* Deprecation Notice - NetSUS is deprecated
+* Updated reposado to the latest version
+* Merged Pull Request #156, thanks [@wegotoeleven](https://github.com/wegotoeleven)
+* Merged Pull Request #154, thanks [@sunny0day](https://github.com/sunny0day)
+* Merged Pull Request #148, thanks [@Kaikon](https://github.com/Kaikon)
+* Merged Pull Request #142, thanks [@james-tipler](https://github.com/james-tipler)
+
 ## 5.0.1
+
 * Fixed a bug with SUS URL validation, when using SSL
 * Fixed an issue with LDAP proxy install in some RHEL-based installations
 * Fixed a bug with NetBoot shares not being browsable on macOS 10.14
@@ -52,7 +62,7 @@
 
 * Added High Sierra support for SUS
 * Updated reposado to latest version
-* Fixed an issue where certain Sierra build would NetBoot extremely slowly
+* Fixed an issue where certain Sierra builds would NetBoot extremely slowly
 
 ## 4.2
 
