@@ -54,7 +54,7 @@ $currentUser = getCurrentWebUser();
 					<span class="icon-bar"></span>
 				</button>
 				<a class="navbar-brand" style="padding-top: 8px;" href="dashboard.php"><img src="images/NSUS-logo.svg" height="34"></a>
-				<div id="version-number-text" class="navbar-text">v5.0.1</div>
+				<div id="version-number-text" class="navbar-text">v5.0.2</div>
 				<div class="navbar-user">
 					<div class="btn-group">
 						<button type="button" class="navbar-btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-user"></span></button>
