@@ -133,27 +133,33 @@ if (!($_SESSION["isAuthUser"])) {
 			echo "<td>&nbsp;</td>";
 			echo "<td align=\"left\">".$details->PostDate."</td>";
 			echo "</tr>";
+
+			echo "<tr>";
+			echo "<td align=\"right\"><strong>Packages:</strong></td>";
+			echo "<td>&nbsp;</td>";
+			echo "<td align=\"left\">&nbsp;</td>";
+			echo "</tr>";
 			echo "</table>";
-			echo "<br/>";
+			echo "<div>";
 			foreach($details->packages as $package){
 				$pack_name = substr($package->URL, strrpos($package->URL, '/') + 1);
 				//$pack_name .= " (".$package->Size.")";
 
 				$size = intval($package->Size);
 				if($size < 1000)
-					$pack_name .= " (".$size." octet)";
+					$pack_name .= " (".$size." B)";
 				else if($size < 1000000)
-					$pack_name .= " (".round(($size/1024),2)." Ko)";
+					$pack_name .= " (".round(($size/1024),2)." KB)";
 				else if($size < 1000000000)
-					$pack_name .= " (".round(($size/(1024*1024)),2)." Mo)";
+					$pack_name .= " (".round(($size/(1024*1024)),2)." MB)";
 				else
-					$pack_name .= " (".round(($size/(1024*1024*1024)),2)." Go)";
+					$pack_name .= " (".round(($size/(1024*1024*1024)),2)." GB)";
 
 				echo '<span class="badge badge-info" style="background-color:#5cb85c !important;">';
 				echo '<a target="_blank" href="'.$package->URL.'" style="color:white;">'.$pack_name.'</a>';
 				echo '</span>';
 			}
-			echo "<br/>";
+			echo "</div>";
 
 			$lines = explode("\n", $details->description);
 			$description = "";

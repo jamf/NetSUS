@@ -170,17 +170,17 @@ foreach($products as $productobj) {
 					// Filter buttons
 					let htmlFilter = '';
 					htmlFilter += '<div class="dropdown" style="margin-left: 10px;">';
-					htmlFilter += '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">';
-					htmlFilter += 'Filter';
+					htmlFilter += '<button class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">';
+					htmlFilter += 'Filter Tags';
 					htmlFilter += '<span class="caret" style="margin-left: 8px;"></span>';
 					htmlFilter += '</button>';
 					htmlFilter += '<ul class="dropdown-menu" id="drop-menu-filter" aria-labelledby="dropdownMenu1">';
-					htmlFilter += '<li><a><input data-filter="others" class="checkbox-filter" type="checkbox" checked> Others</a></li>';
-					htmlFilter += '<li><a><input data-filter="configdata" class="checkbox-filter" type="checkbox"' + ((susfilters["configdata"] != undefined && susfilters["configdata"] == "true") ? ' checked'  : '') + '> Config-Data</a></li>';
-					htmlFilter += '<li><a><input data-filter="deprecated" class="checkbox-filter" type="checkbox"' + ((susfilters["deprecated"] != undefined && susfilters["deprecated"] == "true") ? ' checked'  : '') + '> Deprecated</a></li>';
-					htmlFilter += '<li><a><input data-filter="printer" class="checkbox-filter" type="checkbox"' + ((susfilters["printer"] != undefined && susfilters["printer"] == "true") ? ' checked'  : '') + '> Printer</a></li>';
-					htmlFilter += '<li><a><input data-filter="voice" class="checkbox-filter" type="checkbox"' + ((susfilters["voice"] != undefined && susfilters["voice"] == "true") ? ' checked'  : '') + '> Voice</a></li>';
-					htmlFilter += '<li><a><input data-filter="word" class="checkbox-filter" type="checkbox"' + ((susfilters["word"] != undefined && susfilters["word"] == "true") ? ' checked'  : '') + '> Word</a></li>';
+					htmlFilter += '<li><a><input data-filter="others" class="checkbox-filter" type="checkbox" checked>&nbsp;(No Tag)</a></li>';
+					htmlFilter += '<li><a><input data-filter="configdata" class="checkbox-filter" type="checkbox"' + ((susfilters["configdata"] != undefined && susfilters["configdata"] == "true") ? ' checked'  : '') + '>&nbsp;Config-Data</a></li>';
+					htmlFilter += '<li><a><input data-filter="deprecated" class="checkbox-filter" type="checkbox"' + ((susfilters["deprecated"] != undefined && susfilters["deprecated"] == "true") ? ' checked'  : '') + '>&nbsp;Deprecated</a></li>';
+					htmlFilter += '<li><a><input data-filter="printer" class="checkbox-filter" type="checkbox"' + ((susfilters["printer"] != undefined && susfilters["printer"] == "true") ? ' checked'  : '') + '>&nbsp;Printers</a></li>';
+					htmlFilter += '<li><a><input data-filter="voice" class="checkbox-filter" type="checkbox"' + ((susfilters["voice"] != undefined && susfilters["voice"] == "true") ? ' checked'  : '') + '>&nbsp;Voices</a></li>';
+					htmlFilter += '<li><a><input data-filter="word" class="checkbox-filter" type="checkbox"' + ((susfilters["word"] != undefined && susfilters["word"] == "true") ? ' checked'  : '') + '>&nbsp;Word Lists</a></li>';
 					htmlFilter += '</ul>';
 					htmlFilter += '</div>';
 
@@ -337,7 +337,7 @@ foreach($products as $productobj) {
 							<tr>
 								<th>Enable</th>
 								<th>macOS</th>
-								<?php echo ($filtersEnabled == true) ? "<th>Category Update</th>" : "<th></th>"; ?>
+								<th><?php echo ($filtersEnabled == true) ? "Tags" : ""; ?></th>
 								<th>Name</th>
 								<th>Version</th>
 								<th>Date</th>
@@ -360,7 +360,7 @@ foreach ($products as $productobj) { ?>
 												echo '<span class="badge badge-info" style="background-color:#337ab7 !important;">'.$oscatalog.'</span> ';
 											}
 										}else{
-											echo '<span class="badge badge-info" style="background-color:#337ab7 !important;">'.$productobj->oscatalogs[0].' / '.$productobj->oscatalogs[count($productobj->oscatalogs) - 1].'</span>';
+											echo '<span class="badge badge-info" style="background-color:#337ab7 !important;">'.$productobj->oscatalogs[0].' - '.$productobj->oscatalogs[count($productobj->oscatalogs) - 1].'</span>';
 										}
 									?>
 								</td>
