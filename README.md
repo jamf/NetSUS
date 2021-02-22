@@ -11,6 +11,8 @@ OVA:
 
 NetBoot and Software Update services have been deprecated by Apple, and as such this project will no longer be receiving further updates.
 
+On 19-March-2021 this repository will be archived.
+
 # What is NetSUS?
 
 The NetSUSLP allows you to host an internal software update server (SUS), a NetBoot server, file shares, and a LDAP Proxy server **all on the same Linux system**. For a list of supported Linux distributions see [Requirements](#requirements).
